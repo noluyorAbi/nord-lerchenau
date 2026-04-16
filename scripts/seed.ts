@@ -130,7 +130,8 @@ async function main() {
     console.warn("No image manifest found. Run `bun run download-images` first to import photos.");
   }
 
-  void (IMG_DIR, manifest);
+  void IMG_DIR;
+  void manifest;
 
   // 4. Two news posts
   const author = await payload.find({

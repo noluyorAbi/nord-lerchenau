@@ -304,7 +304,7 @@ Pages are statically generated at build time and re-generated on demand. The flo
 
 | Item | Status |
 |------|--------|
-| **Next.js 16 + Payload v3 compatibility** | Must verify before P1. Payload v3 GA was stable on Next.js 15. If incompatible, options: (a) wait for Payload 16 support, (b) downgrade Next.js to 15 LTS, (c) use Sanity instead. To check first thing in P1. |
+| **Next.js 16 + Payload v3 compatibility** | VERIFIED 2026-04-16: `@payloadcms/next@3.83.0` peerDependency `"next": ">=15.2.9 <15.3.0 \|\| >=15.3.9 <15.4.0 \|\| >=15.4.11 <15.5.0 \|\| >=16.2.2 <17.0.0"` — Next.js 16.2.4 satisfies `>=16.2.2 <17.0.0`. Compatible, no caveats. Proceed with Task 2. |
 | **Vercel Blob vs S3** | Default Vercel Blob for simplicity. If image volume grows past free tier, switch to S3 (Payload supports both). |
 | **Sponsor logo files** | Don't have them yet. Seed inserts placeholder rectangles — Vorstand uploads real logos via admin. |
 | **Roster data** | The original Wix site does not list individual players per team. Roster section in `/fussball/[team]` is conditionally rendered if `players` array is non-empty. |

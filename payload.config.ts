@@ -15,11 +15,14 @@ import { Submissions } from "./payload/collections/Submissions";
 import { Teams } from "./payload/collections/Teams";
 import { Users } from "./payload/collections/Users";
 
+import { ChronikPage } from "./payload/globals/ChronikPage";
 import { ContactInfo } from "./payload/globals/ContactInfo";
 import { HomePage } from "./payload/globals/HomePage";
+import { JugendfoerderPage } from "./payload/globals/JugendfoerderPage";
 import { LegalPages } from "./payload/globals/LegalPages";
 import { Navigation } from "./payload/globals/Navigation";
 import { SiteSettings } from "./payload/globals/SiteSettings";
+import { VereinsheimPage } from "./payload/globals/VereinsheimPage";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -34,7 +37,16 @@ export default buildConfig({
   }),
   editor: lexicalEditor(),
   collections: [Users, Media, People, Teams, Posts, Sponsors, Fixtures, Events, Submissions],
-  globals: [SiteSettings, Navigation, HomePage, ContactInfo, LegalPages],
+  globals: [
+    SiteSettings,
+    Navigation,
+    HomePage,
+    ContactInfo,
+    ChronikPage,
+    VereinsheimPage,
+    JugendfoerderPage,
+    LegalPages,
+  ],
   typescript: {
     outputFile: path.resolve(dirname, "payload-types.ts"),
   },

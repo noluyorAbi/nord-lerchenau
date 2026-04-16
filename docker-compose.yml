@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: svnord-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: svnord
+      POSTGRES_PASSWORD: svnord_dev
+      POSTGRES_DB: svnord
+    volumes:
+      - svnord_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U svnord -d svnord"]
+      interval: 5s
+      retries: 10
+
+volumes:
+  svnord_pgdata:

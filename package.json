@@ -6,12 +6,28 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "payload": "payload",
+    "payload:generate-types": "payload generate:types",
+    "payload:migrate": "payload migrate",
+    "db:up": "docker compose up -d postgres",
+    "db:down": "docker compose down",
+    "db:reset": "docker compose down -v && docker compose up -d postgres",
+    "seed": "bun run scripts/seed.ts",
+    "download-images": "bun run scripts/download-images.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
+    "@payloadcms/db-postgres": "3.83.0",
+    "@payloadcms/next": "3.83.0",
+    "@payloadcms/richtext-lexical": "3.83.0",
+    "graphql": "^16.13.2",
     "next": "16.2.4",
+    "payload": "3.83.0",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

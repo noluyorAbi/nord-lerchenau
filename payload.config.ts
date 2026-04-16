@@ -5,6 +5,8 @@ import { postgresAdapter } from "@payloadcms/db-postgres";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { buildConfig } from "payload";
 
+import { Users } from "./payload/collections/Users";
+
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
@@ -17,7 +19,7 @@ export default buildConfig({
     },
   }),
   editor: lexicalEditor(),
-  collections: [],
+  collections: [Users],
   globals: [],
   typescript: {
     outputFile: path.resolve(dirname, "payload-types.ts"),

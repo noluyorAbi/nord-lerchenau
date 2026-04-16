@@ -15,7 +15,9 @@ import { Submissions } from "./payload/collections/Submissions";
 import { Teams } from "./payload/collections/Teams";
 import { Users } from "./payload/collections/Users";
 
+import { ContactInfo } from "./payload/globals/ContactInfo";
 import { HomePage } from "./payload/globals/HomePage";
+import { LegalPages } from "./payload/globals/LegalPages";
 import { Navigation } from "./payload/globals/Navigation";
 import { SiteSettings } from "./payload/globals/SiteSettings";
 
@@ -32,7 +34,7 @@ export default buildConfig({
   }),
   editor: lexicalEditor(),
   collections: [Users, Media, People, Teams, Posts, Sponsors, Fixtures, Events, Submissions],
-  globals: [SiteSettings, Navigation, HomePage],
+  globals: [SiteSettings, Navigation, HomePage, ContactInfo, LegalPages],
   typescript: {
     outputFile: path.resolve(dirname, "payload-types.ts"),
   },

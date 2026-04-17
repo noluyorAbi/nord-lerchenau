@@ -2,7 +2,11 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { postgresAdapter } from "@payloadcms/db-postgres";
-import { lexicalEditor } from "@payloadcms/richtext-lexical";
+import {
+  FixedToolbarFeature,
+  HeadingFeature,
+  lexicalEditor,
+} from "@payloadcms/richtext-lexical";
 import { buildConfig } from "payload";
 
 import { Events } from "./payload/collections/Events";
@@ -35,7 +39,13 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URI || "",
     },
   }),
-  editor: lexicalEditor(),
+  editor: lexicalEditor({
+    features: ({ defaultFeatures }) => [
+      ...defaultFeatures,
+      FixedToolbarFeature(),
+      HeadingFeature({ enabledHeadingSizes: ["h1", "h2", "h3", "h4"] }),
+    ],
+  }),
   collections: [Users, Media, People, Teams, Posts, Sponsors, Fixtures, Events, Submissions],
   globals: [
     SiteSettings,

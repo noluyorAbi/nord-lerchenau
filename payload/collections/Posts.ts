@@ -18,6 +18,18 @@ export const Posts: CollectionConfig = {
     useAsTitle: "title",
     defaultColumns: ["title", "publishedAt", "author"],
     group: "Content",
+    livePreview: {
+      url: ({ data }) => {
+        const postSlug = typeof data?.slug === "string" ? data.slug : "new";
+        const base = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000";
+        return `${base}/news/${postSlug}?preview=1`;
+      },
+      breakpoints: [
+        { label: "Mobile", name: "mobile", width: 375, height: 667 },
+        { label: "Tablet", name: "tablet", width: 768, height: 1024 },
+        { label: "Desktop", name: "desktop", width: 1440, height: 900 },
+      ],
+    },
   },
   access: {
     create: authenticated,

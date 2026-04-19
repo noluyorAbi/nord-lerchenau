@@ -1,3 +1,4 @@
+import { Heritage } from "@/components/home/Heritage";
 import { Hero } from "@/components/home/Hero";
 import { MembershipCta } from "@/components/home/MembershipCta";
 import { NewsGrid } from "@/components/home/NewsGrid";
@@ -23,8 +24,9 @@ export default async function HomePage() {
       {sections.showNews !== false ? <NewsGrid /> : null}
       {sections.showSports !== false ? <SportsGrid /> : null}
       {sections.showEvents !== false ? <UpcomingEvents /> : null}
-      {sections.showSponsors !== false ? <SponsorMarquee /> : null}
+      <Heritage />
       {sections.showVereinsheim !== false ? <VereinsheimTeaser /> : null}
+      {sections.showSponsors !== false ? <SponsorMarquee /> : null}
       {sections.showMembershipCta !== false ? <MembershipCta /> : null}
     </>
   );

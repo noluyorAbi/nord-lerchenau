@@ -23,6 +23,7 @@
     "@payloadcms/live-preview-react": "3.83.0",
     "@payloadcms/next": "3.83.0",
     "@payloadcms/richtext-lexical": "3.83.0",
+    "@payloadcms/storage-vercel-blob": "3.83.0",
     "@radix-ui/react-dialog": "^1.1.15",
     "graphql": "^16.13.2",
     "motion": "^12.38.0",

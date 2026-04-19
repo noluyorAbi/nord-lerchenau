@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { FadeUp } from "@/components/motion/FadeUp";
 import { getPayloadClient } from "@/lib/payload";
 
 const MONTHS_DE = [
@@ -42,7 +43,7 @@ export async function UpcomingEvents() {
         </div>
 
         <div className="mt-6 grid gap-3 md:grid-cols-3">
-          {result.docs.map((event) => {
+          {result.docs.map((event, idx) => {
             const startDate = new Date(event.startsAt);
             const day = startDate.getDate().toString().padStart(2, "0");
             const month = MONTHS_DE[startDate.getMonth()];
@@ -55,26 +56,27 @@ export async function UpcomingEvents() {
               hour12: false,
             });
             return (
-              <div
-                key={event.id}
-                className="flex items-center gap-3 rounded-xl border border-nord-line bg-white p-3 md:p-4"
-              >
-                <div className="flex min-w-12 flex-col items-center justify-center rounded-lg bg-nord-navy px-3 py-2 text-white">
-                  <span className="text-lg font-bold leading-none">{day}</span>
-                  <span className="mt-1 text-[9px] tracking-[0.1em]">
-                    {month}
-                  </span>
-                </div>
-                <div className="min-w-0">
-                  <div className="truncate text-sm font-semibold text-nord-ink">
-                    {event.title}
+              <FadeUp key={event.id} delay={idx * 0.08}>
+                <div className="flex items-center gap-3 rounded-xl border border-nord-line bg-white p-3 md:p-4">
+                  <div className="flex min-w-12 flex-col items-center justify-center rounded-lg bg-nord-navy px-3 py-2 text-white">
+                    <span className="text-lg font-bold leading-none">
+                      {day}
+                    </span>
+                    <span className="mt-1 text-[9px] tracking-[0.1em]">
+                      {month}
+                    </span>
                   </div>
-                  <div className="mt-0.5 text-[11px] text-nord-muted">
-                    {weekday} · {time}
-                    {event.location ? ` · ${event.location}` : null}
+                  <div className="min-w-0">
+                    <div className="truncate text-sm font-semibold text-nord-ink">
+                      {event.title}
+                    </div>
+                    <div className="mt-0.5 text-[11px] text-nord-muted">
+                      {weekday} · {time}
+                      {event.location ? ` · ${event.location}` : null}
+                    </div>
                   </div>
                 </div>
-              </div>
+              </FadeUp>
             );
           })}
         </div>

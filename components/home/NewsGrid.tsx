@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { FadeUp } from "@/components/motion/FadeUp";
 import { getPayloadClient } from "@/lib/payload";
 
 const TAG_LABELS: Record<string, string> = {
@@ -45,28 +46,31 @@ export async function NewsGrid() {
             const tag = Array.isArray(post.tags) ? post.tags[0] : null;
             const tagLabel = tag ? TAG_LABELS[tag] ?? tag : null;
             return (
-              <Link
-                key={post.id}
-                href={`/news/${post.slug}`}
-                className="group overflow-hidden rounded-xl border border-nord-line bg-white transition hover:-translate-y-0.5 hover:shadow-md"
-              >
-                <div className={`aspect-[16/9] ${GRADIENTS[idx % GRADIENTS.length]}`} />
-                <div className="p-4 md:p-5">
-                  {tagLabel ? (
-                    <div className="text-[10px] font-semibold uppercase tracking-[0.1em] text-nord-sky">
-                      {tagLabel}
-                    </div>
-                  ) : null}
-                  <h3 className="mt-1.5 text-base font-semibold tracking-tight text-nord-ink">
-                    {post.title}
-                  </h3>
-                  {post.excerpt ? (
-                    <p className="mt-2 line-clamp-2 text-xs text-nord-muted">
-                      {post.excerpt}
-                    </p>
-                  ) : null}
-                </div>
-              </Link>
+              <FadeUp key={post.id} delay={idx * 0.08}>
+                <Link
+                  href={`/news/${post.slug}`}
+                  className="group block overflow-hidden rounded-xl border border-nord-line bg-white transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nord-sky focus-visible:ring-offset-2"
+                >
+                  <div
+                    className={`aspect-[16/9] ${GRADIENTS[idx % GRADIENTS.length]}`}
+                  />
+                  <div className="p-4 md:p-5">
+                    {tagLabel ? (
+                      <div className="text-[10px] font-semibold uppercase tracking-[0.1em] text-nord-sky">
+                        {tagLabel}
+                      </div>
+                    ) : null}
+                    <h3 className="mt-1.5 text-base font-semibold tracking-tight text-nord-ink">
+                      {post.title}
+                    </h3>
+                    {post.excerpt ? (
+                      <p className="mt-2 line-clamp-2 text-xs text-nord-muted">
+                        {post.excerpt}
+                      </p>
+                    ) : null}
+                  </div>
+                </Link>
+              </FadeUp>
             );
           })}
         </div>

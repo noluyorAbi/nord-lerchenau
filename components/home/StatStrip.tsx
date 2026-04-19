@@ -1,3 +1,4 @@
+import { StatCounter } from "@/components/motion/StatCounter";
 import type { HomePage } from "@/payload-types";
 
 type Props = { stats: HomePage["stats"] };
@@ -19,17 +20,11 @@ export function StatStrip({ stats }: Props) {
     <section className="border-b border-nord-line bg-white">
       <div className="mx-auto grid max-w-7xl grid-cols-2 divide-nord-line md:grid-cols-4 md:divide-x">
         {items.map((item, idx) => (
-          <div
+          <StatCounter
             key={`${item.label}-${idx}`}
-            className="px-6 py-6 md:px-8 md:py-7"
-          >
-            <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-nord-muted">
-              {item.label}
-            </div>
-            <div className="mt-1 text-2xl font-bold tracking-tight text-nord-ink md:text-3xl">
-              {item.value}
-            </div>
-          </div>
+            label={item.label}
+            value={item.value}
+          />
         ))}
       </div>
     </section>

@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { FadeUp } from "@/components/motion/FadeUp";
+
 const SPORTS = [
   {
     name: "Fußball",
@@ -43,20 +45,21 @@ export function SportsGrid() {
         </div>
 
         <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-6">
-          {SPORTS.map((sport) => (
-            <Link
-              key={sport.name}
-              href={sport.href}
-              className="group rounded-xl border border-nord-line bg-white p-4 transition hover:-translate-y-0.5 hover:shadow-md"
-            >
-              <div className={`size-8 rounded-lg ${sport.color}`} />
-              <div className="mt-3 text-sm font-semibold text-nord-ink">
-                {sport.name}
-              </div>
-              <div className="mt-0.5 text-[11px] text-nord-muted">
-                {sport.caption}
-              </div>
-            </Link>
+          {SPORTS.map((sport, idx) => (
+            <FadeUp key={sport.name} delay={idx * 0.05}>
+              <Link
+                href={sport.href}
+                className="group block rounded-xl border border-nord-line bg-white p-4 transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nord-sky focus-visible:ring-offset-2"
+              >
+                <div className={`size-8 rounded-lg ${sport.color}`} />
+                <div className="mt-3 text-sm font-semibold text-nord-ink">
+                  {sport.name}
+                </div>
+                <div className="mt-0.5 text-[11px] text-nord-muted">
+                  {sport.caption}
+                </div>
+              </Link>
+            </FadeUp>
           ))}
         </div>
       </div>

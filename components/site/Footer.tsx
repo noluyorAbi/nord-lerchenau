@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { Crest } from "@/components/Crest";
 import { getPayloadClient } from "@/lib/payload";
 
 const FALLBACK_COLUMNS = [
@@ -30,7 +31,9 @@ const FALLBACK_COLUMNS = [
   },
   {
     title: "Folgen",
-    links: [{ label: "Instagram", href: "https://www.instagram.com/svnord_ski/" }],
+    links: [
+      { label: "Instagram", href: "https://www.instagram.com/svnord_ski/" },
+    ],
   },
 ];
 
@@ -61,38 +64,62 @@ export async function Footer() {
       : null;
 
   const year = new Date().getFullYear();
+  const siteName = site.name ?? "SV Nord München-Lerchenau e.V.";
 
   return (
-    <footer className="mt-20 bg-nord-navy text-white">
-      <div className="mx-auto grid w-full max-w-7xl gap-10 px-6 py-14 md:grid-cols-[1.4fr_repeat(4,1fr)] md:px-10">
+    <footer className="relative overflow-hidden bg-nord-navy text-white">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-1"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(90deg, var(--color-nord-gold) 0 3px, transparent 3px 10px)",
+        }}
+      />
+      <div className="mx-auto grid w-full max-w-[1320px] gap-10 px-6 py-16 md:grid-cols-[1.6fr_repeat(4,1fr)] md:px-7">
         <div>
-          <div className="text-base font-semibold">{site.name ?? "SV Nord München-Lerchenau e.V."}</div>
+          <Crest size={44} textColor="#fff" />
+          <div className="mt-4 font-display text-[18px] font-black uppercase tracking-[-0.01em]">
+            SV NORD
+          </div>
+          <div className="mt-0.5 font-mono text-[10px] tracking-[0.22em] text-white/60">
+            MÜNCHEN-LERCHENAU · 1947
+          </div>
           {firstAddress ? (
-            <div className="mt-2 text-xs text-white/70">
-              {firstAddress.street} · {firstAddress.postalCode} {firstAddress.city}
+            <div className="mt-5 text-[13px] leading-relaxed text-white/70">
+              {firstAddress.street}
+              <br />
+              {firstAddress.postalCode} {firstAddress.city}
             </div>
           ) : null}
           {contact.email ? (
-            <div className="mt-1 text-xs text-white/70">
-              <a href={`mailto:${contact.email}`} className="hover:text-white">
-                {contact.email}
-              </a>
-              {contact.phone ? ` · ${contact.phone}` : null}
+            <div className="mt-3 space-y-1 text-[13px] text-white/70">
+              <div>
+                <a
+                  href={`mailto:${contact.email}`}
+                  className="hover:text-nord-gold"
+                >
+                  {contact.email}
+                </a>
+              </div>
+              {contact.phone ? (
+                <div className="font-mono text-xs">{contact.phone}</div>
+              ) : null}
             </div>
           ) : null}
         </div>
 
         {columns.map((col) => (
           <div key={col.title}>
-            <div className="text-[10px] font-bold uppercase tracking-[0.15em] text-nord-gold">
+            <div className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-nord-gold">
               {col.title}
             </div>
-            <ul className="mt-3 space-y-1.5">
+            <ul className="mt-4 space-y-2.5">
               {col.links.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-xs text-white/80 hover:text-white"
+                    className="font-display text-[14px] font-medium uppercase tracking-[0.04em] text-white/80 transition hover:text-nord-gold"
                   >
                     {link.label}
                   </Link>
@@ -104,13 +131,21 @@ export async function Footer() {
       </div>
 
       <div className="border-t border-white/10">
-        <div className="mx-auto flex w-full max-w-7xl flex-col items-start justify-between gap-2 px-6 py-5 text-[11px] text-white/60 md:flex-row md:items-center md:px-10">
-          <div>© {year} {site.name ?? "SV Nord München-Lerchenau e.V."}</div>
-          <div className="flex items-center gap-4">
-            <Link href="/impressum" className="hover:text-white">
+        <div className="mx-auto flex w-full max-w-[1320px] flex-col items-start justify-between gap-3 px-6 py-6 text-[11px] text-white/50 md:flex-row md:items-center md:px-7">
+          <div className="font-mono tracking-[0.04em]">
+            © {year} {siteName} · Einmal Nordler, immer Nordler.
+          </div>
+          <div className="flex items-center gap-5">
+            <Link
+              href="/impressum"
+              className="font-display uppercase tracking-[0.08em] hover:text-nord-gold"
+            >
               Impressum
             </Link>
-            <Link href="/datenschutz" className="hover:text-white">
+            <Link
+              href="/datenschutz"
+              className="font-display uppercase tracking-[0.08em] hover:text-nord-gold"
+            >
               Datenschutz
             </Link>
           </div>

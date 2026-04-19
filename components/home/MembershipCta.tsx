@@ -2,28 +2,60 @@ import Link from "next/link";
 
 export function MembershipCta() {
   return (
-    <section className="bg-white">
-      <div className="mx-auto max-w-7xl px-6 py-14 md:px-10 md:py-20">
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-nord-navy to-nord-navy-2 p-8 md:p-12">
+    <section className="border-b border-nord-line bg-nord-paper">
+      <div className="mx-auto max-w-[1320px] px-6 py-14 md:px-7 md:py-20">
+        <div className="relative overflow-hidden rounded-[24px] bg-nord-ink p-10 md:p-16">
           <div
             aria-hidden
-            className="pointer-events-none absolute -right-20 -top-20 size-60 rounded-full bg-[radial-gradient(circle,var(--color-nord-sky)_0%,transparent_60%)] opacity-40"
+            className="pointer-events-none absolute -right-20 -top-20 size-72 rounded-full opacity-50 blur-3xl"
+            style={{
+              background:
+                "radial-gradient(circle, var(--color-nord-gold) 0%, transparent 60%)",
+            }}
           />
-          <div className="relative grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/2 md:block"
+            style={{
+              backgroundImage:
+                "repeating-linear-gradient(90deg, var(--color-nord-gold) 0 3px, transparent 3px 24px)",
+              opacity: 0.12,
+            }}
+          />
+
+          <div className="relative grid gap-8 md:grid-cols-[1.4fr_1fr] md:items-center">
             <div>
-              <h2 className="text-3xl font-bold tracking-tight text-white md:text-4xl">
-                Mit dabei sein.
+              <div className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-nord-gold">
+                Mitmachen
+              </div>
+              <h2
+                className="mt-4 font-display font-black leading-[0.92] tracking-[-0.02em] text-white"
+                style={{ fontSize: "clamp(44px, 6vw, 84px)" }}
+              >
+                Werde{" "}
+                <span className="text-nord-gold">Nordler</span>.
               </h2>
-              <p className="mt-2 text-sm text-white/80 md:text-base">
-                Werde Mitglied beim SV Nord — als Spieler, Eltern, Fan oder Förderer.
+              <p className="mt-5 max-w-xl text-[16px] leading-relaxed text-white/75">
+                Ob als Spieler, Eltern, Fan oder Förderer — beim SV Nord ist
+                Platz für jede und jeden. 500 Mitglieder, sechs Sportarten,
+                ein Vereinsheim mit Biergarten.
               </p>
             </div>
-            <Link
-              href="/mitgliedschaft"
-              className="inline-flex items-center gap-2 rounded-lg bg-nord-gold px-5 py-3 text-sm font-semibold text-nord-navy transition hover:brightness-110"
-            >
-              Mitglied werden →
-            </Link>
+
+            <div className="flex flex-col items-start gap-3 md:items-end">
+              <Link
+                href="/mitgliedschaft"
+                className="inline-flex items-center gap-2.5 rounded-full bg-nord-gold px-6 py-3.5 font-display text-sm font-semibold uppercase tracking-[0.04em] text-nord-navy transition hover:-translate-y-px hover:shadow-[0_12px_30px_rgba(200,169,106,0.4)]"
+              >
+                Mitglied werden →
+              </Link>
+              <Link
+                href="/sponsoren"
+                className="inline-flex items-center gap-2.5 rounded-full border border-white/25 px-6 py-3.5 font-display text-sm font-semibold uppercase tracking-[0.04em] text-white transition hover:bg-white hover:text-nord-navy"
+              >
+                Sponsor werden
+              </Link>
+            </div>
           </div>
         </div>
       </div>

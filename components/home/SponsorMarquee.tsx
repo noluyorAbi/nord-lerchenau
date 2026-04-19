@@ -31,8 +31,8 @@ export async function SponsorMarquee() {
         <div className="mb-5 text-[10px] font-semibold uppercase tracking-[0.2em] text-nord-muted">
           Unsere Sponsoren
         </div>
-        <div className="relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
-          <div className="flex w-max animate-[marquee_40s_linear_infinite] gap-12 pr-12">
+        <div className="group relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
+          <div className="flex w-max animate-[marquee_40s_linear_infinite] gap-12 pr-12 group-hover:[animation-play-state:paused] motion-reduce:animate-none">
             {doubled.map((name, idx) => (
               <div
                 key={`${name}-${idx}`}

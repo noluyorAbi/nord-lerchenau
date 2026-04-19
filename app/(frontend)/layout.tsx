@@ -1,9 +1,42 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import {
+  Barlow_Condensed,
+  Fraunces,
+  Geist,
+  Geist_Mono,
+  Inter,
+  JetBrains_Mono,
+} from "next/font/google";
 
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
+import { MatchdayTicker } from "@/components/site/MatchdayTicker";
 import "../globals.css";
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const barlow = Barlow_Condensed({
+  variable: "--font-barlow-condensed",
+  subsets: ["latin"],
+  weight: ["500", "600", "700", "800", "900"],
+});
+
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
+  subsets: ["latin"],
+  weight: ["500", "700"],
+  style: ["normal", "italic"],
+});
+
+const jetbrains = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,7 +65,7 @@ export default function FrontendLayout({
   return (
     <html
       lang="de"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${barlow.variable} ${fraunces.variable} ${jetbrains.variable} ${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <a
@@ -41,6 +74,7 @@ export default function FrontendLayout({
         >
           Weiter zum Hauptinhalt
         </a>
+        <MatchdayTicker />
         <Header />
         <main id="main" className="flex-1">{children}</main>
         <Footer />

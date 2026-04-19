@@ -5,13 +5,13 @@ import { useEffect, useRef, useState } from "react";
 
 type Props = {
   value: string;
-  label: string;
+  className?: string;
 };
 
 const DIGIT_RE = /^(\d+)([^\d].*)?$/;
 
-export function StatCounter({ value, label }: Props) {
-  const ref = useRef<HTMLDivElement>(null);
+export function StatCounter({ value, className }: Props) {
+  const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-40px" });
   const reduced = useReducedMotion();
   const [display, setDisplay] = useState(value);
@@ -39,13 +39,8 @@ export function StatCounter({ value, label }: Props) {
   }, [inView, reduced, value]);
 
   return (
-    <div ref={ref} className="px-6 py-6 md:px-8 md:py-7">
-      <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-nord-muted">
-        {label}
-      </div>
-      <div className="mt-1 text-2xl font-bold tracking-tight text-nord-ink md:text-3xl">
-        {display}
-      </div>
-    </div>
+    <span ref={ref} className={className}>
+      {display}
+    </span>
   );
 }

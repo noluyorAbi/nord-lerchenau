@@ -1,26 +1,26 @@
 import Link from "next/link";
 
+import { Crest } from "@/components/Crest";
+
 type Props = {
   href?: string;
-  label?: string;
 };
 
-export function Logo({ href = "/", label = "SV Nord" }: Props) {
+export function Logo({ href = "/" }: Props) {
   return (
     <Link
       href={href}
-      className="flex items-center gap-2 font-bold tracking-tight text-nord-ink"
+      className="flex items-center gap-3 text-nord-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nord-gold focus-visible:ring-offset-2"
     >
-      <span className="relative block h-[26px] w-[22px]">
-        <span
-          className="absolute inset-0 bg-nord-navy"
-          style={{
-            clipPath: "polygon(0 0, 100% 0, 100% 70%, 50% 100%, 0 70%)",
-          }}
-        />
-        <span className="absolute inset-x-[2px] top-[12px] h-[3px] bg-nord-gold" />
+      <Crest size={32} />
+      <span className="flex flex-col leading-none">
+        <span className="font-display text-[20px] font-black tracking-[-0.01em]">
+          SV NORD
+        </span>
+        <span className="text-[10px] font-semibold tracking-[0.22em] text-nord-muted">
+          MÜNCHEN-LERCHENAU · 1947
+        </span>
       </span>
-      <span className="text-sm">{label}</span>
     </Link>
   );
 }

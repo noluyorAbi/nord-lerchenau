@@ -1,22 +1,27 @@
 @import "tailwindcss";
 
 @theme {
-  /* Brand */
-  --color-nord-navy: #0e1e4a;
-  --color-nord-navy-2: #1a3a8e;
-  --color-nord-sky: #60c0e8;
+  /* Brand — warm paper + deeper navy + gold */
+  --color-nord-navy: #0b1b3f;
+  --color-nord-navy-2: #14306e;
+  --color-nord-sky: #6ec7ea;
   --color-nord-gold: #c8a96a;
-  --color-nord-paper: #fafafa;
-  --color-nord-ink: #0a0a0a;
+  --color-nord-gold-2: #a38146;
+  --color-nord-paper: #f4f1ea;
+  --color-nord-paper-2: #eae5d8;
+  --color-nord-ink: #0c0c0e;
   --color-nord-muted: #6b6b6b;
-  --color-nord-line: rgb(0 0 0 / 0.08);
+  --color-nord-line: rgb(12 12 14 / 0.12);
+  --color-nord-red: #d43a2f;
 
-  /* Fonts (Geist already loaded in app/layout.tsx) */
-  --font-sans: var(--font-geist-sans), -apple-system, "Inter", system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  /* Fonts */
+  --font-sans: var(--font-inter), var(--font-geist-sans), -apple-system, system-ui, sans-serif;
+  --font-display: var(--font-barlow-condensed), "Barlow Condensed", sans-serif;
+  --font-serif: var(--font-fraunces), "Fraunces", Georgia, serif;
+  --font-mono: var(--font-jetbrains-mono), var(--font-geist-mono), ui-monospace, monospace;
 
   /* Container width used across pages */
-  --container-7xl: 80rem; /* 1280px */
+  --container-7xl: 82.5rem; /* 1320px */
 }
 
 @layer base {
@@ -32,16 +37,37 @@
 
   body {
     font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
   }
 
   ::selection {
-    background: var(--color-nord-sky);
+    background: var(--color-nord-gold);
     color: var(--color-nord-navy);
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-nord-sky);
+    outline: 2px solid var(--color-nord-gold);
     outline-offset: 2px;
     border-radius: 4px;
   }
+}
+
+@utility font-display {
+  font-family: var(--font-display);
+  font-stretch: condensed;
+  letter-spacing: -0.01em;
+}
+
+@utility font-serif {
+  font-family: var(--font-serif);
+}
+
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes live-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(212 58 47 / 0.5); }
+  50% { box-shadow: 0 0 0 8px rgb(212 58 47 / 0); }
 }

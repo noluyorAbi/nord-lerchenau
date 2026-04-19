@@ -1,8 +1,8 @@
 import { Heritage } from "@/components/home/Heritage";
 import { Hero } from "@/components/home/Hero";
+import { MatchdayBlock } from "@/components/home/MatchdayBlock";
 import { MembershipCta } from "@/components/home/MembershipCta";
 import { NewsGrid } from "@/components/home/NewsGrid";
-import { NextMatch } from "@/components/home/NextMatch";
 import { SponsorMarquee } from "@/components/home/SponsorMarquee";
 import { SportsGrid } from "@/components/home/SportsGrid";
 import { StatStrip } from "@/components/home/StatStrip";
@@ -20,7 +20,7 @@ export default async function HomePage() {
     <>
       <Hero hero={home.hero} />
       <StatStrip stats={home.stats} />
-      {sections.showNextMatch !== false ? <NextMatch /> : null}
+      {sections.showNextMatch !== false ? <MatchdayBlock /> : null}
       {sections.showNews !== false ? <NewsGrid /> : null}
       {sections.showSports !== false ? <SportsGrid /> : null}
       {sections.showEvents !== false ? <UpcomingEvents /> : null}

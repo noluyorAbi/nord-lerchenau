@@ -10,7 +10,6 @@ import {
 
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
-import { MatchdayTicker } from "@/components/site/MatchdayTicker";
 import "../globals.css";
 
 const inter = Inter({
@@ -133,7 +132,6 @@ export default function FrontendLayout({
         >
           Weiter zum Hauptinhalt
         </a>
-        <MatchdayTicker />
         <Header />
         <main id="main" className="flex-1">{children}</main>
         <Footer />

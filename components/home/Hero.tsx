@@ -96,7 +96,7 @@ export async function Hero({ hero }: Props) {
               <h1
                 className="font-display font-black text-nord-ink"
                 style={{
-                  fontSize: "clamp(68px, 10vw, 168px)",
+                  fontSize: "clamp(48px, 7vw, 120px)",
                   lineHeight: 0.86,
                   letterSpacing: "-0.03em",
                   margin: 0,

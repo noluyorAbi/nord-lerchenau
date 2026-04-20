@@ -13,10 +13,13 @@ This site is one Next.js 16 app with Payload CMS mounted at `/admin`. Deploy tar
 
 ## 1. Provision Postgres on Neon
 
-1. Create an account at <https://neon.tech> → sign in with GitHub.
-2. Create a project called `svnord-prod` in the nearest region (e.g. Frankfurt).
-3. In the dashboard, copy the **pooled connection string** (looks like `postgres://user:pw@ep-xxx-pooler.eu-central-1.aws.neon.tech/svnord?sslmode=require`).
-4. Save it — you'll paste it into Vercel as `DATABASE_URI`.
+1. Create an account at <https://neon.com> → sign in with GitHub.
+2. Create a project called `svnord-prod` in the nearest region (Frankfurt / `aws-eu-central-1`).
+3. In the dashboard, copy the **pooled connection string** — use the host that ends in `-pooler.c-3.eu-central-1.aws.neon.tech`. Serverless functions on Vercel open many short-lived connections; the pooler holds a warm pool, the direct host does not.
+4. Save it to your local `.env.local.production` — you'll paste it into Vercel as `DATABASE_URI` in step 3.
+5. Optional CLI setup on a new machine: `npx neonctl@latest init`.
+
+> Current project details are tracked in [`TODO.md`](./TODO.md).
 
 ## 2. Get a Resend API key
 

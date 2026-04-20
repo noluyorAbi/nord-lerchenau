@@ -150,9 +150,15 @@ Post edits in `/admin` → click the "Live Preview" tab. The iframe loads the re
 
 ## Deployment
 
-See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) for a step-by-step guide covering **Neon** (Postgres) → **Resend** (email) → **Vercel** (hosting + Blob) → production seed → DNS cutover → Vorstand handoff.
+See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) for the full step-by-step guide and [`docs/TODO.md`](docs/TODO.md) for the current live checklist.
 
-Short version: push to GitHub, import into Vercel, add env vars, attach a Vercel Blob store, deploy.
+**Stack in production**
+- **Database** — [Neon](https://neon.com) Postgres (use the pooler host for `DATABASE_URI`)
+- **Hosting** — [Vercel](https://vercel.com) — one project, auto-deploy from `main`
+- **Media** — [Vercel Blob](https://vercel.com/storage/blob) (via `BLOB_READ_WRITE_TOKEN`; falls back to local `public/uploads/` in dev)
+- **Email** — [Resend](https://resend.com) for contact-form delivery
+
+Short version: push to GitHub ✓, provision Neon + Resend, import into Vercel, add env vars, attach a Vercel Blob store, deploy.
 
 ## Design Source
 

@@ -71,9 +71,9 @@ export async function Hero({ hero }: Props) {
 
   return (
     <section className="relative overflow-hidden bg-nord-paper">
-      <div className="mx-auto grid max-w-[1320px] gap-12 px-6 pb-20 pt-14 md:grid-cols-[1.2fr_1fr] md:px-7 md:pb-[72px] md:pt-14">
+      <div className="mx-auto grid max-w-[1320px] gap-10 px-6 pb-14 pt-10 md:grid-cols-[1.2fr_1fr] md:px-7 md:pb-14 md:pt-10">
         {/* LEFT — headline */}
-        <div className="relative flex min-h-[520px] flex-col justify-between">
+        <div className="relative flex flex-col justify-between gap-8">
           <HeroStagger>
             <HeroItem>
               <div className="mb-6 flex items-center gap-3">
@@ -96,9 +96,9 @@ export async function Hero({ hero }: Props) {
               <h1
                 className="font-display font-black text-nord-ink"
                 style={{
-                  fontSize: "clamp(48px, 7vw, 120px)",
-                  lineHeight: 0.86,
-                  letterSpacing: "-0.03em",
+                  fontSize: "clamp(38px, 4.6vw, 80px)",
+                  lineHeight: 0.92,
+                  letterSpacing: "-0.025em",
                   margin: 0,
                 }}
               >
@@ -138,13 +138,13 @@ export async function Hero({ hero }: Props) {
                 <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-nord-muted">
                   Gegründet
                 </div>
-                <div className="font-display text-[44px] font-black leading-none text-nord-ink">
+                <div className="font-display text-[32px] font-black leading-none text-nord-ink">
                   1947
                 </div>
                 <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.2em] text-nord-muted">
                   Tabelle
                 </div>
-                <div className="font-display text-[44px] font-black leading-tight text-nord-ink">
+                <div className="font-display text-[32px] font-black leading-tight text-nord-ink">
                   {ourRank ?? "—"}
                   <span className="text-nord-gold">.</span>
                 </div>
@@ -154,7 +154,7 @@ export async function Hero({ hero }: Props) {
         </div>
 
         {/* RIGHT — match card */}
-        <div className="relative min-h-[480px] md:min-h-[520px]">
+        <div className="relative min-h-[420px] md:min-h-[460px]">
           <div className="absolute inset-0 overflow-hidden rounded-[20px] border border-nord-line">
             <div
               className="absolute inset-0 bg-cover bg-center"

@@ -874,6 +874,7 @@ export interface HomePage {
     showEvents?: boolean | null;
     showSponsors?: boolean | null;
     showVereinsheim?: boolean | null;
+    showLocation?: boolean | null;
     showMembershipCta?: boolean | null;
   };
   updatedAt?: string | null;
@@ -1134,6 +1135,7 @@ export interface HomePageSelect<T extends boolean = true> {
         showEvents?: T;
         showSponsors?: T;
         showVereinsheim?: T;
+        showLocation?: T;
         showMembershipCta?: T;
       };
   updatedAt?: T;

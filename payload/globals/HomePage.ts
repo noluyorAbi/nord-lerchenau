@@ -51,6 +51,7 @@ export const HomePage: GlobalConfig = {
         { name: "showEvents", type: "checkbox", defaultValue: true },
         { name: "showSponsors", type: "checkbox", defaultValue: true },
         { name: "showVereinsheim", type: "checkbox", defaultValue: true },
+        { name: "showLocation", type: "checkbox", defaultValue: true, label: "Anfahrt / Karte" },
         { name: "showMembershipCta", type: "checkbox", defaultValue: true },
       ],
     },

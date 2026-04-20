@@ -1,6 +1,7 @@
 import { FupaBlock } from "@/components/home/FupaBlock";
 import { Heritage } from "@/components/home/Heritage";
 import { Hero } from "@/components/home/Hero";
+import { LocationMap } from "@/components/home/LocationMap";
 import { MatchdayBlock } from "@/components/home/MatchdayBlock";
 import { MembershipCta } from "@/components/home/MembershipCta";
 import { NewsGrid } from "@/components/home/NewsGrid";
@@ -30,6 +31,7 @@ export default async function HomePage() {
       {sections.showEvents !== false ? <UpcomingEvents /> : null}
       <Heritage />
       {sections.showVereinsheim !== false ? <VereinsheimTeaser /> : null}
+      {sections.showLocation !== false ? <LocationMap /> : null}
       {sections.showSponsors !== false ? <SponsorMarquee /> : null}
       {sections.showMembershipCta !== false ? <MembershipCta /> : null}
     </>

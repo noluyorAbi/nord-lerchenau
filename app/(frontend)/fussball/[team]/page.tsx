@@ -11,6 +11,8 @@ import type { Person } from "@/payload-types";
 
 type Props = { params: Promise<{ team: string }> };
 
+export const dynamic = "force-dynamic";
+
 export default async function TeamPage({ params }: Props) {
   const { team: teamSlug } = await params;
   const payload = await getPayloadClient();
@@ -153,13 +155,3 @@ export default async function TeamPage({ params }: Props) {
   );
 }
 
-export async function generateStaticParams() {
-  const payload = await (await import("@/lib/payload")).getPayloadClient();
-  const result = await payload.find({
-    collection: "teams",
-    where: { sport: { equals: "fussball" } },
-    limit: 100,
-    depth: 0,
-  });
-  return result.docs.map((t) => ({ team: t.slug }));
-}

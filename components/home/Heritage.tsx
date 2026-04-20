@@ -93,7 +93,7 @@ export function Heritage() {
               <div className="mt-2.5 font-serif italic text-[28px] font-bold leading-[1.15] text-balance">
                 „Einmal Nordler,
                 <br />
-                immer Nordler."
+                immer Nordler.&ldquo;
               </div>
             </div>
           </div>

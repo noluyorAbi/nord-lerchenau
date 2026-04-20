@@ -1,6 +1,15 @@
 import Link from "next/link";
 
 import { SectionEyebrow } from "@/components/SectionEyebrow";
+import {
+  FUPA_TEAM_SLUG,
+  FUPA_TEAM_URL,
+  getFupaStanding,
+  getFupaUpcoming,
+  isOurTeam,
+  pickUpcoming,
+  type FupaMatch,
+} from "@/lib/fupa";
 import { getPayloadClient } from "@/lib/payload";
 import type { Fixture } from "@/payload-types";
 
@@ -15,107 +24,7 @@ type FixtureRow = {
   featured?: boolean;
 };
 
-const FALLBACK_FIXTURES: FixtureRow[] = [
-  {
-    comp: "Bezirksliga Oberbayern",
-    md: "20. Spieltag",
-    home: "SV N Lerchenau",
-    away: "SVA Palzing",
-    time: "14:30",
-    date: "Sa · 08.03.2026",
-    venue: "Eschengarten",
-    featured: true,
-  },
-  {
-    comp: "Kreisklasse",
-    md: "16. Spieltag",
-    home: "SV N Lerchenau II",
-    away: "SC Inhauser Moos",
-    time: "12:30",
-    date: "Sa · 08.03.2026",
-    venue: "Eschengarten",
-  },
-  {
-    comp: "B-Klasse",
-    md: "16. Spieltag",
-    home: "SV N Lerchenau III",
-    away: "SV Italia Mchn. II",
-    time: "10:45",
-    date: "Sa · 08.03.2026",
-    venue: "Eschengarten",
-  },
-  {
-    comp: "C-Juniorinnen",
-    md: "12. Spieltag",
-    home: "FC Reichertshof",
-    away: "SV N Lerchenau",
-    time: "11:00",
-    date: "So · 09.03.2026",
-    venue: "auswärts",
-  },
-  {
-    comp: "A-Junioren",
-    md: "11. Spieltag",
-    home: "SV N Lerchenau",
-    away: "TSV Milbertshofen",
-    time: "13:00",
-    date: "So · 09.03.2026",
-    venue: "Eschengarten",
-  },
-];
-
-type TableRow = {
-  pos: number;
-  team: string;
-  sp: number;
-  s: number;
-  u: number;
-  n: number;
-  td: string;
-  pkt: number;
-  us?: boolean;
-};
-
-const TABLE: TableRow[] = [
-  { pos: 1, team: "SV Palzing", sp: 19, s: 13, u: 3, n: 3, td: "+22", pkt: 42 },
-  { pos: 2, team: "ASV Dachau", sp: 19, s: 12, u: 4, n: 3, td: "+18", pkt: 40 },
-  {
-    pos: 3,
-    team: "SV Nord Lerchenau",
-    sp: 19,
-    s: 12,
-    u: 4,
-    n: 3,
-    td: "+16",
-    pkt: 40,
-    us: true,
-  },
-  { pos: 4, team: "TSV Eching", sp: 19, s: 11, u: 3, n: 5, td: "+9", pkt: 36 },
-  {
-    pos: 5,
-    team: "SC Oberweikertshofen",
-    sp: 19,
-    s: 10,
-    u: 4,
-    n: 5,
-    td: "+7",
-    pkt: 34,
-  },
-  { pos: 6, team: "FC Töging", sp: 19, s: 9, u: 5, n: 5, td: "+3", pkt: 32 },
-  {
-    pos: 7,
-    team: "SC Inhauser Moos",
-    sp: 19,
-    s: 8,
-    u: 4,
-    n: 7,
-    td: "−2",
-    pkt: 28,
-  },
-  { pos: 8, team: "TSV Dorfen", sp: 19, s: 7, u: 3, n: 9, td: "−6", pkt: 24 },
-];
-
-function fixtureToRow(f: Fixture): FixtureRow {
+function payloadFixtureToRow(f: Fixture): FixtureRow {
   const team =
     typeof f.team === "object" && f.team !== null ? f.team.name : "SV Nord";
   const kickoff = new Date(f.kickoff);
@@ -145,20 +54,59 @@ function fixtureToRow(f: Fixture): FixtureRow {
   };
 }
 
+function fupaMatchToRow(m: FupaMatch): FixtureRow {
+  const isHome = isOurTeam(m.homeTeam);
+  const kickoff = new Date(m.kickoff);
+  const timeStr = kickoff.toLocaleTimeString("de-DE", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+  const dateStr = kickoff
+    .toLocaleDateString("de-DE", {
+      weekday: "short",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    })
+    .replace(",", " ·");
+  return {
+    comp:
+      m.competition?.shortName ??
+      m.competition?.middleName ??
+      "Bezirksliga Oberbayern Nord",
+    md: m.round?.number ? `${m.round.number}. Spieltag` : "",
+    home: isHome ? "SV N Lerchenau" : m.homeTeam.name.middle,
+    away: isHome ? m.awayTeam.name.middle : "SV N Lerchenau",
+    time: timeStr,
+    date: dateStr,
+    venue: isHome ? "Eschengarten" : "auswärts",
+    featured: isHome,
+  };
+}
+
 export async function MatchdayBlock() {
   const payload = await getPayloadClient();
-  const result = await payload.find({
-    collection: "fixtures",
-    where: { kickoff: { greater_than: new Date().toISOString() } },
-    sort: "kickoff",
-    limit: 5,
-    depth: 1,
-  });
+  const [fixtures, standings, fupaUpcoming] = await Promise.all([
+    payload.find({
+      collection: "fixtures",
+      where: { kickoff: { greater_than: new Date().toISOString() } },
+      sort: "kickoff",
+      limit: 5,
+      depth: 1,
+    }),
+    getFupaStanding(),
+    getFupaUpcoming(),
+  ]);
 
   const rows: FixtureRow[] =
-    result.docs.length > 0 ? result.docs.map(fixtureToRow) : FALLBACK_FIXTURES;
+    fixtures.docs.length > 0
+      ? fixtures.docs.map(payloadFixtureToRow)
+      : pickUpcoming(fupaUpcoming, 5).map(fupaMatchToRow);
 
   const dateHeader = rows[0]?.date ?? "—";
+  const standingRows = standings?.standings ?? [];
+  const table = standingRows.slice(0, 8);
 
   return (
     <section className="border-b border-nord-line bg-nord-paper">
@@ -182,53 +130,62 @@ export async function MatchdayBlock() {
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-          {/* Fixtures list */}
-          <div className="overflow-hidden rounded-2xl border border-nord-line bg-nord-paper-2">
-            <div className="flex items-center justify-between bg-nord-navy px-5 py-3.5 font-mono text-xs uppercase tracking-[0.18em] text-white">
-              <span>Spielplan · {dateHeader}</span>
-              <span className="text-nord-gold">Eschengarten</span>
-            </div>
-            {rows.map((f, i) => (
-              <div
-                key={`${f.comp}-${i}`}
-                className={`grid grid-cols-[70px_1fr_auto] items-center gap-4 px-5 py-4 ${
-                  i < rows.length - 1 ? "border-b border-nord-line" : ""
-                }`}
-              >
-                <div className="text-center">
-                  <div className="font-display text-[26px] font-black leading-none text-nord-navy">
-                    {f.time}
-                  </div>
-                  <div className="mt-1 font-mono text-[10px] tracking-[0.12em] text-nord-muted">
-                    Uhr
-                  </div>
-                </div>
-                <div>
-                  <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-muted">
-                    {f.comp}
-                    {f.md ? ` · ${f.md}` : ""}
-                  </div>
-                  <div className="mt-1 font-display text-[20px] font-extrabold">
-                    {f.home} <span className="text-nord-gold">vs</span> {f.away}
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-[11px] text-nord-muted">{f.venue}</div>
-                  {f.featured ? (
-                    <div className="mt-1.5 inline-flex items-center rounded-full border border-nord-gold bg-nord-gold px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-navy">
-                      Top-Spiel
-                    </div>
-                  ) : null}
-                </div>
+          {rows.length > 0 ? (
+            <div className="overflow-hidden rounded-2xl border border-nord-line bg-nord-paper-2">
+              <div className="flex items-center justify-between bg-nord-navy px-5 py-3.5 font-mono text-xs uppercase tracking-[0.18em] text-white">
+                <span>Spielplan · {dateHeader}</span>
+                <span className="text-nord-gold">Eschengarten</span>
               </div>
-            ))}
-          </div>
+              {rows.map((f, i) => (
+                <div
+                  key={`${f.comp}-${i}`}
+                  className={`grid grid-cols-[70px_1fr_auto] items-center gap-4 px-5 py-4 ${
+                    i < rows.length - 1 ? "border-b border-nord-line" : ""
+                  }`}
+                >
+                  <div className="text-center">
+                    <div className="font-display text-[26px] font-black leading-none text-nord-navy">
+                      {f.time}
+                    </div>
+                    <div className="mt-1 font-mono text-[10px] tracking-[0.12em] text-nord-muted">
+                      Uhr
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-muted">
+                      {f.comp}
+                      {f.md ? ` · ${f.md}` : ""}
+                    </div>
+                    <div className="mt-1 font-display text-[20px] font-extrabold">
+                      {f.home} <span className="text-nord-gold">vs</span>{" "}
+                      {f.away}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-[11px] text-nord-muted">{f.venue}</div>
+                    {f.featured ? (
+                      <div className="mt-1.5 inline-flex items-center rounded-full border border-nord-gold bg-nord-gold px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-navy">
+                        Top-Spiel
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex items-center justify-center rounded-2xl border border-dashed border-nord-line bg-nord-paper-2 px-6 py-12 text-center text-sm text-nord-muted">
+              Aktuell keine Spiele geplant.
+            </div>
+          )}
 
-          {/* Mini league table */}
           <div className="flex flex-col overflow-hidden rounded-2xl bg-nord-ink text-white">
             <div className="flex items-center justify-between border-b border-white/10 px-5 py-3.5 font-mono text-xs uppercase tracking-[0.18em]">
-              <span>Bezirksliga OBB</span>
-              <span className="text-nord-gold">Saison 25/26</span>
+              <span>Bezirksliga OBB · Nord</span>
+              <span className="text-nord-gold">
+                {standings?.round?.number
+                  ? `${standings.round.number}. Spieltag · 25/26`
+                  : "Saison 25/26"}
+              </span>
             </div>
             <div className="grid grid-cols-[36px_1fr_28px_28px_28px_36px_44px] items-center gap-2 border-b border-white/10 bg-white/[0.04] px-3 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-white/50">
               <span>#</span>
@@ -240,48 +197,71 @@ export async function MatchdayBlock() {
               <span className="text-right">Pkt</span>
             </div>
             <div className="flex-1">
-              {TABLE.map((r) => (
-                <div
-                  key={r.pos}
-                  className={`grid grid-cols-[36px_1fr_28px_28px_28px_36px_44px] items-center gap-2 border-b border-white/[0.06] px-3 py-2.5 text-[13px] ${
-                    r.us
-                      ? "bg-[linear-gradient(90deg,rgba(200,169,106,0.18),transparent_70%)]"
-                      : ""
-                  }`}
-                >
-                  <span>
-                    <span
-                      className={`inline-flex size-6 items-center justify-center rounded font-bold text-[11px] ${
-                        r.us
-                          ? "bg-nord-gold text-nord-navy"
-                          : "bg-white/[0.08] text-white"
+              {table.length === 0 ? (
+                <div className="px-5 py-10 text-center text-sm text-white/50">
+                  Tabelle nicht verfügbar.
+                </div>
+              ) : (
+                table.map((r) => {
+                  const us = isOurTeam(r.team, FUPA_TEAM_SLUG);
+                  const td =
+                    r.goalDifference > 0
+                      ? `+${r.goalDifference}`
+                      : r.goalDifference < 0
+                        ? `−${Math.abs(r.goalDifference)}`
+                        : "0";
+                  return (
+                    <div
+                      key={r.rank}
+                      className={`grid grid-cols-[36px_1fr_28px_28px_28px_36px_44px] items-center gap-2 border-b border-white/[0.06] px-3 py-2.5 text-[13px] ${
+                        us
+                          ? "bg-[linear-gradient(90deg,rgba(200,169,106,0.18),transparent_70%)]"
+                          : ""
                       }`}
                     >
-                      {r.pos}
-                    </span>
-                  </span>
-                  <span
-                    className={`font-display text-sm ${
-                      r.us ? "font-black" : "font-bold"
-                    }`}
-                  >
-                    {r.team}
-                    {r.us ? (
-                      <span className="ml-2 text-[10px] tracking-[0.18em] text-nord-gold">
-                        UNS
+                      <span>
+                        <span
+                          className={`inline-flex size-6 items-center justify-center rounded font-bold text-[11px] ${
+                            us
+                              ? "bg-nord-gold text-nord-navy"
+                              : "bg-white/[0.08] text-white"
+                          }`}
+                        >
+                          {r.rank}
+                        </span>
                       </span>
-                    ) : null}
-                  </span>
-                  <span className="text-right opacity-70">{r.sp}</span>
-                  <span className="text-right opacity-70">{r.s}</span>
-                  <span className="text-right opacity-70">{r.u}</span>
-                  <span className="text-right opacity-70">{r.td}</span>
-                  <span className="text-right font-display font-black text-nord-gold">
-                    {r.pkt}
-                  </span>
-                </div>
-              ))}
+                      <span
+                        className={`font-display text-sm ${us ? "font-black" : "font-bold"}`}
+                      >
+                        {r.team.name.middle}
+                        {us ? (
+                          <span className="ml-2 text-[10px] tracking-[0.18em] text-nord-gold">
+                            UNS
+                          </span>
+                        ) : null}
+                      </span>
+                      <span className="text-right opacity-70">{r.matches}</span>
+                      <span className="text-right opacity-70">{r.wins}</span>
+                      <span className="text-right opacity-70">{r.draws}</span>
+                      <span className="text-right opacity-70">{td}</span>
+                      <span className="text-right font-display font-black text-nord-gold">
+                        {r.points}
+                      </span>
+                    </div>
+                  );
+                })
+              )}
             </div>
+            {standingRows.length > 0 ? (
+              <a
+                href={FUPA_TEAM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="border-t border-white/10 px-5 py-3 text-center font-mono text-[11px] uppercase tracking-[0.16em] text-white/60 transition hover:text-nord-gold"
+              >
+                Komplette Tabelle auf fupa ↗
+              </a>
+            ) : null}
           </div>
         </div>
       </div>

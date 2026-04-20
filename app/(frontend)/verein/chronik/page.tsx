@@ -4,6 +4,8 @@ import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical
 import { PageHero } from "@/components/PageHero";
 import { getPayloadClient } from "@/lib/payload";
 
+export const dynamic = "force-dynamic";
+
 export default async function ChronikPage() {
   const payload = await getPayloadClient();
   const chronik = await payload.findGlobal({ slug: "chronik-page" });

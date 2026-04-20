@@ -1,6 +1,8 @@
 import { PageHero } from "@/components/PageHero";
 import { getPayloadClient } from "@/lib/payload";
 
+export const dynamic = "force-dynamic";
+
 const MONTHS_DE = [
   "Januar",
   "Februar",

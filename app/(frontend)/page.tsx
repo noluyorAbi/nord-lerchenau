@@ -1,3 +1,4 @@
+import { FupaBlock } from "@/components/home/FupaBlock";
 import { Heritage } from "@/components/home/Heritage";
 import { Hero } from "@/components/home/Hero";
 import { MatchdayBlock } from "@/components/home/MatchdayBlock";
@@ -10,6 +11,8 @@ import { UpcomingEvents } from "@/components/home/UpcomingEvents";
 import { VereinsheimTeaser } from "@/components/home/VereinsheimTeaser";
 import { getPayloadClient } from "@/lib/payload";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const payload = await getPayloadClient();
   const home = await payload.findGlobal({ slug: "home-page" });
@@ -21,6 +24,7 @@ export default async function HomePage() {
       <Hero hero={home.hero} />
       <StatStrip stats={home.stats} />
       {sections.showNextMatch !== false ? <MatchdayBlock /> : null}
+      {sections.showFupa !== false ? <FupaBlock /> : null}
       {sections.showNews !== false ? <NewsGrid /> : null}
       {sections.showSports !== false ? <SportsGrid /> : null}
       {sections.showEvents !== false ? <UpcomingEvents /> : null}

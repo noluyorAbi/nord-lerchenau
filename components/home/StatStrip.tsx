@@ -1,4 +1,9 @@
 import { StatCounter } from "@/components/motion/StatCounter";
+import {
+  FUPA_TEAM_SLUG,
+  getFupaStanding,
+  isOurTeam,
+} from "@/lib/fupa";
 import type { HomePage } from "@/payload-types";
 
 type Props = { stats: HomePage["stats"] };
@@ -7,11 +12,26 @@ const FALLBACK = [
   { label: "Gegründet", value: "1947", sub: "Vereinsjahr" },
   { label: "Mitglieder", value: "500+", sub: "aktive Nordler" },
   { label: "Mannschaften", value: "13", sub: "Fußball gesamt" },
-  { label: "Sportarten", value: "6", sub: "Breiter Aufstellung" },
+  { label: "Bezirksliga", value: "1.", sub: "Platz · live von fupa" },
 ];
 
-export function StatStrip({ stats }: Props) {
-  const items =
+function isLeagueLabel(label: string): boolean {
+  const l = label.toLowerCase();
+  return (
+    l.includes("bezirksliga") ||
+    l.includes("tabelle") ||
+    l.includes("platz") ||
+    l === "liga"
+  );
+}
+
+export async function StatStrip({ stats }: Props) {
+  const standing = await getFupaStanding();
+  const ourRank = standing?.standings.find((r) =>
+    isOurTeam(r.team, FUPA_TEAM_SLUG),
+  )?.rank;
+
+  const baseItems =
     Array.isArray(stats) && stats.length > 0
       ? stats.map((s, i) => ({
           label: String(s.label),
@@ -19,6 +39,17 @@ export function StatStrip({ stats }: Props) {
           sub: FALLBACK[i]?.sub ?? "",
         }))
       : FALLBACK;
+
+  const items = baseItems.map((item) => {
+    if (ourRank && isLeagueLabel(item.label)) {
+      return {
+        label: "Bezirksliga",
+        value: `${ourRank}.`,
+        sub: "Platz · live von fupa",
+      };
+    }
+    return item;
+  });
 
   return (
     <section className="bg-nord-navy text-white">

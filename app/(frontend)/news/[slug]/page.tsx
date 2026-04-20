@@ -7,6 +7,8 @@ import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical
 import { RefreshOnPreview } from "./RefreshOnPreview";
 import config from "@/payload.config";
 
+export const dynamic = "force-dynamic";
+
 type Props = {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ preview?: string }>;

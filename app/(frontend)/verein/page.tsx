@@ -2,6 +2,8 @@ import Link from "next/link";
 
 import { PageHero } from "@/components/PageHero";
 
+export const dynamic = "force-dynamic";
+
 const CARDS = [
   {
     title: "Chronik",

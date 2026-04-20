@@ -2,6 +2,8 @@ import { ContactForm } from "@/components/ContactForm";
 import { PageHero } from "@/components/PageHero";
 import { getPayloadClient } from "@/lib/payload";
 
+export const dynamic = "force-dynamic";
+
 type Props = {
   searchParams: Promise<{ subject?: string }>;
 };

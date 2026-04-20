@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import {
   Barlow_Condensed,
   Fraunces,
@@ -48,13 +48,72 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SERVER_URL ?? "https://svnord-lerchenau.de";
+const SITE_NAME = "SV Nord München-Lerchenau e.V.";
+const DESCRIPTION =
+  "Traditionsverein im Münchner Norden seit 1947. Fußball in der Bezirksliga Oberbayern Nord, dazu Volleyball, Gymnastik, Ski und Esport — rund 500 Mitglieder, eine Familie.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "SV Nord München-Lerchenau e.V.",
-    template: "%s · SV Nord München-Lerchenau",
+    default: `${SITE_NAME} — Heimat im Münchner Norden seit 1947`,
+    template: `%s · ${SITE_NAME}`,
   },
-  description:
-    "Traditionsverein im Münchner Norden seit 1947. Fußball, Volleyball, Gymnastik, Ski. ~500 Mitglieder, eine Familie.",
+  description: DESCRIPTION,
+  applicationName: SITE_NAME,
+  keywords: [
+    "SV Nord München-Lerchenau",
+    "SV Nord Lerchenau",
+    "Fußball München Nord",
+    "Lerchenau",
+    "Bezirksliga Oberbayern Nord",
+    "Verein München",
+    "Amateurfußball München",
+    "Volleyball München",
+    "Gymnastik München",
+    "Ski München",
+    "Eschengarten",
+    "Einmal Nordler",
+  ],
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  category: "sports",
+  alternates: { canonical: "/" },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: "de_DE",
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    title: `${SITE_NAME} — Heimat im Münchner Norden seit 1947`,
+    description: DESCRIPTION,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_NAME} — Heimat im Münchner Norden seit 1947`,
+    description: DESCRIPTION,
+  },
+  formatDetection: { telephone: false, email: false, address: false },
+  manifest: "/manifest.webmanifest",
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f4f1ea" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b1b3f" },
+  ],
+  colorScheme: "light",
 };
 
 export default function FrontendLayout({

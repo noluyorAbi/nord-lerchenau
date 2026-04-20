@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Crest } from "@/components/Crest";
+import { ClubLogo } from "@/components/ClubLogo";
 
 type Props = {
   href?: string;
@@ -12,7 +12,7 @@ export function Logo({ href = "/" }: Props) {
       href={href}
       className="flex items-center gap-3 text-nord-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nord-gold focus-visible:ring-offset-2"
     >
-      <Crest size={32} />
+      <ClubLogo size={40} priority />
       <span className="flex flex-col leading-none">
         <span className="font-display text-[20px] font-black tracking-[-0.01em]">
           SV NORD

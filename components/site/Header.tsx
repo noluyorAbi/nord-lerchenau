@@ -47,13 +47,6 @@ export async function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <div className="hidden items-center gap-1.5 font-mono text-[11px] text-nord-muted md:flex">
-            <span
-              className="inline-block size-1.5 rounded-full bg-nord-red"
-              style={{ animation: "live-pulse 1.8s infinite" }}
-            />
-            LIVE
-          </div>
           <Link
             href={CTA.href}
             className="hidden items-center gap-2 rounded-full bg-nord-gold px-4 py-2.5 font-display text-xs font-semibold uppercase tracking-[0.04em] text-nord-navy transition hover:-translate-y-px hover:shadow-[0_8px_20px_rgba(200,169,106,0.4)] md:inline-flex"

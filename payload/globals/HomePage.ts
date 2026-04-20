@@ -45,6 +45,7 @@ export const HomePage: GlobalConfig = {
       admin: { description: "Welche Sektionen werden auf der Startseite angezeigt?" },
       fields: [
         { name: "showNextMatch", type: "checkbox", defaultValue: true },
+        { name: "showFupa", type: "checkbox", defaultValue: true, label: "Fupa-Block (Liga · Ergebnisse · Torjäger · News)" },
         { name: "showNews", type: "checkbox", defaultValue: true },
         { name: "showSports", type: "checkbox", defaultValue: true },
         { name: "showEvents", type: "checkbox", defaultValue: true },

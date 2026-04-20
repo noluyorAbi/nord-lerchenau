@@ -2,6 +2,8 @@ import { PageHero } from "@/components/PageHero";
 import { PersonCard } from "@/components/PersonCard";
 import { getPayloadClient } from "@/lib/payload";
 
+export const dynamic = "force-dynamic";
+
 export default async function VorstandPage() {
   const payload = await getPayloadClient();
   const result = await payload.find({

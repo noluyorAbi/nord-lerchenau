@@ -868,6 +868,7 @@ export interface HomePage {
    */
   sections?: {
     showNextMatch?: boolean | null;
+    showFupa?: boolean | null;
     showNews?: boolean | null;
     showSports?: boolean | null;
     showEvents?: boolean | null;
@@ -1127,6 +1128,7 @@ export interface HomePageSelect<T extends boolean = true> {
     | T
     | {
         showNextMatch?: T;
+        showFupa?: T;
         showNews?: T;
         showSports?: T;
         showEvents?: T;

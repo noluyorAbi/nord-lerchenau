@@ -2,6 +2,8 @@ import { PageHero } from "@/components/PageHero";
 import { TeamCard } from "@/components/TeamCard";
 import { getPayloadClient } from "@/lib/payload";
 
+export const dynamic = "force-dynamic";
+
 export default async function FussballPage() {
   const payload = await getPayloadClient();
 

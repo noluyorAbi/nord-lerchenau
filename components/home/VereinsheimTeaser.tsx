@@ -35,7 +35,7 @@ export function VereinsheimTeaser() {
           </h2>
           <p className="mt-6 max-w-[520px] text-[17px] leading-relaxed text-white/75">
             Seit 40 Jahren treffen sich hier Generationen — Kabine, Tribüne und
-            Biergarten. Fassbier, Weißwurst und Flutlicht gibt's bei jedem
+            Biergarten. Fassbier, Weißwurst und Flutlicht gibt&rsquo;s bei jedem
             Heimspiel.
           </p>
           <div className="mt-8 grid grid-cols-3 gap-4">

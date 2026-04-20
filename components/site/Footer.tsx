@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Crest } from "@/components/Crest";
+import { ClubLogo } from "@/components/ClubLogo";
 import { getPayloadClient } from "@/lib/payload";
 
 const FALLBACK_COLUMNS = [
@@ -78,7 +78,7 @@ export async function Footer() {
       />
       <div className="mx-auto grid w-full max-w-[1320px] gap-10 px-6 py-16 md:grid-cols-[1.6fr_repeat(4,1fr)] md:px-7">
         <div>
-          <Crest size={44} textColor="#fff" />
+          <ClubLogo size={60} className="drop-shadow-[0_4px_10px_rgba(0,0,0,0.25)]" />
           <div className="mt-4 font-display text-[18px] font-black uppercase tracking-[-0.01em]">
             SV NORD
           </div>

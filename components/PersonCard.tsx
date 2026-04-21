@@ -5,7 +5,14 @@ type Props = { person: Person };
 function portraitUrl(photo: Person["photo"]): string | null {
   if (!photo || typeof photo !== "object") return null;
   const m = photo as Media;
-  return m.url ?? null;
+  if (!m.url) return null;
+  // Prefer relative path so the src works on whichever domain is serving.
+  try {
+    const u = new URL(m.url);
+    return u.pathname + u.search;
+  } catch {
+    return m.url;
+  }
 }
 
 export function PersonCard({ person }: Props) {

@@ -50,6 +50,10 @@ skills-lock.json
 *.tsbuildinfo
 next-env.d.ts
 
-/public/uploads/
+/public/uploads/*
+!/public/uploads/.gitkeep
+!/public/uploads/Ralf_Kirmeyer.jpg
+!/public/uploads/BirgitHoefer.jpg
+!/public/uploads/Britta_Feierabend.jpg
 
 /tmp/

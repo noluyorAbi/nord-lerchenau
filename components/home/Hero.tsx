@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { ClubLogo } from "@/components/ClubLogo";
+import { HeroMatchCard } from "@/components/home/HeroMatchCard";
 import { HeroItem, HeroStagger } from "@/components/motion/HeroStagger";
 import { formatKickoff, formatShortDate } from "@/lib/format-date";
 import {
@@ -70,14 +70,23 @@ export async function Hero({ hero }: Props) {
   };
 
   return (
-    <section className="relative overflow-hidden bg-nord-paper">
-      <div className="mx-auto grid max-w-[1320px] gap-10 px-6 pb-14 pt-10 md:grid-cols-[1.2fr_1fr] md:px-7 md:pb-14 md:pt-10">
+    <section className="relative -mt-[72px] flex min-h-[100svh] items-center overflow-hidden text-white">
+      {/* Full-bleed background image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${HERO_BG})` }}
+      />
+      {/* Darken the left/bottom for text legibility, let the right breathe */}
+      <div className="absolute inset-0 bg-[linear-gradient(100deg,rgba(5,14,36,0.94)_0%,rgba(11,27,63,0.78)_45%,rgba(11,27,63,0.35)_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,14,36,0.1)_0%,rgba(5,14,36,0)_35%,rgba(5,14,36,0.55)_100%)]" />
+
+      <div className="relative mx-auto grid w-full max-w-[1320px] items-center gap-10 px-6 pb-14 pt-[calc(72px+2.5rem)] md:grid-cols-[1.2fr_1fr] md:px-7 md:pb-20 md:pt-[calc(72px+3.5rem)]">
         {/* LEFT — headline */}
         <div className="relative flex flex-col justify-between gap-8">
           <HeroStagger>
             <HeroItem>
-              <div className="mb-6 flex items-center gap-3">
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-nord-line px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-muted">
+              <div className="mb-6 flex flex-wrap items-center gap-3">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/5 px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-white/80 backdrop-blur-sm">
                   <span
                     className="size-1.5 rounded-full bg-nord-red"
                     style={{ animation: "live-pulse 1.8s infinite" }}
@@ -85,7 +94,7 @@ export async function Hero({ hero }: Props) {
                   {isHome ? "Heimspieltag · Eschengarten" : "Auswärts · Ligaspiel"}
                 </span>
                 {matchDayBadge ? (
-                  <span className="font-mono text-[11px] text-nord-muted">
+                  <span className="font-mono text-[11px] text-white/60">
                     {matchDayBadge.toUpperCase()}
                   </span>
                 ) : null}
@@ -94,7 +103,7 @@ export async function Hero({ hero }: Props) {
 
             <HeroItem>
               <h1
-                className="font-display font-black text-nord-ink"
+                className="font-display font-black text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.4)]"
                 style={{
                   fontSize: "clamp(38px, 4.6vw, 80px)",
                   lineHeight: 0.92,
@@ -103,17 +112,17 @@ export async function Hero({ hero }: Props) {
                 }}
               >
                 <span className="block uppercase">{line1}</span>
-                <span className="block font-serif italic font-bold text-nord-navy">
+                <span className="block font-serif italic font-bold text-nord-gold">
                   {line2}
                 </span>
               </h1>
             </HeroItem>
           </HeroStagger>
 
-          <HeroStagger className="mt-8 flex flex-wrap items-end gap-10">
+          <HeroStagger className="flex flex-wrap items-end gap-10">
             <HeroItem>
               <div className="max-w-[440px]">
-                <p className="m-0 text-base leading-relaxed text-nord-muted">
+                <p className="m-0 text-base leading-relaxed text-white/75">
                   {subline}
                 </p>
                 <div className="mt-5 flex flex-wrap gap-2.5">
@@ -125,7 +134,7 @@ export async function Hero({ hero }: Props) {
                   </Link>
                   <Link
                     href={secondary.href}
-                    className="inline-flex items-center gap-2.5 rounded-full border border-nord-line bg-transparent px-[18px] py-3 font-display text-[13px] font-semibold uppercase tracking-[0.04em] text-nord-ink transition hover:bg-nord-ink hover:text-nord-paper"
+                    className="inline-flex items-center gap-2.5 rounded-full border border-white/30 bg-white/5 px-[18px] py-3 font-display text-[13px] font-semibold uppercase tracking-[0.04em] text-white backdrop-blur-sm transition hover:bg-white hover:text-nord-navy"
                   >
                     {secondary.label}
                   </Link>
@@ -134,17 +143,17 @@ export async function Hero({ hero }: Props) {
             </HeroItem>
 
             <HeroItem>
-              <div className="border-l border-nord-line pl-5">
-                <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-nord-muted">
+              <div className="border-l border-white/20 pl-5">
+                <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/60">
                   Gegründet
                 </div>
-                <div className="font-display text-[32px] font-black leading-none text-nord-ink">
+                <div className="font-display text-[32px] font-black leading-none text-white">
                   1947
                 </div>
-                <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.2em] text-nord-muted">
+                <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.2em] text-white/60">
                   Tabelle
                 </div>
-                <div className="font-display text-[32px] font-black leading-tight text-nord-ink">
+                <div className="font-display text-[32px] font-black leading-tight text-white">
                   {ourRank ?? "—"}
                   <span className="text-nord-gold">.</span>
                 </div>
@@ -153,93 +162,15 @@ export async function Hero({ hero }: Props) {
           </HeroStagger>
         </div>
 
-        {/* RIGHT — match card */}
-        <div className="relative min-h-[420px] md:min-h-[460px]">
-          <div className="absolute inset-0 overflow-hidden rounded-[20px] border border-nord-line">
-            <div
-              className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: `url(${HERO_BG})` }}
-            />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(11,27,63,0.2)_0%,rgba(11,27,63,0.92)_85%)]" />
-
-            <div className="absolute left-5 right-5 top-5 flex items-center justify-between text-white">
-              <div className="font-mono text-[10px] uppercase tracking-[0.2em] opacity-80">
-                Nächstes Spiel
-              </div>
-              <span className="inline-flex items-center rounded-full border border-nord-gold px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-gold">
-                {compLabel}
-              </span>
-            </div>
-
-            <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-              <div className="font-mono text-[11px] uppercase tracking-[0.18em] opacity-70">
-                {matchDateLine}
-              </div>
-
-              {nextMatch && opponent ? (
-                <>
-                  <div className="mt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-4">
-                    <div className="flex flex-col items-center gap-2.5">
-                      <ClubLogo
-                        size={64}
-                        className="drop-shadow-[0_4px_12px_rgba(0,0,0,0.35)]"
-                      />
-                      <div className="text-center font-display text-[18px] font-extrabold leading-tight">
-                        SV Nord
-                        <br />
-                        Lerchenau
-                      </div>
-                    </div>
-                    <div className="font-display text-[56px] font-black leading-none text-nord-gold">
-                      vs
-                    </div>
-                    <div className="flex flex-col items-center gap-2.5">
-                      <div className="flex size-16 items-center justify-center overflow-hidden rounded-md bg-white/95 p-1.5">
-                        {opponentCrest ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={opponentCrest}
-                            alt={`Wappen ${opponent.name.full}`}
-                            className="size-full object-contain"
-                          />
-                        ) : (
-                          <span className="font-display text-[18px] font-black text-nord-navy">
-                            {opponent.name.short}
-                          </span>
-                        )}
-                      </div>
-                      <div className="text-center font-display text-[18px] font-extrabold leading-tight">
-                        {opponent.name.full}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-5 flex items-center justify-between border-t border-white/20 pt-4">
-                    <div>
-                      <div className="font-mono text-[10px] uppercase tracking-[0.2em] opacity-60">
-                        Anstoß
-                      </div>
-                      <div className="font-display text-[32px] font-black leading-none text-nord-gold">
-                        {kickoffTime}
-                      </div>
-                    </div>
-                    <Link
-                      href="/fussball"
-                      className="inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-2.5 font-display text-[11px] font-semibold uppercase tracking-[0.04em] text-nord-navy transition hover:bg-nord-gold"
-                    >
-                      Spielinfo →
-                    </Link>
-                  </div>
-                </>
-              ) : (
-                <div className="mt-6 rounded-lg border border-white/15 bg-white/5 p-6 text-center text-sm text-white/70">
-                  Aktuell kein Spiel angesetzt. Tabellen & News findest du
-                  weiter unten.
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+        {/* RIGHT — 3D tilt / shine match card */}
+        <HeroMatchCard
+          nextMatch={nextMatch}
+          opponent={opponent}
+          opponentCrest={opponentCrest}
+          kickoffTime={kickoffTime}
+          compLabel={compLabel}
+          matchDateLine={matchDateLine}
+        />
       </div>
     </section>
   );

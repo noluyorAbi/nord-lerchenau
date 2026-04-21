@@ -11,10 +11,15 @@ type NavLink = { label: string; href: string };
 type Props = {
   links: NavLink[];
   cta?: { label: string; href: string };
+  theme?: "light" | "dark";
 };
 
-export function MobileMenu({ links, cta }: Props) {
+export function MobileMenu({ links, cta, theme = "light" }: Props) {
   const [open, setOpen] = useState(false);
+  const triggerColor =
+    theme === "dark"
+      ? "text-white hover:bg-white/10"
+      : "text-nord-ink hover:bg-black/5";
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -22,7 +27,7 @@ export function MobileMenu({ links, cta }: Props) {
         <button
           type="button"
           aria-label="Menü öffnen"
-          className="inline-flex size-10 items-center justify-center rounded-md text-nord-ink hover:bg-black/5 md:hidden"
+          className={`inline-flex size-10 items-center justify-center rounded-md transition md:hidden ${triggerColor}`}
         >
           <svg
             width="20"

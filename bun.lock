@@ -12,6 +12,7 @@
         "@payloadcms/storage-vercel-blob": "3.83.0",
         "@radix-ui/react-dialog": "^1.1.15",
         "graphql": "^16.13.2",
+        "gsap": "^3.15.0",
         "motion": "^12.38.0",
         "next": "16.2.4",
         "payload": "3.83.0",
@@ -973,6 +974,8 @@
     "graphql-playground-html": ["graphql-playground-html@1.6.30", "", { "dependencies": { "xss": "^1.0.6" } }, "sha512-tpCujhsJMva4aqE8ULnF7/l3xw4sNRZcSHu+R00VV+W0mfp+Q20Plvcrp+5UXD+2yS6oyCXncA+zoQJQqhGCEw=="],
 
     "graphql-scalars": ["graphql-scalars@1.22.2", "", { "dependencies": { "tslib": "^2.5.0" }, "peerDependencies": { "graphql": "^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0" } }, "sha512-my9FB4GtghqXqi/lWSVAOPiTzTnnEzdOXCsAC2bb5V7EFNQjVjwy3cSSbUvgYOtDuDibd+ZsCDhz+4eykYOlhQ=="],
+
+    "gsap": ["gsap@3.15.0", "", {}, "sha512-dMW4CWBTUK1AEEDeZc1g4xpPGIrSf9fJF960qbTZmN/QwZIWY5wgliS6JWl9/25fpTGJrMRtSjGtOmPnfjZB+A=="],
 
     "happy-dom": ["happy-dom@20.9.0", "", { "dependencies": { "@types/node": ">=20.0.0", "@types/whatwg-mimetype": "^3.0.2", "@types/ws": "^8.18.1", "entities": "^7.0.1", "whatwg-mimetype": "^3.0.0", "ws": "^8.18.3" } }, "sha512-GZZ9mKe8r646NUAf/zemnGbjYh4Bt8/MqASJY+pSm5ZDtc3YQox+4gsLI7yi1hba6o+eCsGxpHn5+iEVn31/FQ=="],
 

@@ -1,27 +1,42 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
-import type { ReactNode } from "react";
+import gsap from "gsap";
+import { useEffect, useLayoutEffect, useRef, type ReactNode } from "react";
 
 type Props = { children: ReactNode; className?: string };
 
-export function HeroStagger({ children, className }: Props) {
-  const reduced = useReducedMotion();
+const useIsoLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
-  if (reduced) return <div className={className}>{children}</div>;
+export function HeroStagger({ children, className }: Props) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useIsoLayoutEffect(() => {
+    const root = ref.current;
+    if (!root) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const items = root.querySelectorAll<HTMLElement>("[data-hero-item]");
+    if (!items.length) return;
+    if (reduced) {
+      gsap.set(items, { clearProps: "all", opacity: 1 });
+      return;
+    }
+    const ctx = gsap.context(() => {
+      gsap.from(items, {
+        y: 28,
+        opacity: 0,
+        duration: 0.9,
+        ease: "power3.out",
+        stagger: 0.12,
+      });
+    }, root);
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <motion.div
-      initial="hidden"
-      animate="visible"
-      variants={{
-        hidden: {},
-        visible: { transition: { staggerChildren: 0.08 } },
-      }}
-      className={className}
-    >
+    <div ref={ref} className={className}>
       {children}
-    </motion.div>
+    </div>
   );
 }
 
@@ -33,18 +48,8 @@ export function HeroItem({
   className?: string;
 }) {
   return (
-    <motion.div
-      variants={{
-        hidden: { opacity: 0, y: 12 },
-        visible: {
-          opacity: 1,
-          y: 0,
-          transition: { duration: 0.5, ease: [0.2, 0.8, 0.2, 1] },
-        },
-      }}
-      className={className}
-    >
+    <div data-hero-item className={className}>
       {children}
-    </motion.div>
+    </div>
   );
 }

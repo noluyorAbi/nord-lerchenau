@@ -568,13 +568,19 @@ Eine grundlegende Neustrukturierung der Vereinsorganisation legte den Grundstein
 
 #### 1980 – Erweiterung der Bezirkssportanlage
 
-Die Bezirkssportanlage Lerchenau wurde maßgeblich erweitert und an die gestiegenen Nutzeranforderungen angepasst.
+Die erste große Erweiterung der Bezirkssportanlage Lerchenau konnte im Oktober 1980 abgeschlossen werden. Die Bestrebungen um weitere Ausbauten liefen über die folgenden Jahre weiter — 1984 gab die Stadt endgültig grünes Licht, 1985 erfolgte der Auftrag, 1986 wurde ein zusätzliches Rasenspielfeld fertiggestellt und 1987 das neue Umkleidegebäude eingeweiht.
 
-#### 1984 – Vereinsheimbau in Eigenleistung
+#### 1983–1986 – Der Eschengarten entsteht
 
-Der Vereinsheimbau wurde – wie so vieles beim SV Nord – in beeindruckender Eigenleistung durch die Mitglieder realisiert. Das Vereinsheim „Eschengarten” wurde damit zu einem festen Treffpunkt der Nordler Familie.
+Auf Initiative von Horst Lanninger (damals 1. Vorstand des SV Nord) gründeten SV Nord, FC Eintracht München und der Heimat- und Volkstrachtenverein Edelweiß-Stamm Lerchenau am 5. Mai 1983 die „Interessengemeinschaft Sportheimbau Lerchenau” — die heutige Vereins-Interessengemeinschaft Lerchenau e.V. (VIG-Lerchenau). Am 25. April 1985 bewilligte der Stadtrat die Bezuschussung, am 21. Juni 1985 war Baubeginn.
+
+Nach rund 15.000 freiwilligen Arbeitsstunden der Vereinsmitglieder wurde das Vereinsheim „Eschengarten” am 19. Juli 1986 feierlich eröffnet — ein Gemeinschaftsprojekt dreier Vereine, das bis heute der gesellschaftliche Mittelpunkt der Lerchenau ist.
 
 #### Vereinsentwicklung ab 1987
+
+Mit Fertigstellung des Eschengartens und dem Ausbau der Bezirkssportanlage begann eine neue Phase. Im Herbst 1987 gründete sich auf Initiative von Karl Prölß die Ski-Abteilung. Die Gymnastikabteilung, 1967 von Anna Schaflitzl ins Leben gerufen, war bereits seit 20 Jahren aktiv. 1993 kam der Förderverein der Fußball-Senioren hinzu.
+
+Die Mitgliederzahl wuchs von 500 (1971) über 766 (1996) auf 870 (1998). Seit 2006 ist der SV Nord online unter www.svnord.de präsent — heute sind es rund 500 aktive Mitglieder in fünf Abteilungen.
 
 Die jüngere Vereinsgeschichte ist geprägt von Erfolgen im Fußball, einem breiten Sportangebot über mehrere Abteilungen und dem anhaltenden Bemühen um die Erweiterung der Sportanlage in Zusammenarbeit mit der Stadt München.`,
       ),
@@ -586,9 +592,15 @@ Die jüngere Vereinsgeschichte ist geprägt von Erfolgen im Fußball, einem brei
     slug: "vereinsheim-page",
     data: {
       intro:
-        "Das Vereinsheim „Eschengarten” ist seit 1984 das Zuhause der Nordler-Familie — in Eigenleistung gebaut, bis heute der Treffpunkt an der Bezirkssportanlage Lerchenau.",
+        "Das Vereinsheim „Eschengarten\u201D wurde am 19. Juli 1986 nach rund 15.000 Stunden Eigenleistung eröffnet — ein Gemeinschaftsprojekt von SV Nord, FC Eintracht München und dem Heimat- und Volkstrachtenverein Edelweiß-Stamm. Bis heute der gesellschaftliche Mittelpunkt der Lerchenau.",
       body: md(
-        `## Unsere Plätze
+        `## Eine Gemeinschaftsleistung dreier Vereine
+
+Auf Initiative von Horst Lanninger (damaliger 1. Vorstand des SV Nord) gründeten drei Lerchenauer Vereine am 5. Mai 1983 die Interessengemeinschaft Sportheimbau Lerchenau — die heutige Vereins-Interessengemeinschaft Lerchenau e.V. (VIG-Lerchenau). Mitgliedsvereine sind der SV Nord München-Lerchenau, der FC Eintracht München und der Heimat- und Volkstrachtenverein Edelweiß-Stamm Lerchenau.
+
+Am 25. April 1985 bewilligte der Münchner Stadtrat die Bezuschussung (30% Zuschuss + zinsloses Darlehen), am 21. Juni 1985 war Baubeginn. Nach 15.000 freiwilligen Arbeitsstunden der Vereinsmitglieder wurde der Eschengarten am 19. Juli 1986 feierlich eröffnet.
+
+## Unsere Plätze
 
 Unsere modernen Trainings- und Spielbedingungen bieten beste Voraussetzungen für sportlichen Erfolg: Der Verein verfügt über zwei hochwertige Kunstrasenplätze sowie einen gepflegten Naturrasenplatz, die ganzjährig optimale Nutzung ermöglichen. In den Wintermonaten steht zusätzlich eine Sporthalle zur Verfügung.
 

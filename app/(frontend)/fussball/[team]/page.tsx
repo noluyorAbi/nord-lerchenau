@@ -7,7 +7,12 @@ import { BfvMatchesPanel } from "@/components/BfvMatchesPanel";
 import { BfvTablePanel } from "@/components/BfvTablePanel";
 import { PageHero } from "@/components/PageHero";
 import { PersonCard } from "@/components/PersonCard";
-import { bfvTeamUrl, BFV_CLUB_URL } from "@/lib/bfv";
+import {
+  bfvClubLogoUrl,
+  bfvTeamImageUrl,
+  bfvTeamUrl,
+  BFV_CLUB_URL,
+} from "@/lib/bfv";
 import { formatKickoff } from "@/lib/format-date";
 import { getPayloadClient } from "@/lib/payload";
 import type { Person } from "@/payload-types";
@@ -59,6 +64,8 @@ export default async function TeamPage({ params }: Props) {
 
   const bfv = team.bfv ?? null;
   const bfvUrl = bfvTeamUrl(bfv);
+  const bfvTeamImage = bfvTeamImageUrl(bfv?.teamId);
+  const bfvClubCrest = bfvClubLogoUrl("00ES8GNHD400000DVV0AG08LVUPGND5I");
 
   return (
     <>
@@ -76,7 +83,58 @@ export default async function TeamPage({ params }: Props) {
         }
       />
 
-      <div className="mx-auto max-w-7xl px-6 py-14 md:px-10 md:py-20">
+      <div className="mx-auto max-w-7xl px-6 py-10 md:px-10 md:py-14">
+        {bfv?.teamId ? (
+          <div className="mb-10 overflow-hidden rounded-2xl border border-nord-line bg-nord-ink">
+            <div className="relative aspect-[16/9] w-full overflow-hidden sm:aspect-[24/9]">
+              {bfvTeamImage ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={bfvTeamImage}
+                  alt={`Mannschaftsfoto ${team.name}`}
+                  className="size-full object-cover"
+                  loading="lazy"
+                />
+              ) : (
+                <div
+                  className="size-full bg-[linear-gradient(135deg,#0b1b3f_0%,#142a64_60%,#6ec7ea_120%)]"
+                  aria-hidden
+                />
+              )}
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,14,36,0.15)_0%,rgba(5,14,36,0.85)_100%)]" />
+              <div className="absolute inset-x-5 bottom-4 flex items-end justify-between gap-4 md:inset-x-8 md:bottom-6">
+                <div className="flex items-center gap-4">
+                  {bfvClubCrest ? (
+                    <span className="flex size-14 items-center justify-center overflow-hidden rounded-xl bg-white p-1.5 ring-1 ring-white/30 sm:size-16">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={bfvClubCrest}
+                        alt=""
+                        className="size-full object-contain"
+                        loading="lazy"
+                      />
+                    </span>
+                  ) : null}
+                  <div className="text-white">
+                    <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold">
+                      SV Nord · {bfv?.spielklasse ?? team.league ?? "Fußball"}
+                    </div>
+                    <div
+                      className="mt-0.5 font-display font-black leading-[0.95] tracking-[-0.01em]"
+                      style={{ fontSize: "clamp(22px, 3vw, 36px)" }}
+                    >
+                      {team.name}
+                    </div>
+                  </div>
+                </div>
+                <span className="hidden shrink-0 rounded-full border border-nord-gold bg-nord-gold/10 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-gold backdrop-blur md:inline-block">
+                  Foto · BFV
+                </span>
+              </div>
+            </div>
+          </div>
+        ) : null}
+
         <div className="grid gap-10 md:grid-cols-[1.6fr_1fr]">
           <div className="space-y-10">
             {hasDescription ? (

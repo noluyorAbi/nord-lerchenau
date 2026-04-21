@@ -1,5 +1,6 @@
 import {
   bfvMatchResult,
+  bfvMatchSideLogo,
   bfvMatchUrl,
   bfvTeamUrl,
   fetchBfvMatches,
@@ -173,6 +174,8 @@ function NextMatchBody({ match, teamId }: { match: BfvMatch; teamId: string }) {
   const d = parseBfvKickoff(match.kickoffDate, match.kickoffTime);
   const home = match.homeTeamName;
   const away = match.guestTeamName;
+  const homeLogo = bfvMatchSideLogo(match, "home");
+  const awayLogo = bfvMatchSideLogo(match, "away");
   const kickoffLabel = d ? formatKickoff(d) : `${match.kickoffDate ?? ""} ${match.kickoffTime ?? ""}`;
 
   return (
@@ -180,6 +183,7 @@ function NextMatchBody({ match, teamId }: { match: BfvMatch; teamId: string }) {
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 sm:gap-4">
         <TeamFace
           name={home}
+          logoUrl={homeLogo}
           highlight={side === "home"}
           align="right"
         />
@@ -188,6 +192,7 @@ function NextMatchBody({ match, teamId }: { match: BfvMatch; teamId: string }) {
         </div>
         <TeamFace
           name={away}
+          logoUrl={awayLogo}
           highlight={side === "away"}
           align="left"
         />
@@ -218,11 +223,12 @@ function NextMatchBody({ match, teamId }: { match: BfvMatch; teamId: string }) {
 function ResultRow({ match, teamId }: { match: BfvMatch; teamId: string }) {
   const side = isOurBfvTeam(match, teamId);
   const opp = side === "home" ? match.guestTeamName : match.homeTeamName;
+  const oppLogo = bfvMatchSideLogo(match, side === "home" ? "away" : "home");
   const { us, them, outcome } = bfvMatchResult(match, teamId);
   const d = parseBfvKickoff(match.kickoffDate, match.kickoffTime);
 
   return (
-    <li className="grid grid-cols-[28px_1fr_auto] items-center gap-3 px-5 py-2.5 text-[13px]">
+    <li className="grid grid-cols-[28px_24px_1fr_auto] items-center gap-3 px-5 py-2.5 text-[13px]">
       <span
         className={`inline-flex size-6 items-center justify-center rounded font-display text-[11px] font-black ${
           outcome === "W"
@@ -235,6 +241,17 @@ function ResultRow({ match, teamId }: { match: BfvMatch; teamId: string }) {
         }`}
       >
         {outcome ?? "–"}
+      </span>
+      <span className="flex size-6 items-center justify-center overflow-hidden rounded bg-nord-paper-2 ring-1 ring-nord-line">
+        {oppLogo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={oppLogo}
+            alt=""
+            className="size-full object-contain"
+            loading="lazy"
+          />
+        ) : null}
       </span>
       <span className="min-w-0">
         <span className="block truncate font-display font-bold text-nord-ink">
@@ -257,26 +274,52 @@ function ResultRow({ match, teamId }: { match: BfvMatch; teamId: string }) {
 
 function TeamFace({
   name,
+  logoUrl,
   highlight,
   align,
 }: {
   name: string;
+  logoUrl: string | null;
   highlight: boolean;
   align: "left" | "right";
 }) {
   return (
     <div
-      className={`flex flex-col ${align === "right" ? "items-end text-right" : "items-start text-left"}`}
+      className={`flex flex-col gap-2 ${align === "right" ? "items-end text-right" : "items-start text-left"}`}
     >
       <div
-        className={`font-display text-[15px] font-extrabold leading-tight sm:text-[17px] ${
+        className={`flex size-14 items-center justify-center overflow-hidden rounded-xl bg-white p-1.5 ring-1 ring-nord-line sm:size-16 ${
+          highlight ? "ring-2 ring-nord-gold" : ""
+        }`}
+      >
+        {logoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={logoUrl}
+            alt={`Wappen ${name}`}
+            className="size-full object-contain"
+            loading="lazy"
+          />
+        ) : (
+          <span className="font-display text-[11px] font-black text-nord-muted">
+            {name
+              .split(/\s+/)
+              .slice(0, 2)
+              .map((p) => p[0])
+              .join("")
+              .toUpperCase()}
+          </span>
+        )}
+      </div>
+      <div
+        className={`font-display text-[14px] font-extrabold leading-tight sm:text-[16px] ${
           highlight ? "text-nord-navy" : "text-nord-ink"
         }`}
       >
         {name}
       </div>
       {highlight ? (
-        <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.18em] text-nord-gold">
+        <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-nord-gold">
           Wir
         </div>
       ) : null}

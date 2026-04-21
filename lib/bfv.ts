@@ -189,6 +189,47 @@ export function normalizeBfvLogoUrl(raw: string | null | undefined): string | nu
   return raw;
 }
 
+export const BFV_VERBAND_ID = "00ES8GNCQK000000VV0AG08LVUPGND5I";
+
+/**
+ * BFV club crest. `format/7` is the 99×99 transparent PNG that BFV's own
+ * widgets render. Other formats exist (1/2/3/… = other resolutions) but 7
+ * is the right balance of detail + file size for most UI surfaces.
+ */
+export function bfvClubLogoUrl(
+  clubId: string | null | undefined,
+  format: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 = 7,
+): string | null {
+  if (!clubId) return null;
+  return `https://app.bfv.de/export.media/-/action/getLogo/format/${format}/id/${clubId}/verband/${BFV_VERBAND_ID}/strat_code/bfv`;
+}
+
+/**
+ * Team/squad photo served from DFB-Net's media API. SZ goes 0..3 (largest).
+ * Returns null for private-logo teams.
+ */
+export function bfvTeamImageUrl(
+  teamId: string | null | undefined,
+  size: 0 | 1 | 2 | 3 = 3,
+): string | null {
+  if (!teamId) return null;
+  return `https://service.media.fussball.de/api/uimg/cont/-/ID/${teamId}/TYP/50/SZ/${size}`;
+}
+
+/**
+ * Pick the right logo for a match side — prefer the BFV club logo, respect
+ * the "logoPrivate" flag BFV ships so we don't render a placeholder.
+ */
+export function bfvMatchSideLogo(
+  match: BfvMatch,
+  side: "home" | "away",
+): string | null {
+  if (side === "home" && match.homeLogoPrivate) return null;
+  if (side === "away" && match.guestLogoPrivate) return null;
+  const clubId = side === "home" ? match.homeClubId : match.guestClubId;
+  return bfvClubLogoUrl(clubId);
+}
+
 /**
  * A row parsed from the fussball.de widget table.
  */

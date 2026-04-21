@@ -27,9 +27,55 @@ export default async function FussballPage() {
       <PageHero
         eyebrow="Fußball"
         title="Unsere Mannschaften"
-        lede="Fünf Herrenmannschaften, 14 Junioren-Teams, Bambinis und drei Juniorinnen — bei uns kickt jedes Alter."
+        lede="Unsere Fußballabteilung existiert seit 1947. In der Saison 2025/26 stellen wir fünfzehn Jugendmannschaften, fünf Herrenmannschaften und eine Ehrenligamannschaft."
       />
       <div className="mx-auto max-w-7xl px-6 py-14 md:px-10 md:py-20">
+        <section className="mb-12 grid gap-6 rounded-2xl bg-nord-paper-2 p-8 md:grid-cols-[1.4fr_1fr] md:p-10">
+          <div>
+            <div className="mb-2 font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold">
+              Herzlich Willkommen bei der Fußball-Abteilung
+            </div>
+            <p className="text-base leading-relaxed text-nord-ink">
+              Unsere Fußballabteilung existiert seit dem Jahre 1947. Wir stellen
+              in der Saison 2025/2026 fünfzehn Jugendmannschaften, fünf
+              Herrenmannschaften und eine Ehrenligamannschaft. Wir freuen uns
+              über alle Fußballbegeisterten von Jung bis Alt.
+            </p>
+            <p className="mt-3 text-sm italic text-nord-muted">
+              Eure SV Nord Fußballer.
+            </p>
+          </div>
+          <div className="rounded-xl border border-nord-line bg-white p-5">
+            <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold">
+              Sportliche Leitung
+            </div>
+            <ul className="mt-3 space-y-2 text-sm">
+              <li>
+                <div className="font-semibold text-nord-ink">
+                  Felix Kirmeyer
+                </div>
+                <div className="text-xs text-nord-muted">
+                  Sportlicher Leiter
+                </div>
+              </li>
+              <li>
+                <div className="font-semibold text-nord-ink">
+                  Tobias Treffer
+                </div>
+                <div className="text-xs text-nord-muted">
+                  Jugendleitung Großfeld
+                </div>
+              </li>
+              <li>
+                <div className="font-semibold text-nord-ink">Ergin Piker</div>
+                <div className="text-xs text-nord-muted">
+                  Jugendleitung Kleinfeld
+                </div>
+              </li>
+            </ul>
+          </div>
+        </section>
+
         {groups.map((group) =>
           group.teams.length === 0 ? null : (
             <div key={group.label} className="mb-14 last:mb-0">

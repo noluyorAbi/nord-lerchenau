@@ -53,22 +53,22 @@ export async function StatStrip({ stats }: Props) {
 
   return (
     <section className="bg-nord-navy text-white">
-      <div className="mx-auto grid max-w-[1320px] border-l border-white/10 md:grid-cols-4">
+      <div className="mx-auto grid max-w-[1320px] grid-cols-2 md:grid-cols-4">
         {items.map((item, idx) => (
           <div
             key={`${item.label}-${idx}`}
-            className="border-r border-white/10 px-6 py-7 md:px-7"
+            className="border-b border-r border-white/10 px-5 py-6 last:border-r-0 md:px-7 md:py-7 md:[&:nth-child(-n+4)]:border-b-0"
           >
             <div
               className="font-display font-black leading-none text-nord-gold"
-              style={{ fontSize: "clamp(48px, 6vw, 88px)" }}
+              style={{ fontSize: "clamp(36px, 6vw, 88px)" }}
             >
               <StatCounter value={item.value} />
             </div>
-            <div className="mt-1.5 font-display text-base font-bold uppercase tracking-[0.08em]">
+            <div className="mt-1.5 font-display text-sm font-bold uppercase tracking-[0.08em] md:text-base">
               {item.label}
             </div>
-            <div className="mt-0.5 text-xs opacity-60">{item.sub}</div>
+            <div className="mt-0.5 text-[11px] opacity-60 md:text-xs">{item.sub}</div>
           </div>
         ))}
       </div>

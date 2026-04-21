@@ -169,32 +169,32 @@ export function HeroMatchCard({
 
           {nextMatch && opponent ? (
             <>
-              <div className="mt-5 grid grid-cols-[1fr_auto_1fr] items-center gap-4">
+              <div className="mt-5 grid grid-cols-[1fr_auto_1fr] items-center gap-3 sm:gap-4">
                 <div
-                  className="flex flex-col items-center gap-2.5"
+                  className="flex flex-col items-center gap-2"
                   style={{ transform: "translateZ(30px)" }}
                 >
                   <ClubLogo
-                    size={56}
+                    size={52}
                     className="drop-shadow-[0_4px_12px_rgba(0,0,0,0.35)]"
                   />
-                  <div className="text-center font-display text-[16px] font-extrabold leading-tight">
+                  <div className="text-center font-display text-[14px] font-extrabold leading-tight sm:text-[16px]">
                     SV Nord
                     <br />
                     Lerchenau
                   </div>
                 </div>
                 <div
-                  className="font-display text-[44px] font-black leading-none text-nord-gold drop-shadow-[0_6px_18px_rgba(200,169,106,0.35)]"
+                  className="font-display text-[36px] font-black leading-none text-nord-gold drop-shadow-[0_6px_18px_rgba(200,169,106,0.35)] sm:text-[44px]"
                   style={{ transform: "translateZ(60px)" }}
                 >
                   vs
                 </div>
                 <div
-                  className="flex flex-col items-center gap-2.5"
+                  className="flex flex-col items-center gap-2"
                   style={{ transform: "translateZ(30px)" }}
                 >
-                  <div className="flex size-14 items-center justify-center overflow-hidden rounded-md bg-white/95 p-1.5 shadow-lg">
+                  <div className="flex size-12 items-center justify-center overflow-hidden rounded-md bg-white/95 p-1.5 shadow-lg sm:size-14">
                     {opponentCrest ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
@@ -203,12 +203,12 @@ export function HeroMatchCard({
                         className="size-full object-contain"
                       />
                     ) : (
-                      <span className="font-display text-[16px] font-black text-nord-navy">
+                      <span className="font-display text-[14px] font-black text-nord-navy sm:text-[16px]">
                         {opponent.name.short}
                       </span>
                     )}
                   </div>
-                  <div className="text-center font-display text-[16px] font-extrabold leading-tight">
+                  <div className="line-clamp-2 text-center font-display text-[14px] font-extrabold leading-tight sm:text-[16px]">
                     {opponent.name.full}
                   </div>
                 </div>

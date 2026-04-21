@@ -18,7 +18,7 @@ export default async function VereinsheimPage() {
       <PageHero
         eyebrow="Vereinsheim"
         title="Eschengarten"
-        lede={page.intro ?? "Seit 1984 unser Zuhause im Eschenviertel."}
+        lede={page.intro ?? "Seit 1986 unser Zuhause im Eschenviertel."}
       />
       <article className="mx-auto max-w-3xl px-6 py-16 md:py-20">
         {hasBody ? (

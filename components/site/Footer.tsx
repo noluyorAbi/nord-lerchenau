@@ -135,7 +135,7 @@ export async function Footer() {
           <div className="font-mono tracking-[0.04em]">
             © {year} {siteName} · Einmal Nordler, immer Nordler.
           </div>
-          <div className="flex items-center gap-5">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 md:gap-x-5">
             <Link
               href="/impressum"
               className="font-display uppercase tracking-[0.08em] hover:text-nord-gold"
@@ -148,6 +148,18 @@ export async function Footer() {
             >
               Datenschutz
             </Link>
+            <span className="hidden h-3 w-px bg-white/15 md:inline-block" aria-hidden />
+            <a
+              href="https://adatepe.dev"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono tracking-[0.08em] text-white/40 transition hover:text-nord-gold"
+            >
+              Built by{" "}
+              <span className="font-semibold text-white/70 group-hover:text-nord-gold">
+                adatepe.dev
+              </span>
+            </a>
           </div>
         </div>
       </div>

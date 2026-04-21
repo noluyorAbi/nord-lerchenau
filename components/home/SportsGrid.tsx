@@ -129,20 +129,20 @@ export function SportsGrid() {
                   </div>
                 </div>
 
-                <div className="absolute inset-x-0 bottom-0 translate-y-[30%] p-5 transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.1,1)] group-hover:translate-y-0 md:p-6">
+                <div className="absolute inset-x-0 bottom-0 p-5 transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.1,1)] md:translate-y-[30%] md:p-6 md:group-hover:translate-y-0">
                   <h3
                     className="m-0 font-display font-black leading-[0.95] tracking-[-0.01em]"
-                    style={{ fontSize: 38 }}
+                    style={{ fontSize: "clamp(28px, 6vw, 38px)" }}
                   >
                     {sport.name}
                   </h3>
                   <div className="mt-1.5 font-mono text-[11px] uppercase tracking-[0.14em] opacity-85">
                     {sport.caption}
                   </div>
-                  <p className="m-0 mt-3 max-w-[360px] text-[13px] leading-relaxed opacity-0 transition-opacity duration-400 group-hover:opacity-90 motion-reduce:opacity-90">
+                  <p className="m-0 mt-3 max-w-[360px] text-[13px] leading-relaxed opacity-90 md:opacity-0 md:transition-opacity md:duration-400 md:group-hover:opacity-90 md:motion-reduce:opacity-90">
                     {sport.lead}
                   </p>
-                  <div className="mt-3 font-display text-[13px] font-extrabold uppercase tracking-[0.08em] text-nord-gold opacity-0 transition-opacity duration-400 group-hover:opacity-100 motion-reduce:opacity-100">
+                  <div className="mt-3 font-display text-[13px] font-extrabold uppercase tracking-[0.08em] text-nord-gold opacity-100 md:opacity-0 md:transition-opacity md:duration-400 md:group-hover:opacity-100 md:motion-reduce:opacity-100">
                     Zur Abteilung →
                   </div>
                 </div>

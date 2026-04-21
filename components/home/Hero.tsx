@@ -70,7 +70,7 @@ export async function Hero({ hero }: Props) {
   };
 
   return (
-    <section className="relative -mt-[72px] flex min-h-[100svh] items-center overflow-hidden text-white">
+    <section className="relative -mt-[72px] flex min-h-[100svh] items-start overflow-hidden text-white md:items-center">
       {/* Full-bleed background image */}
       <div
         className="absolute inset-0 bg-cover bg-center"
@@ -119,7 +119,7 @@ export async function Hero({ hero }: Props) {
             </HeroItem>
           </HeroStagger>
 
-          <HeroStagger className="flex flex-wrap items-end gap-10">
+          <HeroStagger className="flex flex-wrap items-end gap-6 md:gap-10">
             <HeroItem>
               <div className="max-w-[440px]">
                 <p className="m-0 text-base leading-relaxed text-white/75">

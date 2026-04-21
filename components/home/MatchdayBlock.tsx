@@ -139,29 +139,37 @@ export async function MatchdayBlock() {
               {rows.map((f, i) => (
                 <div
                   key={`${f.comp}-${i}`}
-                  className={`grid grid-cols-[70px_1fr_auto] items-center gap-4 px-5 py-4 ${
+                  className={`grid grid-cols-[56px_1fr] items-start gap-3 px-4 py-4 sm:grid-cols-[70px_1fr_auto] sm:items-center sm:gap-4 sm:px-5 ${
                     i < rows.length - 1 ? "border-b border-nord-line" : ""
                   }`}
                 >
                   <div className="text-center">
-                    <div className="font-display text-[26px] font-black leading-none text-nord-navy">
+                    <div className="font-display text-[22px] font-black leading-none text-nord-navy sm:text-[26px]">
                       {f.time}
                     </div>
                     <div className="mt-1 font-mono text-[10px] tracking-[0.12em] text-nord-muted">
                       Uhr
                     </div>
                   </div>
-                  <div>
-                    <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-muted">
+                  <div className="min-w-0">
+                    <div className="truncate font-mono text-[10px] uppercase tracking-[0.18em] text-nord-muted">
                       {f.comp}
                       {f.md ? ` · ${f.md}` : ""}
                     </div>
-                    <div className="mt-1 font-display text-[20px] font-extrabold">
+                    <div className="mt-1 font-display text-[16px] font-extrabold leading-snug sm:text-[20px]">
                       {f.home} <span className="text-nord-gold">vs</span>{" "}
                       {f.away}
                     </div>
+                    <div className="mt-1.5 flex flex-wrap items-center gap-2 text-[11px] text-nord-muted sm:hidden">
+                      <span>{f.venue}</span>
+                      {f.featured ? (
+                        <span className="inline-flex items-center rounded-full bg-nord-gold px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-nord-navy">
+                          Top-Spiel
+                        </span>
+                      ) : null}
+                    </div>
                   </div>
-                  <div className="text-right">
+                  <div className="hidden text-right sm:block">
                     <div className="text-[11px] text-nord-muted">{f.venue}</div>
                     {f.featured ? (
                       <div className="mt-1.5 inline-flex items-center rounded-full border border-nord-gold bg-nord-gold px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-navy">
@@ -187,13 +195,14 @@ export async function MatchdayBlock() {
                   : "Saison 25/26"}
               </span>
             </div>
-            <div className="grid grid-cols-[36px_1fr_28px_28px_28px_36px_44px] items-center gap-2 border-b border-white/10 bg-white/[0.04] px-3 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-white/50">
+            <div className="grid grid-cols-[32px_1fr_40px_44px] items-center gap-2 border-b border-white/10 bg-white/[0.04] px-3 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-white/50 sm:grid-cols-[36px_1fr_28px_28px_28px_36px_44px]">
               <span>#</span>
               <span>Team</span>
-              <span className="text-right">Sp</span>
-              <span className="text-right">S</span>
-              <span className="text-right">U</span>
-              <span className="text-right">TD</span>
+              <span className="text-right sm:hidden">Sp</span>
+              <span className="hidden text-right sm:inline">Sp</span>
+              <span className="hidden text-right sm:inline">S</span>
+              <span className="hidden text-right sm:inline">U</span>
+              <span className="hidden text-right sm:inline">TD</span>
               <span className="text-right">Pkt</span>
             </div>
             <div className="flex-1">
@@ -213,7 +222,7 @@ export async function MatchdayBlock() {
                   return (
                     <div
                       key={r.rank}
-                      className={`grid grid-cols-[36px_1fr_28px_28px_28px_36px_44px] items-center gap-2 border-b border-white/[0.06] px-3 py-2.5 text-[13px] ${
+                      className={`grid grid-cols-[32px_1fr_40px_44px] items-center gap-2 border-b border-white/[0.06] px-3 py-2.5 text-[13px] sm:grid-cols-[36px_1fr_28px_28px_28px_36px_44px] ${
                         us
                           ? "bg-[linear-gradient(90deg,rgba(200,169,106,0.18),transparent_70%)]"
                           : ""
@@ -231,7 +240,7 @@ export async function MatchdayBlock() {
                         </span>
                       </span>
                       <span
-                        className={`font-display text-sm ${us ? "font-black" : "font-bold"}`}
+                        className={`min-w-0 truncate font-display text-sm ${us ? "font-black" : "font-bold"}`}
                       >
                         {r.team.name.middle}
                         {us ? (
@@ -240,10 +249,21 @@ export async function MatchdayBlock() {
                           </span>
                         ) : null}
                       </span>
-                      <span className="text-right opacity-70">{r.matches}</span>
-                      <span className="text-right opacity-70">{r.wins}</span>
-                      <span className="text-right opacity-70">{r.draws}</span>
-                      <span className="text-right opacity-70">{td}</span>
+                      <span className="text-right opacity-70 sm:hidden">
+                        {r.matches}
+                      </span>
+                      <span className="hidden text-right opacity-70 sm:inline">
+                        {r.matches}
+                      </span>
+                      <span className="hidden text-right opacity-70 sm:inline">
+                        {r.wins}
+                      </span>
+                      <span className="hidden text-right opacity-70 sm:inline">
+                        {r.draws}
+                      </span>
+                      <span className="hidden text-right opacity-70 sm:inline">
+                        {td}
+                      </span>
                       <span className="text-right font-display font-black text-nord-gold">
                         {r.points}
                       </span>

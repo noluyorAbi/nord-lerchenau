@@ -1,5 +1,5 @@
 import { ContactForm } from "@/components/ContactForm";
-import { NordMap } from "@/components/NordMap";
+import { MapEmbed } from "@/components/MapEmbed";
 import { PageHero } from "@/components/PageHero";
 import { getPayloadClient } from "@/lib/payload";
 
@@ -194,9 +194,13 @@ export default async function KontaktPage({ searchParams }: Props) {
                     style={{ colorScheme: "normal" }}
                   />
                 ) : (
-                  <NordMap
-                    title={primary?.label ?? "Vereinsheim"}
-                    className="relative h-full w-full overflow-hidden bg-nord-ink"
+                  <MapEmbed
+                    lat={48.1994}
+                    lon={11.5545}
+                    zoom={15.6}
+                    label={primary?.label ?? "Vereinsheim"}
+                    variant="positron"
+                    className="relative h-full w-full"
                   />
                 )}
               </div>

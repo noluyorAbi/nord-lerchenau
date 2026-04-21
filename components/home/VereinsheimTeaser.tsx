@@ -38,7 +38,7 @@ export function VereinsheimTeaser() {
             Biergarten. Fassbier, Weißwurst und Flutlicht gibt&rsquo;s bei jedem
             Heimspiel.
           </p>
-          <div className="mt-8 grid grid-cols-3 gap-4">
+          <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
             {FACTS.map((f) => (
               <div
                 key={f.l}
@@ -47,7 +47,7 @@ export function VereinsheimTeaser() {
                 <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/60">
                   {f.l}
                 </div>
-                <div className="mt-1.5 font-display text-[22px] font-extrabold leading-none">
+                <div className="mt-1.5 font-display text-[18px] font-extrabold leading-tight sm:text-[20px] md:text-[22px]">
                   {f.v}
                 </div>
                 <div className="mt-1 text-[11px] text-white/60">{f.h}</div>
@@ -82,7 +82,7 @@ export function VereinsheimTeaser() {
                 Unser Zuhause seit
               </div>
               <div className="font-display text-[72px] font-black leading-none text-nord-gold">
-                1984
+                1986
               </div>
               <div className="mt-1 font-display text-[18px] font-bold">
                 Eschenstraße · Lerchenau

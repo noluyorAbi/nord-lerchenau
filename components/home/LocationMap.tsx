@@ -1,3 +1,4 @@
+import { NordMap } from "@/components/NordMap";
 import { SectionEyebrow } from "@/components/SectionEyebrow";
 import { getPayloadClient } from "@/lib/payload";
 
@@ -7,14 +8,6 @@ const DEFAULT_ADDRESS = {
   postalCode: "80935",
   city: "München",
 };
-
-const COORDS = { lat: 48.1994, lon: 11.5545 };
-
-const OSM_SRC =
-  "https://www.openstreetmap.org/export/embed.html" +
-  "?bbox=11.5445,48.1954,11.5645,48.2034" +
-  "&layer=mapnik" +
-  `&marker=${COORDS.lat},${COORDS.lon}`;
 
 export async function LocationMap() {
   const payload = await getPayloadClient();
@@ -53,8 +46,10 @@ export async function LocationMap() {
     `${primary.label}, ${primary.street}, ${primary.postalCode} ${primary.city}`,
   );
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${dirQuery}`;
-  const osmLinkUrl = `https://www.openstreetmap.org/?mlat=${COORDS.lat}&mlon=${COORDS.lon}#map=17/${COORDS.lat}/${COORDS.lon}`;
-  const mapSrc = customEmbed && customEmbed.startsWith("http") ? customEmbed : OSM_SRC;
+  const mapsLinkUrl = `https://maps.google.com/?q=${encodeURIComponent(
+    `${primary.label}, ${primary.street}, ${primary.postalCode} ${primary.city}`,
+  )}`;
+  const useCustomEmbed = Boolean(customEmbed && customEmbed.startsWith("http"));
 
   return (
     <section className="border-b border-nord-line bg-nord-paper">
@@ -153,26 +148,39 @@ export async function LocationMap() {
           </div>
 
           {/* Map */}
-          <div className="relative overflow-hidden rounded-2xl border border-nord-line bg-nord-paper-2">
-            <iframe
-              title={`Karte · ${primary.label}`}
-              src={mapSrc}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="aspect-[4/3] w-full border-0 md:aspect-[16/10]"
-              style={{ colorScheme: "normal" }}
+          <div className="relative overflow-hidden rounded-2xl border border-nord-line bg-nord-paper-2 shadow-[0_24px_60px_-24px_rgba(11,27,63,0.28)]">
+            <div className="aspect-[4/3] w-full md:aspect-[16/10]">
+              {useCustomEmbed ? (
+                <iframe
+                  title={`Karte · ${primary.label}`}
+                  src={customEmbed!}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="h-full w-full border-0"
+                  style={{ colorScheme: "normal" }}
+                />
+              ) : (
+                <NordMap
+                  title={primary.label}
+                  className="relative h-full w-full overflow-hidden bg-nord-ink"
+                />
+              )}
+            </div>
+            <div
+              className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/60 to-transparent"
+              aria-hidden
             />
-            <div className="flex items-center justify-between gap-3 border-t border-nord-line bg-nord-paper-2 px-4 py-3">
+            <div className="flex items-center justify-between gap-3 border-t border-nord-line bg-white/90 px-4 py-3 backdrop-blur">
               <div className="truncate font-mono text-[11px] uppercase tracking-[0.14em] text-nord-muted">
                 {addressLine}
               </div>
               <a
-                href={osmLinkUrl}
+                href={mapsLinkUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="shrink-0 font-mono text-[11px] uppercase tracking-[0.14em] text-nord-navy transition hover:text-nord-gold"
               >
-                Größer ↗
+                Auf Karte ↗
               </a>
             </div>
           </div>

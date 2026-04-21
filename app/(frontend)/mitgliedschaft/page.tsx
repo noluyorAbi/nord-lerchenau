@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import { PageHero } from "@/components/PageHero";
 import { getPayloadClient } from "@/lib/payload";
 
@@ -28,6 +26,62 @@ const BENEFITS = [
   "Teilnahme an allen Vereinsveranstaltungen (Jeep Cup, Sommerfest, Weihnachtsfeier)",
   "Freier Eintritt zu allen Heimspielen",
   "Mitbestimmung in der Jahreshauptversammlung",
+];
+
+const WIX_PDF = "https://www.svnord-lerchenau.de/_files/ugd/c475b1_";
+
+type Download = { label: string; href: string; hint?: string };
+type DownloadGroup = { group: string; items: Download[] };
+
+const DOWNLOADS: DownloadGroup[] = [
+  {
+    group: "Aufnahmeantrag",
+    items: [
+      {
+        label: "Mitglieds-Antrag",
+        href: `${WIX_PDF}c263b875a83c4c1eaafb358bad317e0a.pdf`,
+        hint: "Hauptformular für Neumitglieder",
+      },
+    ],
+  },
+  {
+    group: "Spielerpass Fußball",
+    items: [
+      {
+        label: "Passantrag Erwachsene",
+        href: `${WIX_PDF}087ec7628edd451e910b491f4d23896d.pdf`,
+      },
+      {
+        label: "Passantrag Jugend",
+        href: `${WIX_PDF}4c76d2eddec7416bb37e15956b3cb7f0.pdf`,
+      },
+      {
+        label: "Spieler aus dem Ausland (10–17)",
+        href: `${WIX_PDF}0c7fa8d5317240e8a552ec7321509b9d.pdf`,
+      },
+      {
+        label: "DFB-Zusatzerklärung",
+        href: `${WIX_PDF}1e6da086b72a4e8fab43bba5ab26efae.pdf`,
+      },
+    ],
+  },
+  {
+    group: "Einverständniserklärungen",
+    items: [
+      {
+        label: "Spieler-Passfoto (bis U13)",
+        href: `${WIX_PDF}baed2f01b4464a31b3990e7c4923c9b5.pdf`,
+      },
+      {
+        label: "Spieler-Passfoto (ab U14)",
+        href: `${WIX_PDF}f6fe69b8098b465188ab5144c3b32b57.pdf`,
+      },
+      {
+        label: "Veröffentlichung von Bildern",
+        href: `${WIX_PDF}2b37a95d1c304bdd8cbf32bb3e11a8c1.pdf`,
+      },
+    ],
+  },
 ];
 
 export default async function MitgliedschaftPage() {
@@ -80,21 +134,58 @@ export default async function MitgliedschaftPage() {
           </ul>
         </section>
 
-        <section className="mb-16 rounded-2xl bg-gradient-to-br from-nord-navy to-nord-navy-2 p-8 text-white md:p-12">
-          <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
-            Mitgliedsantrag
-          </h2>
-          <p className="mt-2 max-w-xl text-sm text-white/80 md:text-base">
-            Der Antrag liegt als PDF bereit. Den Link schicken wir dir auf
-            Anfrage per E-Mail zu — oder frage direkt im Vereinsheim nach einem
-            Exemplar.
+        <section className="mb-16">
+          <div className="mb-5 flex items-end justify-between gap-4">
+            <h2 className="text-sm font-bold uppercase tracking-[0.15em] text-nord-muted">
+              Formulare & Anträge
+            </h2>
+            <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-nord-muted">
+              PDF · Direkt-Download
+            </span>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            {DOWNLOADS.map((group) => (
+              <div
+                key={group.group}
+                className="flex flex-col gap-3 rounded-xl border border-nord-line bg-white p-5"
+              >
+                <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-nord-gold">
+                  {group.group}
+                </div>
+                <ul className="space-y-2">
+                  {group.items.map((item) => (
+                    <li key={item.href}>
+                      <a
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex items-start justify-between gap-3 rounded-lg border border-nord-line/60 bg-nord-paper-2 px-3 py-2.5 transition hover:border-nord-gold hover:bg-white"
+                      >
+                        <span className="flex-1 text-sm font-semibold text-nord-ink">
+                          {item.label}
+                          {item.hint ? (
+                            <span className="block text-[11px] font-normal text-nord-muted">
+                              {item.hint}
+                            </span>
+                          ) : null}
+                        </span>
+                        <span
+                          className="shrink-0 text-nord-gold transition-transform group-hover:translate-x-0.5"
+                          aria-hidden
+                        >
+                          ↓
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+          <p className="mt-4 text-xs text-nord-muted">
+            Alle Formulare werden ausgefüllt per Post an die Vereinsadresse
+            geschickt oder im Vereinsheim Eschengarten abgegeben.
           </p>
-          <Link
-            href="/kontakt?subject=Mitgliedsantrag"
-            className="mt-6 inline-flex rounded-lg bg-nord-gold px-5 py-3 text-sm font-semibold text-nord-navy hover:brightness-110"
-          >
-            Antrag anfordern →
-          </Link>
         </section>
 
         <section className="grid gap-8 rounded-2xl border border-nord-line bg-white p-8 md:grid-cols-2 md:p-10">

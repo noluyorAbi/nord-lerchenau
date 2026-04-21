@@ -582,7 +582,11 @@ Mit Fertigstellung des Eschengartens und dem Ausbau der Bezirkssportanlage began
 
 Die Mitgliederzahl wuchs von 500 (1971) über 766 (1996) auf 870 (1998). Seit 2006 ist der SV Nord online unter www.svnord.de präsent — heute sind es rund 500 aktive Mitglieder in fünf Abteilungen.
 
-Die jüngere Vereinsgeschichte ist geprägt von Erfolgen im Fußball, einem breiten Sportangebot über mehrere Abteilungen und dem anhaltenden Bemühen um die Erweiterung der Sportanlage in Zusammenarbeit mit der Stadt München.`,
+Die jüngere Vereinsgeschichte ist geprägt von Erfolgen im Fußball, einem breiten Sportangebot über mehrere Abteilungen und dem anhaltenden Bemühen um die Erweiterung der Sportanlage in Zusammenarbeit mit der Stadt München.
+
+#### Alle 1. Vorstände seit 1947
+
+Carl Jennerwein (1947/48) · Karl Hornung sen. (1948–1950) · Kleophas Lang (1950–1959) · Hans Späht (1959–1961) · Georg Schmidt (1961–1964) · Franz Gossler (1964–1967) · Oskar Huhle (1967–1970) · Josef Promeberger (1970–1972) · Wolfgang Viertl (1972–1978) · Franz Münch (1978–1980) · Horst Lanninger (1980–1990, später Ehrenvorstand) · Kurt Tänzer (1990–2000) · Günter Ottl (2000–2004) · Rudolf Westermair (2004/05) · Wolfgang Wennrich (2005–2009) · Christian Douda (2009–2015) · Goran Pajic (2015–2017) · Heinz Fessenmayer (ab 23.11.2017) · Ralf Kirmeyer (heute).`,
       ),
     } as never,
   });

@@ -304,6 +304,14 @@ export interface Team {
      */
     partner?: string | null;
   };
+  /**
+   * Link the team to fupa.net so squad + player images light up.
+   */
+  fupa?: {
+    slug?: string | null;
+    autumnSlug?: string | null;
+    springSlug?: string | null;
+  };
   trainers?: (number | Person)[] | null;
   description?: {
     root: {
@@ -689,6 +697,13 @@ export interface TeamsSelect<T extends boolean = true> {
         slug?: T;
         spielklasse?: T;
         partner?: T;
+      };
+  fupa?:
+    | T
+    | {
+        slug?: T;
+        autumnSlug?: T;
+        springSlug?: T;
       };
   trainers?: T;
   description?: T;

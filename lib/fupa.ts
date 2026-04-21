@@ -1,5 +1,11 @@
+export const FUPA_CLUB_SLUG = "sv-nord-muenchen-lerchenau";
+export const FUPA_CLUB_URL = `https://www.fupa.net/club/${FUPA_CLUB_SLUG}`;
 export const FUPA_TEAM_SLUG = "sv-nord-muenchen-lerchenau-m1-2025-26";
 export const FUPA_TEAM_URL = `https://www.fupa.net/team/${FUPA_TEAM_SLUG}`;
+
+export function fupaTeamUrl(slug: string): string {
+  return `https://www.fupa.net/team/${slug}`;
+}
 
 const API = "https://api.fupa.net/v1";
 const STREAM = "https://stream.fupa.net/v1";
@@ -163,6 +169,152 @@ export function getFupaStanding(
     `${API}/standings?competition=${competition}&season=${season}`,
     `fupa:standings:${competition}:${season}`,
   );
+}
+
+export type FupaSquadPlayer = {
+  id: number;
+  slug: string;
+  firstName: string;
+  lastName: string;
+  isDeactivated: boolean;
+  position: "Torwart" | "Abwehr" | "Mittelfeld" | "Angriff" | null;
+  image: FupaImage;
+  jerseyNumber: number | null;
+  matches: number;
+  goals: number;
+  flags: string[];
+  age: number | null;
+};
+
+export type FupaSquadCoachRole =
+  | "Trainer"
+  | "Co-Trainer"
+  | "Spielertrainer"
+  | "Interimstrainer"
+  | "Betreuer"
+  | "Torwarttrainer"
+  | (string & {});
+
+export type FupaSquadCoach = {
+  id: number;
+  slug: string;
+  firstName: string;
+  lastName: string;
+  role: FupaSquadCoachRole;
+  isDeactivated: boolean;
+  image: FupaImage;
+  age: number | null;
+};
+
+export type FupaCaptain = {
+  id: number;
+  slug: string;
+  firstName: string;
+  lastName: string;
+  birthday: string | null;
+  image: FupaImage;
+  isDeactivated: boolean;
+  position: string | null;
+};
+
+export type FupaSquadInfo = {
+  teamImage: FupaImage | null;
+  contacts: unknown[];
+  seasonTarget: string | null;
+  targetDescription: string | null;
+  championFavourit: string | null;
+  club: {
+    id: number;
+    name: string;
+    middleName: string;
+    shortName: string;
+    image: FupaImage;
+    slug: string;
+  };
+  captain: FupaCaptain | null;
+  viceCaptain: FupaCaptain | null;
+};
+
+export type FupaSquad = {
+  players: FupaSquadPlayer[];
+  coaches: FupaSquadCoach[];
+  info: FupaSquadInfo;
+};
+
+export type FupaClub = {
+  id: number;
+  name: string;
+  middleName: string;
+  shortName: string;
+  slug: string;
+  founded: string | null;
+  colors: string | null;
+  memberCount: string | null;
+  departments: string | null;
+  address: string | null;
+  achievements: string | null;
+  email: string | null;
+  website: string | null;
+  phoneClub: string | null;
+  phoneClubHome: string | null;
+  phoneVenue: string | null;
+  image: FupaImage;
+  district: { id: number; name: string; slug: string } | null;
+  contacts: Array<{
+    id: number;
+    slug: string;
+    name: string;
+    job: string | null;
+    image: FupaImage;
+  }>;
+  managers: Array<{
+    id: number;
+    slug: string;
+    name: string;
+    job: string | null;
+    image: FupaImage;
+  }>;
+  venues: unknown[];
+};
+
+export function getFupaSquad(slug: string) {
+  return fupaFetch<FupaSquad>(
+    `${API}/teams/${slug}/squad`,
+    `fupa:squad:${slug}`,
+  );
+}
+
+export function getFupaClub(slug: string = FUPA_CLUB_SLUG) {
+  return fupaFetch<FupaClub>(`${API}/clubs/${slug}`, `fupa:club:${slug}`);
+}
+
+export type FupaMeta = {
+  slug?: string | null;
+  autumnSlug?: string | null;
+  springSlug?: string | null;
+};
+
+/**
+ * Picks the most relevant fupa team slug for "now". Youth SGs split the
+ * season into autumn2025 / spring2026 halves; the stable senior slugs
+ * (…m1-2025-26) stay in `slug`.
+ *
+ * Preference order:
+ *   spring half (Feb–Jun) → springSlug > slug > autumnSlug
+ *   autumn half (Jul–Jan) → autumnSlug > slug > springSlug
+ */
+export function resolveFupaSlug(
+  fupa: FupaMeta | null | undefined,
+  now: Date = new Date(),
+): string | null {
+  if (!fupa) return null;
+  const month = now.getMonth() + 1;
+  const inSpring = month >= 2 && month <= 6;
+  const primary = inSpring ? fupa.springSlug : fupa.autumnSlug;
+  if (primary) return primary;
+  if (fupa.slug) return fupa.slug;
+  const secondary = inSpring ? fupa.autumnSlug : fupa.springSlug;
+  return secondary ?? null;
 }
 
 export function getFupaNews(slug: string = FUPA_TEAM_SLUG, limit = 6) {

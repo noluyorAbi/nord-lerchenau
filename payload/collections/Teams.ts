@@ -91,6 +91,40 @@ export const Teams: CollectionConfig = {
       ],
     },
     {
+      name: "fupa",
+      type: "group",
+      admin: {
+        description:
+          "Link the team to fupa.net so squad + player images light up. Youth SGs split the season into autumn/spring halves — store both and the site picks the current one.",
+      },
+      fields: [
+        {
+          name: "slug",
+          type: "text",
+          admin: {
+            description:
+              "Primary fupa team slug, e.g. sv-nord-muenchen-lerchenau-m1-2025-26",
+          },
+        },
+        {
+          name: "autumnSlug",
+          type: "text",
+          admin: {
+            description:
+              "Hinrunde-Slug for youth SGs, e.g. sg-n-lerchenau-fasanerie-n-u19-1-autumn2025",
+          },
+        },
+        {
+          name: "springSlug",
+          type: "text",
+          admin: {
+            description:
+              "Rückrunde-Slug for youth SGs, e.g. sg-n-lerchenau-fasanerie-n-u19-1-spring2026",
+          },
+        },
+      ],
+    },
+    {
       name: "trainers",
       type: "relationship",
       relationTo: "people",

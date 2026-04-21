@@ -6,6 +6,7 @@ import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical
 import { BfvMatchesPanel } from "@/components/BfvMatchesPanel";
 import { BfvSquadPanel } from "@/components/BfvSquadPanel";
 import { BfvTablePanel } from "@/components/BfvTablePanel";
+import { FupaSquadPanel } from "@/components/FupaSquadPanel";
 import { PageHero } from "@/components/PageHero";
 import { PersonCard } from "@/components/PersonCard";
 import {
@@ -14,6 +15,7 @@ import {
   bfvTeamUrl,
   BFV_CLUB_URL,
 } from "@/lib/bfv";
+import { resolveFupaSlug } from "@/lib/fupa";
 import { formatKickoff } from "@/lib/format-date";
 import { getPayloadClient } from "@/lib/payload";
 import type { Person } from "@/payload-types";
@@ -151,7 +153,11 @@ export default async function TeamPage({ params }: Props) {
 
             {bfv?.teamId ? <BfvMatchesPanel bfv={bfv} /> : null}
             {bfv?.teamId ? <BfvTablePanel bfv={bfv} /> : null}
-            {bfv?.teamId ? <BfvSquadPanel bfv={bfv} /> : null}
+            {team.fupa && resolveFupaSlug(team.fupa) ? (
+              <FupaSquadPanel fupa={team.fupa} teamName={team.name} />
+            ) : bfv?.teamId ? (
+              <BfvSquadPanel bfv={bfv} />
+            ) : null}
 
             {trainers.length > 0 ? (
               <div>

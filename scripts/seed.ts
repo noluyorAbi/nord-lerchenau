@@ -250,6 +250,12 @@ type BfvMeta = {
   partner?: string;
 };
 
+type FupaMeta = {
+  slug?: string;
+  autumnSlug?: string;
+  springSlug?: string;
+};
+
 async function ensureTeam(
   payload: Awaited<ReturnType<typeof getPayload>>,
   t: {
@@ -261,6 +267,7 @@ async function ensureTeam(
     order: number;
     league?: string;
     bfv?: BfvMeta;
+    fupa?: FupaMeta;
   },
 ) {
   const teamSlug = t.slug ?? slug(t.name);
@@ -274,6 +281,7 @@ async function ensureTeam(
     season: "2025/26",
     league: t.league,
     bfv: t.bfv,
+    fupa: t.fupa,
   };
   const existing = await payload.find({
     collection: "teams",
@@ -388,6 +396,7 @@ async function main() {
         slug: "sv-n-lerchenau",
         spielklasse: "Herren / Bezirksliga",
       },
+      fupa: { slug: "sv-nord-muenchen-lerchenau-m1-2025-26" },
     },
     {
       name: "2. Herren",
@@ -402,6 +411,7 @@ async function main() {
         slug: "sv-n-lerchenau-ii",
         spielklasse: "Herren / Kreisklasse",
       },
+      fupa: { slug: "sv-nord-muenchen-lerchenau-m2-2025-26" },
     },
     {
       name: "3. Herren",
@@ -416,6 +426,7 @@ async function main() {
         slug: "sv-n-lerchenau-iii",
         spielklasse: "Herren / B-Klasse",
       },
+      fupa: { slug: "sv-nord-muenchen-lerchenau-m3-2025-26" },
     },
     {
       name: "Herren Ü32",
@@ -430,6 +441,7 @@ async function main() {
         slug: "sv-nord-muenchen-lerchenau",
         spielklasse: "Senioren / A-Klasse",
       },
+      fupa: { slug: "sv-nord-muenchen-lerchenau-o32-1-2026" },
     },
     {
       name: "Herren Ü40",
@@ -460,6 +472,10 @@ async function main() {
         spielklasse: "A-Junioren / Kreisliga",
         partner: "Spielgemeinschaft mit Fasanarie-Nord",
       },
+      fupa: {
+        autumnSlug: "sg-n-lerchenau-fasanerie-n-u19-1-autumn2025",
+        springSlug: "sg-n-lerchenau-fasanerie-n-u19-1-spring2026",
+      },
     },
     {
       name: "A2-Junioren · U19-II",
@@ -474,6 +490,10 @@ async function main() {
         slug: "sg-nord-lerchenau-fasanarie-nord-u19-ii",
         spielklasse: "A-Junioren / Kreisklasse",
         partner: "Spielgemeinschaft mit Fasanarie-Nord",
+      },
+      fupa: {
+        autumnSlug: "sg-n-lerchenau-fasanerie-n-u19-2-autumn2025",
+        springSlug: "sg-n-lerchenau-fasanerie-n-u19-2-spring2026",
       },
     },
     {
@@ -490,6 +510,10 @@ async function main() {
         spielklasse: "B-Junioren / Kreisklasse",
         partner: "Spielgemeinschaft mit Fasanarie-Nord",
       },
+      fupa: {
+        autumnSlug: "sg-n-lerchenau-fasanerie-n-u17-1-autumn2025",
+        springSlug: "sg-n-lerchenau-fasanerie-n-u17-1-spring2026",
+      },
     },
     {
       name: "B2-Junioren · U17-II",
@@ -504,6 +528,10 @@ async function main() {
         slug: "sg-nord-lerchenau-fasanarie-nord-u17-ii",
         spielklasse: "B-Junioren / Kreisklasse",
         partner: "Spielgemeinschaft mit Fasanarie-Nord",
+      },
+      fupa: {
+        autumnSlug: "sg-n-lerchenau-fasanerie-n-u17-2-autumn2025",
+        springSlug: "sg-n-lerchenau-fasanerie-n-u17-2-spring2026",
       },
     },
     {
@@ -640,6 +668,7 @@ async function main() {
         slug: "sv-nord-muenchen-lerchenau-u17",
         spielklasse: "B-Juniorinnen / Kreisklasse",
       },
+      fupa: { slug: "sv-nord-muenchen-lerchenau-wu17-1-2025-26" },
     },
     {
       name: "C-Juniorinnen · U15",
@@ -654,6 +683,7 @@ async function main() {
         slug: "sv-nord-muenchen-lerchenau-u15",
         spielklasse: "C-Juniorinnen / Kreisklasse",
       },
+      fupa: { slug: "sv-nord-muenchen-lerchenau-wu15-1-2025-26" },
     },
     {
       name: "D-Juniorinnen · U13",

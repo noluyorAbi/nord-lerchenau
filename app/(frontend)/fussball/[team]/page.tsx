@@ -4,6 +4,7 @@ import { RichText } from "@payloadcms/richtext-lexical/react";
 import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical";
 
 import { BfvMatchesPanel } from "@/components/BfvMatchesPanel";
+import { BfvSquadPanel } from "@/components/BfvSquadPanel";
 import { BfvTablePanel } from "@/components/BfvTablePanel";
 import { PageHero } from "@/components/PageHero";
 import { PersonCard } from "@/components/PersonCard";
@@ -149,7 +150,8 @@ export default async function TeamPage({ params }: Props) {
             )}
 
             {bfv?.teamId ? <BfvMatchesPanel bfv={bfv} /> : null}
-            {bfv?.teamId ? <BfvTablePanel bfv={bfv} compact /> : null}
+            {bfv?.teamId ? <BfvTablePanel bfv={bfv} /> : null}
+            {bfv?.teamId ? <BfvSquadPanel bfv={bfv} /> : null}
 
             {trainers.length > 0 ? (
               <div>

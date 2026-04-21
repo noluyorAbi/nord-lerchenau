@@ -5,7 +5,7 @@ type Props = {
   compact?: boolean;
 };
 
-export async function BfvTablePanel({ bfv, compact = false }: Props) {
+export async function BfvTablePanel({ bfv, compact }: Props) {
   if (!bfv?.teamId) return null;
 
   const table = await fetchBfvTable(bfv.teamId);
@@ -40,6 +40,7 @@ export async function BfvTablePanel({ bfv, compact = false }: Props) {
   const rowsToShow = compact
     ? pickCompactWindow(table.rows, table.ownRow?.rank ?? 1)
     : table.rows;
+  const totalRows = table.rows.length;
 
   return (
     <section className="overflow-hidden rounded-2xl border border-nord-line bg-white">
@@ -130,8 +131,13 @@ export async function BfvTablePanel({ bfv, compact = false }: Props) {
         ))}
       </ul>
 
-      <div className="border-t border-nord-line bg-nord-paper-2 px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.14em] text-nord-muted">
-        Quelle · fussball.de &middot; DFB-Net · Cache 30 min
+      <div className="flex items-center justify-between gap-3 border-t border-nord-line bg-nord-paper-2 px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.14em] text-nord-muted">
+        <span>
+          {compact
+            ? `Auszug · ${totalRows} Mannschaften gesamt`
+            : `${totalRows} Mannschaften · Vollständig`}
+        </span>
+        <span>Quelle · BFV · Cache 30 min</span>
       </div>
     </section>
   );

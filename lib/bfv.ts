@@ -69,6 +69,77 @@ export async function fetchBfvMatches(
   }
 }
 
+export type BfvSquadPlayer = {
+  name: string;
+  playerImage: string | null;
+  playerImageStamp: string | null;
+  playerImageCopyright: string | null;
+  matchesPlayed: number;
+  minutesPlayed: number;
+  goals: number;
+};
+
+export type BfvSquad = {
+  public: boolean;
+  season: string | null;
+  players: BfvSquadPlayer[];
+};
+
+/**
+ * Fetch the public squad for a BFV team. Returns `{ public: false, players: [] }`
+ * when the club has opted out of public kader lists — common for amateur
+ * clubs — so UI should fall back to a "im BFV-Profil" link in that case.
+ */
+export async function fetchBfvSquad(teamId: string): Promise<BfvSquad | null> {
+  if (!teamId) return null;
+  try {
+    const res = await fetch(`${BFV_API_BASE}/team/${teamId}/squad`, {
+      headers: { Accept: "application/json" },
+      next: { revalidate: CLUB_REVALIDATE, tags: [`bfv:squad:${teamId}`] },
+    });
+    if (!res.ok) return null;
+    const body = (await res.json()) as {
+      data?: {
+        public?: boolean;
+        season?: { name?: string };
+        players?: Array<{
+          player?: {
+            name?: string;
+            playerImage?: string | null;
+            playerImageStamp?: string | null;
+            playerImageCopyright?: string | null;
+          };
+          statistics?: {
+            matchesPlayed?: number;
+            minutesPlayed?: number;
+            goals?: number;
+          };
+        }>;
+      };
+    };
+    const data = body.data;
+    if (!data) return null;
+
+    const players: BfvSquadPlayer[] = (data.players ?? []).map((p) => ({
+      name: p.player?.name ?? "",
+      playerImage: normalizeBfvLogoUrl(p.player?.playerImage ?? null),
+      playerImageStamp: normalizeBfvLogoUrl(p.player?.playerImageStamp ?? null),
+      playerImageCopyright: p.player?.playerImageCopyright ?? null,
+      matchesPlayed: p.statistics?.matchesPlayed ?? 0,
+      minutesPlayed: p.statistics?.minutesPlayed ?? 0,
+      goals: p.statistics?.goals ?? 0,
+    }));
+
+    return {
+      public: Boolean(data.public),
+      season: data.season?.name ?? null,
+      players,
+    };
+  } catch {
+    return null;
+  }
+}
+
 export async function fetchBfvClub(teamId: string): Promise<BfvClub | null> {
   if (!teamId) return null;
   try {
@@ -283,8 +354,7 @@ export async function fetchBfvTable(teamId: string): Promise<BfvTable | null> {
 export function parseBfvTable(html: string): BfvTable | null {
   if (!html.includes("fixtures-league-table")) return null;
 
-  const rowRegex =
-    /<tr\s+(?:class="([^"]*)"\s*)?>([\s\S]*?)<\/tr>/g;
+  const rowRegex = /<tr(?:\s+class="([^"]*)")?\s*>([\s\S]*?)<\/tr>/g;
   const rows: BfvTableRow[] = [];
 
   let m: RegExpExecArray | null;
@@ -299,10 +369,13 @@ export function parseBfvTable(html: string): BfvTable | null {
     const clubName = cleanText(
       /<div\s+class="club-name"[^>]*>([\s\S]*?)<\/div>/.exec(body)?.[1] ?? "",
     );
-    const logoUrl =
-      normalizeLogo(
-        /<img[^>]+src="([^"]+)"[^>]*alt="[^"]*"/.exec(body)?.[1] ?? null,
-      );
+    const rawLogoSrc =
+      /<img[^>]+src="([^"]+)"[^>]*alt="[^"]*"/.exec(body)?.[1] ?? null;
+    const clubId = extractClubIdFromLogoSrc(rawLogoSrc);
+    // Prefer the BFV format/7 logo — it returns the real crest even for
+    // clubs that haven't opted into fussball.de (which returns a
+    // placeholder at format/0).
+    const logoUrl = clubId ? bfvClubLogoUrl(clubId) : normalizeLogo(rawLogoSrc);
 
     // Columns in order after rank/club: Sp G U V "x : y" Tordiff Pkt
     const numericCells = [...body.matchAll(/<td[^>]*>\s*([\s\S]*?)\s*<\/td>/g)]
@@ -363,6 +436,12 @@ function normalizeLogo(src: string | null): string | null {
   if (src.startsWith("//")) return `https:${src}`;
   if (src.startsWith("/")) return `https://www.fussball.de${src}`;
   return src;
+}
+
+function extractClubIdFromLogoSrc(src: string | null): string | null {
+  if (!src) return null;
+  const m = /\/id\/([A-Z0-9]+)\//i.exec(src);
+  return m?.[1] ?? null;
 }
 
 function readNumber(match: RegExpExecArray | null): number | null {

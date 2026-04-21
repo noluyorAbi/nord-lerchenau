@@ -5,14 +5,16 @@ type Props = { person: Person };
 function portraitUrl(photo: Person["photo"]): string | null {
   if (!photo || typeof photo !== "object") return null;
   const m = photo as Media;
-  if (!m.url) return null;
-  // Prefer relative path so the src works on whichever domain is serving.
-  try {
-    const u = new URL(m.url);
-    return u.pathname + u.search;
-  } catch {
-    return m.url;
+  const url = m.url ?? "";
+  // Blob / external CDN — use the stored URL directly.
+  if (/^https?:\/\//.test(url) && !url.includes("/api/media/file/")) {
+    return url;
   }
+  // Local upload adapter — Payload's /api/media/file/ route isn't reachable
+  // from Vercel's serverless runtime, but the file ships with the build at
+  // public/uploads/<filename>, which Next.js serves directly.
+  if (m.filename) return `/uploads/${m.filename}`;
+  return null;
 }
 
 export function PersonCard({ person }: Props) {

@@ -22,6 +22,7 @@ import { Users } from "./payload/collections/Users";
 
 import { ChronikPage } from "./payload/globals/ChronikPage";
 import { ContactInfo } from "./payload/globals/ContactInfo";
+import { FaqPage } from "./payload/globals/FaqPage";
 import { HomePage } from "./payload/globals/HomePage";
 import { JugendfoerderPage } from "./payload/globals/JugendfoerderPage";
 import { LegalPages } from "./payload/globals/LegalPages";
@@ -57,6 +58,7 @@ export default buildConfig({
     VereinsheimPage,
     JugendfoerderPage,
     LegalPages,
+    FaqPage,
   ],
   typescript: {
     outputFile: path.resolve(dirname, "payload-types.ts"),

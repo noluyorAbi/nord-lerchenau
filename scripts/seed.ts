@@ -449,6 +449,7 @@ async function main() {
           links: [
             { label: "Mitglied werden", href: "/mitgliedschaft" },
             { label: "Sponsoring", href: "/sponsoren" },
+            { label: "FAQ", href: "/faq" },
           ],
         },
         {
@@ -623,6 +624,72 @@ Ebereschenstraße 17
 80935 München
 info@svnord.de`,
       ),
+    } as never,
+  });
+
+  // FAQ — base set expanded from the live site's 4 questions with
+  // answers grounded in the real repo (team count, league, venue).
+  await payload.updateGlobal({
+    slug: "faq-page",
+    data: {
+      intro:
+        "Die häufigsten Fragen rund um Mitgliedschaft, Training und Vereinsleben beim SV Nord München-Lerchenau. Antwort fehlt? Schreibt uns einfach an info@svnord.de.",
+      items: [
+        {
+          group: "allgemein",
+          question: "Welche Sportarten gibt es beim SV Nord?",
+          answer:
+            "Wir bieten Fußball (Herren, Jugend, Senioren, AH, Schiedsrichter), Volleyball, Gymnastik, Ski und Esport — rund 500 Mitglieder in fünf Abteilungen.",
+        },
+        {
+          group: "allgemein",
+          question: "Welche Mannschaften gibt es im Fußballbereich?",
+          answer:
+            "Aktuell stellen wir drei Herren-Mannschaften, zwei Seniorenteams (A & B) sowie eine Alte Herren. Im Jugendbereich spielen wir von den Bambinis bis zur A-Jugend in allen Altersstufen, für Mädchen zusätzlich die B-, C- und D-Juniorinnen.",
+        },
+        {
+          group: "allgemein",
+          question: "In welcher Liga spielt die 1. Mannschaft?",
+          answer:
+            "Die erste Herren-Mannschaft spielt in der Saison 2025/26 in der Bezirksliga Oberbayern Nord. Tabelle, Spielplan und Torjäger findest Du live auf fupa.net — der Block auf unserer Startseite zieht diese Daten automatisch.",
+        },
+        {
+          group: "mitgliedschaft",
+          question: "Wer kann beim SV Nord mitspielen?",
+          answer:
+            "Jeder und jede Sportbegeisterte, vom Anfänger bis zum erfahrenen Spieler. Wir nehmen Mitglieder jeden Alters auf — einfach ein Probetraining vereinbaren und reinschnuppern.",
+        },
+        {
+          group: "mitgliedschaft",
+          question: "Wie werde ich Mitglied?",
+          answer:
+            "Den Aufnahmeantrag findest Du unter /mitgliedschaft bzw. im Vereinsheim. Fragen beantwortet der Vorstand per E-Mail: info@svnord.de.",
+        },
+        {
+          group: "mitgliedschaft",
+          question: "Gibt es einen Jugendförderverein?",
+          answer:
+            "Ja. Der Förderverein der Fußballjunioren unterstützt Trainingslager, Ausstattung und Jugend-Events. Mindestbeitrag 24 € pro Jahr, Spendenquittungen werden ausgestellt. Kontakt: nordjugend@gmx.de.",
+        },
+        {
+          group: "training",
+          question: "Wo trainieren die Mannschaften?",
+          answer:
+            "Auf der Bezirkssportanlage Lerchenau in der Ebereschenstraße 17, 80935 München — zwei Kunstrasenplätze, ein Naturrasenplatz und im Winter zusätzlich eine Sporthalle.",
+        },
+        {
+          group: "training",
+          question: "Wie kann ich den Verein kontaktieren?",
+          answer:
+            "Per Mail an info@svnord.de, für den Jugendförderverein nordjugend@gmx.de, und für die Vorstandschaft stehen die persönlichen Kontakte unter /verein/vorstand. Das Kontaktformular unter /kontakt wird innerhalb von 2–3 Tagen beantwortet.",
+        },
+        {
+          group: "vereinsheim",
+          question: "Wann hat das Vereinsheim Eschengarten geöffnet?",
+          answer:
+            "Montag: Ruhetag. Dienstag – Freitag 11:00 – 23:30 Uhr, Samstag 10:00 – 23:30 Uhr, Sonntag 10:00 – 21:00 Uhr. Reservierung unter +49 (0)89 351 1899 oder www.eschengarten.com.",
+        },
+      ],
     } as never,
   });
 

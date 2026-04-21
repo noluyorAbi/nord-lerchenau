@@ -110,6 +110,7 @@ export interface Config {
     'vereinsheim-page': VereinsheimPage;
     'jugendfoerder-page': JugendfoerderPage;
     'legal-pages': LegalPage;
+    'faq-page': FaqPage;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
@@ -120,6 +121,7 @@ export interface Config {
     'vereinsheim-page': VereinsheimPageSelect<false> | VereinsheimPageSelect<true>;
     'jugendfoerder-page': JugendfoerderPageSelect<false> | JugendfoerderPageSelect<true>;
     'legal-pages': LegalPagesSelect<false> | LegalPagesSelect<true>;
+    'faq-page': FaqPageSelect<false> | FaqPageSelect<true>;
   };
   locale: null;
   widgets: {
@@ -1051,6 +1053,39 @@ export interface LegalPage {
   };
   updatedAt?: string | null;
   createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq-page".
+ */
+export interface FaqPage {
+  id: number;
+  intro?: string | null;
+  items?:
+    | {
+        question: string;
+        answer: string;
+        group?: ('allgemein' | 'mitgliedschaft' | 'training' | 'vereinsheim') | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+export interface FaqPageSelect<T extends boolean = true> {
+  intro?: T;
+  items?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        group?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -200,6 +200,49 @@ async function ensurePortrait(
   });
 }
 
+async function populateSportSection(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+  opts: {
+    sport: string;
+    teamName: string;
+    descriptionMd: string;
+    trainers: Array<{ name: string; role: string; phone?: string; email?: string }>;
+  },
+) {
+  // 1. Ensure trainer/leader people exist; collect their IDs
+  const trainerIds: Array<string | number> = [];
+  for (let i = 0; i < opts.trainers.length; i++) {
+    const t = opts.trainers[i]!;
+    const id = await ensurePerson(payload, {
+      name: t.name,
+      role: t.role,
+      function: "sportleitung",
+      phone: t.phone,
+      email: t.email,
+      order: 100 + i, // push below Vorstand (order 1-7)
+    });
+    trainerIds.push(id);
+  }
+
+  // 2. Find the sport team by slug (Payload auto-slugs from name)
+  const teamSlug = slug(opts.teamName);
+  const existing = await payload.find({
+    collection: "teams",
+    where: { slug: { equals: teamSlug } },
+    limit: 1,
+  });
+  if (existing.docs.length === 0) return;
+
+  await payload.update({
+    collection: "teams",
+    id: existing.docs[0]!.id,
+    data: {
+      description: md(opts.descriptionMd),
+      trainers: trainerIds,
+    } as never,
+  });
+}
+
 async function ensureTeam(payload: Awaited<ReturnType<typeof getPayload>>, t: {
   name: string; sport: string; category: string; ageGroup?: string; order: number;
 }) {
@@ -625,6 +668,104 @@ Ebereschenstraße 17
 info@svnord.de`,
       ),
     } as never,
+  });
+
+  // Sport-section descriptions + leaders (mirrored from the live site).
+  await populateSportSection(payload, {
+    sport: "gymnastik",
+    teamName: "Gymnastik",
+    descriptionMd: `## Willkommen bei der Gymnastik-Abteilung
+
+Unsere Gymnastikabteilung wurde 1967 gegründet und ist somit schon über 50 Jahre alt. Aktuell sind wir rund 35 Mitglieder in der Gymnastikgruppe.
+
+## Training
+
+Wir trainieren jeden Montag von 19:00 bis 20:00 Uhr in der Waldmeisterschule und jeden Mittwoch von 19:00 bis 20:00 Uhr im Pfarrsaal. In den Schulferien ist kein Training.
+
+## Mitmachen
+
+Jeder ist herzlich willkommen — Frauen wie Männer. Habt ihr Lust bekommen? Meldet euch gerne bei uns, wir freuen uns!`,
+    trainers: [
+      {
+        name: "Elisabeth Schillinger",
+        role: "1. Abteilungsleiterin Gymnastik",
+        phone: "0176 646 61 724",
+        email: "info@svnord.de",
+      },
+      {
+        name: "Tenja Hirlinger",
+        role: "Vertretung Gymnastik",
+        phone: "0171 856 60 64",
+      },
+    ],
+  });
+
+  await populateSportSection(payload, {
+    sport: "volleyball",
+    teamName: "Volleyball",
+    descriptionMd: `## Willkommen bei der Volleyball-Abteilung
+
+Wir treffen uns seit 1984 als Familienvolleyballer und wurden dann beim SV Nord als eigene Abteilung aufgenommen. Unser Team ist zwischen 15 und 75 Jahre alt — Gemeinschaft und Spaß am Spiel stehen bei uns im Vordergrund.
+
+## Training
+
+Wir spielen jeden Freitag von 19:00 bis 21:00 Uhr in der Waldmeisterschule. In den Schulferien ist kein Training.
+
+## Mitmachen
+
+Vielleicht habt ihr Lust bekommen und wollt einmal reinschnuppern. Wir freuen uns auf euch!`,
+    trainers: [],
+  });
+
+  await populateSportSection(payload, {
+    sport: "ski",
+    teamName: "Ski",
+    descriptionMd: `## Willkommen bei der Ski-Abteilung
+
+Seit mehr als 20 Jahren ist die Ski-Abteilung fester Bestandteil des SV Nord. Mit ausgebildeten und jungen Skilehrern wollen wir jedem Interessenten den Spaß am Skifahren näher bringen. Vom motivierten Neueinsteiger bis hin zum routinierten Könner — in der Ski-Abteilung ist für jeden Pistenfreund ein Platz frei.
+
+Wir freuen uns auf Dich. Eure SV Nord Ski-Crew.`,
+    trainers: [
+      { name: "Bini Hafner", role: "1. Vorsitzender · Skilehrer" },
+      { name: "Tobias Tins", role: "2. Vorsitzender · Skilehrer" },
+      { name: "Fabian Falk", role: "Skilehrer" },
+    ],
+  });
+
+  await populateSportSection(payload, {
+    sport: "esport",
+    teamName: "Esport",
+    descriptionMd: `## Willkommen bei der E-Sport-Abteilung
+
+Seit nunmehr zwei Jahren messen wir uns auch virtuell mit anderen Vereinen. Im Debütjahr konnten die Jungs von Erich Popp direkt die Meisterschaft eintüten und spielten daraufhin in der höchsten Spielklasse der BFV-eLeague (eRegionalliga). Zudem wurde eine zweite Mannschaft in der eLandesliga gemeldet.
+
+## Aktuelle Saison
+
+Die erste Mannschaft erreichte den 4. Tabellenplatz und qualifizierte sich für die Playoffs, wo man gegen Gilching ausschied. Die Reserve wurde souverän Zweite und verpasste damit knapp den Aufstieg in die eBayernliga.
+
+## Mitspielen
+
+Das Team sucht weiterhin junge, talentierte Spieler ab 16 Jahren. Wenn ihr Lust habt mitzuspielen, meldet euch bei uns.`,
+    trainers: [
+      { name: "Erich Popp", role: "Trainer E-Sport" },
+      { name: "Kevin Schwarz", role: "Kapitän · eRegionalliga" },
+    ],
+  });
+
+  await populateSportSection(payload, {
+    sport: "schiedsrichter",
+    teamName: "Schiedsrichter",
+    descriptionMd: `## Willkommen bei unseren Schiedsrichtern
+
+Ein Platz, zwei Tore und 22 Spieler — das ist das Erste, was jedem zum Thema Fußball einfällt. Doch ohne den Schiedsrichter könnte keine Partie stattfinden. Schiedsrichter zu sein bedeutet nicht nur am Wochenende seine Spiele zu pfeifen; der Aufgabenbereich ist vielfältig.
+
+## Nachwuchs gesucht
+
+Wenn Ihr Lust habt, Verantwortung im Fußball zu übernehmen, wendet Euch gerne an unseren Schiedsrichterobmann. Er erzählt euch mehr über das Tätigkeitsfeld — neben den aktiven Schiedsrichtern suchen wir weiterhin nach Nachwuchs.`,
+    trainers: [
+      { name: "Vincenzo Tropeano", role: "Schiedsrichter-Obmann · Bezirksliga" },
+      { name: "Matthias Brisgies", role: "Schiedsrichter" },
+    ],
   });
 
   // FAQ — base set expanded from the live site's 4 questions with

@@ -298,6 +298,10 @@ async function main() {
     { personName: "Kevin Schwarz", filename: "Kevin_Schwarz.jpg", alt: "Porträt Kevin Schwarz" },
     { personName: "Vincenzo Tropeano", filename: "Vincenzo_Tropeano.jpg", alt: "Porträt Vincenzo Tropeano" },
     { personName: "Matthias Brisgies", filename: "Matthias_Brisgies.jpg", alt: "Porträt Matthias Brisgies" },
+    { personName: "Christoph Hafner", filename: "Christoph_Hafner.jpg", alt: "Porträt Christoph Hafner" },
+    { personName: "Florian Brams", filename: "Florian_Brams.jpg", alt: "Porträt Florian Brams" },
+    { personName: "Vincent Balleng", filename: "Vincent_Balleng.jpg", alt: "Porträt Vincent Balleng" },
+    { personName: "Tobias Lippenberger", filename: "Tobias_Lippenberger.jpg", alt: "Porträt Tobias Lippenberger" },
   ];
   const portraitDir = path.resolve(process.cwd(), "tmp/live-portraits");
   for (const pt of portraits) {
@@ -729,6 +733,7 @@ Wir freuen uns auf Dich. Eure SV Nord Ski-Crew.`,
       { name: "Bini Hafner", role: "1. Vorsitzender · Skilehrer" },
       { name: "Tobias Tins", role: "2. Vorsitzender · Skilehrer" },
       { name: "Fabian Falk", role: "Skilehrer" },
+      { name: "Christoph Hafner", role: "Skilehrer" },
     ],
   });
 
@@ -749,6 +754,10 @@ Das Team sucht weiterhin junge, talentierte Spieler ab 16 Jahren. Wenn ihr Lust 
     trainers: [
       { name: "Erich Popp", role: "Trainer E-Sport" },
       { name: "Kevin Schwarz", role: "Kapitän · eRegionalliga" },
+      { name: "Julian Wetzl", role: "Spieler · eRegionalliga" },
+      { name: "Florian Brams", role: "Spieler · eRegionalliga" },
+      { name: "Vincent Balleng", role: "Spieler · eLandesliga" },
+      { name: "Tobias Lippenberger", role: "Spieler · eLandesliga" },
     ],
   });
 
@@ -764,7 +773,8 @@ Ein Platz, zwei Tore und 22 Spieler — das ist das Erste, was jedem zum Thema F
 Wenn Ihr Lust habt, Verantwortung im Fußball zu übernehmen, wendet Euch gerne an unseren Schiedsrichterobmann. Er erzählt euch mehr über das Tätigkeitsfeld — neben den aktiven Schiedsrichtern suchen wir weiterhin nach Nachwuchs.`,
     trainers: [
       { name: "Vincenzo Tropeano", role: "Schiedsrichter-Obmann · Bezirksliga" },
-      { name: "Matthias Brisgies", role: "Schiedsrichter" },
+      { name: "Matthias Brisgies", role: "Schiedsrichter (aktiv)" },
+      { name: "Kurt Tänzer", role: "Schiedsrichter (passiv)" },
     ],
   });
 

@@ -71,5 +71,9 @@ next-env.d.ts
 !/public/uploads/Kevin_Schwarz.jpg
 !/public/uploads/Vincenzo_Tropeano.jpg
 !/public/uploads/Matthias_Brisgies.jpg
+!/public/uploads/Christoph_Hafner.jpg
+!/public/uploads/Florian_Brams.jpg
+!/public/uploads/Vincent_Balleng.jpg
+!/public/uploads/Tobias_Lippenberger.jpg
 
 /tmp/

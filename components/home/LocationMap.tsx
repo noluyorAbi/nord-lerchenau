@@ -1,4 +1,4 @@
-import { NordMap } from "@/components/NordMap";
+import { MapEmbed } from "@/components/MapEmbed";
 import { SectionEyebrow } from "@/components/SectionEyebrow";
 import { getPayloadClient } from "@/lib/payload";
 
@@ -160,16 +160,16 @@ export async function LocationMap() {
                   style={{ colorScheme: "normal" }}
                 />
               ) : (
-                <NordMap
-                  title={primary.label}
-                  className="relative h-full w-full overflow-hidden bg-nord-ink"
+                <MapEmbed
+                  lat={48.1994}
+                  lon={11.5545}
+                  zoom={15.8}
+                  label={primary.label}
+                  variant="positron"
+                  className="relative h-full w-full"
                 />
               )}
             </div>
-            <div
-              className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/60 to-transparent"
-              aria-hidden
-            />
             <div className="flex items-center justify-between gap-3 border-t border-nord-line bg-white/90 px-4 py-3 backdrop-blur">
               <div className="truncate font-mono text-[11px] uppercase tracking-[0.14em] text-nord-muted">
                 {addressLine}

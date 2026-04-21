@@ -1,15 +1,22 @@
 /**
  * BFV (Bayerischer Fußball-Verband) integration.
  *
- * BFV team pages are client-rendered SPAs, so direct HTML scrapes only return
- * the shell. The fussball.de widget endpoint, however, returns a real HTML
- * fragment for the league table that's also keyed by the same team ID. We use
- * that + a pile of static URL builders to surface BFV data on the site.
+ * Uses the official BFV widget API (same backend the bfv-api npm package
+ * targets) for structured match + club data, and falls back to fussball.de's
+ * team-table HTML fragment for league standings (no equivalent in the BFV
+ * JSON API). Both sources are keyed by the same 32-char team permanentId we
+ * store in Payload.
  */
+
+import type { Schemas } from "bfv-api";
 
 export const BFV_CLUB_ID = "00ES8GNHD400000DVV0AG08LVUPGND5I";
 export const BFV_CLUB_SLUG = "sv-nord-muenchen-lerchenau";
 export const BFV_CLUB_URL = `https://www.bfv.de/vereine/${BFV_CLUB_SLUG}/${BFV_CLUB_ID}`;
+export const BFV_API_BASE = "https://widget-prod.bfv.de/api/service/widget/v1";
+
+const MATCH_REVALIDATE = 900; // 15 min
+const CLUB_REVALIDATE = 86400; // 24 h
 
 export type BfvMeta = {
   teamId?: string | null;
@@ -18,10 +25,168 @@ export type BfvMeta = {
   partner?: string | null;
 };
 
+export type BfvMatch = Schemas["Match"];
+export type BfvTeam = Schemas["Team"];
+export type BfvClub = Schemas["ClubInformation"];
+
 export function bfvTeamUrl(bfv: BfvMeta | null | undefined): string | null {
   if (!bfv?.teamId) return null;
   const s = bfv.slug ?? BFV_CLUB_SLUG;
   return `https://www.bfv.de/mannschaften/${s}/${bfv.teamId}`;
+}
+
+export function bfvMatchUrl(matchId: string): string {
+  return `https://www.bfv.de/spiele/${matchId}`;
+}
+
+export type BfvMatchData = {
+  team: BfvTeam;
+  matches: BfvMatch[];
+};
+
+/**
+ * Fetch all matches (league + friendlies, past + upcoming) for a BFV team.
+ * 15-min revalidate — match days update results live.
+ */
+export async function fetchBfvMatches(
+  teamId: string,
+): Promise<BfvMatchData | null> {
+  if (!teamId) return null;
+  try {
+    const res = await fetch(`${BFV_API_BASE}/team/${teamId}/matches`, {
+      headers: { Accept: "application/json" },
+      next: { revalidate: MATCH_REVALIDATE, tags: [`bfv:matches:${teamId}`] },
+    });
+    if (!res.ok) return null;
+    const body = (await res.json()) as {
+      state: number;
+      data?: BfvMatchData;
+    };
+    if (!body.data?.matches) return null;
+    return body.data;
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchBfvClub(teamId: string): Promise<BfvClub | null> {
+  if (!teamId) return null;
+  try {
+    const res = await fetch(
+      `${BFV_API_BASE}/club/info?teamPermanentId=${teamId}`,
+      {
+        headers: { Accept: "application/json" },
+        next: { revalidate: CLUB_REVALIDATE, tags: [`bfv:club:${teamId}`] },
+      },
+    );
+    if (!res.ok) return null;
+    const body = (await res.json()) as { data?: { club?: BfvClub } };
+    return body.data?.club ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Parse the BFV "DD.MM.YYYY"/"HH:MM" kickoff format into a JS Date.
+ */
+export function parseBfvKickoff(
+  date: string | null | undefined,
+  time: string | null | undefined,
+): Date | null {
+  if (!date) return null;
+  const [d, m, y] = date.split(".");
+  if (!d || !m || !y) return null;
+  const [hh, mm] = (time ?? "00:00").split(":");
+  const iso = `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}T${(hh ?? "00").padStart(2, "0")}:${(mm ?? "00").padStart(2, "0")}:00`;
+  const parsed = new Date(iso);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+export function isLeagueMatch(m: BfvMatch): boolean {
+  return m.competitionType === "Meisterschaften";
+}
+
+export function isOurBfvTeam(m: BfvMatch, teamId: string): "home" | "away" | null {
+  if (m.homeTeamPermanentId === teamId) return "home";
+  if (m.guestTeamPermanentId === teamId) return "away";
+  return null;
+}
+
+export function bfvMatchResult(
+  m: BfvMatch,
+  teamId: string,
+): { played: boolean; us: number | null; them: number | null; outcome: "W" | "D" | "L" | null } {
+  if (!m.result || m.result.trim() === "" || m.result === "-:-") {
+    return { played: false, us: null, them: null, outcome: null };
+  }
+  const [a, b] = m.result.split(":").map((n) => Number(n.trim()));
+  if (Number.isNaN(a) || Number.isNaN(b)) {
+    return { played: false, us: null, them: null, outcome: null };
+  }
+  const side = isOurBfvTeam(m, teamId);
+  const us = side === "home" ? a : b;
+  const them = side === "home" ? b : a;
+  const outcome = us > them ? "W" : us < them ? "L" : "D";
+  return { played: true, us, them, outcome };
+}
+
+export function pickNextBfvMatch(
+  matches: BfvMatch[],
+  now: Date = new Date(),
+): BfvMatch | null {
+  const upcoming = matches
+    .map((m) => ({ m, d: parseBfvKickoff(m.kickoffDate, m.kickoffTime) }))
+    .filter(
+      (x): x is { m: BfvMatch; d: Date } =>
+        x.d !== null &&
+        x.d.getTime() >= now.getTime() &&
+        (!x.m.result || x.m.result.trim() === "" || x.m.result === "-:-"),
+    )
+    .sort((a, b) => a.d.getTime() - b.d.getTime());
+  return upcoming[0]?.m ?? null;
+}
+
+export function pickRecentBfvMatches(
+  matches: BfvMatch[],
+  n = 5,
+  leagueOnly = false,
+): BfvMatch[] {
+  return matches
+    .filter((m) => (leagueOnly ? isLeagueMatch(m) : true))
+    .filter((m) => Boolean(m.result) && m.result !== "-:-")
+    .map((m) => ({ m, d: parseBfvKickoff(m.kickoffDate, m.kickoffTime) }))
+    .filter((x): x is { m: BfvMatch; d: Date } => x.d !== null)
+    .sort((a, b) => b.d.getTime() - a.d.getTime())
+    .slice(0, n)
+    .map((x) => x.m);
+}
+
+export function pickUpcomingBfvMatches(
+  matches: BfvMatch[],
+  n = 5,
+  leagueOnly = false,
+  now: Date = new Date(),
+): BfvMatch[] {
+  return matches
+    .filter((m) => (leagueOnly ? isLeagueMatch(m) : true))
+    .map((m) => ({ m, d: parseBfvKickoff(m.kickoffDate, m.kickoffTime) }))
+    .filter(
+      (x): x is { m: BfvMatch; d: Date } =>
+        x.d !== null &&
+        x.d.getTime() >= now.getTime() &&
+        (!x.m.result || x.m.result.trim() === "" || x.m.result === "-:-"),
+    )
+    .sort((a, b) => a.d.getTime() - b.d.getTime())
+    .slice(0, n)
+    .map((x) => x.m);
+}
+
+export function normalizeBfvLogoUrl(raw: string | null | undefined): string | null {
+  if (!raw) return null;
+  if (raw.startsWith("//")) return `https:${raw}`;
+  if (raw.startsWith("/")) return `https://www.bfv.de${raw}`;
+  return raw;
 }
 
 /**

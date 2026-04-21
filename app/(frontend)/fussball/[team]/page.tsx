@@ -3,8 +3,10 @@ import { notFound } from "next/navigation";
 import { RichText } from "@payloadcms/richtext-lexical/react";
 import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical";
 
+import { BfvTablePanel } from "@/components/BfvTablePanel";
 import { PageHero } from "@/components/PageHero";
 import { PersonCard } from "@/components/PersonCard";
+import { bfvTeamUrl, BFV_CLUB_URL } from "@/lib/bfv";
 import { formatKickoff } from "@/lib/format-date";
 import { getPayloadClient } from "@/lib/payload";
 import type { Person } from "@/payload-types";
@@ -54,23 +56,28 @@ export default async function TeamPage({ params }: Props) {
       typeof l?.label === "string" && typeof l?.url === "string",
   );
 
+  const bfv = team.bfv ?? null;
+  const bfvUrl = bfvTeamUrl(bfv);
+
   return (
     <>
       <PageHero
-        eyebrow={team.league ?? "Fußball"}
+        eyebrow={team.league ?? bfv?.spielklasse ?? "Fußball"}
         title={team.name}
         lede={
-          team.ageGroup
-            ? `Altersklasse ${team.ageGroup}${team.season ? ` · Saison ${team.season}` : ""}`
-            : team.season
-              ? `Saison ${team.season}`
-              : undefined
+          bfv?.partner
+            ? `${bfv.partner}${team.season ? ` · Saison ${team.season}` : ""}`
+            : team.ageGroup
+              ? `Altersklasse ${team.ageGroup}${team.season ? ` · Saison ${team.season}` : ""}`
+              : team.season
+                ? `Saison ${team.season}`
+                : undefined
         }
       />
 
       <div className="mx-auto max-w-7xl px-6 py-14 md:px-10 md:py-20">
         <div className="grid gap-10 md:grid-cols-[1.6fr_1fr]">
-          <div>
+          <div className="space-y-10">
             {hasDescription ? (
               <div className="prose prose-neutral max-w-none">
                 <RichText data={team.description as SerializedEditorState} />
@@ -82,8 +89,10 @@ export default async function TeamPage({ params }: Props) {
               </div>
             )}
 
+            {bfv?.teamId ? <BfvTablePanel bfv={bfv} compact /> : null}
+
             {trainers.length > 0 ? (
-              <div className="mt-12">
+              <div>
                 <h2 className="mb-4 text-sm font-bold uppercase tracking-[0.15em] text-nord-muted">
                   Trainer
                 </h2>
@@ -97,6 +106,40 @@ export default async function TeamPage({ params }: Props) {
           </div>
 
           <aside className="space-y-6">
+            {bfvUrl ? (
+              <div className="overflow-hidden rounded-2xl bg-nord-ink p-6 text-white">
+                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold">
+                  BFV · Offizieller Spielbetrieb
+                </div>
+                <div className="mt-3 font-display text-[22px] font-extrabold leading-tight">
+                  {bfv?.spielklasse ?? team.league ?? team.name}
+                </div>
+                {bfv?.partner ? (
+                  <p className="mt-2 text-xs leading-relaxed text-white/70">
+                    {bfv.partner}
+                  </p>
+                ) : null}
+                <div className="mt-5 flex flex-wrap gap-2">
+                  <a
+                    href={bfvUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-full bg-nord-gold px-4 py-2.5 font-display text-[12px] font-semibold uppercase tracking-[0.04em] text-nord-navy transition hover:-translate-y-px hover:shadow-[0_8px_20px_rgba(200,169,106,0.4)]"
+                  >
+                    Zum Mannschafts­profil ↗
+                  </a>
+                  <a
+                    href={BFV_CLUB_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-full border border-white/20 px-4 py-2.5 font-display text-[12px] font-semibold uppercase tracking-[0.04em] text-white transition hover:bg-white hover:text-nord-navy"
+                  >
+                    Vereinsprofil
+                  </a>
+                </div>
+              </div>
+            ) : null}
+
             {fixturesResult.docs.length > 0 ? (
               <div className="rounded-xl border border-nord-line bg-white p-5">
                 <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-nord-muted">

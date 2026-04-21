@@ -1,5 +1,6 @@
 import { PageHero } from "@/components/PageHero";
 import { TeamCard } from "@/components/TeamCard";
+import { BFV_CLUB_URL } from "@/lib/bfv";
 import { getPayloadClient } from "@/lib/payload";
 
 export const dynamic = "force-dynamic";
@@ -21,6 +22,8 @@ export default async function FussballPage() {
     { label: "Bambini", teams: result.docs.filter((t) => t.category === "bambini") },
     { label: "Juniorinnen", teams: result.docs.filter((t) => t.category === "juniorinnen") },
   ];
+
+  const bfvCount = result.docs.filter((t) => t.bfv?.teamId).length;
 
   return (
     <>
@@ -44,6 +47,19 @@ export default async function FussballPage() {
             <p className="mt-3 text-sm italic text-nord-muted">
               Eure SV Nord Fußballer.
             </p>
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <a
+                href={BFV_CLUB_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full bg-nord-ink px-4 py-2.5 font-display text-[12px] font-semibold uppercase tracking-[0.04em] text-white transition hover:-translate-y-px hover:bg-nord-navy-2"
+              >
+                BFV-Vereinsprofil ↗
+              </a>
+              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-nord-muted">
+                {bfvCount} Mannschaften · live beim BFV gemeldet
+              </span>
+            </div>
           </div>
           <div className="rounded-xl border border-nord-line bg-white p-5">
             <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold">

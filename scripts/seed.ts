@@ -243,20 +243,56 @@ async function populateSportSection(
   });
 }
 
-async function ensureTeam(payload: Awaited<ReturnType<typeof getPayload>>, t: {
-  name: string; sport: string; category: string; ageGroup?: string; order: number;
-}) {
-  const teamSlug = slug(t.name);
+type BfvMeta = {
+  teamId?: string;
+  slug?: string;
+  spielklasse?: string;
+  partner?: string;
+};
+
+async function ensureTeam(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+  t: {
+    name: string;
+    slug?: string;
+    sport: string;
+    category: string;
+    ageGroup?: string;
+    order: number;
+    league?: string;
+    bfv?: BfvMeta;
+  },
+) {
+  const teamSlug = t.slug ?? slug(t.name);
+  const data = {
+    name: t.name,
+    slug: teamSlug,
+    sport: t.sport,
+    category: t.category,
+    ageGroup: t.ageGroup,
+    order: t.order,
+    season: "2025/26",
+    league: t.league,
+    bfv: t.bfv,
+  };
   const existing = await payload.find({
     collection: "teams",
     where: { slug: { equals: teamSlug } },
     limit: 1,
   });
-  if (existing.docs.length > 0) return existing.docs[0]!.id;
+  if (existing.docs.length > 0) {
+    const id = existing.docs[0]!.id;
+    await payload.update({
+      collection: "teams",
+      id,
+      data: data as never,
+    });
+    return id;
+  }
 
   const created = await payload.create({
     collection: "teams",
-    data: { ...t, slug: teamSlug, season: "2025/26" } as never,
+    data: data as never,
   });
   return created.id;
 }
@@ -336,30 +372,303 @@ async function main() {
     }
   }
 
-  // 2. Teams (from spec §5). 22 football teams + 5 other-sport rows
+  // 2. Teams — mirrored 1:1 from the BFV Vereinsprofil on 2026-04-22.
+  // BFV club URL: https://www.bfv.de/vereine/sv-nord-muenchen-lerchenau/00ES8GNHD400000DVV0AG08LVUPGND5I
   const teams = [
-    { name: "Erste", sport: "fussball", category: "senioren", order: 1 },
-    { name: "Zwoate", sport: "fussball", category: "senioren", order: 2 },
-    { name: "Dritte", sport: "fussball", category: "senioren", order: 3 },
-    { name: "Senioren A", sport: "fussball", category: "senioren", order: 4 },
-    { name: "Senioren B", sport: "fussball", category: "senioren", order: 5 },
-    { name: "A1 Junioren", sport: "fussball", category: "junioren", ageGroup: "A1", order: 10 },
-    { name: "A2 Junioren", sport: "fussball", category: "junioren", ageGroup: "A2", order: 11 },
-    { name: "B1 Junioren", sport: "fussball", category: "junioren", ageGroup: "B1", order: 12 },
-    { name: "B2 Junioren", sport: "fussball", category: "junioren", ageGroup: "B2", order: 13 },
-    { name: "C1 Junioren", sport: "fussball", category: "junioren", ageGroup: "C1", order: 14 },
-    { name: "D1 Junioren", sport: "fussball", category: "junioren", ageGroup: "D1", order: 15 },
-    { name: "D2 Junioren", sport: "fussball", category: "junioren", ageGroup: "D2", order: 16 },
-    { name: "E1 Junioren", sport: "fussball", category: "junioren", ageGroup: "E1", order: 17 },
-    { name: "E2 Junioren", sport: "fussball", category: "junioren", ageGroup: "E2", order: 18 },
-    { name: "F1 Junioren", sport: "fussball", category: "junioren", ageGroup: "F1", order: 19 },
-    { name: "F2 Junioren", sport: "fussball", category: "junioren", ageGroup: "F2", order: 20 },
-    { name: "F3 Junioren", sport: "fussball", category: "junioren", ageGroup: "F3", order: 21 },
-    { name: "G Junioren", sport: "fussball", category: "junioren", ageGroup: "G", order: 22 },
-    { name: "Bambini", sport: "fussball", category: "bambini", ageGroup: "Bambini", order: 23 },
-    { name: "B-Juniorinnen", sport: "fussball", category: "juniorinnen", ageGroup: "B", order: 30 },
-    { name: "C-Juniorinnen", sport: "fussball", category: "juniorinnen", ageGroup: "C", order: 31 },
-    { name: "D-Juniorinnen", sport: "fussball", category: "juniorinnen", ageGroup: "D", order: 32 },
+    {
+      name: "1. Herren",
+      slug: "erste",
+      sport: "fussball",
+      category: "senioren",
+      ageGroup: "Herren",
+      order: 1,
+      league: "Bezirksliga Oberbayern Nord",
+      bfv: {
+        teamId: "016PMM83PG000000VV0AG811VUDIC8D7",
+        slug: "sv-n-lerchenau",
+        spielklasse: "Herren / Bezirksliga",
+      },
+    },
+    {
+      name: "2. Herren",
+      slug: "zwoate",
+      sport: "fussball",
+      category: "senioren",
+      ageGroup: "Herren",
+      order: 2,
+      league: "Kreisklasse München",
+      bfv: {
+        teamId: "016PG593GK000000VV0AG80NVUT1FLRU",
+        slug: "sv-n-lerchenau-ii",
+        spielklasse: "Herren / Kreisklasse",
+      },
+    },
+    {
+      name: "3. Herren",
+      slug: "dritte",
+      sport: "fussball",
+      category: "senioren",
+      ageGroup: "Herren",
+      order: 3,
+      league: "B-Klasse München",
+      bfv: {
+        teamId: "02EN0JFAQS000000VS5489B1VU24SJ9U",
+        slug: "sv-n-lerchenau-iii",
+        spielklasse: "Herren / B-Klasse",
+      },
+    },
+    {
+      name: "Herren Ü32",
+      slug: "senioren-a",
+      sport: "fussball",
+      category: "senioren",
+      ageGroup: "Ü32",
+      order: 4,
+      league: "Senioren A · A-Klasse Gr. 1",
+      bfv: {
+        teamId: "02DKBK6RNK000000VS5489B1VT3FEKAP",
+        slug: "sv-nord-muenchen-lerchenau",
+        spielklasse: "Senioren / A-Klasse",
+      },
+    },
+    {
+      name: "Herren Ü40",
+      slug: "senioren-b",
+      sport: "fussball",
+      category: "senioren",
+      ageGroup: "Ü40",
+      order: 5,
+      league: "Senioren Ü40 · Kreisklasse 2",
+      bfv: {
+        teamId: "02VQ9J0FS8000000VS5489BSVSPMR2B8",
+        slug: "sg-sv-wb-allianz-muenchen-sv-nord-muenchen-lerchenau",
+        spielklasse: "Senioren Ü40 / Kreisklasse",
+        partner: "Spielgemeinschaft mit SV WB Allianz München",
+      },
+    },
+    {
+      name: "A1-Junioren · U19-I",
+      slug: "a1-junioren",
+      sport: "fussball",
+      category: "junioren",
+      ageGroup: "U19",
+      order: 10,
+      league: "U19 Kreisliga Nord",
+      bfv: {
+        teamId: "011MICNASC000000VTVG0001VTR8C1K7",
+        slug: "sg-nord-lerchenau-fasanarie-nord-u19-i",
+        spielklasse: "A-Junioren / Kreisliga",
+        partner: "Spielgemeinschaft mit Fasanarie-Nord",
+      },
+    },
+    {
+      name: "A2-Junioren · U19-II",
+      slug: "a2-junioren",
+      sport: "fussball",
+      category: "junioren",
+      ageGroup: "U19",
+      order: 11,
+      league: "U19 Kreisklasse Nord",
+      bfv: {
+        teamId: "02Q1H9R058000000VS5489B2VT450JFN",
+        slug: "sg-nord-lerchenau-fasanarie-nord-u19-ii",
+        spielklasse: "A-Junioren / Kreisklasse",
+        partner: "Spielgemeinschaft mit Fasanarie-Nord",
+      },
+    },
+    {
+      name: "B1-Junioren · U17-I",
+      slug: "b1-junioren",
+      sport: "fussball",
+      category: "junioren",
+      ageGroup: "U17",
+      order: 12,
+      league: "U17 Kreisklasse Nord",
+      bfv: {
+        teamId: "011MIDR440000000VTVG0001VTR8C1K7",
+        slug: "sg-nord-lerchenau-fasanarie-nord-u17-i",
+        spielklasse: "B-Junioren / Kreisklasse",
+        partner: "Spielgemeinschaft mit Fasanarie-Nord",
+      },
+    },
+    {
+      name: "B2-Junioren · U17-II",
+      slug: "b2-junioren",
+      sport: "fussball",
+      category: "junioren",
+      ageGroup: "U17",
+      order: 13,
+      league: "U17 Kreisklasse Nord RR",
+      bfv: {
+        teamId: "02MECTAVFG000000VS5489B2VSMMET75",
+        slug: "sg-nord-lerchenau-fasanarie-nord-u17-ii",
+        spielklasse: "B-Junioren / Kreisklasse",
+        partner: "Spielgemeinschaft mit Fasanarie-Nord",
+      },
+    },
+    {
+      name: "C-Junioren · U14",
+      slug: "c1-junioren",
+      sport: "fussball",
+      category: "junioren",
+      ageGroup: "U14",
+      order: 14,
+      league: "U14 Kreisklasse Nord",
+      bfv: {
+        teamId: "011MID44RO000000VTVG0001VTR8C1K7",
+        slug: "sv-nord-lerchenau-u14",
+        spielklasse: "C-Junioren / Kreisklasse",
+      },
+    },
+    {
+      name: "D-Junioren · U13",
+      slug: "d1-junioren",
+      sport: "fussball",
+      category: "junioren",
+      ageGroup: "U13",
+      order: 15,
+      league: "U13 Kreisklasse Nord",
+      bfv: {
+        teamId: "011MIB2F00000000VTVG0001VTR8C1K7",
+        slug: "sv-nord-lerchenau-u13",
+        spielklasse: "D-Junioren / Kreisklasse",
+      },
+    },
+    {
+      name: "D-Junioren · U12",
+      slug: "d2-junioren",
+      sport: "fussball",
+      category: "junioren",
+      ageGroup: "U12",
+      order: 16,
+      league: "U12 Gruppe Nord 01 RR",
+      bfv: {
+        teamId: "01793QVOBS000000VV0AG80NVSPDBCDD",
+        slug: "sv-nord-lerchenau-u12",
+        spielklasse: "D-Junioren / Gruppe Nord",
+      },
+    },
+    {
+      name: "E-Junioren · U10-1",
+      slug: "e1-junioren",
+      sport: "fussball",
+      category: "junioren",
+      ageGroup: "U10",
+      order: 17,
+      league: "U10 Nord Orange RR",
+      bfv: {
+        teamId: "011MIC45LG000000VTVG0001VTR8C1K7",
+        slug: "sv-nord-lerchenau-u10-1",
+        spielklasse: "E-Junioren / Gruppe Orange",
+      },
+    },
+    {
+      name: "E-Junioren · U10-2",
+      slug: "e2-junioren",
+      sport: "fussball",
+      category: "junioren",
+      ageGroup: "U10",
+      order: 18,
+      league: "U10 Nord RR",
+      bfv: {
+        teamId: "02HHKIT4F8000000VS5489B2VS0QNMOS",
+        slug: "sv-nord-lerchenau-u10-2",
+        spielklasse: "E-Junioren / Gruppe Nord",
+      },
+    },
+    {
+      name: "F-Junioren · U9",
+      slug: "f1-junioren",
+      sport: "fussball",
+      category: "junioren",
+      ageGroup: "U9",
+      order: 19,
+      league: "U9 Nord RR",
+      bfv: {
+        teamId: "01E1KUPPOG000000VV0AG811VU96PDS7",
+        slug: "sv-nord-lerchenau-u9",
+        spielklasse: "F-Junioren",
+      },
+    },
+    {
+      name: "F-Junioren · U8-I",
+      slug: "f2-junioren",
+      sport: "fussball",
+      category: "junioren",
+      ageGroup: "U8",
+      order: 20,
+      league: "U8 Nord Puma RR",
+      bfv: {
+        teamId: "026EFPEI0S000000VS5489B1VVJ2HPHR",
+        slug: "sv-nord-lerchenau-u8-i",
+        spielklasse: "F-Junioren / Gruppe Puma",
+      },
+    },
+    {
+      name: "F-Junioren · U8-II",
+      slug: "f3-junioren",
+      sport: "fussball",
+      category: "junioren",
+      ageGroup: "U8",
+      order: 21,
+      league: "U8 Nord Puma RR",
+      bfv: {
+        teamId: "02TQ4KCI78000000VS5489BSVTNMVP4D",
+        slug: "sv-nord-lerchenau-u8-ii",
+        spielklasse: "F-Junioren / Gruppe Puma",
+      },
+    },
+    {
+      name: "Bambini",
+      slug: "bambini",
+      sport: "fussball",
+      category: "bambini",
+      ageGroup: "ab 4 Jahren",
+      order: 22,
+      league: "Trainingsgruppe · kein Spielbetrieb",
+    },
+    {
+      name: "B-Juniorinnen · U17",
+      slug: "b-juniorinnen",
+      sport: "fussball",
+      category: "juniorinnen",
+      ageGroup: "U17",
+      order: 30,
+      league: "U17 Kreisklasse Nord",
+      bfv: {
+        teamId: "02TQ04QJS0000000VS5489BSVTNMVP4D",
+        slug: "sv-nord-muenchen-lerchenau-u17",
+        spielklasse: "B-Juniorinnen / Kreisklasse",
+      },
+    },
+    {
+      name: "C-Juniorinnen · U15",
+      slug: "c-juniorinnen",
+      sport: "fussball",
+      category: "juniorinnen",
+      ageGroup: "U15",
+      order: 31,
+      league: "U15 Kreisklasse Nord",
+      bfv: {
+        teamId: "02MED5F3QO000000VS5489B2VSMMET75",
+        slug: "sv-nord-muenchen-lerchenau-u15",
+        spielklasse: "C-Juniorinnen / Kreisklasse",
+      },
+    },
+    {
+      name: "D-Juniorinnen · U13",
+      slug: "d-juniorinnen",
+      sport: "fussball",
+      category: "juniorinnen",
+      ageGroup: "U13",
+      order: 32,
+      league: "U13 Kreisklasse Nord",
+      bfv: {
+        teamId: "02IPFCVV1G000000VS5489B1VT368TME",
+        slug: "sv-nord-muenchen-lerchenau-u13",
+        spielklasse: "D-Juniorinnen / Kreisklasse",
+      },
+    },
     { name: "Volleyball", sport: "volleyball", category: "allgemein", order: 100 },
     { name: "Gymnastik", sport: "gymnastik", category: "allgemein", order: 101 },
     { name: "Ski", sport: "ski", category: "allgemein", order: 102 },

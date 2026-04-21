@@ -283,6 +283,27 @@ export interface Team {
    * z.B. Bezirksliga Oberbayern
    */
   league?: string | null;
+  /**
+   * Link the team to its BFV registry entry so live data + links show up.
+   */
+  bfv?: {
+    /**
+     * 32-char BFV/DFB-Net ID, e.g. 016PMM83PG000000VV0AG811VUDIC8D7
+     */
+    teamId?: string | null;
+    /**
+     * URL slug for BFV, e.g. sv-n-lerchenau
+     */
+    slug?: string | null;
+    /**
+     * BFV-Wortlaut der Spielklasse, e.g. 'Herren / Bezirksliga'
+     */
+    spielklasse?: string | null;
+    /**
+     * Für SG-Teams, z.B. 'Spielgemeinschaft mit Fasanarie-Nord'
+     */
+    partner?: string | null;
+  };
   trainers?: (number | Person)[] | null;
   description?: {
     root: {
@@ -661,6 +682,14 @@ export interface TeamsSelect<T extends boolean = true> {
   ageGroup?: T;
   season?: T;
   league?: T;
+  bfv?:
+    | T
+    | {
+        teamId?: T;
+        slug?: T;
+        spielklasse?: T;
+        partner?: T;
+      };
   trainers?: T;
   description?: T;
   photo?: T;

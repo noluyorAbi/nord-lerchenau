@@ -61,6 +61,36 @@ export const Teams: CollectionConfig = {
     { name: "season", type: "text", admin: { description: "z.B. 2025/26" } },
     { name: "league", type: "text", admin: { description: "z.B. Bezirksliga Oberbayern" } },
     {
+      name: "bfv",
+      type: "group",
+      admin: {
+        description:
+          "Link the team to its BFV registry entry so live data + links show up.",
+      },
+      fields: [
+        {
+          name: "teamId",
+          type: "text",
+          admin: { description: "32-char BFV/DFB-Net ID, e.g. 016PMM83PG000000VV0AG811VUDIC8D7" },
+        },
+        {
+          name: "slug",
+          type: "text",
+          admin: { description: "URL slug for BFV, e.g. sv-n-lerchenau" },
+        },
+        {
+          name: "spielklasse",
+          type: "text",
+          admin: { description: "BFV-Wortlaut der Spielklasse, e.g. 'Herren / Bezirksliga'" },
+        },
+        {
+          name: "partner",
+          type: "text",
+          admin: { description: "Für SG-Teams, z.B. 'Spielgemeinschaft mit Fasanarie-Nord'" },
+        },
+      ],
+    },
+    {
       name: "trainers",
       type: "relationship",
       relationTo: "people",

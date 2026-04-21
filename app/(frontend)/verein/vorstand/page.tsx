@@ -13,7 +13,7 @@ export default async function VorstandPage() {
     },
     sort: "order",
     limit: 50,
-    depth: 0,
+    depth: 1,
   });
 
   const byFunction = {

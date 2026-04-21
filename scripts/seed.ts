@@ -95,6 +95,53 @@ async function ensurePerson(payload: Awaited<ReturnType<typeof getPayload>>, p: 
   return created.id;
 }
 
+async function ensurePortrait(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+  opts: { personName: string; filename: string; alt: string; filePath: string },
+) {
+  const { personName, filename, alt, filePath } = opts;
+  const person = await payload.find({
+    collection: "people",
+    where: { name: { equals: personName } },
+    limit: 1,
+  });
+  if (person.docs.length === 0) return;
+
+  // Check if media already exists for this filename
+  const existingMedia = await payload.find({
+    collection: "media",
+    where: { filename: { equals: filename } },
+    limit: 1,
+  });
+
+  let mediaId: string | number;
+  if (existingMedia.docs.length > 0) {
+    mediaId = existingMedia.docs[0]!.id;
+  } else {
+    const buf = await fs.readFile(filePath);
+    const mimetype = filename.toLowerCase().endsWith(".png")
+      ? "image/png"
+      : "image/jpeg";
+    const created = await payload.create({
+      collection: "media",
+      data: { alt } as never,
+      file: {
+        data: buf,
+        mimetype,
+        name: filename,
+        size: buf.byteLength,
+      },
+    });
+    mediaId = created.id;
+  }
+
+  await payload.update({
+    collection: "people",
+    id: person.docs[0]!.id,
+    data: { photo: mediaId } as never,
+  });
+}
+
 async function ensureTeam(payload: Awaited<ReturnType<typeof getPayload>>, t: {
   name: string; sport: string; category: string; ageGroup?: string; order: number;
 }) {
@@ -131,6 +178,36 @@ async function main() {
 
   for (const p of vorstand) {
     await ensurePerson(payload, p);
+  }
+
+  // 1b. Portraits from the live site (mirrored into tmp/live-portraits/)
+  const portraits = [
+    {
+      personName: "Ralf Kirmeyer",
+      filename: "Ralf_Kirmeyer.jpg",
+      alt: "Porträt Ralf Kirmeyer, 1. Vorstand",
+    },
+    {
+      personName: "Birgit Höfer",
+      filename: "BirgitHoefer.jpg",
+      alt: "Porträt Birgit Höfer, 2. Vorstand",
+    },
+    {
+      personName: "Britta Feierabend",
+      filename: "Britta_Feierabend.jpg",
+      alt: "Porträt Britta Feierabend, Kassier",
+    },
+  ];
+  const portraitDir = path.resolve(process.cwd(), "tmp/live-portraits");
+  for (const pt of portraits) {
+    const filePath = path.join(portraitDir, pt.filename);
+    try {
+      await fs.access(filePath);
+      await ensurePortrait(payload, { ...pt, filePath });
+      console.log(`✓ Portrait attached: ${pt.personName}`);
+    } catch {
+      // file not present — skip silently so seed works without the mirror
+    }
   }
 
   // 2. Teams (from spec §5). 22 football teams + 5 other-sport rows

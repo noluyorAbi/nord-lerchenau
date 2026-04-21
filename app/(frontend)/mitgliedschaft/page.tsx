@@ -82,6 +82,21 @@ const DOWNLOADS: DownloadGroup[] = [
       },
     ],
   },
+  {
+    group: "Vereinsdokumente",
+    items: [
+      {
+        label: "Satzung",
+        href: `${WIX_PDF}d3c8104a3f4d4a879ac25bf00ebcbb25.pdf`,
+        hint: "Geltende Fassung vom 23.11.2023 · VR 6924",
+      },
+      {
+        label: "Jugendfußballkonzept",
+        href: `${WIX_PDF}a49715fb5199401ea7ad093e1664eabd.pdf`,
+        hint: "Mia san Nord · Erlebnis vor Ergebnis",
+      },
+    ],
+  },
 ];
 
 export default async function MitgliedschaftPage() {

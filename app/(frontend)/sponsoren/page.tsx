@@ -26,6 +26,55 @@ export default async function SponsorenPage() {
       />
 
       <div className="mx-auto max-w-7xl px-6 py-14 md:px-10 md:py-20">
+        <section className="mb-14 grid gap-8 rounded-2xl bg-nord-paper-2 p-8 md:grid-cols-[1.2fr_1fr] md:p-10">
+          <div>
+            <div className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-nord-muted">
+              Liebe Sponsoren
+            </div>
+            <p className="text-base leading-relaxed text-nord-ink">
+              Der SV Nord München-Lerchenau e.V. ist ein traditioneller
+              Sportverein im Münchner Norden, der im Jahr 1947 gegründet wurde.
+              Derzeit haben wir rund 500 Mitglieder in Fußball, Volleyball,
+              Gymnastik, Ski und Esport.
+            </p>
+            <p className="mt-3 text-base leading-relaxed text-nord-ink">
+              Im Fußballbereich stellen wir zwei Herren- und elf
+              Jugendmannschaften. Im Durchschnitt begrüßen wir 100–150 Zuschauer
+              bei unseren Heimspielen der ersten Herrenmannschaft, die aktuell
+              in der Bezirksliga Oberbayern Nord spielt.
+            </p>
+            <p className="mt-3 text-base leading-relaxed text-nord-muted">
+              Der SV Nord wird in der Lerchenau als sympathischer, familiärer
+              und sehr sozialer Verein wahrgenommen — wir bieten Sponsoren
+              damit eine große Reichweite und mit Werbung auf den Trikots einen
+              gesteigerten Bekanntheitsgrad.
+            </p>
+          </div>
+          <div className="rounded-xl border border-nord-line bg-white p-6">
+            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-nord-gold">
+              Das bieten wir Ihnen
+            </div>
+            <ul className="mt-4 space-y-2 text-sm text-nord-ink">
+              <li className="flex gap-2">
+                <span className="text-nord-gold">›</span> Höherer
+                Bekanntheitsgrad für Ihr Unternehmen
+              </li>
+              <li className="flex gap-2">
+                <span className="text-nord-gold">›</span> Ausdruck sozialen
+                Engagements (z.B. Mannschaftsfotos)
+              </li>
+              <li className="flex gap-2">
+                <span className="text-nord-gold">›</span> Zusätzliche Werbung
+                auf Social Media (Instagram, Facebook)
+              </li>
+              <li className="flex gap-2">
+                <span className="text-nord-gold">›</span> Aushang auf unseren
+                Spielankündigungsplakaten
+              </li>
+            </ul>
+          </div>
+        </section>
+
         {premium.length > 0 ? (
           <section className="mb-14">
             <h2 className="mb-5 text-sm font-bold uppercase tracking-[0.15em] text-nord-gold">
@@ -93,25 +142,49 @@ function SponsorCard({ sponsor, size }: SponsorProps) {
   const s = sponsor as unknown as {
     name: string;
     url?: string | null;
+    logo?: { url?: string | null; filename?: string | null } | number | null;
   };
+  const logo = typeof s.logo === "object" && s.logo ? s.logo : null;
+  const logoUrl = logo
+    ? logo.filename
+      ? `/uploads/${logo.filename}`
+      : (logo.url ?? null)
+    : null;
+
   const content = (
     <div
-      className={`flex items-center justify-center rounded-xl border border-nord-line bg-white ${
-        size === "large" ? "aspect-[16/9] p-6" : "aspect-[3/2] p-4"
-      } transition hover:-translate-y-0.5 hover:shadow-md`}
+      className={`group flex items-center justify-center overflow-hidden rounded-xl border border-nord-line bg-nord-navy ${
+        size === "large" ? "aspect-[16/9] p-8" : "aspect-[3/2] p-5"
+      } transition hover:-translate-y-0.5 hover:shadow-lg`}
     >
-      <span
-        className={`text-center font-serif italic text-nord-muted ${
-          size === "large" ? "text-2xl" : "text-base"
-        }`}
-      >
-        {s.name}
-      </span>
+      {logoUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={logoUrl}
+          alt={`Logo ${s.name}`}
+          className="max-h-full max-w-full object-contain transition group-hover:scale-105"
+          loading="lazy"
+        />
+      ) : (
+        <span
+          className={`text-center font-serif italic text-white/80 ${
+            size === "large" ? "text-2xl" : "text-base"
+          }`}
+        >
+          {s.name}
+        </span>
+      )}
     </div>
   );
 
   return s.url ? (
-    <a href={s.url} target="_blank" rel="noreferrer" className="block">
+    <a
+      href={s.url}
+      target="_blank"
+      rel="noreferrer"
+      className="block"
+      title={s.name}
+    >
       {content}
     </a>
   ) : (

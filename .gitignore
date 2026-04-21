@@ -55,5 +55,11 @@ next-env.d.ts
 !/public/uploads/Ralf_Kirmeyer.jpg
 !/public/uploads/BirgitHoefer.jpg
 !/public/uploads/Britta_Feierabend.jpg
+!/public/uploads/sponsor1.avif
+!/public/uploads/sponsor2.avif
+!/public/uploads/sponsor3.avif
+!/public/uploads/sponsor4.avif
+!/public/uploads/sponsor5.avif
+!/public/uploads/sponsor6.avif
 
 /tmp/

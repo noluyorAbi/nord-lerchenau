@@ -95,6 +95,64 @@ async function ensurePerson(payload: Awaited<ReturnType<typeof getPayload>>, p: 
   return created.id;
 }
 
+async function ensureSponsor(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+  opts: {
+    name: string;
+    filename: string;
+    filePath: string;
+    url?: string;
+    tier?: "premium" | "standard";
+    order: number;
+  },
+) {
+  const { name, filename, filePath, url, tier = "standard", order } = opts;
+  // 1. Upload / find media
+  const existingMedia = await payload.find({
+    collection: "media",
+    where: { filename: { equals: filename } },
+    limit: 1,
+  });
+  let mediaId: string | number;
+  if (existingMedia.docs.length > 0) {
+    mediaId = existingMedia.docs[0]!.id;
+  } else {
+    const buf = await fs.readFile(filePath);
+    const mimetype = filename.endsWith(".avif")
+      ? "image/avif"
+      : filename.endsWith(".png")
+        ? "image/png"
+        : filename.endsWith(".webp")
+          ? "image/webp"
+          : "image/jpeg";
+    const created = await payload.create({
+      collection: "media",
+      data: { alt: `Logo ${name}` } as never,
+      file: { data: buf, mimetype, name: filename, size: buf.byteLength },
+    });
+    mediaId = created.id;
+  }
+
+  // 2. Create / update sponsor doc by name
+  const existingSponsor = await payload.find({
+    collection: "sponsors",
+    where: { name: { equals: name } },
+    limit: 1,
+  });
+  if (existingSponsor.docs.length > 0) {
+    await payload.update({
+      collection: "sponsors",
+      id: existingSponsor.docs[0]!.id,
+      data: { logo: mediaId, tier, order, ...(url ? { url } : {}) } as never,
+    });
+  } else {
+    await payload.create({
+      collection: "sponsors",
+      data: { name, logo: mediaId, tier, order, ...(url ? { url } : {}) } as never,
+    });
+  }
+}
+
 async function ensurePortrait(
   payload: Awaited<ReturnType<typeof getPayload>>,
   opts: { personName: string; filename: string; alt: string; filePath: string },
@@ -207,6 +265,27 @@ async function main() {
       console.log(`✓ Portrait attached: ${pt.personName}`);
     } catch {
       // file not present — skip silently so seed works without the mirror
+    }
+  }
+
+  // 1c. Sponsor logos (mirrored from live site into tmp/live-sponsors/)
+  const sponsors = [
+    { name: "a+b Pertler", filename: "sponsor1.avif", tier: "standard" as const, order: 5 },
+    { name: "Autohaus Walter", filename: "sponsor2.avif", tier: "premium" as const, order: 2 },
+    { name: "CHECK24", filename: "sponsor3.avif", url: "https://www.check24.de/", tier: "premium" as const, order: 1 },
+    { name: "B&W Sport Consulting", filename: "sponsor4.avif", tier: "standard" as const, order: 6 },
+    { name: "M-net", filename: "sponsor5.avif", url: "https://www.m-net.de/", tier: "premium" as const, order: 3 },
+    { name: "Bromberger Office + Living", filename: "sponsor6.avif", tier: "standard" as const, order: 4 },
+  ];
+  const sponsorDir = path.resolve(process.cwd(), "tmp/live-sponsors");
+  for (const sp of sponsors) {
+    const filePath = path.join(sponsorDir, sp.filename);
+    try {
+      await fs.access(filePath);
+      await ensureSponsor(payload, { ...sp, filePath });
+      console.log(`✓ Sponsor attached: ${sp.name}`);
+    } catch {
+      // skip silently
     }
   }
 

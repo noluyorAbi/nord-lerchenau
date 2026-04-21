@@ -282,22 +282,22 @@ async function main() {
   }
 
   // 1b. Portraits from the live site (mirrored into tmp/live-portraits/)
+  // Idempotent: ensurePortrait() skips if the Person doc doesn't yet exist
+  // (so it also works for people we'll only add later via populateSportSection).
   const portraits = [
-    {
-      personName: "Ralf Kirmeyer",
-      filename: "Ralf_Kirmeyer.jpg",
-      alt: "Porträt Ralf Kirmeyer, 1. Vorstand",
-    },
-    {
-      personName: "Birgit Höfer",
-      filename: "BirgitHoefer.jpg",
-      alt: "Porträt Birgit Höfer, 2. Vorstand",
-    },
-    {
-      personName: "Britta Feierabend",
-      filename: "Britta_Feierabend.jpg",
-      alt: "Porträt Britta Feierabend, Kassier",
-    },
+    { personName: "Ralf Kirmeyer", filename: "Ralf_Kirmeyer.jpg", alt: "Porträt Ralf Kirmeyer" },
+    { personName: "Birgit Höfer", filename: "BirgitHoefer.jpg", alt: "Porträt Birgit Höfer" },
+    { personName: "Britta Feierabend", filename: "Britta_Feierabend.jpg", alt: "Porträt Britta Feierabend" },
+    { personName: "Fabian Falk", filename: "FabianFalk.jpg", alt: "Porträt Fabian Falk" },
+    { personName: "Felix Kirmeyer", filename: "Felix_Kirmeyer.jpg", alt: "Porträt Felix Kirmeyer" },
+    { personName: "Tobias Treffer", filename: "Tobias_Treffer.jpg", alt: "Porträt Tobias Treffer" },
+    { personName: "Elisabeth Schillinger", filename: "Elisabeth_Schillinger.jpg", alt: "Porträt Elisabeth Schillinger" },
+    { personName: "Tenja Hirlinger", filename: "Tenja_Hirlinger.jpg", alt: "Porträt Tenja Hirlinger" },
+    { personName: "Bini Hafner", filename: "Bini_Hafner.jpg", alt: "Porträt Bini Hafner" },
+    { personName: "Tobias Tins", filename: "Tobias_Tins.jpg", alt: "Porträt Tobias Tins" },
+    { personName: "Kevin Schwarz", filename: "Kevin_Schwarz.jpg", alt: "Porträt Kevin Schwarz" },
+    { personName: "Vincenzo Tropeano", filename: "Vincenzo_Tropeano.jpg", alt: "Porträt Vincenzo Tropeano" },
+    { personName: "Matthias Brisgies", filename: "Matthias_Brisgies.jpg", alt: "Porträt Matthias Brisgies" },
   ];
   const portraitDir = path.resolve(process.cwd(), "tmp/live-portraits");
   for (const pt of portraits) {
@@ -833,6 +833,19 @@ Wenn Ihr Lust habt, Verantwortung im Fußball zu übernehmen, wendet Euch gerne 
       ],
     } as never,
   });
+
+  // Re-run the portraits pass — the first one (step 1b) can't attach to
+  // sport-section People because those don't exist until populateSportSection
+  // runs. Rerunning now picks them up.
+  for (const pt of portraits) {
+    const filePath = path.join(portraitDir, pt.filename);
+    try {
+      await fs.access(filePath);
+      await ensurePortrait(payload, { ...pt, filePath });
+    } catch {
+      // skip silently
+    }
+  }
 
   console.log("\n✓ Seed complete.");
   process.exit(0);

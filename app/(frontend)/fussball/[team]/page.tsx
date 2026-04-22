@@ -9,11 +9,11 @@ import { BfvTablePanel } from "@/components/BfvTablePanel";
 import { FupaSquadPanel } from "@/components/FupaSquadPanel";
 import { PageHero } from "@/components/PageHero";
 import { PersonCard } from "@/components/PersonCard";
+import { TeamSourceButtons } from "@/components/TeamSourceButtons";
 import {
   bfvClubLogoUrl,
   bfvTeamImageUrl,
   bfvTeamUrl,
-  BFV_CLUB_URL,
 } from "@/lib/bfv";
 import { resolveFupaSlug } from "@/lib/fupa";
 import { formatKickoff } from "@/lib/format-date";
@@ -162,12 +162,12 @@ export default async function TeamPage({ params }: Props) {
             </div>
           )}
 
-          {bfvUrl ? (
+          {bfvUrl || resolveFupaSlug(team.fupa ?? null) ? (
             <div className="overflow-hidden rounded-2xl bg-nord-ink p-8 text-white md:p-10">
-              <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
+              <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
                 <div className="min-w-0 flex-1">
                   <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-nord-gold">
-                    BFV · Offizieller Spielbetrieb
+                    Offizieller Spielbetrieb
                   </div>
                   <div
                     className="mt-3 font-display font-extrabold leading-tight"
@@ -181,24 +181,11 @@ export default async function TeamPage({ params }: Props) {
                     </p>
                   ) : null}
                 </div>
-                <div className="flex flex-wrap gap-3">
-                  <a
-                    href={bfvUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-full bg-nord-gold px-5 py-3 font-display text-[13px] font-semibold uppercase tracking-[0.06em] text-nord-navy transition hover:-translate-y-px hover:shadow-[0_8px_20px_rgba(200,169,106,0.4)]"
-                  >
-                    Zum Mannschafts­profil ↗
-                  </a>
-                  <a
-                    href={BFV_CLUB_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-full border border-white/25 px-5 py-3 font-display text-[13px] font-semibold uppercase tracking-[0.06em] text-white transition hover:bg-white hover:text-nord-navy"
-                  >
-                    Vereinsprofil
-                  </a>
-                </div>
+                <TeamSourceButtons
+                  bfv={bfv}
+                  fupa={team.fupa ?? null}
+                  variant="dark"
+                />
               </div>
             </div>
           ) : null}

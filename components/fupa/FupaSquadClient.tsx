@@ -166,13 +166,13 @@ function PlayerCard({
       type="button"
       onClick={onClick}
       aria-label={`Profil von ${player.fullName} öffnen`}
-      className={`group flex w-full items-center gap-3 rounded-lg border p-2.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nord-gold ${
+      className={`group flex w-full items-center gap-4 rounded-xl border p-3.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nord-gold ${
         marked
           ? "border-nord-gold/70 bg-[linear-gradient(90deg,rgba(200,169,106,0.08),transparent_75%)] hover:border-nord-gold"
           : "border-nord-line/70 bg-white hover:-translate-y-0.5 hover:border-nord-gold hover:shadow-sm"
       }`}
     >
-      <span className="relative flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-nord-paper-2 ring-1 ring-nord-line">
+      <span className="relative flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-nord-paper-2 ring-1 ring-nord-line">
         {img ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -182,32 +182,32 @@ function PlayerCard({
             loading="lazy"
           />
         ) : (
-          <span className="font-display text-[11px] font-black text-nord-muted">
+          <span className="font-display text-[13px] font-black text-nord-muted">
             {initials(player.firstName, player.lastName)}
           </span>
         )}
         {player.jerseyNumber !== null && player.jerseyNumber !== undefined ? (
-          <span className="absolute -bottom-1 -right-1 flex size-5 items-center justify-center rounded-full bg-nord-ink font-display text-[10px] font-black text-white ring-2 ring-white">
+          <span className="absolute -bottom-1 -right-1 flex size-6 items-center justify-center rounded-full bg-nord-ink font-display text-[11px] font-black text-white ring-2 ring-white">
             {player.jerseyNumber}
           </span>
         ) : null}
       </span>
-      <span className="flex min-w-0 flex-1 flex-col">
+      <span className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="flex items-center gap-1.5">
-          <span className="truncate font-display text-sm font-bold text-nord-ink">
+          <span className="truncate font-display text-base font-bold text-nord-ink">
             {player.fullName}
           </span>
           {player.isCaptain ? (
-            <span className="shrink-0 rounded-sm bg-nord-gold px-1 font-mono text-[9px] font-black text-nord-navy">
+            <span className="shrink-0 rounded-sm bg-nord-gold px-1.5 py-0.5 font-mono text-[10px] font-black text-nord-navy">
               C
             </span>
           ) : player.isViceCaptain ? (
-            <span className="shrink-0 rounded-sm bg-nord-navy px-1 font-mono text-[9px] font-black text-white">
+            <span className="shrink-0 rounded-sm bg-nord-navy px-1.5 py-0.5 font-mono text-[10px] font-black text-white">
               C²
             </span>
           ) : null}
         </span>
-        <span className="truncate font-mono text-[10px] tracking-[0.08em] text-nord-muted">
+        <span className="truncate font-mono text-[12px] tracking-[0.06em] text-nord-muted">
           {[
             player.age !== null ? `${player.age} J.` : null,
             player.matches > 0 ? `${player.matches} Sp` : null,
@@ -234,8 +234,8 @@ function PlayerCard({
 function CoachRow({ coach }: { coach: FupaSquadCoach }) {
   const img = fupaImage(coach.image, "128x128", "webp");
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-nord-line/70 bg-white p-2.5">
-      <span className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-nord-paper-2 ring-1 ring-nord-line">
+    <div className="flex items-center gap-4 rounded-xl border border-nord-line/70 bg-white p-3.5">
+      <span className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-nord-paper-2 ring-1 ring-nord-line">
         {img ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -245,16 +245,16 @@ function CoachRow({ coach }: { coach: FupaSquadCoach }) {
             loading="lazy"
           />
         ) : (
-          <span className="font-display text-[11px] font-black text-nord-muted">
+          <span className="font-display text-[13px] font-black text-nord-muted">
             {initials(coach.firstName, coach.lastName)}
           </span>
         )}
       </span>
-      <span className="flex min-w-0 flex-1 flex-col">
-        <span className="truncate font-display text-sm font-bold text-nord-ink">
+      <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <span className="truncate font-display text-base font-bold text-nord-ink">
           {coach.firstName} {coach.lastName}
         </span>
-        <span className="truncate font-mono text-[10px] tracking-[0.08em] text-nord-gold">
+        <span className="truncate font-mono text-[12px] tracking-[0.06em] text-nord-gold">
           {coach.role}
           {coach.age !== null ? ` · ${coach.age} J.` : ""}
         </span>

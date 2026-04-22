@@ -44,13 +44,13 @@ export async function BfvTablePanel({ bfv, compact }: Props) {
 
   return (
     <section className="overflow-hidden rounded-2xl border border-nord-line bg-white">
-      <div className="flex items-center justify-between gap-3 border-b border-nord-line bg-nord-paper-2 px-5 py-3.5">
+      <div className="flex items-center justify-between gap-3 border-b border-nord-line bg-nord-paper-2 px-6 py-4">
         <div>
-          <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold">
+          <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-nord-gold">
             BFV · Tabelle
           </div>
           {bfv.spielklasse ? (
-            <div className="mt-0.5 font-display text-sm font-bold text-nord-ink">
+            <div className="mt-1 font-display text-base font-bold text-nord-ink">
               {bfv.spielklasse}
             </div>
           ) : null}
@@ -60,7 +60,7 @@ export async function BfvTablePanel({ bfv, compact }: Props) {
             href={profileUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="shrink-0 font-mono text-[10px] uppercase tracking-[0.14em] text-nord-navy transition hover:text-nord-gold"
+            className="shrink-0 font-mono text-[11px] uppercase tracking-[0.14em] text-nord-navy transition hover:text-nord-gold"
           >
             Auf BFV ↗
           </a>
@@ -71,15 +71,15 @@ export async function BfvTablePanel({ bfv, compact }: Props) {
         {rowsToShow.map((row) => (
           <li
             key={row.rank}
-            className={`grid grid-cols-[32px_1fr_auto_auto] items-center gap-3 px-4 py-2.5 text-[13px] sm:grid-cols-[36px_1fr_36px_36px_36px_44px_52px] sm:px-5 ${
+            className={`grid grid-cols-[36px_1fr_auto_auto] items-center gap-3 px-4 py-3.5 text-[15px] sm:grid-cols-[44px_1fr_44px_44px_44px_52px_64px] sm:gap-4 sm:px-6 sm:py-4 ${
               row.isUs
-                ? "bg-[linear-gradient(90deg,rgba(200,169,106,0.14),transparent_60%)]"
+                ? "bg-[linear-gradient(90deg,rgba(200,169,106,0.16),transparent_60%)]"
                 : ""
             }`}
           >
             <span>
               <span
-                className={`inline-flex size-6 items-center justify-center rounded font-bold text-[11px] ${
+                className={`inline-flex size-8 items-center justify-center rounded-md font-bold text-[13px] ${
                   row.isUs
                     ? "bg-nord-gold text-nord-navy"
                     : "bg-nord-paper-2 text-nord-ink"
@@ -88,18 +88,18 @@ export async function BfvTablePanel({ bfv, compact }: Props) {
                 {row.rank}
               </span>
             </span>
-            <span className="flex min-w-0 items-center gap-2">
+            <span className="flex min-w-0 items-center gap-3">
               {row.logoUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={row.logoUrl}
                   alt=""
-                  className="size-5 shrink-0 object-contain"
+                  className="size-7 shrink-0 object-contain"
                   loading="lazy"
                 />
               ) : null}
               <span
-                className={`min-w-0 truncate font-display ${
+                className={`min-w-0 truncate font-display text-[15px] sm:text-base ${
                   row.isUs ? "font-black" : "font-bold"
                 } text-nord-ink`}
               >
@@ -121,7 +121,7 @@ export async function BfvTablePanel({ bfv, compact }: Props) {
             <span className="hidden text-right tabular-nums text-nord-muted sm:inline">
               {formatGoalDiff(row.goalDifference)}
             </span>
-            <span className="text-right font-display font-black text-nord-gold">
+            <span className="text-right font-display text-[17px] font-black text-nord-gold">
               {row.points}
               <span className="ml-1 font-normal text-[10px] text-nord-muted">
                 Pkt

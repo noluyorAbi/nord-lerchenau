@@ -6,25 +6,21 @@ import { getPayloadClient } from "@/lib/payload";
 
 export const dynamic = "force-dynamic";
 
-const JFV_BODY = `
-Liebe Eltern, liebe Freunde des SV Nord Lerchenau,
+const DEFAULT_INTRO =
+  "Der Förderverein der Fußballjunioren unterstützt die Jugendmannschaften über das hinaus, was der reine Spielbetrieb hergibt — damit alle Kinder das gleiche Erlebnis haben.";
 
-seit vielen Jahren wird in der Jugend der Fußballabteilung des SV Nord Lerchenau eine sehr erfolgreiche Jugendarbeit geleistet. Der SV Nord Lerchenau bietet jungen Menschen eine hervorragende Möglichkeit zur sportlichen Betätigung mit allen positiven Wirkungen einer sozialen Gemeinschaft, die ein Verein erzielt. Nicht nur beim Sport, sondern auch bei der Ausgestaltung des Vereinslebens hat die Fußballjugend einen hohen Stand erreicht. Diesen Standard wollen wir halten und weiter heben — trotz angespannter wirtschaftlicher Lage.
-
-Mit der Gründung des Fördervereins der Fußballjunioren haben wir eine Möglichkeit geschaffen, die zahlreichen Jugendmannschaften der Fußball-Abteilung finanziell zu unterstützen. Die für einen geregelten Sportbetrieb notwendigen Aufwendungen werden weiterhin vom SV Nord Lerchenau bestritten — unsere Mittel und Unterstützungen sind für Anschaffungen und Aktivitäten gedacht, die darüber hinausgehen.
-
-Ziel des Fördervereins der Fußballjunioren ist es, das Angebot an die Kinder und Jugendlichen rund um den Sport zu intensivieren.
-`.trim();
-
-const JFV_BULLETS = [
+const DEFAULT_BULLETS = [
   "Zuzahlung zu Ausflügen und Kurzreisen",
   "Zuzahlung zur Ausgestaltung von Feierlichkeiten der Nordjugend",
   "Zuzahlung zur Unterstützung von Aktivitäten und Trainingsbetrieb",
 ];
 
-const JFV_CONTACT_EMAIL_PRIMARY = "nordjugend@gmx.de";
-const JFV_CONTACT_EMAIL_BOARD = "ergin.piker@svnord.de";
-const JFV_FORM_PDF = "/downloads/jfv-beitrittserklaerung.pdf";
+const DEFAULT_PRIMARY_EMAIL = "nordjugend@gmx.de";
+const DEFAULT_BOARD_NAME = "Ergin Piker";
+const DEFAULT_BOARD_ROLE = "1. Vorstand";
+const DEFAULT_BOARD_EMAIL = "ergin.piker@svnord.de";
+const DEFAULT_FORM_PDF = "/downloads/jfv-beitrittserklaerung.pdf";
+const DEFAULT_MIN_FEE = 24;
 
 export default async function JugendfoerderPage() {
   const payload = await getPayloadClient();
@@ -34,12 +30,29 @@ export default async function JugendfoerderPage() {
     page.body && typeof page.body === "object" && "root" in page.body;
   const iban = page.iban ?? null;
 
+  const intro = (page.intro?.trim() || DEFAULT_INTRO) ?? DEFAULT_INTRO;
+  const bullets =
+    Array.isArray(page.supportBullets) && page.supportBullets.length > 0
+      ? page.supportBullets
+          .map((b) => (typeof b?.text === "string" ? b.text.trim() : ""))
+          .filter(Boolean)
+      : DEFAULT_BULLETS;
+  const minFee = page.minAnnualFee ?? DEFAULT_MIN_FEE;
+  const formPdfUrl = page.formPdfUrl?.trim() || DEFAULT_FORM_PDF;
+  const primaryEmail =
+    page.primaryContactEmail?.trim() ||
+    page.contactEmail?.trim() ||
+    DEFAULT_PRIMARY_EMAIL;
+  const boardName = page.boardMemberName?.trim() || DEFAULT_BOARD_NAME;
+  const boardRole = page.boardRole?.trim() || DEFAULT_BOARD_ROLE;
+  const boardEmail = page.boardContactEmail?.trim() || DEFAULT_BOARD_EMAIL;
+
   return (
     <>
       <PageHero
         eyebrow="Jugendförderverein"
         title="Für die nächste Generation."
-        lede="Der Förderverein der Fußballjunioren unterstützt die Jugendmannschaften über das hinaus, was der reine Spielbetrieb hergibt — damit alle Kinder das gleiche Erlebnis haben."
+        lede={intro}
       />
       <article className="mx-auto max-w-3xl px-6 py-12 md:py-16">
         {hasBody ? (
@@ -47,8 +60,9 @@ export default async function JugendfoerderPage() {
             <RichText data={page.body as SerializedEditorState} />
           </div>
         ) : (
-          <div className="prose prose-neutral prose-lg max-w-none whitespace-pre-line text-nord-ink">
-            {JFV_BODY}
+          <div className="rounded-xl border border-dashed border-nord-line bg-white p-8 text-sm text-nord-muted">
+            Haupttext im Admin pflegen —{" "}
+            <em>Seiten → Jugendförderverein → Body</em>.
           </div>
         )}
 
@@ -57,7 +71,7 @@ export default async function JugendfoerderPage() {
             Unsere Unterstützung
           </div>
           <ul className="mt-4 space-y-2.5 text-base leading-relaxed text-nord-ink">
-            {JFV_BULLETS.map((b) => (
+            {bullets.map((b) => (
               <li key={b} className="flex gap-2">
                 <span className="select-none text-nord-gold">›</span>
                 <span>{b}</span>
@@ -72,14 +86,16 @@ export default async function JugendfoerderPage() {
           </div>
           <p className="mt-3 text-base leading-relaxed text-nord-ink">
             Der Förderverein der Fußballjunioren erhebt einen{" "}
-            <strong>Mindest­jahresbeitrag von 24&nbsp;€</strong>. Der Beitrag
-            ist bewusst niedrig gehalten, damit über darüber hinausgehende
-            Zuzahlungen — einmalig oder laufend — eine Spenden­quittung
+            <strong>
+              Mindest­jahresbeitrag von {minFee}&nbsp;€
+            </strong>
+            . Der Beitrag ist bewusst niedrig gehalten, damit über darüber
+            hinausgehende Zuzahlungen — einmalig oder laufend — eine Spenden­quittung
             ausgestellt werden kann.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <a
-              href={JFV_FORM_PDF}
+              href={formPdfUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-nord-ink px-5 py-3 font-display text-[13px] font-semibold uppercase tracking-[0.06em] text-white transition hover:-translate-y-px hover:bg-nord-navy-2"
@@ -87,10 +103,10 @@ export default async function JugendfoerderPage() {
               Beitrittserklärung (PDF) ↓
             </a>
             <a
-              href={`mailto:${JFV_CONTACT_EMAIL_PRIMARY}`}
+              href={`mailto:${primaryEmail}`}
               className="inline-flex items-center gap-2 rounded-full border border-nord-line bg-white px-5 py-3 font-display text-[13px] font-semibold uppercase tracking-[0.06em] text-nord-ink transition hover:border-nord-gold hover:text-nord-navy"
             >
-              {JFV_CONTACT_EMAIL_PRIMARY}
+              {primaryEmail}
             </a>
           </div>
         </section>
@@ -114,12 +130,12 @@ export default async function JugendfoerderPage() {
             Vorstand
           </div>
           <p className="mt-3 text-base leading-relaxed text-nord-ink">
-            Ergin Piker, 1. Vorstand · Ebereschenstraße 17, 80935 München ·{" "}
+            {boardName}, {boardRole} · Ebereschenstraße 17, 80935 München ·{" "}
             <a
-              href={`mailto:${JFV_CONTACT_EMAIL_BOARD}`}
+              href={`mailto:${boardEmail}`}
               className="font-semibold text-nord-navy hover:text-nord-navy-2"
             >
-              {JFV_CONTACT_EMAIL_BOARD}
+              {boardEmail}
             </a>
           </p>
         </section>

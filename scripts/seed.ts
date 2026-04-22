@@ -982,6 +982,17 @@ Der Förderverein erhebt von jedem Mitglied nur einen geringen Jahresbeitrag von
 
 Weitere Infos zum Jugendförderverein per Mail an nordjugend@gmx.de.`,
       ),
+      supportBullets: [
+        { text: "Zuzahlung zu Ausflügen und Kurzreisen" },
+        { text: "Zuzahlung zur Ausgestaltung von Feierlichkeiten der Nordjugend" },
+        { text: "Zuzahlung zur Unterstützung von Aktivitäten und Trainingsbetrieb" },
+      ],
+      minAnnualFee: 24,
+      formPdfUrl: "/downloads/jfv-beitrittserklaerung.pdf",
+      primaryContactEmail: "nordjugend@gmx.de",
+      boardMemberName: "Ergin Piker",
+      boardRole: "1. Vorstand",
+      boardContactEmail: "ergin.piker@svnord.de",
     } as never,
   });
 

@@ -1035,7 +1035,7 @@ export interface VereinsheimPage {
  */
 export interface JugendfoerderPage {
   id: number;
-  heroImage?: (number | null) | Media;
+  intro?: string | null;
   body: {
     root: {
       type: string;
@@ -1051,10 +1051,18 @@ export interface JugendfoerderPage {
     };
     [k: string]: unknown;
   };
-  /**
-   * Spenden-IBAN für den Jugendförderverein.
-   */
+  supportBullets?: { text: string; id?: string | null }[] | null;
+  minAnnualFee?: number | null;
+  formPdfUrl?: string | null;
+  primaryContactEmail?: string | null;
+  boardMemberName?: string | null;
+  boardRole?: string | null;
+  boardContactEmail?: string | null;
   iban?: string | null;
+  heroImage?: (number | null) | Media;
+  /**
+   * @deprecated Use `primaryContactEmail` instead. Kept for older docs.
+   */
   contactEmail?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;

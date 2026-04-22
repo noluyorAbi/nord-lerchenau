@@ -284,6 +284,161 @@ export function getFupaSquad(slug: string) {
   );
 }
 
+/**
+ * Enriched player record — merges the /squad entry (position, jersey, age,
+ * photo, captain flags) with the /player-stats entry (assists, cards,
+ * minutes, substitutes, topEleven, penalties). Keyed by the shared fupa
+ * player id. Stats default to 0 when fupa hasn't populated them.
+ */
+export type FupaPlayerDetail = {
+  id: number;
+  slug: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  position: FupaSquadPlayer["position"];
+  jerseyNumber: number | null;
+  age: number | null;
+  birthday: string | null;
+  image: FupaImage;
+  isDeactivated: boolean;
+  isCaptain: boolean;
+  isViceCaptain: boolean;
+
+  matches: number;
+  goals: number;
+  assists: number;
+  minutesPlayed: number;
+  topEleven: number;
+  yellowCards: number;
+  yellowRedCards: number;
+  redCards: number;
+  substitutesIn: number;
+  substitutesOut: number;
+  penaltiesTotal: number;
+  penaltiesHit: number;
+
+  profileUrl: string;
+};
+
+type FupaPlayerStatsRaw = FupaPlayerStat & {
+  penaltiesTotal?: number;
+  penaltiesHit?: number;
+  substitutesIn?: number;
+  substitutesOut?: number;
+};
+
+/**
+ * Extract the stable fupa player-identity id from a player slug. Fupa
+ * slugs always end in `-{playerId}` (e.g. "martin-angermeir-81488"). This
+ * id is stable across seasons/teams, unlike the `id` on squad entries
+ * which is a per-team-season relationship row id.
+ */
+export function parseFupaPlayerId(slug: string): number {
+  const m = /-(\d+)$/.exec(slug);
+  return m ? Number(m[1]) : 0;
+}
+
+export function mergePlayer(
+  squadEntry: FupaSquadPlayer,
+  stats: FupaPlayerStatsRaw | undefined,
+  captain: FupaCaptain | null | undefined,
+  viceCaptain: FupaCaptain | null | undefined,
+): FupaPlayerDetail {
+  const playerId = parseFupaPlayerId(squadEntry.slug);
+  const birthday =
+    (captain?.slug === squadEntry.slug ? captain.birthday : null) ??
+    (viceCaptain?.slug === squadEntry.slug ? viceCaptain.birthday : null) ??
+    null;
+  return {
+    id: playerId || squadEntry.id,
+    slug: squadEntry.slug,
+    firstName: squadEntry.firstName,
+    lastName: squadEntry.lastName,
+    fullName: `${squadEntry.firstName} ${squadEntry.lastName}`.trim(),
+    position: squadEntry.position,
+    jerseyNumber: squadEntry.jerseyNumber,
+    age: squadEntry.age,
+    birthday,
+    image: squadEntry.image,
+    isDeactivated: squadEntry.isDeactivated,
+    isCaptain: captain?.slug === squadEntry.slug,
+    isViceCaptain: viceCaptain?.slug === squadEntry.slug,
+
+    matches: stats?.matches ?? squadEntry.matches ?? 0,
+    goals: stats?.goals ?? squadEntry.goals ?? 0,
+    assists: stats?.assists ?? 0,
+    minutesPlayed: stats?.minutesPlayed ?? 0,
+    topEleven: stats?.topEleven ?? 0,
+    yellowCards: stats?.yellowCards ?? 0,
+    yellowRedCards: stats?.yellowRedCards ?? 0,
+    redCards: stats?.redCards ?? 0,
+    substitutesIn: stats?.substitutesIn ?? 0,
+    substitutesOut: stats?.substitutesOut ?? 0,
+    penaltiesTotal: stats?.penaltiesTotal ?? 0,
+    penaltiesHit: stats?.penaltiesHit ?? 0,
+
+    profileUrl: `https://www.fupa.net/player/${squadEntry.slug}`,
+  };
+}
+
+/**
+ * Pull squad + player-stats in parallel and return a merged roster. Returns
+ * null when the squad itself isn't available.
+ */
+export async function getFupaTeamRoster(
+  teamSlug: string,
+): Promise<{
+  players: FupaPlayerDetail[];
+  coaches: FupaSquadCoach[];
+  info: FupaSquadInfo;
+} | null> {
+  const [squad, stats] = await Promise.all([
+    getFupaSquad(teamSlug),
+    getFupaPlayerStats(teamSlug),
+  ]);
+  if (!squad) return null;
+
+  const statsBySlug = new Map<string, FupaPlayerStatsRaw>();
+  for (const s of (stats ?? []) as FupaPlayerStatsRaw[]) {
+    statsBySlug.set(s.slug, s);
+  }
+
+  const players = squad.players
+    .map((p) =>
+      mergePlayer(
+        p,
+        statsBySlug.get(p.slug),
+        squad.info?.captain,
+        squad.info?.viceCaptain,
+      ),
+    )
+    .sort(
+      (a, b) =>
+        (a.jerseyNumber ?? 999) - (b.jerseyNumber ?? 999) ||
+        a.lastName.localeCompare(b.lastName),
+    );
+
+  return { players, coaches: squad.coaches, info: squad.info };
+}
+
+export function findRosterPlayer(
+  players: FupaPlayerDetail[],
+  key: number | string,
+): FupaPlayerDetail | null {
+  if (typeof key === "number") {
+    return players.find((p) => p.id === key) ?? null;
+  }
+  // String: match slug exactly, or parse numeric suffix.
+  const direct = players.find((p) => p.slug === key);
+  if (direct) return direct;
+  const asNumber = Number(key);
+  if (Number.isFinite(asNumber)) {
+    return players.find((p) => p.id === asNumber) ?? null;
+  }
+  return null;
+}
+
 export function getFupaClub(slug: string = FUPA_CLUB_SLUG) {
   return fupaFetch<FupaClub>(`${API}/clubs/${slug}`, `fupa:club:${slug}`);
 }

@@ -21,6 +21,8 @@ const STATIC_PATHS = [
   "/termine",
   "/sponsoren",
   "/mitgliedschaft",
+  "/shop",
+  "/faq",
   "/kontakt",
   "/impressum",
   "/datenschutz",

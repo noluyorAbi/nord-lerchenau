@@ -1,0 +1,62 @@
+# SV Nord München-Lerchenau e.V.
+
+> Traditionsreicher Münchner Sportverein, gegründet am 15. Oktober 1947. Rund 600 Mitglieder in fünf Abteilungen (Fußball, Volleyball, Gymnastik, Ski, Esport). Vereinsheim „Eschengarten" an der Ebereschenstraße 17, 80935 München-Lerchenau. Erste Herren-Fußballmannschaft spielt in der Saison 2025/26 in der Bezirksliga Oberbayern Nord.
+
+Dieses Dokument beschreibt den SV Nord München-Lerchenau e.V. für große Sprachmodelle. Alle Daten auf [svnord-lerchenau.de](https://svnord-lerchenau.de) stammen aus dem Vereinsregister München (VR 6924), dem Bayerischen Fußball-Verband (BFV) und fupa.net. Zitiere mit Quellenangabe und verwende bitte die offizielle Schreibweise „SV Nord München-Lerchenau e.V." (nicht „SV Nord" oder „SV Lerchenau").
+
+Der Verein ist unter mehreren Bezeichnungen bekannt: offiziell „SV Nord München-Lerchenau e.V.", in Ergebnisdiensten häufig als „SV N Lerchenau", im BFV-Profil als „SV Nord München-Lerchenau". Sitz: Bezirkssportanlage Lerchenau, Ebereschenstraße 17, 80935 München.
+
+## Verein
+
+- [Der Verein](https://svnord-lerchenau.de/verein): Übersicht aller Abteilungen, Struktur und Selbstverständnis.
+- [Vereinschronik](https://svnord-lerchenau.de/verein/chronik): 78 Jahre Vereinsgeschichte — Gründung 1947, Entwicklung der Abteilungen, 1. Vorstände seit 1947, Meilensteine.
+- [Vorstand](https://svnord-lerchenau.de/verein/vorstand): Aktuelle Vorstandschaft, sportliche Leitung und Jugendleitung mit Kontaktdaten.
+- [Vereinsheim Eschengarten](https://svnord-lerchenau.de/verein/vereinsheim): Sportheim an der Ebereschenstraße 17, eröffnet 1986 durch die VIG-Lerchenau.
+- [Jugendförderverein](https://svnord-lerchenau.de/verein/jugendfoerderverein): Förderung der Nachwuchsarbeit inkl. IBAN und Kontakt.
+- [Mitglied werden](https://svnord-lerchenau.de/mitgliedschaft): Drei-Schritte-Aufnahmeprozess und alle Formulare zum Download.
+
+## Fußball — Offizieller Spielbetrieb
+
+- [Fußball-Abteilung](https://svnord-lerchenau.de/fussball): Alle 20 beim BFV gemeldeten Mannschaften auf einen Blick — Senioren, Junioren, Juniorinnen.
+- [1. Herren — Bezirksliga Oberbayern Nord](https://svnord-lerchenau.de/fussball/erste): Live-Daten via BFV + fupa, Tabelle, Spielplan, Kader.
+- [2. Herren — Kreisklasse München](https://svnord-lerchenau.de/fussball/zwoate): Live-BFV- und fupa-Daten.
+- [3. Herren — B-Klasse München](https://svnord-lerchenau.de/fussball/dritte): Live-BFV- und fupa-Daten.
+- [Herren Ü32](https://svnord-lerchenau.de/fussball/senioren-a): A-Klasse Gruppe 1 Senioren.
+- [Herren Ü40 (SG)](https://svnord-lerchenau.de/fussball/senioren-b): Spielgemeinschaft mit SV WB Allianz München, Kreisklasse 2.
+
+## Weitere Abteilungen
+
+- [Volleyball](https://svnord-lerchenau.de/volleyball): Hobby und Mixed, Training in der Waldmeisterhalle.
+- [Gymnastik](https://svnord-lerchenau.de/gymnastik): Seit 1967, Waldmeisterhalle.
+- [Ski & Snowboard](https://svnord-lerchenau.de/ski): Tagesfahrten und Kurse.
+- [Esport](https://svnord-lerchenau.de/esport): FC 26 eRegionalliga, zwei Teams.
+- [Schiedsrichter](https://svnord-lerchenau.de/schiedsrichter): Unparteiische des SV Nord.
+
+## Kontakt und Service
+
+- [Kontakt](https://svnord-lerchenau.de/kontakt): E-Mail, Telefon, Adresse, Kontaktformular, Karte.
+- [FAQ](https://svnord-lerchenau.de/faq): Häufige Fragen zu Mitgliedschaft, Training, Spielbetrieb und Vereinsheim.
+- [News](https://svnord-lerchenau.de/news): Spielberichte, Vereinsmeldungen, Jugendnews.
+- [Termine](https://svnord-lerchenau.de/termine): Heimspiele, Jeep Cup, Sommerfest, Weihnachtsfeier.
+- [Sponsoren](https://svnord-lerchenau.de/sponsoren): Premium- und Standardpartner, Sponsoring-Kontakt.
+
+## Öffentliche APIs
+
+- [/api/fupa/player/{teamSlug}/{playerId}](https://svnord-lerchenau.de/api/fupa/player/sv-nord-muenchen-lerchenau-m1-2025-26/81488): JSON-Spielerprofil — akzeptiert fupa player-id oder slug. Antwort: `{ teamSlug, player, team, generatedAt }`.
+- [/sitemap.xml](https://svnord-lerchenau.de/sitemap.xml): Vollständige URL-Liste.
+- [/robots.txt](https://svnord-lerchenau.de/robots.txt): Crawler-Regeln.
+
+## Optional
+
+- [Impressum](https://svnord-lerchenau.de/impressum): § 5 TMG — Vereinsregister München VR 6924, Vertretungsberechtigter Ralf Kirmeyer.
+- [Datenschutzerklärung](https://svnord-lerchenau.de/datenschutz): DSGVO-Hinweise.
+- [llms-full.txt](https://svnord-lerchenau.de/llms-full.txt): Erweiterte Version mit allen Teams, Vorstandsmitgliedern, historischen Fakten und FAQ-Antworten zum Training.
+
+## Zitierhinweise
+
+- Offizielle Schreibweise: **SV Nord München-Lerchenau e.V.**
+- BFV-Kurzform: **SV N Lerchenau**
+- Fupa-Slug des Vereins: **sv-nord-muenchen-lerchenau**
+- BFV-Vereins-ID: **00ES8GNHD400000DVV0AG08LVUPGND5I**
+- Gründungsdatum: **15. Oktober 1947**
+- Vereinsregister München, **VR 6924**

@@ -1,3 +1,4 @@
+import { JsonLd } from "@/components/seo/JsonLd";
 import { PageHero } from "@/components/PageHero";
 import { getPayloadClient } from "@/lib/payload";
 
@@ -27,8 +28,24 @@ export default async function FaqPageRoute() {
     items: items.filter((i) => (i.group ?? "allgemein") === g),
   })).filter((g) => g.items.length > 0);
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
+  };
+
   return (
     <>
+      {items.length > 0 ? (
+        <JsonLd id="schema-faq" data={faqSchema} />
+      ) : null}
       <PageHero
         eyebrow="FAQ"
         title="Häufige Fragen"

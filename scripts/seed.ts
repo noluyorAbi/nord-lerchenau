@@ -808,6 +808,7 @@ async function main() {
         { label: "Sport", href: "/volleyball" },
         { label: "News", href: "/news" },
         { label: "Termine", href: "/termine" },
+        { label: "Shop", href: "/shop" },
         { label: "Sponsoren", href: "/sponsoren" },
         { label: "Kontakt", href: "/kontakt" },
       ],
@@ -819,6 +820,7 @@ async function main() {
             { label: "Vorstand", href: "/verein/vorstand" },
             { label: "Chronik", href: "/verein/chronik" },
             { label: "Vereinsheim", href: "/verein/vereinsheim" },
+            { label: "Jugendförderverein", href: "/verein/jugendfoerderverein" },
           ],
         },
         {
@@ -828,6 +830,7 @@ async function main() {
             { label: "Volleyball", href: "/volleyball" },
             { label: "Gymnastik", href: "/gymnastik" },
             { label: "Ski", href: "/ski" },
+            { label: "Esport", href: "/esport" },
           ],
         },
         {
@@ -835,12 +838,16 @@ async function main() {
           links: [
             { label: "Mitglied werden", href: "/mitgliedschaft" },
             { label: "Sponsoring", href: "/sponsoren" },
+            { label: "Vereinsshop", href: "/shop" },
             { label: "FAQ", href: "/faq" },
           ],
         },
         {
           title: "Folgen",
-          links: [{ label: "Instagram", href: "https://www.instagram.com/svnord_ski/" }],
+          links: [
+            { label: "Instagram", href: "https://www.instagram.com/svnord_lerchenau/" },
+            { label: "Facebook", href: "https://www.facebook.com/svnordlerchenau/" },
+          ],
         },
       ],
     } as never,

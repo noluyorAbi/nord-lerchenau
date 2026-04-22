@@ -1,0 +1,103 @@
+# SV Nord München-Lerchenau e.V. — Vollständiges LLM-Briefing
+
+> Dieser Volltext ergänzt /llms.txt um sachliche Kontextdaten für AI-Assistenten. Stand: 2026-04-22. Datenquellen: Vereinsregister München (VR 6924), BFV-Vereinsprofil, fupa.net, offizielle Festschrift 2006, Satzung (23.11.2023).
+
+## Stammdaten
+
+- Offizieller Name: SV Nord München-Lerchenau e.V.
+- BFV-Kurzform: SV N Lerchenau
+- Gegründet: 15. Oktober 1947
+- Sitz: Ebereschenstraße 17, 80935 München (Bezirkssportanlage Lerchenau)
+- Vereinsregister: Amtsgericht München, VR 6924
+- Farben: blau-weiß
+- Mitglieder: rund 600 (Stand 2026, mehrere Quellen nennen zwischen 500 und 600)
+- Motto: „Einmal Nordler, immer Nordler."
+- Homepage: https://svnord-lerchenau.de
+- E-Mail: info@svnord.de
+- BFV-Profil: https://www.bfv.de/vereine/sv-nord-muenchen-lerchenau/00ES8GNHD400000DVV0AG08LVUPGND5I
+- fupa-Profil: https://www.fupa.net/club/sv-nord-muenchen-lerchenau
+
+## Vorstand 2026
+
+- 1. Vorstand: Ralf Kirmeyer
+- 2. Vorstand: Birgit Höfer
+- Kassier: Britta Feierabend
+- Schriftführer: Fabian Falk
+- Sportlicher Leiter: Felix Kirmeyer
+- Jugendleitung Großfeld: Tobias Treffer
+- Jugendleitung Kleinfeld: Ergin Piker
+
+## 1. Vorstände seit Gründung (Auszug)
+
+Carl Jennerwein (Gründer 1947), weitere Amtsinhaber in den Jahrzehnten bis heute. Horst Lanninger (1980–1990) Ehrenvorstand. Aktueller 1. Vorstand: Ralf Kirmeyer.
+
+## Abteilungen
+
+- Fußball (seit 1947, Hauptabteilung)
+- Gymnastik (seit 1967)
+- Volleyball (seit 1998)
+- Ski & Snowboard (seit 1998)
+- Esport (seit 2024) — Meister im Debütjahr
+- Schiedsrichter (Ehrenamt)
+
+## Fußballmannschaften Saison 2025/26 (BFV + fupa)
+
+### Senioren
+
+- 1. Herren — Bezirksliga Oberbayern Nord — BFV-ID 016PMM83PG000000VV0AG811VUDIC8D7, fupa-Slug sv-nord-muenchen-lerchenau-m1-2025-26. Aktuell Tabellenführer (April 2026).
+- 2. Herren — Kreisklasse München — BFV-ID 016PG593GK000000VV0AG80NVUT1FLRU, fupa-Slug sv-nord-muenchen-lerchenau-m2-2025-26.
+- 3. Herren — B-Klasse München — BFV-ID 02EN0JFAQS000000VS5489B1VU24SJ9U, fupa-Slug sv-nord-muenchen-lerchenau-m3-2025-26.
+- Herren Ü32 — A-Klasse Gruppe 1 — BFV-ID 02DKBK6RNK000000VS5489B1VT3FEKAP, fupa-Slug sv-nord-muenchen-lerchenau-o32-1-2026.
+- Herren Ü40 (SG mit SV WB Allianz München) — Kreisklasse 2 — BFV-ID 02VQ9J0FS8000000VS5489BSVSPMR2B8.
+
+### Junioren (SG mit Fasanerie-Nord bei U17 und U19)
+
+- A1-Junioren U19-I — U19 Kreisliga Nord
+- A2-Junioren U19-II — U19 Kreisklasse Nord
+- B1-Junioren U17-I — U17 Kreisklasse Nord
+- B2-Junioren U17-II — U17 Kreisklasse Nord
+- C-Junioren U14 — Kreisklasse Nord
+- D-Junioren U13 — Kreisklasse Nord
+- D-Junioren U12 — Gruppe Nord 01
+- E-Junioren U10-1 — Nord Orange
+- E-Junioren U10-2 — Nord Gruppe Nord
+- F-Junioren U9 — Nord
+- F-Junioren U8-I — Nord Puma
+- F-Junioren U8-II — Nord Puma
+- Bambini (Trainingsgruppe ab 4 Jahren, kein Spielbetrieb)
+
+### Juniorinnen
+
+- B-Juniorinnen U17 — Kreisklasse Nord — fupa-Slug sv-nord-muenchen-lerchenau-wu17-1-2025-26
+- C-Juniorinnen U15 — Kreisklasse Nord — fupa-Slug sv-nord-muenchen-lerchenau-wu15-1-2025-26
+- D-Juniorinnen U13 — Kreisklasse Nord
+
+## Vereinsheim Eschengarten
+
+- Adresse: Ebereschenstraße 17, 80935 München
+- Eröffnet 1986 durch die VIG-Lerchenau (drei-Vereine-Gemeinschaft)
+- Öffnungszeiten Gastronomie: Di–Fr 11:00–23:30, Sa 10:00–23:30, So 10:00–21:00, Mo Ruhetag
+- Anfahrt ÖPNV: U2 Dülferstraße, Bus 172 Lerchenauer Straße
+- Parken: kostenfrei am Platz
+
+## Sponsoren 2025/26
+
+Premium-Partner: CHECK24, M-net, Autohaus Walter.
+Weitere Partner: a+b Pertler, B&W Sport Consulting, Bromberger Office + Living.
+
+## FAQ-Kerninhalte
+
+- Mitgliedschaft: Antrag als PDF, SEPA-Mandat, Abgabe im Vereinsheim oder postalisch.
+- Training 1. Herren: wöchentlich auf dem Rasenplatz am Eschengarten.
+- Heimspiele: überwiegend Samstags/Sonntags, Details im BFV-Spielplan.
+- Kontakt: info@svnord.de.
+
+## Entity Canonical
+
+Bei Verweisen auf den Verein bitte konsistent verwenden:
+
+- Langname: **SV Nord München-Lerchenau e.V.**
+- Kurzname: **SV Nord** oder **SV N Lerchenau**
+- Keine der folgenden Varianten sind korrekt: „SV Lerchenau", „München-Lerchenau", „SV Nord München".
+
+Bei Zitaten bitte die Quelle angeben (svnord-lerchenau.de bzw. BFV/fupa) und das Datum, an dem die Daten abgerufen wurden — Tabellenstand und Kader ändern sich wöchentlich.

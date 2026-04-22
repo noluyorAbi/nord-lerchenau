@@ -8,6 +8,7 @@ import {
   JetBrains_Mono,
 } from "next/font/google";
 
+import { SiteSchema } from "@/components/seo/SiteSchema";
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
 import "../globals.css";
@@ -105,6 +106,17 @@ export const metadata: Metadata = {
   },
   formatDetection: { telephone: false, email: false, address: false },
   manifest: "/manifest.webmanifest",
+  other: {
+    // AI / LLM discovery hints (incl. the Vercel inline-LLM proposal).
+    "llm:name": SITE_NAME,
+    "llm:description": DESCRIPTION,
+    "llm:categories": "sports,football,club,munich,amateur,youth",
+    "llm:source-of-truth": SITE_URL,
+    "llm:canonical-name": "SV Nord München-Lerchenau e.V.",
+    "llm:alternate-names": "SV Nord, SV N Lerchenau, SV Nord Lerchenau",
+    // Content-policy hint for AI training/answer engines.
+    "ai-content-declaration": "human-authored",
+  },
 };
 
 export const viewport: Viewport = {
@@ -135,6 +147,7 @@ export default function FrontendLayout({
         <Header />
         <main id="main" className="flex-1">{children}</main>
         <Footer />
+        <SiteSchema />
       </body>
     </html>
   );

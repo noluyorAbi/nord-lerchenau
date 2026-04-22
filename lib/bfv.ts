@@ -395,6 +395,12 @@ export function parseBfvTable(html: string): BfvTable | null {
     const goalDifference = toInt(numericCells[5]) ?? goalsFor - goalsAgainst;
     const points = toInt(numericCells[6]) ?? 0;
 
+    const markedOwn =
+      classes.split(/\s+/).includes("own");
+    // Fall back to name-matching so SG / youth rows that the fussball.de
+    // widget doesn't mark as "own" still highlight as our team.
+    const nameIsUs = isOurClubName(clubName);
+
     rows.push({
       rank,
       clubName,
@@ -407,7 +413,7 @@ export function parseBfvTable(html: string): BfvTable | null {
       goalsAgainst,
       goalDifference,
       points,
-      isUs: classes.includes(" own") || classes.includes("own "),
+      isUs: markedOwn || nameIsUs,
     });
   }
 
@@ -442,6 +448,25 @@ function extractClubIdFromLogoSrc(src: string | null): string | null {
   if (!src) return null;
   const m = /\/id\/([A-Z0-9]+)\//i.exec(src);
   return m?.[1] ?? null;
+}
+
+/**
+ * Match any club/team name that belongs to SV Nord München-Lerchenau,
+ * including SG variants like "(SG) Nord Lerchenau/Fasanarie-Nord …".
+ */
+export function isOurClubName(name: string | null | undefined): boolean {
+  if (!name) return false;
+  const lower = name.toLowerCase();
+  return (
+    lower.includes("sv nord") ||
+    lower.includes("sv n ler") ||
+    lower.includes("sv n lerchenau") ||
+    lower.includes("n. lerchenau") ||
+    lower.includes("nord lerchenau") ||
+    lower.includes("nord-lerchenau") ||
+    /\bsv\s*nord\b/.test(lower) ||
+    /\bn\.?\s*ler(?:chenau)?\b/i.test(name)
+  );
 }
 
 function readNumber(match: RegExpExecArray | null): number | null {

@@ -89,22 +89,34 @@ export default async function TeamPage({ params }: Props) {
       <div className="mx-auto max-w-7xl px-6 py-10 md:px-10 md:py-14">
         {bfv?.teamId ? (
           <div className="mb-10 overflow-hidden rounded-2xl border border-nord-line bg-nord-ink">
-            <div className="relative aspect-[16/9] w-full overflow-hidden sm:aspect-[24/9]">
+            <div className="relative aspect-[16/9] w-full overflow-hidden">
               {bfvTeamImage ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={bfvTeamImage}
-                  alt={`Mannschaftsfoto ${team.name}`}
-                  className="size-full object-cover"
-                  loading="lazy"
-                />
+                <>
+                  {/* Blurred fill backdrop keeps the frame saturated while the
+                      foreground image is shown uncropped via object-contain. */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={bfvTeamImage}
+                    alt=""
+                    aria-hidden
+                    className="absolute inset-0 size-full scale-110 object-cover opacity-40 blur-xl"
+                    loading="lazy"
+                  />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={bfvTeamImage}
+                    alt={`Mannschaftsfoto ${team.name}`}
+                    className="relative size-full object-contain"
+                    loading="lazy"
+                  />
+                </>
               ) : (
                 <div
                   className="size-full bg-[linear-gradient(135deg,#0b1b3f_0%,#142a64_60%,#6ec7ea_120%)]"
                   aria-hidden
                 />
               )}
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,14,36,0.15)_0%,rgba(5,14,36,0.85)_100%)]" />
+              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(5,14,36,0.1)_0%,rgba(5,14,36,0.85)_100%)]" />
               <div className="absolute inset-x-5 bottom-4 flex items-end justify-between gap-4 md:inset-x-8 md:bottom-6">
                 <div className="flex items-center gap-4">
                   {bfvClubCrest ? (

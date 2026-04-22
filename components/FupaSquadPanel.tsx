@@ -214,7 +214,7 @@ function PlayerRow({
   isVice: boolean;
   isMarked: boolean;
 }) {
-  const img = fupaImage(player.image, "96x96", "webp");
+  const img = fupaImage(player.image, "128x128", "webp");
   return (
     <div
       className={`flex items-center gap-3 rounded-lg border p-2.5 transition ${
@@ -275,7 +275,7 @@ function PlayerRow({
 }
 
 function CoachRow({ coach }: { coach: FupaSquadCoach }) {
-  const img = fupaImage(coach.image, "96x96", "webp");
+  const img = fupaImage(coach.image, "128x128", "webp");
   return (
     <div className="flex items-center gap-3 rounded-lg border border-nord-line/70 bg-white p-2.5">
       <span className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-nord-paper-2 ring-1 ring-nord-line">

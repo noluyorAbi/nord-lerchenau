@@ -200,6 +200,54 @@ async function ensurePortrait(
   });
 }
 
+async function ensureTeamPhoto(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+  opts: { teamSlug: string; filename: string; alt: string; filePath: string },
+) {
+  const { teamSlug, filename, alt, filePath } = opts;
+  try {
+    await fs.access(filePath);
+  } catch {
+    return;
+  }
+  const team = await payload.find({
+    collection: "teams",
+    where: { slug: { equals: teamSlug } },
+    limit: 1,
+  });
+  if (team.docs.length === 0) return;
+
+  const existingMedia = await payload.find({
+    collection: "media",
+    where: { filename: { equals: filename } },
+    limit: 1,
+  });
+
+  let mediaId: string | number;
+  if (existingMedia.docs.length > 0) {
+    mediaId = existingMedia.docs[0]!.id;
+  } else {
+    const buf = await fs.readFile(filePath);
+    const created = await payload.create({
+      collection: "media",
+      data: { alt } as never,
+      file: {
+        data: buf,
+        mimetype: "image/jpeg",
+        name: filename,
+        size: buf.byteLength,
+      },
+    });
+    mediaId = created.id;
+  }
+
+  await payload.update({
+    collection: "teams",
+    id: team.docs[0]!.id,
+    data: { photo: mediaId } as never,
+  });
+}
+
 async function populateSportSection(
   payload: Awaited<ReturnType<typeof getPayload>>,
   opts: {
@@ -362,9 +410,9 @@ async function main() {
   // 1c. Sponsor logos (mirrored from live site into tmp/live-sponsors/)
   const sponsors = [
     { name: "a+b Pertler", filename: "sponsor1.avif", tier: "standard" as const, order: 5 },
-    { name: "Autohaus Walter", filename: "sponsor2.avif", tier: "premium" as const, order: 2 },
+    { name: "Autohaus Walter", filename: "sponsor2.avif", url: "https://www.auto-walter.com/", tier: "premium" as const, order: 2 },
     { name: "CHECK24", filename: "sponsor3.avif", url: "https://www.check24.de/", tier: "premium" as const, order: 1 },
-    { name: "B&W Sport Consulting", filename: "sponsor4.avif", tier: "standard" as const, order: 6 },
+    { name: "B&W Sport Consulting", filename: "sponsor4.avif", url: "https://www.bwsportconsulting.de/", tier: "standard" as const, order: 6 },
     { name: "M-net", filename: "sponsor5.avif", url: "https://www.m-net.de/", tier: "premium" as const, order: 3 },
     { name: "Bromberger Office + Living", filename: "sponsor6.avif", tier: "standard" as const, order: 4 },
   ];
@@ -805,7 +853,7 @@ async function main() {
       header: [
         { label: "Verein", href: "/verein" },
         { label: "Fußball", href: "/fussball" },
-        { label: "Sport", href: "/volleyball" },
+        { label: "Sport", href: "/sport" },
         { label: "News", href: "/news" },
         { label: "Termine", href: "/termine" },
         { label: "Shop", href: "/shop" },
@@ -882,57 +930,164 @@ async function main() {
       intro:
         "Seit seiner Gründung 1947 steht der SV Nord für Gemeinschaft, Engagement und sportliche Leidenschaft im Münchner Norden — von 38 Gründungsmitgliedern in der Nachkriegszeit bis heute rund 500 aktive Nordler.",
       body: md(
-        `## Vereinschronik
+        `## Chronik des SV Nord München-Lerchenau e.V.
 
-### Tradition seit 1947
+**Inhalt:**
 
-Was einst unter schwierigen Nachkriegsbedingungen mit viel Eigeninitiative begann, entwickelte sich rasch zu einem festen Bestandteil des sportlichen Lebens im Münchner Norden. In den folgenden Jahrzehnten wuchs der Verein kontinuierlich: Neue Abteilungen entstanden, insbesondere im Fußball- und Handballbereich, und die Jugendarbeit wurde zu einer tragenden Säule.
+1. Vereinsgründung
+2. Entwicklung von 1950 bis 1986
+3. Entwicklung ab 1987 bis 2015
+4. Vorstandschaften
+5. Ehrentafel
+6. Zeittafel
 
-Durch großen Einsatz der Mitglieder konnten wichtige Meilensteine wie der Bau von Sportanlagen, Flutlichtanlagen und schließlich des eigenen Vereinsheims realisiert werden – oft in beeindruckender Eigenleistung.
+## 1. Vereinsgründung
 
-Heute steht der SV Nord für Tradition und Fortschritt gleichermaßen – getragen von dem Ziel, Menschen aller Altersgruppen für den Sport zu begeistern und ein lebendiges Vereinsleben zu gestalten.
+Im Frühjahr 1947 bemühten sich einige sportfreudige Lerchenauer und Eggartler um die Gründung eines Sportvereins. Nach zähen Verhandlungen konnten sich beide Gruppen einigen, den Verein in der Lerchenau zu etablieren. Besonders Alfons Huber, Lorenz Gessler, Hans Brandhuber, Carl Jennerwein, Kleophas Lang und Johann Steiner trieben die Vereinsgründung voran.
 
-#### Vereinsgründung (1947)
+Zur Gründungsversammlung am 15. Oktober 1947 im Gasthof Schützengarten trugen sich 38 Erwachsene und 22 Jugendliche ein. In den Vorstand gewählt wurden: 1. Vorstand Carl Jennerwein, 1. Kassier Adolf Gräf und 1. Schriftführer Karl Hornung. Es wurde beschlossen, den Verein SV Nord München-Lerchenau zu benennen.
 
-Im Frühjahr 1947 bemühten sich einige sportfreudige Lerchenauer und Eggartler um die Gründung eines Sportvereins. Besonders Alfons Huber, Lorenz Gessler, Hans Brandhuber, Carl Jennerwein, Kleophas Lang und Johann Steiner trieben die Vereinsgründung voran.
+### Gründungsmitglieder
 
-Zur Gründungsversammlung am 15. Oktober 1947 im Gasthof Schützengarten trugen sich 38 Erwachsene und 22 Jugendliche ein. In den Vorstand gewählt wurden: 1. Vorstand Carl Jennerwein, 1. Kassier Adolf Gräf und 1. Schriftführer Karl Hornung. Es wurde beschlossen, den Verein „SV Nord München-Lerchenau” zu benennen.
+Jennerwein Carl, Lang Kleophas, Gräf Adolf, Hornung Karl, Brandhuber Johann, Bothner Michael, Steiner Johann, Melz Wilhelm, Heiß Johann, Mährlein Robert, Maier Sebastian, Klingel Johann, Huber Alfons, Steiner Ludwig, Fetzer Jakob, Fetzer Konrad, Brandhuber Albert, Ebersdobler Josef, Buchner Hugo, Noder Walter, Gessler Jakob, Gessler Josef, Härtl Max, Koller Karl, Dietel Hebert, Wimmer Ewald, Remm Horst, Riepl Simon, Samec Tichomir, Kaiser Johann, Demal Johann, Neumaier Herbert, Klotz August, Bilokapic Andreas, Schmidbauer Michael, Spiegel Jakob, Schaflitzl Martin, Pertl Johann.
 
-Von der Deutschen Reichsbahn wurde im Frühjahr 1948 ein Acker an der Heidelerchenstraße gepachtet und mit enormem Arbeitseinsatz zum Sportplatz hergerichtet. Am 01. August 1948 wurde unser Sportplatz mit dem Rückspiel gegen den TSV Unterhaching eingeweiht.
+### Jugendliche bei der Gründungsveranstaltung
 
-#### Die Vereinsentwicklung zwischen 1950 und 1987
+Bauer Sebastian, Detterbeck Wilhelm, Dinauer Rudolf, Dinauer Franz, Heldeis Heinz, Hilger Anton, Hilger Herbert, Ketterl Rudolf, Obermüller Wilhelm, Richter Rudolf.
 
-In den folgenden Jahrzehnten konsolidierten sich die Abteilungen und die Mitgliederzahl wuchs stetig. Trotz beschränkter wirtschaftlicher Mittel wurden in Eigeninitiative die Grundlagen für die heutige Bezirkssportanlage geschaffen.
+Nach den damals in Kraft befindlichen alliierten Bestimmungen mussten bei der Vereinsgründung noch fünf Bürgen benannt werden, die mit dem persönlichen Vermögen hafteten: Martin Schaflitzl, Jakob Spiegel, Willi Melz, Kleophas Lang und Hans Huber. Die sportliche Leitung der Fußballabteilung übernahmen Johann Steiner, Herbert Dietel und Hugo Buchner.
 
-#### 1967 – Flutlichtanlagen in Eigenleistung erstellt
+Erste Aufgabe der Vereinsführung war die Beschaffung von Sportkleidung und Fußbällen. Die wirtschaftliche Lage war katastrophal, Not und Hunger prägten die Zeit. Dennoch wurden relativ schnell ein Spielball und zehn Trikots organisiert. Im Protokoll vom 04. März 1948 heißt es: *„Ein Kompensationsgeschäft zum Erhalt von zwei Bällen in der Gegenleistung einer Kuhhaut wurde ausfindig gemacht."*
 
-Mit unzähligen Arbeitsstunden der Mitglieder wurden die ersten Flutlichtanlagen auf dem Gelände errichtet und ermöglichten damit regelmäßigen Trainingsbetrieb bis in den Abend.
+Von der Deutschen Reichsbahn wurde im Frühjahr 1948 — durch gute Beziehungen und im Einvernehmen mit dem damaligen Pächter, Herrn Kötterl aus Feldmoching — ein Acker an der Heidelerchenstraße gepachtet. Mit enormem Arbeitseinsatz wurde das Gelände zu einem Sportplatz hergerichtet. Mehrere Tonnen Steine mussten aufgelesen werden. Am 01. August 1948 war es so weit: mit dem Rückspiel gegen den TSV Unterhaching wurde unser Sportplatz eingeweiht.
 
-#### 1978 – Neue Vereinsorganisation
+Nach der am 19. Juni 1948 bekanntgegebenen Währungsreform erhielt jeder Bürger am 20. Juni 1948 ein „Kopfgeld" von DM 40,--. Anfang der 50er Jahre wurden Fußballturniere organisiert und im Saal des Vereinsheims Schützengarten fanden Bunte Abende statt. Namhafte Künstler wie Fred Rauch, Helmut M. Backhaus, Adolf Gondrell, Roider Jackl, Georg Plädl, Michl Lang und Ida Schumacher hatten legendäre Auftritte.
 
-Eine grundlegende Neustrukturierung der Vereinsorganisation legte den Grundstein für das weitere Wachstum der Abteilungen.
+## 2. Die Vereinsentwicklung zwischen 1950 und 1987
 
-#### 1980 – Erweiterung der Bezirkssportanlage
+Einen wichtigen Beitrag für die Weiterentwicklung brachte der Neubau der Bezirkssportanlage an der Ebereschenstraße. Großen Anteil daran hatten das damalige Vorstandsmitglied Hans Späth und das Mitglied Georg Pickl. Am 26. Mai 1959 wurde die Anlage mit einem Fußballturnier eingeweiht. Die Jugendarbeit unter Karl Riepl trug erste Früchte — Jugendspieler wie Johann Baumgartner, Georg Albert, Josef Opel und Siegfried Dietel verstärkten die 1. Mannschaft.
 
-Die erste große Erweiterung der Bezirkssportanlage Lerchenau konnte im Oktober 1980 abgeschlossen werden. Die Bestrebungen um weitere Ausbauten liefen über die folgenden Jahre weiter — 1984 gab die Stadt endgültig grünes Licht, 1985 erfolgte der Auftrag, 1986 wurde ein zusätzliches Rasenspielfeld fertiggestellt und 1987 das neue Umkleidegebäude eingeweiht.
+1959 gründete Georg Seifert die Handballabteilung mit einer Damenmannschaft; ein Jahr später folgte unter Abteilungsleiter Hans Proll eine Herrenmannschaft. In den 60er Jahren entwickelte sich die Fußball-Jugendabteilung unter Johann Gottanker zu einer festen Größe — zwei Schülermannschaften und zwei Jugendmannschaften im Punktspielbetrieb, dazu Turniere und Freundschaftsspiele in anderen Städten.
 
-#### 1983–1986 – Der Eschengarten entsteht
+### 1967 — Flutlichtanlagen in Eigenleistung erstellt
 
-Auf Initiative von Horst Lanninger (damals 1. Vorstand des SV Nord) gründeten SV Nord, FC Eintracht München und der Heimat- und Volkstrachtenverein Edelweiß-Stamm Lerchenau am 5. Mai 1983 die „Interessengemeinschaft Sportheimbau Lerchenau” — die heutige Vereins-Interessengemeinschaft Lerchenau e.V. (VIG-Lerchenau). Am 25. April 1985 bewilligte der Stadtrat die Bezuschussung, am 21. Juni 1985 war Baubeginn.
+Bedingt durch den erhöhten Spiel- und Trainingsbetrieb wurden die Bedingungen immer schlechter. Da sich die Stadt München außerstande sah, eine Flutlichtanlage zu finanzieren, bauten die Mitglieder des SV Nord 1967 in Eigenleistung und aus Vereinskosten sowie Spenden die Flutlichtanlage selbst. Ebenfalls 1967 wurde auf Initiative von Frauen der Handball- und Fußballabteilung eine **Gymnastikabteilung** unter Annemarie Riepl gegründet.
 
-Nach rund 15.000 freiwilligen Arbeitsstunden der Vereinsmitglieder wurde das Vereinsheim „Eschengarten” am 19. Juli 1986 feierlich eröffnet — ein Gemeinschaftsprojekt dreier Vereine, das bis heute der gesellschaftliche Mittelpunkt der Lerchenau ist.
+Die 70er Jahre brachten der Jugendabteilung einen enormen Mitgliederzuwachs. Klaus Wersching hatte maßgeblichen Anteil an der Ausweitung; unter seiner Führung erreichten wir über 200 Jugendliche von der E- bis zur A-Jugend. Große Sportreisen führten nach Luxemburg, Straßburg, Enschede, Amsterdam, Hamburg und London; Höhepunkt war eine USA-Reise der B-Jugend. Unter Dieter Silberhorn ging es mit der D-Jugend nach Dietzenbach, Paris und Edingen; unter Kurt Tänzer zu Turnieren nach Dänemark und Ungarn.
 
-#### Vereinsentwicklung ab 1987
+Anlässlich der Olympischen Spiele 1972 benötigte die Stadt einen neuen Handball-Trainingsplatz — der Zuschlag fiel auf unsere Sportanlage. 1971 erhielten wir ein Handball-Kleinfeld mit Tartanbelag. Auch hier wurde 1975 in Eigenleistung eine Flutlichtanlage errichtet.
 
-Mit Fertigstellung des Eschengartens und dem Ausbau der Bezirkssportanlage begann eine neue Phase. Im Herbst 1987 gründete sich auf Initiative von Karl Prölß die Ski-Abteilung. Die Gymnastikabteilung, 1967 von Anna Schaflitzl ins Leben gerufen, war bereits seit 20 Jahren aktiv. 1993 kam der Förderverein der Fußball-Senioren hinzu.
+### 1978 — Neue Vereinsorganisation
 
-Die Mitgliederzahl wuchs von 500 (1971) über 766 (1996) auf 870 (1998). Seit 2006 ist der SV Nord online unter www.svnord.de präsent — heute sind es rund 500 aktive Mitglieder in fünf Abteilungen.
+Die Mitgliederzahl wuchs von 370 (1971) auf knapp 500 (1977). 1978 wurde das Einzugsverfahren für Beiträge eingeführt, 1979 die Satzung neu gefasst (Anerkennung als gemeinnütziger Verein), 1979 erschien die Vereinszeitung Nr. 1, 1981 wurde die Mitgliederverwaltung mit Hilfe einer Software der Stadtsparkasse München auf EDV umgestellt.
 
-Die jüngere Vereinsgeschichte ist geprägt von Erfolgen im Fußball, einem breiten Sportangebot über mehrere Abteilungen und dem anhaltenden Bemühen um die Erweiterung der Sportanlage in Zusammenarbeit mit der Stadt München.
+### 1980 — Erweiterung der Bezirkssportanlage
 
-#### Alle 1. Vorstände seit 1947
+Die Bezirkssportanlage beherbergte inzwischen drei Vereine; es mangelte an Umkleideräumen, nur drei Rasenplätze standen zur Verfügung. 1979 genehmigte die Stadt den Bau eines Sandplatzes mit Flutlichtanlage — Fertigstellung Oktober 1980. 1984 gab die Stadt grünes Licht für eine Erweiterung: 1985 wurde nördlich der Anlage ein sandverfüllter Kunstrasenplatz mit Flutlichtanlage und ein Rasenspielfeld errichtet, 1986 fertiggestellt. 1986 begann die Erweiterung des Umkleidegebäudes, das 1987 eingeweiht werden konnte.
 
-Carl Jennerwein (1947/48) · Karl Hornung sen. (1948–1950) · Kleophas Lang (1950–1959) · Hans Späht (1959–1961) · Georg Schmidt (1961–1964) · Franz Gossler (1964–1967) · Oskar Huhle (1967–1970) · Josef Promeberger (1970–1972) · Wolfgang Viertl (1972–1978) · Franz Münch (1978–1980) · Horst Lanninger (1980–1990, später Ehrenvorstand) · Kurt Tänzer (1990–2000) · Günter Ottl (2000–2004) · Rudolf Westermair (2004/05) · Wolfgang Wennrich (2005–2009) · Christian Douda (2009–2015) · Goran Pajic (2015–2017) · Heinz Fessenmayer (ab 23.11.2017) · Ralf Kirmeyer (heute).`,
+### 1984 — Vereinsheimbau in Eigenleistung
+
+Unumstrittener Höhepunkt der Vereinsgeschichte war der Bau des Vereinsheims *Eschengarten* in Eigenregie, zusammen mit dem HuVT Edelweiß-Stamm und dem FC Eintracht München. Als 1982 die Stadt München eröffnete, sie könne keinen Vereinsheimbau finanzieren, war die Enttäuschung groß — doch 1983 beschloss der Stadtrat ein *Fördermodell zur Schaffung von selbsterrichteten Vereinsheimen*.
+
+Auf Initiative von Horst Lanninger, damaliger 1. Vorstand des SV Nord, schlossen sich am 5. Mai 1983 die drei Vereine zur *Interessengemeinschaft Sportheimbau Lerchenau* zusammen. Am 25. April 1985 akzeptierte der Stadtrat die Bezuschussung in Höhe von DM 383.000,-. Baubeginn war am 21. Juni 1985. Fünf Monate später konnte Erich Ostermeier beim Richtfest über 150 Gäste begrüßen. Nach **15.000 freiwilligen Arbeitsstunden** der Mitglieder fand am 19. Juli 1986 die feierliche Eröffnung des Eschengartens statt.
+
+## 3. Vereinsentwicklung ab 1987
+
+Mit Fertigstellung des Eschengartens und dem Ausbau der Bezirkssportanlage verbesserten sich die sportlichen Rahmenbedingungen erheblich. Ein erster Schritt war die **Gründung der Ski-Abteilung im Herbst 1987** durch Karl Prölß und Christian Schäffer — ein Zuwachs von rund 100 Mitgliedern.
+
+Sportlich entwickelte sich der Verein positiv: 1989 Aufstieg in die A-Klasse (Kreisliga) unter Trainer Morcinek, 1993 erstmaliger Aufstieg in die Bezirksliga unter Spielertrainer Aumüller. 1994 stieg die A-Jugend in die Bezirksliga Oberbayern auf.
+
+1993 wurde zur Unterstützung der Fußball-Senioren ein Förderverein gegründet. 1996 bauten SV Nord, FC Eintracht und FSV Harthof gemeinsam einen großen Sport-Geräteschuppen. Die Mitgliederzahl wuchs von 500 (1971) über 766 (1996) auf 870 (1998); 1999 stellte Kurt Tänzer die Vereins-EDV auf neue PC-Software um. Seit 2006 ist der Verein unter *www.svnord.de* online.
+
+### Angebot der Stadt: Bezirkssportanlage in Eigenregie (2004)
+
+Der Stadtrat beschloss, die Bezirkssportanlagen den ansässigen Vereinen zu überlassen. Hintergrund waren Unterhaltskosten von 200.000 bis 250.000 € pro Jahr; die Stadt erhoffte sich eine Ersparnis von 100.000 bis 120.000 €. Mitte 2004 prüften SV Nord und FC Eintracht das Angebot gemeinsam — nach gründlicher Kostenrechnung lehnten beide ab, da das Risiko zu groß war. 2015 zeigte sich die Richtigkeit: neun Vereine stiegen ein, vier gaben die Anlagen mit sechsstelligen Schulden zurück.
+
+### Versuch der Erweiterung (1998–2008)
+
+1998 stellten SV Nord, FC Eintracht und FSV Harthof den Antrag, eine Teilfläche am Virginia-Depot als Sportfläche auszuweisen. 2002 kam Ernüchterung: das Planungsreferat hatte die Fläche längst als Magerrasenbiotop ausgewiesen. Weitere Gespräche 2003/04 blieben ergebnislos. 2005 bekundete BMW Interesse am Kompletterwerb der Kronprinz-Rupprecht-Kaserne und des Virginia-Depots. Politische Interessen verhinderten 2008 das Ziel endgültig.
+
+## 4. Vorstandschaften
+
+Die Amtszeiten der Vorstandschaft sind chronologisch in der Vereinsakte dokumentiert. Aktuelle Vorstandschaft siehe *Verein → Vorstand*.
+
+## 5. Ehrentafel
+
+### Ehren-Vorstände
+
+**Kleophas Lang** (1914–1992) — Gründungsmitglied und Mäzen. 2. Vorstand bis 1948, 1. Vorstand 1950–1958. 1959 zum Ehrenvorstand ernannt.
+
+**Horst Lanninger** — Mitglied ab 01.01.1963 (BSG Hurth). 2. Vorstand 1974–1979, 1. Vorstand 1980–1990. Seit 1986 im Vorstand der Vereins-Interessengemeinschaft Lerchenau. 1997 zum Ehrenvorstand ernannt. 9 Spiele in der 1. Mannschaft, 2 Tore.
+
+### Ehren-Mitglieder
+
+**Anna Schaflitzl** (1905–1990) — Langjährige Wirtin des Vereinslokals Schützengarten. Unterstützte ab 1947 vor allem Jugendliche mit Speisen und Getränken. 1950 zum Ehrenmitglied ernannt.
+
+**Josef Gerber** (1903–1986) — Mitglied ab 1949. Aktiver Schiedsrichter 1949–1964. 1980 zum Ehrenmitglied ernannt; 1984 Ehrenmitglied der Münchner Schiedsrichtervereinigung.
+
+**Karl Riepl** (1921–2007) — Mitglied ab 01.01.1948. Fußball-Jugendleiter 1951/52, Fußball-Abteilungsleiter 1955–1958, Vereinskassier 1956–1959 und 1967–1969, Chronist der Fußballabteilung 1948–1996. 165 Spiele in der 1. Mannschaft, 4 Tore. 1980 Ehrenmitglied.
+
+**Annemarie Riepl** — Mitglied ab 01.11.1967. Gründerin der Gymnastikabteilung 1967, Abteilungsleiterin bis 1995. 1994 Ehrenmitglied.
+
+**Max Härtl** (1927–2011) — Gründungsmitglied. 118 Spiele in der 1. Mannschaft, 5 Tore. 1997 wegen ununterbrochener 50-jähriger Mitgliedschaft Ehrenmitglied.
+
+**Johann Pertl** (1927–2014) — Gründungsmitglied. 1997 wegen ununterbrochener 50-jähriger Mitgliedschaft Ehrenmitglied.
+
+**Simon Riepl** (1923–2011) — Gründungsmitglied. 87 Spiele in der 1. Mannschaft, 4 Tore. 1997 Ehrenmitglied.
+
+**Kurt Tänzer** — Mitglied ab November 1967. 1970–1973 A-Jugendtrainer, 1973–1975 Trainer der 1. Mannschaft, 1976–1979 AL Fußball, 1979–1982 A+B-Jugendtrainer, 1980–1981 2. Vorstand, 1982–2007 Schiedsrichter, 1982–1988 Jugendleiter, **1990–1999 1. Vorstand**, 1995–2007 Schiedsrichter-Obmann. 2007 zum 60-jährigen Vereinsjubiläum zum Ehrenmitglied ernannt.
+
+**Roswitha Wennrich** — Mitglied ab November 1967. 1975 Gründerin der Damenfußball-Abteilung, Abteilungsleiterin bis 1985. Kassier des SV Nord 1980–1993. 2007 Ehrenmitglied.
+
+**Horst Mauler** — Kam 1968 als 13-Jähriger zum SV Nord. 1970–2007 ununterbrochen Jugendtrainer aller Altersklassen, seither weiterhin Trainer und Betreuer. 1990 Verbandsehrenzeichen des BFV in Gold. 1995–2005 aktiver Schiedsrichter. 1977 silberne, 1996 goldene Vereins-Ehrennadel. 2007 Ehrenmitglied.
+
+**Sebastian Bauer** — Gründungsmitglied. 1957 Schiedsrichterprüfung, 1959–2004 Schiedsrichter, 1964–1994 Schiedsrichter-Obmann. 2007 Ehrenmitglied wegen 60-jähriger Mitgliedschaft.
+
+**Rudolf Richter** — Gründungsmitglied. 165 Spiele in der 1. Mannschaft (davon fünfmal als Torwart!), 43 Tore. 2007 Ehrenmitglied.
+
+**Heinz Heldeis** — Gründungsmitglied. 29 Spiele in der 1. Mannschaft, 3 Tore. 2007 Ehrenmitglied.
+
+## 6. Zeittafel
+
+- **15.10.1947** — Vereinsgründung im Gasthof Schützengarten. Gründung der Fußballabteilung.
+- **02.05.1948** — Erstes Freundschaftsspiel gegen SC Lochhausen (2:3).
+- **01.08.1948** — Sportplatzeröffnung Heidelerchenstraße.
+- **05.09.1948** — 1. Punktspiel gegen Weiß Blau München (2:3).
+- **1949–1953** — Vorübergehend eine Jugend- und eine Schülermannschaft im Spielbetrieb.
+- **1956** — Neuaufbau der Fußball-Jugendabteilung.
+- **1959** — Umzug auf die Bezirkssportanlage Ebereschenstraße 15. Gründung der Handballabteilung.
+- **01.01.1963** — Anschluss der BSG Hurth an den SV Nord.
+- **1965** — Auflösung der Damen-Handballmannschaft.
+- **1966** — Eintrag ins Vereinsregister: *SV Nord München-Lerchenau e.V.*
+- **1967** — Gründung der Gymnastikabteilung. Trainingsplatz-Flutlichtanlage in Eigenleistung.
+- **1971** — Neubau eines Tartan-Kleinhandballfeldes.
+- **1975** — Gründung der Abteilung Damenfußball. Flutlichtanlage Handball-Kleinfeld in Eigenleistung.
+- **1979** — Einzugsverfahren Beiträge. Neue Satzung, Gemeinnützigkeit anerkannt. Vereinszeitung Nr. 1.
+- **1980** — Neubau Sandplatz mit Flutlichtanlage.
+- **1981** — Umstellung der Vereinsverwaltung auf EDV.
+- **03.05.1983** — Gründung der *Interessengemeinschaft Sportheimbau*.
+- **1984** — Erweiterung der Bezirkssportanlage nach Norden (Kunstrasen).
+- **02.07.1984** — Gründung der *Vereins-Interessengemeinschaft Lerchenau e.V. (VIG)*.
+- **01.06.1985** — Baubeginn Vereinsheim *Eschengarten*.
+- **1985** — Auflösung der Abteilung Damenfußball.
+- **19.07.1986** — Eröffnung Vereinsheim *Eschengarten*.
+- **1987** — Erweiterung des Umkleidegebäudes.
+- **27.09.1987** — Gründung der Skiabteilung.
+- **1990** — Layout der Vereinszeitung auf Computer umgestellt.
+- **1991** — Gründung einer Multisportabteilung (Volleyball, Badminton …).
+- **06.05.1992** — Gründung der SV Nord-Förderer (1. Mannschaft Fußball Senioren).
+- **1996** — Gymnastikabteilung gründet *Mädchenturnen* (5–9 Jahre).
+- **1998** — Handballabteilung meldet eine Mädchen-Jugendmannschaft an.
+- **2001** — Handballabteilung meldet die Mädchen-Jugendmannschaft wieder ab.
+- **2002** — Gymnastikabteilung meldet *Mädchenturnen* wieder ab. Bau eines Geräteschuppens mit FC Eintracht und Harthof.
+- **2004** — Kunstrasen-Spielfeld erneuert.
+- **2005** — Der SV Nord ist unter *www.svnord.de* im Internet vertreten.
+- **2009** — Nach 30 Jahren wurde die Vereinszeitung eingestellt.
+- **2011** — Hauptplatz komplett erneuert.
+- **2012** — Nach 20 Jahren Unterstützung wurde der SV Nord-Förderclub aufgelöst.
+- **2013** — Abspaltung der Skiabteilung vom Hauptverein.
+- **2014** — Auflösung der Handballabteilung (seit 1959). Platzwartwohnung wegen Unbewohnbarkeit gesperrt.
+- **2015** — Mitgliederzahl sinkt auf 600 — Folge allgemeiner Unzufriedenheit und der Auflösung von Handball und Ski.`,
       ),
     } as never,
   });
@@ -1071,24 +1226,33 @@ Unsere Gymnastikabteilung wurde 1967 gegründet und ist somit schon über 50 Jah
 
 ## Training
 
-Wir trainieren jeden Montag von 19:00 bis 20:00 Uhr in der Waldmeisterschule und jeden Mittwoch von 19:00 bis 20:00 Uhr im Pfarrsaal. In den Schulferien ist kein Training.
+Wir trainieren jeden Montag und Mittwoch von 19:00 bis 20:00 Uhr in der Waldmeisterschule. Am Montag trainieren nur unsere Frauen, am Mittwoch können dann auch gerne Männer am Training teilnehmen. In den Schulferien ist kein Training.
+
+## Gemeinsam unterwegs
+
+Neben der sportlichen Tätigkeit unternehmen wir auch jedes Jahr einen Ausflug. Die letzten drei Jahre waren wir in Paris, Hamburg und Nizza.
 
 ## Mitmachen
 
-Jeder ist herzlich willkommen — Frauen wie Männer. Habt ihr Lust bekommen? Meldet euch gerne bei uns, wir freuen uns!`,
+Habt ihr Lust bekommen? Meldet euch gerne bei uns — wir freuen uns!
+
+*Eure SV Nord Gymnastik Mannschaft*`,
     trainers: [
       {
-        name: "Elisabeth Schillinger",
-        role: "1. Abteilungsleiterin Gymnastik",
-        phone: "0176 646 61 724",
-        email: "info@svnord.de",
+        name: "Dr. Nicole Abbrederis",
+        role: "Trainerin Gymnastik",
       },
       {
-        name: "Tenja Hirlinger",
-        role: "Vertretung Gymnastik",
-        phone: "0171 856 60 64",
+        name: "Simone Roth",
+        role: "Trainerin Gymnastik",
       },
     ],
+  });
+  await ensureTeamPhoto(payload, {
+    teamSlug: slug("Gymnastik"),
+    filename: "gymnastik-hero.jpg",
+    alt: "SV Nord Gymnastik-Abteilung",
+    filePath: path.resolve(process.cwd(), "tmp/live-sport-hero/gymnastik.jpg"),
   });
 
   await populateSportSection(payload, {
@@ -1096,7 +1260,7 @@ Jeder ist herzlich willkommen — Frauen wie Männer. Habt ihr Lust bekommen? Me
     teamName: "Volleyball",
     descriptionMd: `## Willkommen bei der Volleyball-Abteilung
 
-Wir treffen uns seit 1984 als Familienvolleyballer und wurden dann beim SV Nord als eigene Abteilung aufgenommen. Unser Team ist zwischen 15 und 75 Jahre alt — Gemeinschaft und Spaß am Spiel stehen bei uns im Vordergrund.
+Unser Team ist zwischen 30 und 75 Jahren alt — Gemeinschaft und Spaß am Spiel stehen bei uns im Vordergrund. Wir treffen uns seit 1984 als Familienvolleyballer und wurden dann beim SV Nord als eigene Abteilung aufgenommen.
 
 ## Training
 
@@ -1104,8 +1268,16 @@ Wir spielen jeden Freitag von 19:00 bis 21:00 Uhr in der Waldmeisterschule. In d
 
 ## Mitmachen
 
-Vielleicht habt ihr Lust bekommen und wollt einmal reinschnuppern. Wir freuen uns auf euch!`,
+Wenn Ihr Lust habt Volleyball zu spielen, meldet Euch doch gerne bei uns. Wir freuen uns auf euch!
+
+*Euer SV Nord Volleyball Team*`,
     trainers: [],
+  });
+  await ensureTeamPhoto(payload, {
+    teamSlug: slug("Volleyball"),
+    filename: "volleyball-hero.jpg",
+    alt: "SV Nord Volleyball-Abteilung",
+    filePath: path.resolve(process.cwd(), "tmp/live-sport-hero/volleyball.jpg"),
   });
 
   await populateSportSection(payload, {
@@ -1115,13 +1287,27 @@ Vielleicht habt ihr Lust bekommen und wollt einmal reinschnuppern. Wir freuen un
 
 Seit mehr als 20 Jahren ist die Ski-Abteilung fester Bestandteil des SV Nord. Mit ausgebildeten und jungen Skilehrern wollen wir jedem Interessenten den Spaß am Skifahren näher bringen. Vom motivierten Neueinsteiger bis hin zum routinierten Könner — in der Ski-Abteilung ist für jeden Pistenfreund ein Platz frei.
 
-Wir freuen uns auf Dich. Eure SV Nord Ski-Crew.`,
+Wir freuen uns auf Dich. *Eure SV Nord Ski-Crew.*`,
     trainers: [
       { name: "Bini Hafner", role: "1. Vorsitzender · Skilehrer" },
       { name: "Tobias Tins", role: "2. Vorsitzender · Skilehrer" },
+      { name: "Theresa Hafner", role: "Schriftführerin · Skilehrerin" },
+      { name: "Melina Stenger", role: "Schriftführerin · Skilehrerin" },
       { name: "Fabian Falk", role: "Skilehrer" },
       { name: "Christoph Hafner", role: "Skilehrer" },
+      { name: "David Wünsch", role: "Skilehrer" },
+      { name: "Elias Lilli", role: "Skilehrer" },
+      { name: "Franzi Wagner", role: "Skilehrerin" },
+      { name: "Jonas Lilli", role: "Skilehrer" },
+      { name: "Laura Wünsch", role: "Skilehrerin" },
+      { name: "Luisa Seidl", role: "Skilehrerin" },
     ],
+  });
+  await ensureTeamPhoto(payload, {
+    teamSlug: slug("Ski"),
+    filename: "ski-hero.jpg",
+    alt: "SV Nord Ski-Abteilung",
+    filePath: path.resolve(process.cwd(), "tmp/live-sport-hero/ski.jpg"),
   });
 
   await populateSportSection(payload, {

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { PageHero } from "@/components/PageHero";
 import { TeamCard } from "@/components/TeamCard";
 import { BFV_CLUB_URL } from "@/lib/bfv";
@@ -17,10 +19,10 @@ export default async function FussballPage() {
   });
 
   const groups = [
-    { label: "Senioren", teams: result.docs.filter((t) => t.category === "senioren") },
-    { label: "Junioren", teams: result.docs.filter((t) => t.category === "junioren") },
-    { label: "Bambini", teams: result.docs.filter((t) => t.category === "bambini") },
-    { label: "Juniorinnen", teams: result.docs.filter((t) => t.category === "juniorinnen") },
+    { id: "herren", label: "Herren", teams: result.docs.filter((t) => t.category === "senioren") },
+    { id: "junioren", label: "Junioren", teams: result.docs.filter((t) => t.category === "junioren") },
+    { id: "juniorinnen", label: "Juniorinnen", teams: result.docs.filter((t) => t.category === "juniorinnen") },
+    { id: "bambinis", label: "Bambinis & Fußballkindergarten", teams: result.docs.filter((t) => t.category === "bambini") },
   ];
 
   const bfvCount = result.docs.filter((t) => t.bfv?.teamId).length;
@@ -92,18 +94,67 @@ export default async function FussballPage() {
           </div>
         </section>
 
+        <nav
+          aria-label="Fußball-Kategorien"
+          className="sticky top-2 z-20 -mx-2 mb-10 rounded-2xl border border-nord-line bg-white/85 p-3 shadow-sm backdrop-blur md:mx-0"
+        >
+          <ul className="flex flex-wrap gap-2">
+            {groups
+              .filter((g) => g.teams.length > 0)
+              .map((group) => (
+                <li key={group.id}>
+                  <a
+                    href={`#${group.id}`}
+                    className="inline-flex items-center gap-2 rounded-full border border-nord-line bg-white px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-nord-ink transition hover:border-nord-navy hover:bg-nord-navy hover:text-white"
+                  >
+                    {group.label}
+                    <span className="rounded-full bg-nord-paper-2 px-1.5 py-0.5 text-[9px] text-nord-muted group-hover:bg-white/20">
+                      {group.teams.length}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            <li>
+              <Link
+                href="/schiedsrichter"
+                className="inline-flex items-center gap-2 rounded-full border border-nord-line bg-white px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-nord-ink transition hover:border-nord-navy hover:bg-nord-navy hover:text-white"
+              >
+                Schiedsrichter ↗
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/esport"
+                className="inline-flex items-center gap-2 rounded-full border border-nord-line bg-white px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-nord-ink transition hover:border-nord-navy hover:bg-nord-navy hover:text-white"
+              >
+                E-Sport ↗
+              </Link>
+            </li>
+          </ul>
+        </nav>
+
         {groups.map((group) =>
           group.teams.length === 0 ? null : (
-            <div key={group.label} className="mb-14 last:mb-0">
-              <h2 className="mb-5 text-sm font-bold uppercase tracking-[0.15em] text-nord-muted">
-                {group.label}
-              </h2>
+            <section
+              key={group.id}
+              id={group.id}
+              className="mb-14 scroll-mt-28 last:mb-0"
+            >
+              <div className="mb-5 flex items-baseline justify-between border-b border-nord-line pb-2">
+                <h2 className="font-display text-2xl font-black tracking-tight text-nord-ink md:text-3xl">
+                  {group.label}
+                </h2>
+                <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.15em] text-nord-muted">
+                  {group.teams.length}{" "}
+                  {group.teams.length === 1 ? "Team" : "Teams"}
+                </span>
+              </div>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 {group.teams.map((team) => (
                   <TeamCard key={team.id} team={team} />
                 ))}
               </div>
-            </div>
+            </section>
           ),
         )}
       </div>

@@ -5,7 +5,7 @@ import { PageHero } from "@/components/PageHero";
 export const metadata: Metadata = {
   title: "Vereinsshop",
   description:
-    "Der offizielle SV Nord München-Lerchenau Fanshop bei 11teamsports — Trikots, Trainingsausstattung und Fanartikel in Vereinsfarben.",
+    "Der offizielle SV Nord München-Lerchenau Fanshop bei 11teamsports — Trainingskollektion und Fanartikel in Vereinsfarben.",
   alternates: { canonical: "/shop" },
 };
 
@@ -14,16 +14,16 @@ const SHOP_URL =
 
 const HIGHLIGHTS = [
   {
-    title: "Trikots",
-    body: "Heim-, Auswärts- und Torwarttrikots in der aktuellen Saisonedition mit SV-Nord-Vereinslogo.",
+    title: "Trainingskollektion",
+    body: "adidas Entrada 22 in SV-Nord-Blau — Trainingsjacke, Allwetterjacke, Jogginghose, Hoody und T-Shirt. Für Herren, Damen und Kids.",
   },
   {
-    title: "Trainingsausstattung",
-    body: "Trainingsjacken, Hosen und Sporttaschen für jede Altersklasse.",
+    title: "Accessoires & Taschen",
+    body: "Tiro Duffle Tasche, Tiro Rucksack, Stutzen, Grip-Socken und Sleeves — die Basics für Training und Auswärtsfahrt.",
   },
   {
-    title: "Fanartikel",
-    body: "Schals, Caps und weitere Accessoires in blau-weiß — für den Eschengarten und jeden Auswärtstermin.",
+    title: "Fan-Artikel",
+    body: "Poloshirts, Tanktops, Sweatshirts und HalfZip-Pullover in blau — zum Zuschauen, Reisen und im Eschengarten.",
   },
 ];
 
@@ -33,7 +33,7 @@ export default function ShopPage() {
       <PageHero
         eyebrow="Vereinsshop"
         title="Unser eigener Vereinsshop."
-        lede="Liebe Nordler! Es gibt erfreuliche Nachrichten — der digitale Fanshop beim Partner 11teamsports ist online. Trikots, Trainingskleidung und Fanartikel im offiziellen SV-Nord-Design."
+        lede="Liebe Nordler! Der digitale Fanshop beim Partner 11teamsports ist online. Trainingskollektion, Taschen und Fan-Artikel im offiziellen SV-Nord-Design — direkt in Vereinsfarben bestellbar."
       />
 
       <div className="mx-auto max-w-5xl px-6 py-12 md:px-8 md:py-16">
@@ -52,8 +52,9 @@ export default function ShopPage() {
               <p className="mt-3 max-w-prose text-base leading-relaxed text-white/75">
                 Alle Artikel werden direkt über{" "}
                 <span className="font-semibold text-white">11teamsports</span>{" "}
-                versendet. Die Trikotnummerierung für aktive Spieler erfolgt
-                über die Abteilung.
+                versendet. Zurzeit sind keine Match-Trikots im Clubshop
+                verfügbar — die Kollektion umfasst Trainingskleidung, Taschen
+                und Fan-Artikel.
               </p>
             </div>
             <a
@@ -88,9 +89,10 @@ export default function ShopPage() {
             Hinweis für aktive Mannschaften
           </div>
           <p className="mt-3 max-w-prose text-base leading-relaxed text-nord-ink">
-            Für offizielle Spielausstattung (Trikots, Trainingsanzüge,
-            Aufwärmshirts in den Teamfarben) wendet euch bitte an die
-            sportliche Leitung bzw. eure Trainer:innen. Die Abteilung bündelt
+            Match-Trikots und einheitliche Spielausstattung gibt es nicht im
+            öffentlichen Clubshop. Für offizielle Trikots, Trainingsanzüge und
+            Aufwärmshirts in den Teamfarben wendet euch bitte an die
+            sportliche Leitung bzw. eure Trainer:innen — die Abteilung bündelt
             Bestellungen und sorgt für einheitliches Auftreten auf dem Platz.
           </p>
         </section>

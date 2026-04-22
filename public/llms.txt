@@ -37,7 +37,7 @@ Der Verein ist unter mehreren Bezeichnungen bekannt: offiziell „SV Nord Münch
 - [Kontakt](https://svnord-lerchenau.de/kontakt): E-Mail, Telefon, Adresse, Kontaktformular, Karte.
 - [FAQ](https://svnord-lerchenau.de/faq): Häufige Fragen zu Mitgliedschaft, Training, Spielbetrieb und Vereinsheim.
 - [News](https://svnord-lerchenau.de/news): Spielberichte, Vereinsmeldungen, Jugendnews.
-- [Termine](https://svnord-lerchenau.de/termine): Heimspiele, Jeep Cup, Sommerfest, Weihnachtsfeier.
+- [Termine](https://svnord-lerchenau.de/termine): Heimspiele, Sommerfest, Weihnachtsfeier.
 - [Sponsoren](https://svnord-lerchenau.de/sponsoren): Premium- und Standardpartner, Sponsoring-Kontakt.
 
 ## Öffentliche APIs

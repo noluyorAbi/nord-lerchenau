@@ -5,7 +5,7 @@ import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical
 import { PageHero } from "@/components/PageHero";
 import { PersonCard } from "@/components/PersonCard";
 import { getPayloadClient } from "@/lib/payload";
-import type { Person } from "@/payload-types";
+import type { Media, Person } from "@/payload-types";
 
 type Props = {
   sport: "volleyball" | "gymnastik" | "ski" | "esport" | "schiedsrichter";
@@ -46,9 +46,33 @@ export async function SportSectionPage({
       typeof l?.label === "string" && typeof l?.url === "string",
   );
 
+  const photo =
+    team.photo && typeof team.photo === "object" ? (team.photo as Media) : null;
+  const heroSrc =
+    photo && typeof photo.url === "string" && photo.url
+      ? /^https?:\/\//.test(photo.url) && !photo.url.includes("/api/media/file/")
+        ? photo.url
+        : photo.filename
+          ? `/uploads/${photo.filename}`
+          : null
+      : null;
+
   return (
     <>
       <PageHero eyebrow={eyebrow} title={title} lede={fallbackLede} />
+      {heroSrc ? (
+        <div className="mx-auto max-w-7xl px-6 pt-8 md:px-10 md:pt-12">
+          <div className="relative overflow-hidden rounded-2xl border border-nord-line bg-nord-paper-2">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={heroSrc}
+              alt={photo?.alt ?? `${title}-Abteilung`}
+              className="aspect-[16/7] w-full object-cover"
+              loading="eager"
+            />
+          </div>
+        </div>
+      ) : null}
       <div className="mx-auto max-w-7xl px-6 py-14 md:px-10 md:py-20">
         <div className="grid gap-10 md:grid-cols-[1.6fr_1fr]">
           <div>

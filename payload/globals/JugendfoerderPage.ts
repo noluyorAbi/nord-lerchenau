@@ -80,6 +80,15 @@ export const JugendfoerderPage: GlobalConfig = {
       admin: { description: "Optional — nur ausfüllen, wenn eine Direktspende-IBAN veröffentlicht werden soll." },
     },
     {
+      name: "contactEmail",
+      type: "email",
+      admin: {
+        hidden: true,
+        description:
+          "Veraltet. Bitte 'Hauptkontakt-E-Mail' (primaryContactEmail) verwenden. Feld bleibt für Datenkompatibilität bestehen.",
+      },
+    },
+    {
       name: "heroImage",
       type: "upload",
       relationTo: "media",

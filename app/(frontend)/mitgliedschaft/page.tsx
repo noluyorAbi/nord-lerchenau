@@ -23,7 +23,7 @@ const STEPS = [
 
 const BENEFITS = [
   "Training auf eigenem Platz im Eschengarten",
-  "Teilnahme an allen Vereinsveranstaltungen (Jeep Cup, Sommerfest, Weihnachtsfeier)",
+  "Teilnahme an allen Vereinsveranstaltungen (Sommerfest, Weihnachtsfeier u.a.)",
   "Freier Eintritt zu allen Heimspielen",
   "Mitbestimmung in der Jahreshauptversammlung",
 ];

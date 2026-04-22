@@ -1,117 +1,126 @@
 import { PageHero } from "@/components/PageHero";
+import {
+  TermineClient,
+  type AgendaDTO,
+  type EventDTO,
+  type MatchDTO,
+} from "@/components/TermineClient";
+import {
+  bfvMatchSideLogo,
+  bfvMatchUrl,
+  fetchBfvMatches,
+  isOurBfvTeam,
+  parseBfvKickoff,
+  type BfvMatch,
+} from "@/lib/bfv";
 import { getPayloadClient } from "@/lib/payload";
 
 export const dynamic = "force-dynamic";
-
-const MONTHS_DE = [
-  "Januar",
-  "Februar",
-  "März",
-  "April",
-  "Mai",
-  "Juni",
-  "Juli",
-  "August",
-  "September",
-  "Oktober",
-  "November",
-  "Dezember",
-];
-
-const SHORT_MONTHS_DE = [
-  "JAN",
-  "FEB",
-  "MÄR",
-  "APR",
-  "MAI",
-  "JUN",
-  "JUL",
-  "AUG",
-  "SEP",
-  "OKT",
-  "NOV",
-  "DEZ",
-];
+export const revalidate = 900;
 
 export default async function TerminePage() {
   const payload = await getPayloadClient();
-  const result = await payload.find({
-    collection: "events",
-    where: { startsAt: { greater_than: new Date().toISOString() } },
-    sort: "startsAt",
-    limit: 100,
-    depth: 0,
-  });
 
-  const byMonth = new Map<
-    string,
-    { label: string; events: typeof result.docs }
-  >();
+  const [events, teams] = await Promise.all([
+    payload.find({
+      collection: "events",
+      where: { startsAt: { greater_than: new Date().toISOString() } },
+      sort: "startsAt",
+      limit: 200,
+      depth: 0,
+    }),
+    payload.find({
+      collection: "teams",
+      where: { "bfv.teamId": { exists: true } },
+      limit: 100,
+      depth: 0,
+    }),
+  ]);
 
-  for (const event of result.docs) {
-    const d = new Date(event.startsAt);
-    const key = `${d.getFullYear()}-${d.getMonth()}`;
-    const label = `${MONTHS_DE[d.getMonth()]} ${d.getFullYear()}`;
-    if (!byMonth.has(key)) {
-      byMonth.set(key, { label, events: [] });
+  const matchBundles = await Promise.all(
+    teams.docs.map(async (t) => {
+      const teamId = t.bfv?.teamId;
+      if (!teamId) return null;
+      const data = await fetchBfvMatches(teamId);
+      return data ? { team: t, matches: data.matches } : null;
+    }),
+  );
+
+  const now = new Date().getTime();
+  const items: AgendaDTO[] = [];
+  const teamCounts = new Map<string, { name: string; slug: string; count: number }>();
+
+  for (const bundle of matchBundles) {
+    if (!bundle) continue;
+    for (const m of bundle.matches) {
+      const d = parseBfvKickoff(m.kickoffDate, m.kickoffTime);
+      if (!d || d.getTime() < now) continue;
+      if (m.result && m.result.trim() !== "" && m.result !== "-:-") continue;
+      const side = isOurBfvTeam(m as BfvMatch, bundle.team.bfv!.teamId!);
+      if (!side) continue;
+      const teamSlug = bundle.team.slug ?? String(bundle.team.id);
+      const item: MatchDTO = {
+        kind: "match",
+        at: d.toISOString(),
+        id: m.matchId,
+        teamName: bundle.team.name,
+        teamSlug,
+        opponent: side === "home" ? m.guestTeamName : m.homeTeamName,
+        side,
+        competition: m.competitionName ?? null,
+        homeLogo: bfvMatchSideLogo(m, "home"),
+        awayLogo: bfvMatchSideLogo(m, "away"),
+        href: bfvMatchUrl(m.matchId),
+        venue: m.venue ?? null,
+      };
+      items.push(item);
+      const existing = teamCounts.get(teamSlug);
+      if (existing) {
+        existing.count += 1;
+      } else {
+        teamCounts.set(teamSlug, { name: bundle.team.name, slug: teamSlug, count: 1 });
+      }
     }
-    byMonth.get(key)!.events.push(event);
   }
+
+  for (const e of events.docs) {
+    const d = new Date(e.startsAt);
+    if (Number.isNaN(d.getTime()) || d.getTime() < now) continue;
+    const item: EventDTO = {
+      kind: "event",
+      at: d.toISOString(),
+      id: String(e.id),
+      title: e.title,
+      location: e.location ?? null,
+      description: e.description ?? null,
+    };
+    items.push(item);
+  }
+
+  items.sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime());
+
+  const teamOptions = [...teamCounts.values()].sort((a, b) =>
+    a.name.localeCompare(b.name, "de"),
+  );
+
+  const HERREN_ORDER = ["1. Herren", "2. Herren", "3. Herren"];
+  const showcase = HERREN_ORDER.map((teamName) => {
+    const next = items
+      .filter((i) => i.kind === "match" && i.teamName === teamName)
+      .sort(
+        (a, b) => new Date(a.at).getTime() - new Date(b.at).getTime(),
+      )[0];
+    return { teamName, match: (next as MatchDTO | undefined) ?? null };
+  });
 
   return (
     <>
       <PageHero
         eyebrow="Termine"
         title="Was ist los beim SV Nord?"
-        lede="Training, Heimspiele, Jeep Cup, Sommerfest, Weihnachtsfeier — hier steht, wann du vorbeikommen kannst."
+        lede="Heimspiele aller Mannschaften, Sommerfest, Weihnachtsfeier — durchsuche den Spielplan oder filtere nach Mannschaft und Zeitraum."
       />
-      <div className="mx-auto max-w-3xl px-6 py-14 md:py-20">
-        {byMonth.size === 0 ? (
-          <div className="rounded-xl border border-dashed border-nord-line bg-white p-10 text-center text-sm text-nord-muted">
-            Keine anstehenden Termine. Pflege Termine im Admin unter{" "}
-            <em>Content → Events</em>.
-          </div>
-        ) : (
-          [...byMonth.entries()].map(([key, group]) => (
-            <section key={key} className="mb-12 last:mb-0">
-              <h2 className="mb-4 text-sm font-bold uppercase tracking-[0.15em] text-nord-muted">
-                {group.label}
-              </h2>
-              <ul className="divide-y divide-nord-line overflow-hidden rounded-xl border border-nord-line bg-white">
-                {group.events.map((event) => {
-                  const d = new Date(event.startsAt);
-                  const day = d.getDate().toString().padStart(2, "0");
-                  const month = SHORT_MONTHS_DE[d.getMonth()];
-                  const time = d.toLocaleTimeString("de-DE", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: false,
-                  });
-                  return (
-                    <li key={event.id} className="flex items-center gap-4 px-5 py-4">
-                      <div className="flex min-w-12 flex-col items-center justify-center rounded-lg bg-nord-navy px-3 py-2 text-white">
-                        <span className="text-lg font-bold leading-none">{day}</span>
-                        <span className="mt-1 text-[9px] tracking-[0.1em]">
-                          {month}
-                        </span>
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="text-sm font-semibold text-nord-ink">
-                          {event.title}
-                        </div>
-                        <div className="mt-0.5 text-[11px] text-nord-muted">
-                          {time}
-                          {event.location ? ` · ${event.location}` : null}
-                        </div>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
-          ))
-        )}
-      </div>
+      <TermineClient items={items} teams={teamOptions} showcase={showcase} />
     </>
   );
 }

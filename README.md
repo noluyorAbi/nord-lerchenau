@@ -139,7 +139,7 @@ bun run download-images         # Mirror Wix CDN images locally
 | `Posts` | News — Lexical body, tags, optional hero image |
 | `Sponsors` | Logo + url + tier (premium / standard) |
 | `Fixtures` | Match fixtures with optional result |
-| `Events` | Training times, parties, Jeep Cup, etc. |
+| `Events` | Training times, parties, tournaments, etc. |
 | `Submissions` | Contact-form results (admin-only read) |
 
 **Globals** — `SiteSettings`, `Navigation`, `HomePage`, `ContactInfo`, `ChronikPage`, `VereinsheimPage`, `JugendfoerderPage`, `LegalPages`.

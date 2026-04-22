@@ -14,13 +14,36 @@ export const HomePage: GlobalConfig = {
       name: "hero",
       type: "group",
       fields: [
-        { name: "pretitle", type: "text", defaultValue: "Heimspieltag · Sa 14:30 · Eschengarten" },
-        { name: "headlineLine1", type: "text", required: true, defaultValue: "Einmal Nordler," },
-        { name: "headlineLine2", type: "text", required: true, defaultValue: "immer Nordler." },
-        { name: "subline", type: "textarea", defaultValue: "Seit 1947 zuhause im Münchner Norden. 500+ Mitglieder, vier Sportarten, eine Familie." },
+        {
+          name: "pretitle",
+          type: "text",
+          defaultValue: "Heimspieltag · Sa 14:30 · Eschengarten",
+        },
+        {
+          name: "headlineLine1",
+          type: "text",
+          required: true,
+          defaultValue: "Einmal Nordler,",
+        },
+        {
+          name: "headlineLine2",
+          type: "text",
+          required: true,
+          defaultValue: "immer Nordler.",
+        },
+        {
+          name: "subline",
+          type: "textarea",
+          defaultValue:
+            "Seit 1947 zuhause im Münchner Norden. 500+ Mitglieder, vier Sportarten, eine Familie.",
+        },
         { name: "primaryCtaLabel", type: "text", defaultValue: "Spielplan" },
         { name: "primaryCtaHref", type: "text", defaultValue: "/fussball" },
-        { name: "secondaryCtaLabel", type: "text", defaultValue: "Verein kennenlernen" },
+        {
+          name: "secondaryCtaLabel",
+          type: "text",
+          defaultValue: "Verein kennenlernen",
+        },
         { name: "secondaryCtaHref", type: "text", defaultValue: "/verein" },
       ],
     },
@@ -42,16 +65,28 @@ export const HomePage: GlobalConfig = {
     {
       name: "sections",
       type: "group",
-      admin: { description: "Welche Sektionen werden auf der Startseite angezeigt?" },
+      admin: {
+        description: "Welche Sektionen werden auf der Startseite angezeigt?",
+      },
       fields: [
         { name: "showNextMatch", type: "checkbox", defaultValue: true },
-        { name: "showFupa", type: "checkbox", defaultValue: true, label: "Fupa-Block (Liga · Ergebnisse · Torjäger · News)" },
+        {
+          name: "showFupa",
+          type: "checkbox",
+          defaultValue: true,
+          label: "Fupa-Block (Liga · Ergebnisse · Torjäger · News)",
+        },
         { name: "showNews", type: "checkbox", defaultValue: true },
         { name: "showSports", type: "checkbox", defaultValue: true },
         { name: "showEvents", type: "checkbox", defaultValue: true },
         { name: "showSponsors", type: "checkbox", defaultValue: true },
         { name: "showVereinsheim", type: "checkbox", defaultValue: true },
-        { name: "showLocation", type: "checkbox", defaultValue: true, label: "Anfahrt / Karte" },
+        {
+          name: "showLocation",
+          type: "checkbox",
+          defaultValue: true,
+          label: "Anfahrt / Karte",
+        },
         { name: "showMembershipCta", type: "checkbox", defaultValue: true },
       ],
     },

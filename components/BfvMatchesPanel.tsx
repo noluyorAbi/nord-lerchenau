@@ -112,7 +112,7 @@ export async function BfvMatchesPanel({ bfv }: Props) {
                       vs {opp}
                     </span>
                     <span className="shrink-0 font-mono text-[11px] text-nord-muted">
-                      {d ? formatShortDate(d) : m.kickoffDate ?? ""}
+                      {d ? formatShortDate(d) : (m.kickoffDate ?? "")}
                     </span>
                   </li>
                 );
@@ -144,7 +144,13 @@ export async function BfvMatchesPanel({ bfv }: Props) {
                         ? "bg-nord-gold text-nord-navy"
                         : "bg-nord-red text-white"
                   }`}
-                  title={o === "W" ? "Sieg" : o === "D" ? "Unentschieden" : "Niederlage"}
+                  title={
+                    o === "W"
+                      ? "Sieg"
+                      : o === "D"
+                        ? "Unentschieden"
+                        : "Niederlage"
+                  }
                 >
                   {o}
                 </span>
@@ -176,7 +182,9 @@ function NextMatchBody({ match, teamId }: { match: BfvMatch; teamId: string }) {
   const away = match.guestTeamName;
   const homeLogo = bfvMatchSideLogo(match, "home");
   const awayLogo = bfvMatchSideLogo(match, "away");
-  const kickoffLabel = d ? formatKickoff(d) : `${match.kickoffDate ?? ""} ${match.kickoffTime ?? ""}`;
+  const kickoffLabel = d
+    ? formatKickoff(d)
+    : `${match.kickoffDate ?? ""} ${match.kickoffTime ?? ""}`;
 
   return (
     <div className="px-5 py-5">
@@ -255,13 +263,11 @@ function ResultRow({ match, teamId }: { match: BfvMatch; teamId: string }) {
       </span>
       <span className="min-w-0">
         <span className="block truncate font-display font-bold text-nord-ink">
-          <span className="text-nord-muted">
-            {side === "home" ? "H" : "A"}
-          </span>{" "}
+          <span className="text-nord-muted">{side === "home" ? "H" : "A"}</span>{" "}
           vs {opp}
         </span>
         <span className="font-mono text-[10px] text-nord-muted">
-          {d ? formatShortDate(d) : match.kickoffDate ?? ""}
+          {d ? formatShortDate(d) : (match.kickoffDate ?? "")}
           {match.competitionType === "Freundschaftsspiele" ? " · Test" : ""}
         </span>
       </span>

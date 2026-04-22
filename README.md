@@ -2,7 +2,7 @@
 
 Modern rebuild of **SV Nord München-Lerchenau e.V.** — a 78-year-old traditional sports club in Munich's Lerchenau district. Replaces the legacy Wix site with a fast, editable, fully-typed Next.js 16 app backed by Payload CMS.
 
-> *„Einmal Nordler, immer Nordler."*
+> _„Einmal Nordler, immer Nordler."_
 
 ## Highlights
 
@@ -19,25 +19,25 @@ Modern rebuild of **SV Nord München-Lerchenau e.V.** — a 78-year-old traditio
 
 ## Tech Stack
 
-| Layer | Tech |
-|---|---|
-| Framework | Next.js 16 (App Router, Server Components) |
-| UI | React 19 · TypeScript strict |
-| Styling | Tailwind CSS v4 (`@theme` tokens) |
-| Motion | [Motion](https://motion.dev) (Framer Motion v12) |
-| CMS | [Payload v3](https://payloadcms.com) in-app at `/admin` |
-| Editor | Lexical rich text with fixed toolbar |
-| DB | Postgres (Docker dev · Neon prod) |
-| Storage | local `public/uploads/` (dev) · Vercel Blob (prod) |
-| Email | [Resend](https://resend.com) |
-| Validation | [Zod](https://zod.dev) |
-| Primitives | Radix UI (Dialog for mobile menu) |
-| Package manager | [Bun](https://bun.sh) |
-| Deploy | Vercel |
+| Layer           | Tech                                                    |
+| --------------- | ------------------------------------------------------- |
+| Framework       | Next.js 16 (App Router, Server Components)              |
+| UI              | React 19 · TypeScript strict                            |
+| Styling         | Tailwind CSS v4 (`@theme` tokens)                       |
+| Motion          | [Motion](https://motion.dev) (Framer Motion v12)        |
+| CMS             | [Payload v3](https://payloadcms.com) in-app at `/admin` |
+| Editor          | Lexical rich text with fixed toolbar                    |
+| DB              | Postgres (Docker dev · Neon prod)                       |
+| Storage         | local `public/uploads/` (dev) · Vercel Blob (prod)      |
+| Email           | [Resend](https://resend.com)                            |
+| Validation      | [Zod](https://zod.dev)                                  |
+| Primitives      | Radix UI (Dialog for mobile menu)                       |
+| Package manager | [Bun](https://bun.sh)                                   |
+| Deploy          | Vercel                                                  |
 
 ## Screenshots
 
-*(Add after first deploy — or run `bun dev` to see it locally.)*
+_(Add after first deploy — or run `bun dev` to see it locally.)_
 
 ## Getting Started
 
@@ -130,17 +130,17 @@ bun run download-images         # Mirror Wix CDN images locally
 
 **Collections**
 
-| Collection | What |
-|---|---|
-| `Users` | Admins (Payload auth) |
-| `Media` | Uploads — Sharp resizes to thumbnail/card/feature/hero, WebP |
-| `People` | Vorstand, sport leads, trainers, optional players |
-| `Teams` | All sport teams (22 football + 5 other-sport docs), slug-hooked |
-| `Posts` | News — Lexical body, tags, optional hero image |
-| `Sponsors` | Logo + url + tier (premium / standard) |
-| `Fixtures` | Match fixtures with optional result |
-| `Events` | Training times, parties, tournaments, etc. |
-| `Submissions` | Contact-form results (admin-only read) |
+| Collection    | What                                                            |
+| ------------- | --------------------------------------------------------------- |
+| `Users`       | Admins (Payload auth)                                           |
+| `Media`       | Uploads — Sharp resizes to thumbnail/card/feature/hero, WebP    |
+| `People`      | Vorstand, sport leads, trainers, optional players               |
+| `Teams`       | All sport teams (22 football + 5 other-sport docs), slug-hooked |
+| `Posts`       | News — Lexical body, tags, optional hero image                  |
+| `Sponsors`    | Logo + url + tier (premium / standard)                          |
+| `Fixtures`    | Match fixtures with optional result                             |
+| `Events`      | Training times, parties, tournaments, etc.                      |
+| `Submissions` | Contact-form results (admin-only read)                          |
 
 **Globals** — `SiteSettings`, `Navigation`, `HomePage`, `ContactInfo`, `ChronikPage`, `VereinsheimPage`, `JugendfoerderPage`, `LegalPages`.
 
@@ -153,6 +153,7 @@ Post edits in `/admin` → click the "Live Preview" tab. The iframe loads the re
 See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) for the full step-by-step guide and [`docs/TODO.md`](docs/TODO.md) for the current live checklist.
 
 **Stack in production**
+
 - **Database** — [Neon](https://neon.com) Postgres (use the pooler host for `DATABASE_URI`)
 - **Hosting** — [Vercel](https://vercel.com) — one project, auto-deploy from `main`
 - **Media** — [Vercel Blob](https://vercel.com/storage/blob) (via `BLOB_READ_WRITE_TOKEN`; falls back to local `public/uploads/` in dev)
@@ -165,7 +166,7 @@ Short version: push to GitHub ✓, provision Neon + Resend, import into Vercel, 
 The visual direction came out of a design-handoff from [claude.ai/design](https://claude.ai/design). Key decisions:
 
 - **Personality** — modern sports-app energy × Bavarian heritage
-- **Hero treatment** — huge Barlow Condensed "EINMAL NORDLER, IMMER *Nordler.*" with gold and italic-serif accents, next-fixture card on the right
+- **Hero treatment** — huge Barlow Condensed "EINMAL NORDLER, IMMER _Nordler._" with gold and italic-serif accents, next-fixture card on the right
 - **Ticker** — live Heimspieltag bar above the header
 - **Palette** — extracted from the SV Nord crest: deep navy `#0b1b3f`, sky `#6ec7ea`, gold `#c8a96a`, warm paper `#f4f1ea`, red accent `#d43a2f`
 

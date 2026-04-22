@@ -23,8 +23,17 @@ export const Submissions: CollectionConfig = {
     { name: "email", type: "email", required: true },
     { name: "subject", type: "text" },
     { name: "message", type: "textarea", required: true },
-    { name: "handled", type: "checkbox", defaultValue: false, label: "Erledigt" },
-    { name: "notes", type: "textarea", admin: { description: "Interne Notizen — nicht öffentlich." } },
+    {
+      name: "handled",
+      type: "checkbox",
+      defaultValue: false,
+      label: "Erledigt",
+    },
+    {
+      name: "notes",
+      type: "textarea",
+      admin: { description: "Interne Notizen — nicht öffentlich." },
+    },
   ],
   timestamps: true,
 };

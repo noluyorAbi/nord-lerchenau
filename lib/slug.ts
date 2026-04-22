@@ -11,7 +11,10 @@ const umlautMap: Record<string, string> = {
 export function slug(input: string): string {
   if (!input) return "";
 
-  const transliterated = input.replace(/[äöüÄÖÜß]/g, (ch) => umlautMap[ch] ?? ch);
+  const transliterated = input.replace(
+    /[äöüÄÖÜß]/g,
+    (ch) => umlautMap[ch] ?? ch,
+  );
 
   return transliterated
     .normalize("NFKD")

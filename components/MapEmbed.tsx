@@ -104,7 +104,10 @@ export function MapEmbed({
         </span>
       `;
 
-      const marker = new maplibre.Marker({ element: markerEl, anchor: "bottom" })
+      const marker = new maplibre.Marker({
+        element: markerEl,
+        anchor: "bottom",
+      })
         .setLngLat([lon, lat])
         .addTo(map);
 

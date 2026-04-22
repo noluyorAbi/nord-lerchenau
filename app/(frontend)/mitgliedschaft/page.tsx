@@ -226,8 +226,8 @@ export default async function MitgliedschaftPage() {
             {contact.phone ? <div>{contact.phone}</div> : null}
             {Array.isArray(contact.addresses) && contact.addresses[0] ? (
               <div>
-                {contact.addresses[0].street} · {contact.addresses[0].postalCode}{" "}
-                {contact.addresses[0].city}
+                {contact.addresses[0].street} ·{" "}
+                {contact.addresses[0].postalCode} {contact.addresses[0].city}
               </div>
             ) : null}
           </div>

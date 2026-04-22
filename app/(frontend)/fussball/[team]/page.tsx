@@ -10,11 +10,7 @@ import { FupaSquadPanel } from "@/components/FupaSquadPanel";
 import { PageHero } from "@/components/PageHero";
 import { PersonCard } from "@/components/PersonCard";
 import { TeamSourceButtons } from "@/components/TeamSourceButtons";
-import {
-  bfvClubLogoUrl,
-  bfvTeamImageUrl,
-  bfvTeamUrl,
-} from "@/lib/bfv";
+import { bfvClubLogoUrl, bfvTeamImageUrl, bfvTeamUrl } from "@/lib/bfv";
 import { resolveFupaSlug } from "@/lib/fupa";
 import { formatKickoff } from "@/lib/format-date";
 import { getPayloadClient } from "@/lib/payload";
@@ -272,4 +268,3 @@ export default async function TeamPage({ params }: Props) {
     </>
   );
 }
-

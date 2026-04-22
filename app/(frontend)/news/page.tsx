@@ -67,7 +67,8 @@ export default async function NewsIndex({ searchParams }: Props) {
               const tag = Array.isArray(post.tags) ? post.tags[0] : null;
               const tagLabel = tag ? (TAG_LABELS[tag] ?? tag) : "News";
               const fallbackImg =
-                FALLBACK_HEROS[idx % FALLBACK_HEROS.length] ?? FALLBACK_HEROS[0];
+                FALLBACK_HEROS[idx % FALLBACK_HEROS.length] ??
+                FALLBACK_HEROS[0];
               return (
                 <Link
                   key={post.id}

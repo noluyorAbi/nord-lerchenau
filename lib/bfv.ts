@@ -178,7 +178,10 @@ export function isLeagueMatch(m: BfvMatch): boolean {
   return m.competitionType === "Meisterschaften";
 }
 
-export function isOurBfvTeam(m: BfvMatch, teamId: string): "home" | "away" | null {
+export function isOurBfvTeam(
+  m: BfvMatch,
+  teamId: string,
+): "home" | "away" | null {
   if (m.homeTeamPermanentId === teamId) return "home";
   if (m.guestTeamPermanentId === teamId) return "away";
   return null;
@@ -187,7 +190,12 @@ export function isOurBfvTeam(m: BfvMatch, teamId: string): "home" | "away" | nul
 export function bfvMatchResult(
   m: BfvMatch,
   teamId: string,
-): { played: boolean; us: number | null; them: number | null; outcome: "W" | "D" | "L" | null } {
+): {
+  played: boolean;
+  us: number | null;
+  them: number | null;
+  outcome: "W" | "D" | "L" | null;
+} {
   if (!m.result || m.result.trim() === "" || m.result === "-:-") {
     return { played: false, us: null, them: null, outcome: null };
   }
@@ -253,7 +261,9 @@ export function pickUpcomingBfvMatches(
     .map((x) => x.m);
 }
 
-export function normalizeBfvLogoUrl(raw: string | null | undefined): string | null {
+export function normalizeBfvLogoUrl(
+  raw: string | null | undefined,
+): string | null {
   if (!raw) return null;
   if (raw.startsWith("//")) return `https:${raw}`;
   if (raw.startsWith("/")) return `https://www.bfv.de${raw}`;
@@ -363,7 +373,9 @@ export function parseBfvTable(html: string): BfvTable | null {
     const body = m[2];
     if (classes.includes("thead")) continue;
 
-    const rank = readNumber(/<td\s+class="column-rank"[^>]*>\s*(\d+)/.exec(body));
+    const rank = readNumber(
+      /<td\s+class="column-rank"[^>]*>\s*(\d+)/.exec(body),
+    );
     if (rank === null) continue;
 
     const clubName = cleanText(
@@ -395,8 +407,7 @@ export function parseBfvTable(html: string): BfvTable | null {
     const goalDifference = toInt(numericCells[5]) ?? goalsFor - goalsAgainst;
     const points = toInt(numericCells[6]) ?? 0;
 
-    const markedOwn =
-      classes.split(/\s+/).includes("own");
+    const markedOwn = classes.split(/\s+/).includes("own");
     // Fall back to name-matching so SG / youth rows that the fussball.de
     // widget doesn't mark as "own" still highlight as our team.
     const nameIsUs = isOurClubName(clubName);

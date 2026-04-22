@@ -145,7 +145,9 @@ export default function FrontendLayout({
           Weiter zum Hauptinhalt
         </a>
         <Header />
-        <main id="main" className="flex-1">{children}</main>
+        <main id="main" className="flex-1">
+          {children}
+        </main>
         <Footer />
         <SiteSchema />
       </body>

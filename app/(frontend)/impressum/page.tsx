@@ -44,7 +44,12 @@ export default async function ImpressumPage() {
               <p>
                 <strong className="text-nord-ink">Kontakt</strong>
                 <br />
-                {contact.email ? <>E-Mail: {contact.email}<br /></> : null}
+                {contact.email ? (
+                  <>
+                    E-Mail: {contact.email}
+                    <br />
+                  </>
+                ) : null}
                 {contact.phone ? <>Telefon: {contact.phone}</> : null}
               </p>
             ) : null}

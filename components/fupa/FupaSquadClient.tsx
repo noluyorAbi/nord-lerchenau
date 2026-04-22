@@ -38,7 +38,10 @@ export function FupaSquadClient({
   season,
 }: Props) {
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  const selected = selectedId !== null ? players.find((p) => p.id === selectedId) ?? null : null;
+  const selected =
+    selectedId !== null
+      ? (players.find((p) => p.id === selectedId) ?? null)
+      : null;
 
   const buckets = groupByPosition(players);
 

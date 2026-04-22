@@ -4,18 +4,44 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 const MONTHS_DE = [
-  "Januar","Februar","März","April","Mai","Juni",
-  "Juli","August","September","Oktober","November","Dezember",
+  "Januar",
+  "Februar",
+  "März",
+  "April",
+  "Mai",
+  "Juni",
+  "Juli",
+  "August",
+  "September",
+  "Oktober",
+  "November",
+  "Dezember",
 ];
 
 const SHORT_MONTHS_DE = [
-  "JAN","FEB","MÄR","APR","MAI","JUN",
-  "JUL","AUG","SEP","OKT","NOV","DEZ",
+  "JAN",
+  "FEB",
+  "MÄR",
+  "APR",
+  "MAI",
+  "JUN",
+  "JUL",
+  "AUG",
+  "SEP",
+  "OKT",
+  "NOV",
+  "DEZ",
 ];
 
-const WEEKDAYS_DE = ["So","Mo","Di","Mi","Do","Fr","Sa"];
+const WEEKDAYS_DE = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
 const WEEKDAYS_LONG_DE = [
-  "Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag",
+  "Sonntag",
+  "Montag",
+  "Dienstag",
+  "Mittwoch",
+  "Donnerstag",
+  "Freitag",
+  "Samstag",
 ];
 
 export type MatchDTO = {
@@ -108,10 +134,7 @@ export function TermineClient({
   const rest = filtered.slice(1);
 
   const byMonth = useMemo(() => {
-    const map = new Map<
-      string,
-      { label: string; items: typeof filtered }
-    >();
+    const map = new Map<string, { label: string; items: typeof filtered }>();
     for (const item of rest) {
       const at = new Date(item.atMs);
       const key = `${at.getFullYear()}-${at.getMonth()}`;
@@ -125,9 +148,7 @@ export function TermineClient({
   const matchCount = filtered.filter((i) => i.kind === "match").length;
   const eventCount = filtered.filter((i) => i.kind === "event").length;
   const nowMs = new Date().getTime();
-  const next7 = filtered.filter(
-    (i) => i.atMs < nowMs + 7 * 86400_000,
-  ).length;
+  const next7 = filtered.filter((i) => i.atMs < nowMs + 7 * 86400_000).length;
 
   const hasFilters = Boolean(
     query || type !== "all" || range !== "all" || teamSlug || side !== "all",
@@ -283,9 +304,7 @@ function Toolbar(props: {
             { value: "away", label: "Auswärts" },
           ]}
           value={props.side}
-          onChange={(v) =>
-            props.setSide(v as "all" | "home" | "away")
-          }
+          onChange={(v) => props.setSide(v as "all" | "home" | "away")}
         />
         <span className="ml-auto self-center font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-nord-muted">
           {props.total} {props.total === 1 ? "Treffer" : "Treffer"}
@@ -354,13 +373,7 @@ function HerrenShowcase({ entries }: { entries: ShowcaseEntry[] }) {
   );
 }
 
-function HerrenCard({
-  entry,
-  nowMs,
-}: {
-  entry: ShowcaseEntry;
-  nowMs: number;
-}) {
+function HerrenCard({ entry, nowMs }: { entry: ShowcaseEntry; nowMs: number }) {
   if (!entry.match) {
     return (
       <div className="rounded-xl border border-dashed border-nord-line bg-white p-5 text-center">
@@ -403,8 +416,14 @@ function HerrenCard({
 
       <div className="mt-4 flex items-center gap-3">
         <div className="flex items-center -space-x-2">
-          <Crest src={m.homeLogo} ring={m.side === "home" ? "ring-nord-gold" : "ring-nord-line"} />
-          <Crest src={m.awayLogo} ring={m.side === "away" ? "ring-nord-gold" : "ring-nord-line"} />
+          <Crest
+            src={m.homeLogo}
+            ring={m.side === "home" ? "ring-nord-gold" : "ring-nord-line"}
+          />
+          <Crest
+            src={m.awayLogo}
+            ring={m.side === "away" ? "ring-nord-gold" : "ring-nord-line"}
+          />
         </div>
         <div className="min-w-0 flex-1">
           <div className="truncate font-display text-base font-bold leading-tight tracking-tight text-nord-ink">
@@ -444,11 +463,14 @@ function EmptyState({ hasFilters }: { hasFilters: boolean }) {
   return (
     <div className="mt-8 rounded-2xl border border-dashed border-nord-line bg-white p-10 text-center text-sm text-nord-muted">
       {hasFilters ? (
-        <>Keine Treffer für die gewählten Filter. Probier einen anderen Zeitraum oder eine andere Mannschaft.</>
+        <>
+          Keine Treffer für die gewählten Filter. Probier einen anderen Zeitraum
+          oder eine andere Mannschaft.
+        </>
       ) : (
         <>
           Aktuell sind keine kommenden Termine hinterlegt. BFV-Spiele erscheinen
-          automatisch, sobald der Spielplan steht — zusätzliche Vereinstermine
+          automatisch, sobald der Spielplan steht · zusätzliche Vereinstermine
           (Turniere, Sommerfest, Weihnachtsfeier) pflegt der Vorstand im Admin
           unter <em>Content → Events</em>.
         </>
@@ -612,13 +634,15 @@ function TeamBlock({
   isUs: boolean;
 }) {
   const alignment =
-    align === "left" ? "md:items-start md:text-left" : "md:items-end md:text-right";
+    align === "left"
+      ? "md:items-start md:text-left"
+      : "md:items-end md:text-right";
   return (
     <div className={`flex flex-col items-center gap-4 ${alignment}`}>
       <div
-        className={`flex size-20 items-center justify-center rounded-full bg-white/10 p-3 ring-2 ${
-          isUs ? "ring-nord-gold" : "ring-white/20"
-        } md:size-24`}
+        className={`flex size-20 items-center justify-center overflow-hidden rounded-full p-2 ring-2 md:size-24 ${
+          logo ? "bg-white" : "bg-white/10"
+        } ${isUs ? "ring-nord-gold" : "ring-white/20"}`}
       >
         {logo ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -629,7 +653,7 @@ function TeamBlock({
             loading="lazy"
           />
         ) : (
-          <span className="font-display text-lg font-black">
+          <span className="font-display text-lg font-black text-white">
             {name
               .split(/\s+/)
               .map((p) => p[0])
@@ -651,11 +675,7 @@ function TeamBlock({
   );
 }
 
-function AgendaRow({
-  item,
-}: {
-  item: AgendaDTO & { atMs: number };
-}) {
+function AgendaRow({ item }: { item: AgendaDTO & { atMs: number } }) {
   const at = new Date(item.atMs);
   const day = at.getDate().toString().padStart(2, "0");
   const month = SHORT_MONTHS_DE[at.getMonth()];
@@ -750,9 +770,7 @@ function DateTile({
   tone: "navy" | "gold";
 }) {
   const toneClass =
-    tone === "navy"
-      ? "bg-nord-navy text-white"
-      : "bg-nord-gold text-nord-ink";
+    tone === "navy" ? "bg-nord-navy text-white" : "bg-nord-gold text-nord-ink";
   return (
     <div
       className={`flex w-16 shrink-0 flex-col items-center justify-center gap-0.5 ${toneClass} md:w-20`}
@@ -806,9 +824,14 @@ function Crest({
     >
       {src ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={src} alt="" className="size-full object-contain" loading="lazy" />
+        <img
+          src={src}
+          alt=""
+          className="size-full object-contain"
+          loading="lazy"
+        />
       ) : (
-        <span className="text-[10px] font-bold text-nord-muted">—</span>
+        <span className="text-[10px] font-bold text-nord-muted">·</span>
       )}
     </div>
   );

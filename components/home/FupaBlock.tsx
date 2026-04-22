@@ -56,9 +56,7 @@ export async function FupaBlock() {
   const topScorers = [...(players ?? [])]
     .sort(
       (a, b) =>
-        b.goals - a.goals ||
-        b.assists - a.assists ||
-        b.topEleven - a.topEleven,
+        b.goals - a.goals || b.assists - a.assists || b.topEleven - a.topEleven,
     )
     .filter((p) => p.goals > 0 || p.assists > 0 || p.topEleven > 0)
     .slice(0, 5);
@@ -161,7 +159,8 @@ function NextMatchCard({
           </div>
           <div className="min-w-0 flex-1">
             <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/50">
-              {venue} · {match.round?.number ? `${match.round.number}. ST` : "Liga"}
+              {venue} ·{" "}
+              {match.round?.number ? `${match.round.number}. ST` : "Liga"}
             </div>
             <div className="mt-1 truncate font-display text-xl font-extrabold">
               vs {opp.name.full}
@@ -230,7 +229,13 @@ function RecentResultsCard({ recent }: { recent: FupaMatch[] }) {
               <span
                 key={i}
                 className={`inline-flex size-6 items-center justify-center rounded-full font-display text-[11px] font-black ${FORM_STYLE[f]}`}
-                aria-label={f === "W" ? "Sieg" : f === "D" ? "Unentschieden" : "Niederlage"}
+                aria-label={
+                  f === "W"
+                    ? "Sieg"
+                    : f === "D"
+                      ? "Unentschieden"
+                      : "Niederlage"
+                }
               >
                 {f}
               </span>

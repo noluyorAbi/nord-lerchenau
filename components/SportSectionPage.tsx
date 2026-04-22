@@ -50,7 +50,8 @@ export async function SportSectionPage({
     team.photo && typeof team.photo === "object" ? (team.photo as Media) : null;
   const heroSrc =
     photo && typeof photo.url === "string" && photo.url
-      ? /^https?:\/\//.test(photo.url) && !photo.url.includes("/api/media/file/")
+      ? /^https?:\/\//.test(photo.url) &&
+        !photo.url.includes("/api/media/file/")
         ? photo.url
         : photo.filename
           ? `/uploads/${photo.filename}`

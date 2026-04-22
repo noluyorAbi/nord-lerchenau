@@ -31,7 +31,16 @@ export const Teams: CollectionConfig = {
   },
   fields: [
     { name: "name", type: "text", required: true },
-    { name: "slug", type: "text", required: true, unique: true, admin: { description: "Auto-generated from name. Edit only if you know what you're doing." } },
+    {
+      name: "slug",
+      type: "text",
+      required: true,
+      unique: true,
+      admin: {
+        description:
+          "Auto-generated from name. Edit only if you know what you're doing.",
+      },
+    },
     {
       name: "sport",
       type: "select",
@@ -57,9 +66,17 @@ export const Teams: CollectionConfig = {
       ],
       defaultValue: "allgemein",
     },
-    { name: "ageGroup", type: "text", admin: { description: "z.B. A1, B2, F3, Bambini" } },
+    {
+      name: "ageGroup",
+      type: "text",
+      admin: { description: "z.B. A1, B2, F3, Bambini" },
+    },
     { name: "season", type: "text", admin: { description: "z.B. 2025/26" } },
-    { name: "league", type: "text", admin: { description: "z.B. Bezirksliga Oberbayern" } },
+    {
+      name: "league",
+      type: "text",
+      admin: { description: "z.B. Bezirksliga Oberbayern" },
+    },
     {
       name: "bfv",
       type: "group",
@@ -71,7 +88,10 @@ export const Teams: CollectionConfig = {
         {
           name: "teamId",
           type: "text",
-          admin: { description: "32-char BFV/DFB-Net ID, e.g. 016PMM83PG000000VV0AG811VUDIC8D7" },
+          admin: {
+            description:
+              "32-char BFV/DFB-Net ID, e.g. 016PMM83PG000000VV0AG811VUDIC8D7",
+          },
         },
         {
           name: "slug",
@@ -81,12 +101,18 @@ export const Teams: CollectionConfig = {
         {
           name: "spielklasse",
           type: "text",
-          admin: { description: "BFV-Wortlaut der Spielklasse, e.g. 'Herren / Bezirksliga'" },
+          admin: {
+            description:
+              "BFV-Wortlaut der Spielklasse, e.g. 'Herren / Bezirksliga'",
+          },
         },
         {
           name: "partner",
           type: "text",
-          admin: { description: "Für SG-Teams, z.B. 'Spielgemeinschaft mit Fasanarie-Nord'" },
+          admin: {
+            description:
+              "Für SG-Teams, z.B. 'Spielgemeinschaft mit Fasanarie-Nord'",
+          },
         },
       ],
     },

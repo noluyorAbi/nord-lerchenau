@@ -9,7 +9,10 @@ type Payload = {
   sport?: string | null;
 };
 
-const COLLECTION_TAGS: Record<string, (slug?: string, sport?: string) => string[]> = {
+const COLLECTION_TAGS: Record<
+  string,
+  (slug?: string, sport?: string) => string[]
+> = {
   posts: (slug) => {
     const tags = ["news-list", "home-news"];
     if (slug) tags.push(`post-${slug}`);
@@ -53,7 +56,10 @@ export async function POST(request: Request) {
 
   const expected = process.env.REVALIDATE_SECRET;
   if (!expected || body.secret !== expected) {
-    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json(
+      { ok: false, error: "Unauthorized" },
+      { status: 401 },
+    );
   }
 
   const tags: string[] = [];

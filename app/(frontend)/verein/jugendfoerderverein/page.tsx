@@ -86,12 +86,10 @@ export default async function JugendfoerderPage() {
           </div>
           <p className="mt-3 text-base leading-relaxed text-nord-ink">
             Der Förderverein der Fußballjunioren erhebt einen{" "}
-            <strong>
-              Mindest­jahresbeitrag von {minFee}&nbsp;€
-            </strong>
-            . Der Beitrag ist bewusst niedrig gehalten, damit über darüber
-            hinausgehende Zuzahlungen — einmalig oder laufend — eine Spenden­quittung
-            ausgestellt werden kann.
+            <strong>Mindest­jahresbeitrag von {minFee}&nbsp;€</strong>. Der
+            Beitrag ist bewusst niedrig gehalten, damit über darüber
+            hinausgehende Zuzahlungen — einmalig oder laufend — eine
+            Spenden­quittung ausgestellt werden kann.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <a

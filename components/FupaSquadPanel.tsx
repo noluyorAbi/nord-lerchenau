@@ -32,9 +32,9 @@ export async function FupaSquadPanel({ fupa, teamName }: Props) {
               Kader · fupa
             </div>
             <p className="mt-2 max-w-prose text-sm leading-relaxed text-nord-muted">
-              Für diese Mannschaft ist auf fupa noch kein Kader gepflegt.
-              Sobald Spieler:innen beim Verein hinterlegt sind, tauchen sie
-              hier automatisch auf.
+              Für diese Mannschaft ist auf fupa noch kein Kader gepflegt. Sobald
+              Spieler:innen beim Verein hinterlegt sind, tauchen sie hier
+              automatisch auf.
             </p>
           </div>
           <a

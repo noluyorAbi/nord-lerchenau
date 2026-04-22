@@ -14,7 +14,8 @@ type Crawl = {
 
 const IMAGE_RE = /!\[([^\]]*)\]\((https?:\/\/[^)\s]+)\)/g;
 
-const hash = (s: string) => createHash("sha1").update(s).digest("hex").slice(0, 16);
+const hash = (s: string) =>
+  createHash("sha1").update(s).digest("hex").slice(0, 16);
 
 async function main() {
   const raw = await fs.readFile(SRC, "utf-8");
@@ -83,7 +84,9 @@ async function main() {
     JSON.stringify(manifest, null, 2),
   );
 
-  console.log(`\nDone. ${seen.size} unique images. Manifest: ${path.join(OUT_DIR, "manifest.json")}`);
+  console.log(
+    `\nDone. ${seen.size} unique images. Manifest: ${path.join(OUT_DIR, "manifest.json")}`,
+  );
 }
 
 void main();

@@ -21,7 +21,8 @@ export const Posts: CollectionConfig = {
     livePreview: {
       url: ({ data }) => {
         const postSlug = typeof data?.slug === "string" ? data.slug : "new";
-        const base = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000";
+        const base =
+          process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000";
         return `${base}/news/${postSlug}?preview=1`;
       },
       breakpoints: [
@@ -44,11 +45,20 @@ export const Posts: CollectionConfig = {
   fields: [
     { name: "title", type: "text", required: true },
     { name: "slug", type: "text", required: true, unique: true },
-    { name: "excerpt", type: "textarea", admin: { description: "1–2 sentence teaser shown in cards." } },
+    {
+      name: "excerpt",
+      type: "textarea",
+      admin: { description: "1–2 sentence teaser shown in cards." },
+    },
     { name: "heroImage", type: "upload", relationTo: "media" },
     { name: "body", type: "richText", required: true },
     { name: "author", type: "relationship", relationTo: "people" },
-    { name: "publishedAt", type: "date", required: true, admin: { date: { pickerAppearance: "dayAndTime" } } },
+    {
+      name: "publishedAt",
+      type: "date",
+      required: true,
+      admin: { date: { pickerAppearance: "dayAndTime" } },
+    },
     {
       name: "tags",
       type: "select",

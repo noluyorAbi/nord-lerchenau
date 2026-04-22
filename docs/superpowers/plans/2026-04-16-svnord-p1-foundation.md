@@ -12,9 +12,10 @@
 **Tech Stack:** Next.js 16 · React 19 · TypeScript (strict) · Tailwind v4 · Payload CMS v3 · Postgres (Docker dev / Neon prod) · `@payloadcms/db-postgres` · `@payloadcms/richtext-lexical` · Sharp · Bun · Vitest (helpers only) · firecrawl JSON (seed source)
 
 **Reference docs (read before starting):**
+
 - `node_modules/next/dist/docs/01-app/01-getting-started/15-route-handlers.md`
 - `node_modules/next/dist/docs/01-app/02-guides/how-revalidation-works.md`
-- `node_modules/next/dist/docs/01-app/02-guides/caching-without-cache-components.md` *(we use the previous-model caching, not Cache Components)*
+- `node_modules/next/dist/docs/01-app/02-guides/caching-without-cache-components.md` _(we use the previous-model caching, not Cache Components)_
 - Payload v3 docs (online — verify version compat in Task 1)
 
 ---
@@ -78,6 +79,7 @@ nord-lerchenau/
 ```
 
 **Conventions used throughout:**
+
 - All new TS files use ES module syntax with `import type` for type-only imports.
 - All Payload schemas export a single named `const` matching the file name (`export const Posts: CollectionConfig = {...}`).
 - All commits use Conventional Commits (`feat:`, `chore:`, `test:`, `docs:`).
@@ -94,6 +96,7 @@ This is the highest risk in the entire spec. The fix path differs based on what 
 - [ ] **Step 1: Check what Payload versions exist on npm**
 
 Run:
+
 ```bash
 bun pm view payload versions --json | tail -30
 ```
@@ -103,6 +106,7 @@ Read the output. Note the latest 3.x version and any 4.x.
 - [ ] **Step 2: Check Payload's declared peer-dependency on Next.js**
 
 Run:
+
 ```bash
 bun pm view payload@latest peerDependencies
 ```
@@ -116,11 +120,13 @@ Three possible outcomes:
 (a) **Payload latest supports Next.js 16** → continue to Task 2 unchanged.
 
 (b) **Payload latest supports only Next.js 15** → before continuing, check if there's a canary/beta with Next 16 support:
-  ```bash
-  bun pm view payload@beta version peerDependencies
-  bun pm view payload@canary version peerDependencies
-  ```
-  If a beta exists with Next 16 support, plan to use that; otherwise STOP and ask the user whether to (i) downgrade Next.js to 15 LTS or (ii) switch CMS to Sanity (per spec §13).
+
+```bash
+bun pm view payload@beta version peerDependencies
+bun pm view payload@canary version peerDependencies
+```
+
+If a beta exists with Next 16 support, plan to use that; otherwise STOP and ask the user whether to (i) downgrade Next.js to 15 LTS or (ii) switch CMS to Sanity (per spec §13).
 
 (c) **Payload latest supports Next.js 16 but with caveats** (e.g. only with Cache Components disabled) → note the caveats in `payload.config.ts` comments and continue.
 
@@ -140,6 +146,7 @@ git commit -m "docs: record verified Payload + Next.js 16 compatibility status"
 ## Task 2: Local Postgres via Docker Compose
 
 **Files:**
+
 - Create: `docker-compose.yml`
 
 - [ ] **Step 1: Write `docker-compose.yml`**
@@ -170,6 +177,7 @@ volumes:
 - [ ] **Step 2: Start Postgres and verify it's healthy**
 
 Run:
+
 ```bash
 docker compose up -d postgres
 docker compose ps
@@ -180,6 +188,7 @@ Expected: `STATUS` column shows `Up X seconds (healthy)` for `svnord-postgres`.
 - [ ] **Step 3: Verify connection**
 
 Run:
+
 ```bash
 docker exec svnord-postgres psql -U svnord -d svnord -c "SELECT version();"
 ```
@@ -198,6 +207,7 @@ git commit -m "chore: add docker-compose for local Postgres"
 ## Task 3: Environment files
 
 **Files:**
+
 - Create: `.env.example`
 - Create: `.env.local` (gitignored — `.env*` already in `.gitignore`)
 
@@ -226,6 +236,7 @@ RESEND_TO_EMAIL=info@svnord.de
 - [ ] **Step 2: Write `.env.local`**
 
 Generate a real secret:
+
 ```bash
 openssl rand -hex 32
 ```
@@ -245,6 +256,7 @@ RESEND_TO_EMAIL=info@svnord.de
 - [ ] **Step 3: Verify `.env.local` is gitignored**
 
 Run:
+
 ```bash
 git check-ignore .env.local
 ```
@@ -263,6 +275,7 @@ git commit -m "chore: add .env.example template"
 ## Task 4: Install Payload core dependencies
 
 **Files:**
+
 - Modify: `package.json` (auto-updated by bun)
 
 - [ ] **Step 1: Install Payload + DB adapter + rich-text + image processing**
@@ -278,6 +291,7 @@ bun add payload@<payload-version> @payloadcms/db-postgres@<payload-version> @pay
 - [ ] **Step 2: Verify install**
 
 Run:
+
 ```bash
 bun pm ls payload @payloadcms/db-postgres @payloadcms/richtext-lexical @payloadcms/next sharp
 ```
@@ -321,6 +335,7 @@ git commit -m "chore: install Payload v3 + Postgres adapter + Lexical + Sharp"
 ## Task 5: Wrap `next.config.ts` with `withPayload`
 
 **Files:**
+
 - Modify: `next.config.ts`
 
 - [ ] **Step 1: Replace contents of `next.config.ts`**
@@ -351,6 +366,7 @@ The `static.wixstatic.com` remote pattern is only needed during seeding so we ca
 - [ ] **Step 2: Verify type-checks**
 
 Run:
+
 ```bash
 bunx tsc --noEmit
 ```
@@ -369,6 +385,7 @@ git commit -m "feat: wrap next.config with withPayload"
 ## Task 6: Create the Payload config skeleton (no collections yet)
 
 **Files:**
+
 - Create: `payload.config.ts`
 
 - [ ] **Step 1: Write `payload.config.ts` skeleton**
@@ -409,6 +426,7 @@ export default buildConfig({
 - [ ] **Step 2: Type-check**
 
 Run:
+
 ```bash
 bunx tsc --noEmit
 ```
@@ -427,6 +445,7 @@ git commit -m "feat: add minimal Payload config skeleton (Postgres + Lexical)"
 ## Task 7: Mount the Payload admin route group
 
 **Files:**
+
 - Create: `app/(payload)/admin/[[...segments]]/page.tsx`
 - Create: `app/(payload)/admin/[[...segments]]/not-found.tsx`
 - Create: `app/(payload)/api/[...slug]/route.ts`
@@ -462,10 +481,7 @@ If `@payloadcms/next/layouts` exports a different name in the version chosen in 
 
 ```tsx
 import type { Metadata } from "next";
-import {
-  generatePageMetadata,
-  RootPage,
-} from "@payloadcms/next/views";
+import { generatePageMetadata, RootPage } from "@payloadcms/next/views";
 
 import config from "@/payload.config";
 
@@ -474,11 +490,16 @@ type Props = {
   searchParams: Promise<Record<string, string | string[]>>;
 };
 
-export const generateMetadata = ({ params, searchParams }: Props): Promise<Metadata> =>
+export const generateMetadata = ({
+  params,
+  searchParams,
+}: Props): Promise<Metadata> =>
   generatePageMetadata({ config, params, searchParams });
 
 export default function Page({ params, searchParams }: Props) {
-  return <RootPage config={config} params={params} searchParams={searchParams} />;
+  return (
+    <RootPage config={config} params={params} searchParams={searchParams} />
+  );
 }
 ```
 
@@ -563,6 +584,7 @@ bun run dev
 ```
 
 Expected (in another terminal, leave dev server running):
+
 - Output includes `Ready in <time>` and lists `http://localhost:3000`.
 - No fatal errors. Warnings about peer dependencies are fine.
 
@@ -585,6 +607,7 @@ If you see a `withPayload` error: re-check Task 5.
 ## Task 9: Set up Vitest + write `slug` helper (TDD)
 
 **Files:**
+
 - Create: `vitest.config.ts`
 - Create: `lib/slug.ts`
 - Create: `tests/lib/slug.test.ts`
@@ -680,7 +703,10 @@ const umlautMap: Record<string, string> = {
 export function slug(input: string): string {
   if (!input) return "";
 
-  const transliterated = input.replace(/[äöüÄÖÜß]/g, (ch) => umlautMap[ch] ?? ch);
+  const transliterated = input.replace(
+    /[äöüÄÖÜß]/g,
+    (ch) => umlautMap[ch] ?? ch,
+  );
 
   return transliterated
     .normalize("NFKD")
@@ -711,6 +737,7 @@ git commit -m "feat: add slug helper with German transliteration + tests"
 ## Task 10: `format-date` helper (TDD)
 
 **Files:**
+
 - Create: `lib/format-date.ts`
 - Create: `tests/lib/format-date.test.ts`
 
@@ -721,7 +748,11 @@ Used to format match kickoff times (`Sa, 14:30`) and event dates (`23. Apr 2026`
 ```ts
 import { describe, expect, test } from "vitest";
 
-import { formatKickoff, formatEventDate, formatShortDate } from "@/lib/format-date";
+import {
+  formatKickoff,
+  formatEventDate,
+  formatShortDate,
+} from "@/lib/format-date";
 
 describe("formatKickoff", () => {
   test("formats a Saturday kickoff as 'Sa, 14:30'", () => {
@@ -793,7 +824,10 @@ export function formatKickoff(date: Date): string {
 
 export function formatEventDate(date: Date): string {
   // Intl outputs "23. Apr. 2026" — drop the dot after the month.
-  return eventDateFmt.format(date).replace(/\./g, "").replace(/(\d+)\s/, "$1. ");
+  return eventDateFmt
+    .format(date)
+    .replace(/\./g, "")
+    .replace(/(\d+)\s/, "$1. ");
 }
 
 export function formatShortDate(date: Date): string {
@@ -823,6 +857,7 @@ git commit -m "feat: add date formatters for kickoff/event/short German formats"
 ## Task 11: Access helpers + revalidate hook stub
 
 **Files:**
+
 - Create: `payload/access/anyone.ts`
 - Create: `payload/access/authenticated.ts`
 - Create: `payload/hooks/revalidate.ts`
@@ -848,10 +883,7 @@ export const authenticated: Access = ({ req: { user } }) => Boolean(user);
 - [ ] **Step 3: Create `payload/hooks/revalidate.ts` (stub for P1)**
 
 ```ts
-import type {
-  CollectionAfterChangeHook,
-  GlobalAfterChangeHook,
-} from "payload";
+import type { CollectionAfterChangeHook, GlobalAfterChangeHook } from "payload";
 
 /**
  * P1 stub. P4 wires this to POST /api/revalidate with the right tags.
@@ -897,6 +929,7 @@ git commit -m "feat: add access helpers and revalidate hook stub for Payload"
 ## Task 12: `Users` collection (auth)
 
 **Files:**
+
 - Create: `payload/collections/Users.ts`
 
 - [ ] **Step 1: Write the collection**
@@ -955,6 +988,7 @@ git commit -m "feat: add Users collection (Payload auth)"
 ## Task 13: `Media` collection (uploads)
 
 **Files:**
+
 - Create: `payload/collections/Media.ts`
 
 - [ ] **Step 1: Write the collection**
@@ -1016,6 +1050,7 @@ collections: [Users, Media],
 - [ ] **Step 3: Add `public/uploads/` to gitignore**
 
 Edit `.gitignore`, add at end:
+
 ```
 /public/uploads/
 ```
@@ -1036,6 +1071,7 @@ git commit -m "feat: add Media collection with WebP image processing"
 ## Task 14: `People` collection
 
 **Files:**
+
 - Create: `payload/collections/People.ts`
 
 People = Vorstand, trainers, sport leads, optionally players.
@@ -1067,7 +1103,14 @@ export const People: CollectionConfig = {
   },
   fields: [
     { name: "name", type: "text", required: true },
-    { name: "role", type: "text", required: true, admin: { description: "e.g. 1. Vorstand · Sportlicher Leiter · Trainer A1" } },
+    {
+      name: "role",
+      type: "text",
+      required: true,
+      admin: {
+        description: "e.g. 1. Vorstand · Sportlicher Leiter · Trainer A1",
+      },
+    },
     {
       name: "function",
       type: "select",
@@ -1085,8 +1128,18 @@ export const People: CollectionConfig = {
     { name: "photo", type: "upload", relationTo: "media" },
     { name: "phone", type: "text" },
     { name: "email", type: "email" },
-    { name: "team", type: "relationship", relationTo: "teams", admin: { description: "Optional. Used for trainer/player assignment." } },
-    { name: "order", type: "number", defaultValue: 0, admin: { description: "Lower = earlier in lists." } },
+    {
+      name: "team",
+      type: "relationship",
+      relationTo: "teams",
+      admin: { description: "Optional. Used for trainer/player assignment." },
+    },
+    {
+      name: "order",
+      type: "number",
+      defaultValue: 0,
+      admin: { description: "Lower = earlier in lists." },
+    },
   ],
 };
 ```
@@ -1121,6 +1174,7 @@ git commit -m "feat: add People collection (Vorstand, trainers, players)"
 ## Task 15: `Teams` collection
 
 **Files:**
+
 - Create: `payload/collections/Teams.ts`
 
 - [ ] **Step 1: Write the collection**
@@ -1159,7 +1213,16 @@ export const Teams: CollectionConfig = {
   },
   fields: [
     { name: "name", type: "text", required: true },
-    { name: "slug", type: "text", required: true, unique: true, admin: { description: "Auto-generated from name. Edit only if you know what you're doing." } },
+    {
+      name: "slug",
+      type: "text",
+      required: true,
+      unique: true,
+      admin: {
+        description:
+          "Auto-generated from name. Edit only if you know what you're doing.",
+      },
+    },
     {
       name: "sport",
       type: "select",
@@ -1185,9 +1248,17 @@ export const Teams: CollectionConfig = {
       ],
       defaultValue: "allgemein",
     },
-    { name: "ageGroup", type: "text", admin: { description: "z.B. A1, B2, F3, Bambini" } },
+    {
+      name: "ageGroup",
+      type: "text",
+      admin: { description: "z.B. A1, B2, F3, Bambini" },
+    },
     { name: "season", type: "text", admin: { description: "z.B. 2025/26" } },
-    { name: "league", type: "text", admin: { description: "z.B. Bezirksliga Oberbayern" } },
+    {
+      name: "league",
+      type: "text",
+      admin: { description: "z.B. Bezirksliga Oberbayern" },
+    },
     {
       name: "trainers",
       type: "relationship",
@@ -1237,6 +1308,7 @@ git commit -m "feat: add Teams collection with slug hook + sport/category/league
 ## Task 16: `Posts` collection
 
 **Files:**
+
 - Create: `payload/collections/Posts.ts`
 
 - [ ] **Step 1: Write the collection**
@@ -1276,11 +1348,20 @@ export const Posts: CollectionConfig = {
   fields: [
     { name: "title", type: "text", required: true },
     { name: "slug", type: "text", required: true, unique: true },
-    { name: "excerpt", type: "textarea", admin: { description: "1–2 sentence teaser shown in cards." } },
+    {
+      name: "excerpt",
+      type: "textarea",
+      admin: { description: "1–2 sentence teaser shown in cards." },
+    },
     { name: "heroImage", type: "upload", relationTo: "media" },
     { name: "body", type: "richText", required: true },
     { name: "author", type: "relationship", relationTo: "people" },
-    { name: "publishedAt", type: "date", required: true, admin: { date: { pickerAppearance: "dayAndTime" } } },
+    {
+      name: "publishedAt",
+      type: "date",
+      required: true,
+      admin: { date: { pickerAppearance: "dayAndTime" } },
+    },
     {
       name: "tags",
       type: "select",
@@ -1322,6 +1403,7 @@ git commit -m "feat: add Posts collection with Lexical body + tags"
 ## Task 17: `Sponsors` collection
 
 **Files:**
+
 - Create: `payload/collections/Sponsors.ts`
 
 - [ ] **Step 1: Write the collection**
@@ -1388,6 +1470,7 @@ git commit -m "feat: add Sponsors collection with tier (premium/standard)"
 ## Task 18: `Fixtures` collection
 
 **Files:**
+
 - Create: `payload/collections/Fixtures.ts`
 
 - [ ] **Step 1: Write the collection**
@@ -1417,11 +1500,34 @@ export const Fixtures: CollectionConfig = {
   },
   fields: [
     { name: "team", type: "relationship", relationTo: "teams", required: true },
-    { name: "opponent", type: "text", required: true, admin: { description: "Name des gegnerischen Vereins" } },
-    { name: "kickoff", type: "date", required: true, admin: { date: { pickerAppearance: "dayAndTime" } } },
-    { name: "competition", type: "text", admin: { description: "z.B. Bezirksliga · Spieltag 20" } },
-    { name: "venue", type: "text", admin: { description: "z.B. Eschengarten · ASV Dachau" } },
-    { name: "isHome", type: "checkbox", defaultValue: true, label: "Heimspiel" },
+    {
+      name: "opponent",
+      type: "text",
+      required: true,
+      admin: { description: "Name des gegnerischen Vereins" },
+    },
+    {
+      name: "kickoff",
+      type: "date",
+      required: true,
+      admin: { date: { pickerAppearance: "dayAndTime" } },
+    },
+    {
+      name: "competition",
+      type: "text",
+      admin: { description: "z.B. Bezirksliga · Spieltag 20" },
+    },
+    {
+      name: "venue",
+      type: "text",
+      admin: { description: "z.B. Eschengarten · ASV Dachau" },
+    },
+    {
+      name: "isHome",
+      type: "checkbox",
+      defaultValue: true,
+      label: "Heimspiel",
+    },
     {
       name: "result",
       type: "group",
@@ -1455,6 +1561,7 @@ git commit -m "feat: add Fixtures collection (kickoff + competition + result)"
 ## Task 19: `Events` collection
 
 **Files:**
+
 - Create: `payload/collections/Events.ts`
 
 - [ ] **Step 1: Write the collection**
@@ -1484,12 +1591,25 @@ export const Events: CollectionConfig = {
   },
   fields: [
     { name: "title", type: "text", required: true },
-    { name: "startsAt", type: "date", required: true, admin: { date: { pickerAppearance: "dayAndTime" } } },
-    { name: "endsAt", type: "date", admin: { date: { pickerAppearance: "dayAndTime" } } },
+    {
+      name: "startsAt",
+      type: "date",
+      required: true,
+      admin: { date: { pickerAppearance: "dayAndTime" } },
+    },
+    {
+      name: "endsAt",
+      type: "date",
+      admin: { date: { pickerAppearance: "dayAndTime" } },
+    },
     { name: "location", type: "text" },
     { name: "description", type: "richText" },
     { name: "image", type: "upload", relationTo: "media" },
-    { name: "ctaUrl", type: "text", admin: { description: "Optional. Externer Link, z.B. zur Anmeldung." } },
+    {
+      name: "ctaUrl",
+      type: "text",
+      admin: { description: "Optional. Externer Link, z.B. zur Anmeldung." },
+    },
   ],
 };
 ```
@@ -1514,6 +1634,7 @@ git commit -m "feat: add Events collection (training, parties, Jeep Cup, etc.)"
 ## Task 20: `Submissions` collection (read-only public, admin sees)
 
 **Files:**
+
 - Create: `payload/collections/Submissions.ts`
 
 - [ ] **Step 1: Write the collection**
@@ -1544,8 +1665,17 @@ export const Submissions: CollectionConfig = {
     { name: "email", type: "email", required: true },
     { name: "subject", type: "text" },
     { name: "message", type: "textarea", required: true },
-    { name: "handled", type: "checkbox", defaultValue: false, label: "Erledigt" },
-    { name: "notes", type: "textarea", admin: { description: "Interne Notizen — nicht öffentlich." } },
+    {
+      name: "handled",
+      type: "checkbox",
+      defaultValue: false,
+      label: "Erledigt",
+    },
+    {
+      name: "notes",
+      type: "textarea",
+      admin: { description: "Interne Notizen — nicht öffentlich." },
+    },
   ],
   timestamps: true,
 };
@@ -1571,6 +1701,7 @@ git commit -m "feat: add Submissions collection (admin-readable contact-form sto
 ## Task 21: Globals — `SiteSettings`, `Navigation`, `HomePage`
 
 **Files:**
+
 - Create: `payload/globals/SiteSettings.ts`
 - Create: `payload/globals/Navigation.ts`
 - Create: `payload/globals/HomePage.ts`
@@ -1590,8 +1721,17 @@ export const SiteSettings: GlobalConfig = {
   access: { read: anyone, update: authenticated },
   hooks: { afterChange: [revalidateGlobalOnChange("site-settings")] },
   fields: [
-    { name: "name", type: "text", required: true, defaultValue: "SV Nord München-Lerchenau e.V." },
-    { name: "tagline", type: "text", defaultValue: "Einmal Nordler, immer Nordler." },
+    {
+      name: "name",
+      type: "text",
+      required: true,
+      defaultValue: "SV Nord München-Lerchenau e.V.",
+    },
+    {
+      name: "tagline",
+      type: "text",
+      defaultValue: "Einmal Nordler, immer Nordler.",
+    },
     { name: "description", type: "textarea" },
     { name: "ogImage", type: "upload", relationTo: "media" },
     {
@@ -1678,13 +1818,36 @@ export const HomePage: GlobalConfig = {
       name: "hero",
       type: "group",
       fields: [
-        { name: "pretitle", type: "text", defaultValue: "Heimspieltag · Sa 14:30 · Eschengarten" },
-        { name: "headlineLine1", type: "text", required: true, defaultValue: "Einmal Nordler," },
-        { name: "headlineLine2", type: "text", required: true, defaultValue: "immer Nordler." },
-        { name: "subline", type: "textarea", defaultValue: "Seit 1947 zuhause im Münchner Norden. 500+ Mitglieder, vier Sportarten, eine Familie." },
+        {
+          name: "pretitle",
+          type: "text",
+          defaultValue: "Heimspieltag · Sa 14:30 · Eschengarten",
+        },
+        {
+          name: "headlineLine1",
+          type: "text",
+          required: true,
+          defaultValue: "Einmal Nordler,",
+        },
+        {
+          name: "headlineLine2",
+          type: "text",
+          required: true,
+          defaultValue: "immer Nordler.",
+        },
+        {
+          name: "subline",
+          type: "textarea",
+          defaultValue:
+            "Seit 1947 zuhause im Münchner Norden. 500+ Mitglieder, vier Sportarten, eine Familie.",
+        },
         { name: "primaryCtaLabel", type: "text", defaultValue: "Spielplan" },
         { name: "primaryCtaHref", type: "text", defaultValue: "/fussball" },
-        { name: "secondaryCtaLabel", type: "text", defaultValue: "Verein kennenlernen" },
+        {
+          name: "secondaryCtaLabel",
+          type: "text",
+          defaultValue: "Verein kennenlernen",
+        },
         { name: "secondaryCtaHref", type: "text", defaultValue: "/verein" },
       ],
     },
@@ -1706,7 +1869,9 @@ export const HomePage: GlobalConfig = {
     {
       name: "sections",
       type: "group",
-      admin: { description: "Welche Sektionen werden auf der Startseite angezeigt?" },
+      admin: {
+        description: "Welche Sektionen werden auf der Startseite angezeigt?",
+      },
       fields: [
         { name: "showNextMatch", type: "checkbox", defaultValue: true },
         { name: "showNews", type: "checkbox", defaultValue: true },
@@ -1747,6 +1912,7 @@ git commit -m "feat: add SiteSettings/Navigation/HomePage globals"
 ## Task 22: Globals — `ContactInfo` + `LegalPages`
 
 **Files:**
+
 - Create: `payload/globals/ContactInfo.ts`
 - Create: `payload/globals/LegalPages.ts`
 
@@ -1769,24 +1935,54 @@ export const ContactInfo: GlobalConfig = {
       name: "addresses",
       type: "array",
       fields: [
-        { name: "label", type: "text", required: true, admin: { description: "z.B. 'Postanschrift', 'Vereinsheim Eschengarten'" } },
+        {
+          name: "label",
+          type: "text",
+          required: true,
+          admin: {
+            description: "z.B. 'Postanschrift', 'Vereinsheim Eschengarten'",
+          },
+        },
         { name: "street", type: "text", required: true },
         { name: "postalCode", type: "text", required: true },
         { name: "city", type: "text", required: true, defaultValue: "München" },
       ],
     },
     { name: "phone", type: "text", defaultValue: "0172 2392919" },
-    { name: "email", type: "email", required: true, defaultValue: "info@svnord.de" },
-    { name: "iban", type: "text", admin: { description: "Für Mitgliedsbeiträge / Spenden." } },
+    {
+      name: "email",
+      type: "email",
+      required: true,
+      defaultValue: "info@svnord.de",
+    },
+    {
+      name: "iban",
+      type: "text",
+      admin: { description: "Für Mitgliedsbeiträge / Spenden." },
+    },
     {
       name: "openingHours",
       type: "array",
       fields: [
-        { name: "day", type: "text", required: true, admin: { description: "z.B. Mo–Fr, Sa, So" } },
-        { name: "hours", type: "text", required: true, admin: { description: "z.B. 17:00–22:00 oder geschlossen" } },
+        {
+          name: "day",
+          type: "text",
+          required: true,
+          admin: { description: "z.B. Mo–Fr, Sa, So" },
+        },
+        {
+          name: "hours",
+          type: "text",
+          required: true,
+          admin: { description: "z.B. 17:00–22:00 oder geschlossen" },
+        },
       ],
     },
-    { name: "mapEmbedSrc", type: "text", admin: { description: "Optional iframe src für Google Maps embed." } },
+    {
+      name: "mapEmbedSrc",
+      type: "text",
+      admin: { description: "Optional iframe src für Google Maps embed." },
+    },
   ],
 };
 ```
@@ -1833,6 +2029,7 @@ git commit -m "feat: add ContactInfo and LegalPages globals"
 ## Task 23: Globals — `ChronikPage`, `VereinsheimPage`, `JugendfoerderPage`
 
 **Files:**
+
 - Create: `payload/globals/ChronikPage.ts`
 - Create: `payload/globals/VereinsheimPage.ts`
 - Create: `payload/globals/JugendfoerderPage.ts`
@@ -1908,7 +2105,11 @@ export const JugendfoerderPage: GlobalConfig = {
   fields: [
     { name: "heroImage", type: "upload", relationTo: "media" },
     { name: "body", type: "richText", required: true },
-    { name: "iban", type: "text", admin: { description: "Spenden-IBAN für den Jugendförderverein." } },
+    {
+      name: "iban",
+      type: "text",
+      admin: { description: "Spenden-IBAN für den Jugendförderverein." },
+    },
     { name: "contactEmail", type: "email" },
   ],
 };
@@ -1949,6 +2150,7 @@ git commit -m "feat: add Chronik, Vereinsheim, and Jugendförderverein page glob
 ## Task 24: Generate Payload TypeScript types
 
 **Files:**
+
 - Create (auto): `payload-types.ts`
 
 - [ ] **Step 1: Run the type generator**
@@ -1979,6 +2181,7 @@ git commit -m "chore: generate Payload TypeScript types"
 ## Task 25: Tailwind v4 theme tokens — club colors
 
 **Files:**
+
 - Modify: `app/globals.css`
 
 The existing `app/globals.css` has placeholder vars. Replace with the SV Nord token set. Tailwind v4 reads `@theme` blocks to generate utilities.
@@ -2000,7 +2203,8 @@ The existing `app/globals.css` has placeholder vars. Replace with the SV Nord to
   --color-nord-line: rgb(0 0 0 / 0.08);
 
   /* Fonts (Geist already loaded in app/layout.tsx) */
-  --font-sans: var(--font-geist-sans), -apple-system, "Inter", system-ui, sans-serif;
+  --font-sans:
+    var(--font-geist-sans), -apple-system, "Inter", system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 
   /* Container width used across pages */
@@ -2045,6 +2249,7 @@ git commit -m "feat: add SV Nord brand color tokens to Tailwind v4 theme"
 ## Task 26: Update root layout metadata
 
 **Files:**
+
 - Modify: `app/layout.tsx`
 
 - [ ] **Step 1: Replace metadata in `app/layout.tsx`**
@@ -2078,6 +2283,7 @@ git commit -m "feat: set proper site metadata in root layout"
 ## Task 27: Image download script
 
 **Files:**
+
 - Create: `scripts/download-images.ts`
 
 Mirrors every image referenced in `.firecrawl/svnord-lerchenau.json` into `tmp/wix-images/` so the seed script can upload them via Payload's local API without depending on Wix CDN.
@@ -2101,7 +2307,8 @@ type Crawl = {
 
 const IMAGE_RE = /!\[([^\]]*)\]\((https?:\/\/[^)\s]+)\)/g;
 
-const hash = (s: string) => createHash("sha1").update(s).digest("hex").slice(0, 16);
+const hash = (s: string) =>
+  createHash("sha1").update(s).digest("hex").slice(0, 16);
 
 async function main() {
   const raw = await fs.readFile(SRC, "utf-8");
@@ -2170,7 +2377,9 @@ async function main() {
     JSON.stringify(manifest, null, 2),
   );
 
-  console.log(`\nDone. ${seen.size} unique images. Manifest: ${path.join(OUT_DIR, "manifest.json")}`);
+  console.log(
+    `\nDone. ${seen.size} unique images. Manifest: ${path.join(OUT_DIR, "manifest.json")}`,
+  );
 }
 
 void main();
@@ -2187,6 +2396,7 @@ Expected: prints `✓ <hash>.jpg  <alt>` lines, ends with "Done. NN unique image
 - [ ] **Step 3: Add `tmp/` to `.gitignore`**
 
 Edit `.gitignore`, add at end:
+
 ```
 /tmp/
 ```
@@ -2203,6 +2413,7 @@ git commit -m "chore: add image download script that mirrors Wix CDN to tmp/wix-
 ## Task 28: Seed script
 
 **Files:**
+
 - Create: `scripts/seed.ts`
 
 Imports the firecrawl content into Payload via the local API. Idempotent — uses upsert by slug/email.
@@ -2484,7 +2695,7 @@ void main().catch((err) => {
 });
 ```
 
-> **Note**: This script seeds the *minimum* needed to demo the schema. The Vorstand will populate richer content (real photos, more posts, sponsor logos, fixtures, events, vereinschronik, vereinsheim text, jugendförderverein text, legal text) via the admin after first run. P2 requires only the data above to render the homepage.
+> **Note**: This script seeds the _minimum_ needed to demo the schema. The Vorstand will populate richer content (real photos, more posts, sponsor logos, fixtures, events, vereinschronik, vereinsheim text, jugendförderverein text, legal text) via the admin after first run. P2 requires only the data above to render the homepage.
 
 - [ ] **Step 2: Run the seed**
 
@@ -2497,6 +2708,7 @@ Expected: prints upsert progress, ends with `✓ Seed complete.` Re-running is s
 - [ ] **Step 3: Verify in admin**
 
 Restart dev. Open `/admin`:
+
 - People: 7 entries (Vorstand + sport leads)
 - Teams: 27 entries (22 football + 5 other-sport rows)
 - Posts: 2 entries
@@ -2548,6 +2760,7 @@ bun run dev
 ```
 
 Open `http://localhost:3000/admin`, log in with the admin credentials from Task 8, and verify:
+
 1. Sidebar groups: Content (Posts, Events) · Sport (Teams, People, Fixtures) · Verein (Sponsors, Submissions) · Settings (8 globals) · System (Users, Media)
 2. Posts list shows the 2 seeded posts
 3. Teams list shows 27 teams
@@ -2571,6 +2784,7 @@ Expected: ~28 commits since the design-spec commit, the most recent tagged `p1-f
 ## Self-review (informational)
 
 **Spec coverage:**
+
 - §3 every decision row → reflected in tasks (Postgres in T2/T3, Payload in T4–T7, slug+date helpers in T9–T10, all 9 collections in T12–T20, all 8 globals in T21–T23, theme tokens in T25, image strategy in T27–T28).
 - §8.1 every collection has its own task (T12–T20).
 - §8.2 every global appears in T21–T23.
@@ -2586,6 +2800,7 @@ Expected: ~28 commits since the design-spec commit, the most recent tagged `p1-f
 **Type consistency:** field names (`slug`, `publishedAt`, `kickoff`, `isHome`, `function`, `tier`) are spelled the same way in seeds, schemas, and references. The `team` relationship in `People` (T14) and `Fixtures` (T18) and the `trainers` relationship in `Teams` (T15) all reference the `teams` slug.
 
 **Out-of-P1 (handled in later phases):**
+
 - Public site routes/pages → P2/P3
 - `/api/contact` + Resend → P4
 - `/api/revalidate` + real `afterChange` cache busting → P4

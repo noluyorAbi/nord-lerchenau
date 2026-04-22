@@ -30,7 +30,10 @@ export function formatKickoff(date: Date): string {
 
 export function formatEventDate(date: Date): string {
   // Intl outputs "23. Apr. 2026" — drop the dot after the month.
-  return eventDateFmt.format(date).replace(/\./g, "").replace(/(\d+)\s/, "$1. ");
+  return eventDateFmt
+    .format(date)
+    .replace(/\./g, "")
+    .replace(/(\d+)\s/, "$1. ");
 }
 
 export function formatShortDate(date: Date): string {

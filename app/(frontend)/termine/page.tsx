@@ -48,7 +48,10 @@ export default async function TerminePage() {
 
   const now = new Date().getTime();
   const items: AgendaDTO[] = [];
-  const teamCounts = new Map<string, { name: string; slug: string; count: number }>();
+  const teamCounts = new Map<
+    string,
+    { name: string; slug: string; count: number }
+  >();
 
   for (const bundle of matchBundles) {
     if (!bundle) continue;
@@ -58,6 +61,13 @@ export default async function TerminePage() {
       if (m.result && m.result.trim() !== "" && m.result !== "-:-") continue;
       const side = isOurBfvTeam(m as BfvMatch, bundle.team.bfv!.teamId!);
       if (!side) continue;
+      const opponentName = side === "home" ? m.guestTeamName : m.homeTeamName;
+      if (
+        !opponentName ||
+        /spielfrei/i.test(opponentName) ||
+        opponentName.trim().toLowerCase() === "s"
+      )
+        continue;
       const teamSlug = bundle.team.slug ?? String(bundle.team.id);
       const item: MatchDTO = {
         kind: "match",
@@ -71,14 +81,18 @@ export default async function TerminePage() {
         homeLogo: bfvMatchSideLogo(m, "home"),
         awayLogo: bfvMatchSideLogo(m, "away"),
         href: bfvMatchUrl(m.matchId),
-        venue: m.venue ?? null,
+        venue: typeof m.venue === "string" ? m.venue : null,
       };
       items.push(item);
       const existing = teamCounts.get(teamSlug);
       if (existing) {
         existing.count += 1;
       } else {
-        teamCounts.set(teamSlug, { name: bundle.team.name, slug: teamSlug, count: 1 });
+        teamCounts.set(teamSlug, {
+          name: bundle.team.name,
+          slug: teamSlug,
+          count: 1,
+        });
       }
     }
   }
@@ -92,7 +106,7 @@ export default async function TerminePage() {
       id: String(e.id),
       title: e.title,
       location: e.location ?? null,
-      description: e.description ?? null,
+      description: typeof e.description === "string" ? e.description : null,
     };
     items.push(item);
   }
@@ -107,9 +121,7 @@ export default async function TerminePage() {
   const showcase = HERREN_ORDER.map((teamName) => {
     const next = items
       .filter((i) => i.kind === "match" && i.teamName === teamName)
-      .sort(
-        (a, b) => new Date(a.at).getTime() - new Date(b.at).getTime(),
-      )[0];
+      .sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime())[0];
     return { teamName, match: (next as MatchDTO | undefined) ?? null };
   });
 
@@ -117,8 +129,8 @@ export default async function TerminePage() {
     <>
       <PageHero
         eyebrow="Termine"
-        title="Was ist los beim SV Nord?"
-        lede="Heimspiele aller Mannschaften, Sommerfest, Weihnachtsfeier — durchsuche den Spielplan oder filtere nach Mannschaft und Zeitraum."
+        title="Komm vorbei!"
+        lede="Heimspiele aller Mannschaften, Sommerfest, Weihnachtsfeier. Durchsuche den Spielplan oder filtere nach Mannschaft und Zeitraum."
       />
       <TermineClient items={items} teams={teamOptions} showcase={showcase} />
     </>

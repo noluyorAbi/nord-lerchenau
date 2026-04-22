@@ -22,7 +22,14 @@ export const People: CollectionConfig = {
   },
   fields: [
     { name: "name", type: "text", required: true },
-    { name: "role", type: "text", required: true, admin: { description: "e.g. 1. Vorstand · Sportlicher Leiter · Trainer A1" } },
+    {
+      name: "role",
+      type: "text",
+      required: true,
+      admin: {
+        description: "e.g. 1. Vorstand · Sportlicher Leiter · Trainer A1",
+      },
+    },
     {
       name: "function",
       type: "select",
@@ -40,7 +47,17 @@ export const People: CollectionConfig = {
     { name: "photo", type: "upload", relationTo: "media" },
     { name: "phone", type: "text" },
     { name: "email", type: "email" },
-    { name: "team", type: "relationship", relationTo: "teams", admin: { description: "Optional. Used for trainer/player assignment." } },
-    { name: "order", type: "number", defaultValue: 0, admin: { description: "Lower = earlier in lists." } },
+    {
+      name: "team",
+      type: "relationship",
+      relationTo: "teams",
+      admin: { description: "Optional. Used for trainer/player assignment." },
+    },
+    {
+      name: "order",
+      type: "number",
+      defaultValue: 0,
+      admin: { description: "Lower = earlier in lists." },
+    },
   ],
 };

@@ -22,11 +22,24 @@ export const Events: CollectionConfig = {
   },
   fields: [
     { name: "title", type: "text", required: true },
-    { name: "startsAt", type: "date", required: true, admin: { date: { pickerAppearance: "dayAndTime" } } },
-    { name: "endsAt", type: "date", admin: { date: { pickerAppearance: "dayAndTime" } } },
+    {
+      name: "startsAt",
+      type: "date",
+      required: true,
+      admin: { date: { pickerAppearance: "dayAndTime" } },
+    },
+    {
+      name: "endsAt",
+      type: "date",
+      admin: { date: { pickerAppearance: "dayAndTime" } },
+    },
     { name: "location", type: "text" },
     { name: "description", type: "richText" },
     { name: "image", type: "upload", relationTo: "media" },
-    { name: "ctaUrl", type: "text", admin: { description: "Optional. Externer Link, z.B. zur Anmeldung." } },
+    {
+      name: "ctaUrl",
+      type: "text",
+      admin: { description: "Optional. Externer Link, z.B. zur Anmeldung." },
+    },
   ],
 };

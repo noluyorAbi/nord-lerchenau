@@ -15,8 +15,7 @@ import type { HomePage } from "@/payload-types";
 
 type Props = { hero: HomePage["hero"] };
 
-const HERO_BG =
-  "https://image.fupa.net/team-image/HV6MiTsJZKMu/1920x1080.webp";
+const HERO_BG = "https://image.fupa.net/team-image/HV6MiTsJZKMu/1920x1080.webp";
 
 export async function Hero({ hero }: Props) {
   const [upcoming, standings] = await Promise.all([
@@ -91,7 +90,9 @@ export async function Hero({ hero }: Props) {
                     className="size-1.5 rounded-full bg-nord-red"
                     style={{ animation: "live-pulse 1.8s infinite" }}
                   />
-                  {isHome ? "Heimspieltag · Eschengarten" : "Auswärts · Ligaspiel"}
+                  {isHome
+                    ? "Heimspieltag · Eschengarten"
+                    : "Auswärts · Ligaspiel"}
                 </span>
                 {matchDayBadge ? (
                   <span className="font-mono text-[11px] text-white/60">

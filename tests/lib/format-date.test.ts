@@ -1,6 +1,10 @@
 import { describe, expect, test } from "vitest";
 
-import { formatKickoff, formatEventDate, formatShortDate } from "@/lib/format-date";
+import {
+  formatKickoff,
+  formatEventDate,
+  formatShortDate,
+} from "@/lib/format-date";
 
 describe("formatKickoff", () => {
   test("formats a Saturday kickoff as 'Sa, 14:30'", () => {

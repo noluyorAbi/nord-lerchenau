@@ -138,8 +138,9 @@ export async function LocationMap() {
             </div>
 
             <div className="mt-6 border-t border-white/10 pt-5 text-[11px] text-white/50">
-              Öffentlich: U-Bahn <span className="text-white/80">U2 Dülferstraße</span>{" "}
-              · Bus <span className="text-white/80">172 Lerchenauer Straße</span>
+              Öffentlich: U-Bahn{" "}
+              <span className="text-white/80">U2 Dülferstraße</span> · Bus{" "}
+              <span className="text-white/80">172 Lerchenauer Straße</span>
               <div className="mt-1">
                 Auto: kostenfreie Parkplätze am{" "}
                 <span className="text-white/80">Eschengarten</span>.

@@ -91,9 +91,9 @@ export default function ShopPage() {
           <p className="mt-3 max-w-prose text-base leading-relaxed text-nord-ink">
             Match-Trikots und einheitliche Spielausstattung gibt es nicht im
             öffentlichen Clubshop. Für offizielle Trikots, Trainingsanzüge und
-            Aufwärmshirts in den Teamfarben wendet euch bitte an die
-            sportliche Leitung bzw. eure Trainer:innen — die Abteilung bündelt
-            Bestellungen und sorgt für einheitliches Auftreten auf dem Platz.
+            Aufwärmshirts in den Teamfarben wendet euch bitte an die sportliche
+            Leitung bzw. eure Trainer:innen — die Abteilung bündelt Bestellungen
+            und sorgt für einheitliches Auftreten auf dem Platz.
           </p>
         </section>
       </div>

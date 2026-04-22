@@ -19,10 +19,26 @@ export default async function FussballPage() {
   });
 
   const groups = [
-    { id: "herren", label: "Herren", teams: result.docs.filter((t) => t.category === "senioren") },
-    { id: "junioren", label: "Junioren", teams: result.docs.filter((t) => t.category === "junioren") },
-    { id: "juniorinnen", label: "Juniorinnen", teams: result.docs.filter((t) => t.category === "juniorinnen") },
-    { id: "bambinis", label: "Bambinis & Fußballkindergarten", teams: result.docs.filter((t) => t.category === "bambini") },
+    {
+      id: "herren",
+      label: "Herren",
+      teams: result.docs.filter((t) => t.category === "senioren"),
+    },
+    {
+      id: "junioren",
+      label: "Junioren",
+      teams: result.docs.filter((t) => t.category === "junioren"),
+    },
+    {
+      id: "juniorinnen",
+      label: "Juniorinnen",
+      teams: result.docs.filter((t) => t.category === "juniorinnen"),
+    },
+    {
+      id: "bambinis",
+      label: "Bambinis & Fußballkindergarten",
+      teams: result.docs.filter((t) => t.category === "bambini"),
+    },
   ];
 
   const bfvCount = result.docs.filter((t) => t.bfv?.teamId).length;

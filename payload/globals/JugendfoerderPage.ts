@@ -77,7 +77,10 @@ export const JugendfoerderPage: GlobalConfig = {
     {
       name: "iban",
       type: "text",
-      admin: { description: "Optional — nur ausfüllen, wenn eine Direktspende-IBAN veröffentlicht werden soll." },
+      admin: {
+        description:
+          "Optional — nur ausfüllen, wenn eine Direktspende-IBAN veröffentlicht werden soll.",
+      },
     },
     {
       name: "contactEmail",

@@ -38,7 +38,9 @@ export function HeroMatchCard({
     const shine = shineRef.current;
     if (!card || !inner || !shine) return;
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     if (reduced) return;
 
     // Reveal animation on mount
@@ -57,11 +59,26 @@ export function HeroMatchCard({
     );
 
     // Quick tweens for cursor-driven tilt + parallax
-    const rotY = gsap.quickTo(card, "rotationY", { duration: 0.6, ease: "power3.out" });
-    const rotX = gsap.quickTo(card, "rotationX", { duration: 0.6, ease: "power3.out" });
-    const innerX = gsap.quickTo(inner, "x", { duration: 0.7, ease: "power3.out" });
-    const innerY = gsap.quickTo(inner, "y", { duration: 0.7, ease: "power3.out" });
-    const shineOp = gsap.quickTo(shine, "opacity", { duration: 0.4, ease: "power2.out" });
+    const rotY = gsap.quickTo(card, "rotationY", {
+      duration: 0.6,
+      ease: "power3.out",
+    });
+    const rotX = gsap.quickTo(card, "rotationX", {
+      duration: 0.6,
+      ease: "power3.out",
+    });
+    const innerX = gsap.quickTo(inner, "x", {
+      duration: 0.7,
+      ease: "power3.out",
+    });
+    const innerY = gsap.quickTo(inner, "y", {
+      duration: 0.7,
+      ease: "power3.out",
+    });
+    const shineOp = gsap.quickTo(shine, "opacity", {
+      duration: 0.4,
+      ease: "power2.out",
+    });
 
     let raf = 0;
     let pending: { x: number; y: number } | null = null;
@@ -113,10 +130,7 @@ export function HeroMatchCard({
   }, []);
 
   return (
-    <div
-      className="relative flex items-center"
-      style={{ perspective: 1200 }}
-    >
+    <div className="relative flex items-center" style={{ perspective: 1200 }}>
       <div
         ref={cardRef}
         className="group relative w-full overflow-hidden rounded-[20px] border border-white/15 bg-nord-ink/60 p-6 shadow-[0_20px_60px_rgba(5,14,36,0.45)] backdrop-blur-md transition-shadow duration-300 will-change-transform hover:shadow-[0_30px_80px_rgba(5,14,36,0.65)]"

@@ -1,9 +1,5 @@
 import { StatCounter } from "@/components/motion/StatCounter";
-import {
-  FUPA_TEAM_SLUG,
-  getFupaStanding,
-  isOurTeam,
-} from "@/lib/fupa";
+import { FUPA_TEAM_SLUG, getFupaStanding, isOurTeam } from "@/lib/fupa";
 import type { HomePage } from "@/payload-types";
 
 type Props = { stats: HomePage["stats"] };
@@ -68,7 +64,9 @@ export async function StatStrip({ stats }: Props) {
             <div className="mt-1.5 font-display text-sm font-bold uppercase tracking-[0.08em] md:text-base">
               {item.label}
             </div>
-            <div className="mt-0.5 text-[11px] opacity-60 md:text-xs">{item.sub}</div>
+            <div className="mt-0.5 text-[11px] opacity-60 md:text-xs">
+              {item.sub}
+            </div>
           </div>
         ))}
       </div>

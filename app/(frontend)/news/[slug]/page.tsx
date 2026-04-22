@@ -53,7 +53,7 @@ export default async function NewsPost({ params, searchParams }: Props) {
   });
 
   const tag = Array.isArray(post.tags) ? post.tags[0] : null;
-  const tagLabel = tag ? TAG_LABELS[tag] ?? tag : null;
+  const tagLabel = tag ? (TAG_LABELS[tag] ?? tag) : null;
 
   return (
     <>

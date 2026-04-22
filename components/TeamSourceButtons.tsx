@@ -26,11 +26,7 @@ export function TeamSourceButtons({
   if (!bfvUrl && !fupaUrl) return null;
 
   return (
-    <div
-      className={
-        className ?? "flex flex-wrap items-center gap-3"
-      }
-    >
+    <div className={className ?? "flex flex-wrap items-center gap-3"}>
       {bfvUrl ? (
         <a
           href={bfvUrl}

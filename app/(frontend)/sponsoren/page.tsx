@@ -45,8 +45,8 @@ export default async function SponsorenPage() {
             </p>
             <p className="mt-3 text-base leading-relaxed text-nord-muted">
               Der SV Nord wird in der Lerchenau als sympathischer, familiärer
-              und sehr sozialer Verein wahrgenommen — wir bieten Sponsoren
-              damit eine große Reichweite und mit Werbung auf den Trikots einen
+              und sehr sozialer Verein wahrgenommen — wir bieten Sponsoren damit
+              eine große Reichweite und mit Werbung auf den Trikots einen
               gesteigerten Bekanntheitsgrad.
             </p>
           </div>

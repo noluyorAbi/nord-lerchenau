@@ -123,7 +123,8 @@ function PlayerCard({
                 {player.position}
               </span>
             ) : null}
-            {player.jerseyNumber !== null && player.jerseyNumber !== undefined ? (
+            {player.jerseyNumber !== null &&
+            player.jerseyNumber !== undefined ? (
               <span className="rounded-full bg-nord-gold px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-nord-navy">
                 Nr. {player.jerseyNumber}
               </span>
@@ -157,27 +158,46 @@ function PlayerCard({
       <div className="flex-1 overflow-y-auto px-5 py-6 sm:px-7">
         <div className="grid grid-cols-3 gap-3">
           <PrimaryStat value={player.matches} label="Spiele" />
-          <PrimaryStat value={player.goals} label={player.goals === 1 ? "Tor" : "Tore"} accent />
-          <PrimaryStat value={player.assists} label={player.assists === 1 ? "Vorlage" : "Vorlagen"} />
+          <PrimaryStat
+            value={player.goals}
+            label={player.goals === 1 ? "Tor" : "Tore"}
+            accent
+          />
+          <PrimaryStat
+            value={player.assists}
+            label={player.assists === 1 ? "Vorlage" : "Vorlagen"}
+          />
         </div>
 
         <dl className="mt-6 grid grid-cols-2 gap-x-4 gap-y-3 text-sm sm:grid-cols-3">
-          <SecondaryStat label="Minuten" value={minutesToReadable(player.minutesPlayed)} />
+          <SecondaryStat
+            label="Minuten"
+            value={minutesToReadable(player.minutesPlayed)}
+          />
           <SecondaryStat label="Elf d. W." value={player.topEleven} />
           <SecondaryStat
             label="Karten"
             value={
               <span className="inline-flex items-center gap-1.5">
                 {player.yellowCards > 0 ? (
-                  <CardChip color="#facc15" label={String(player.yellowCards)} />
+                  <CardChip
+                    color="#facc15"
+                    label={String(player.yellowCards)}
+                  />
                 ) : null}
                 {player.yellowRedCards > 0 ? (
-                  <CardChip color="#f97316" label={String(player.yellowRedCards)} />
+                  <CardChip
+                    color="#f97316"
+                    label={String(player.yellowRedCards)}
+                  />
                 ) : null}
                 {player.redCards > 0 ? (
                   <CardChip color="#dc2626" label={String(player.redCards)} />
                 ) : null}
-                {player.yellowCards + player.yellowRedCards + player.redCards === 0 ? (
+                {player.yellowCards +
+                  player.yellowRedCards +
+                  player.redCards ===
+                0 ? (
                   <span className="text-nord-muted">keine</span>
                 ) : null}
               </span>

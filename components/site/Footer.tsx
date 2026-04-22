@@ -78,7 +78,10 @@ export async function Footer() {
       />
       <div className="mx-auto grid w-full max-w-[1320px] gap-10 px-6 py-16 md:grid-cols-[1.6fr_repeat(4,1fr)] md:px-7">
         <div>
-          <ClubLogo size={60} className="drop-shadow-[0_4px_10px_rgba(0,0,0,0.25)]" />
+          <ClubLogo
+            size={60}
+            className="drop-shadow-[0_4px_10px_rgba(0,0,0,0.25)]"
+          />
           <div className="mt-4 font-display text-[18px] font-black uppercase tracking-[-0.01em]">
             SV NORD
           </div>
@@ -148,7 +151,10 @@ export async function Footer() {
             >
               Datenschutz
             </Link>
-            <span className="hidden h-3 w-px bg-white/15 md:inline-block" aria-hidden />
+            <span
+              className="hidden h-3 w-px bg-white/15 md:inline-block"
+              aria-hidden
+            />
             <a
               href="https://adatepe.dev"
               target="_blank"

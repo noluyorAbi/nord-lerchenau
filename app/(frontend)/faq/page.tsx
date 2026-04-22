@@ -43,9 +43,7 @@ export default async function FaqPageRoute() {
 
   return (
     <>
-      {items.length > 0 ? (
-        <JsonLd id="schema-faq" data={faqSchema} />
-      ) : null}
+      {items.length > 0 ? <JsonLd id="schema-faq" data={faqSchema} /> : null}
       <PageHero
         eyebrow="FAQ"
         title="Häufige Fragen"

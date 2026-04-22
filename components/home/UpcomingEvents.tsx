@@ -5,8 +5,18 @@ import { SectionEyebrow } from "@/components/SectionEyebrow";
 import { getPayloadClient } from "@/lib/payload";
 
 const MONTHS_DE = [
-  "JAN", "FEB", "MÄR", "APR", "MAI", "JUN",
-  "JUL", "AUG", "SEP", "OKT", "NOV", "DEZ",
+  "JAN",
+  "FEB",
+  "MÄR",
+  "APR",
+  "MAI",
+  "JUN",
+  "JUL",
+  "AUG",
+  "SEP",
+  "OKT",
+  "NOV",
+  "DEZ",
 ];
 
 export async function UpcomingEvents() {

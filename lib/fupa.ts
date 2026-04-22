@@ -386,9 +386,7 @@ export function mergePlayer(
  * Pull squad + player-stats in parallel and return a merged roster. Returns
  * null when the squad itself isn't available.
  */
-export async function getFupaTeamRoster(
-  teamSlug: string,
-): Promise<{
+export async function getFupaTeamRoster(teamSlug: string): Promise<{
   players: FupaPlayerDetail[];
   coaches: FupaSquadCoach[];
   info: FupaSquadInfo;
@@ -513,7 +511,9 @@ export function matchForm(
   return "D";
 }
 
-export function pickNext(matches: FupaMatch[] | null | undefined): FupaMatch | null {
+export function pickNext(
+  matches: FupaMatch[] | null | undefined,
+): FupaMatch | null {
   if (!matches?.length) return null;
   const now = Date.now();
   const future = matches

@@ -11,7 +11,7 @@ export function PageHero({ eyebrow, title, lede }: Props) {
         aria-hidden
         className="pointer-events-none absolute inset-x-0 -top-32 h-[360px] bg-[radial-gradient(ellipse_at_50%_0%,rgba(110,199,234,0.18)_0%,transparent_60%)]"
       />
-      <div className="relative mx-auto max-w-[1320px] px-6 py-12 md:px-7 md:py-24">
+      <div className="relative mx-auto max-w-[1320px] px-6 pt-10 pb-8 md:px-7 md:pt-20 md:pb-14">
         {eyebrow ? (
           <div className="flex items-center gap-3 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-nord-muted">
             <span className="h-px w-6 bg-current opacity-60" />
@@ -25,7 +25,7 @@ export function PageHero({ eyebrow, title, lede }: Props) {
           {title}
         </h1>
         {lede ? (
-          <p className="mt-5 max-w-2xl text-base leading-relaxed text-nord-muted md:text-lg">
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-nord-muted md:text-lg">
             {lede}
           </p>
         ) : null}

@@ -48,7 +48,17 @@ export default buildConfig({
       HeadingFeature({ enabledHeadingSizes: ["h1", "h2", "h3", "h4"] }),
     ],
   }),
-  collections: [Users, Media, People, Teams, Posts, Sponsors, Fixtures, Events, Submissions],
+  collections: [
+    Users,
+    Media,
+    People,
+    Teams,
+    Posts,
+    Sponsors,
+    Fixtures,
+    Events,
+    Submissions,
+  ],
   globals: [
     SiteSettings,
     Navigation,

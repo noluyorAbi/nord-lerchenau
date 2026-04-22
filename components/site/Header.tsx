@@ -24,7 +24,8 @@ export async function Header() {
       typeof l?.label === "string" && typeof l?.href === "string",
   );
 
-  const links: NavLink[] = headerLinks.length > 0 ? headerLinks : FALLBACK_LINKS;
+  const links: NavLink[] =
+    headerLinks.length > 0 ? headerLinks : FALLBACK_LINKS;
 
   return <HeaderShell links={links} cta={CTA} />;
 }

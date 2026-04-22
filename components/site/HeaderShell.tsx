@@ -53,9 +53,7 @@ export function HeaderShell({ links, cta }: Props) {
               key={link.href}
               href={link.href}
               className={`border-b-2 border-transparent pb-1 transition ${
-                glass
-                  ? "hover:text-white"
-                  : "hover:text-nord-ink"
+                glass ? "hover:text-white" : "hover:text-nord-ink"
               }`}
             >
               {link.label}
@@ -70,7 +68,11 @@ export function HeaderShell({ links, cta }: Props) {
           >
             {cta.label}
           </Link>
-          <MobileMenu links={links} cta={cta} theme={glass ? "dark" : "light"} />
+          <MobileMenu
+            links={links}
+            cta={cta}
+            theme={glass ? "dark" : "light"}
+          />
         </div>
       </div>
     </header>

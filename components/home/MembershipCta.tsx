@@ -32,13 +32,12 @@ export function MembershipCta() {
                 className="mt-4 font-display font-black leading-[0.92] tracking-[-0.02em] text-white"
                 style={{ fontSize: "clamp(44px, 6vw, 84px)" }}
               >
-                Werde{" "}
-                <span className="text-nord-gold">Nordler</span>.
+                Werde <span className="text-nord-gold">Nordler</span>.
               </h2>
               <p className="mt-5 max-w-xl text-[16px] leading-relaxed text-white/75">
                 Ob als Spieler, Eltern, Fan oder Förderer — beim SV Nord ist
-                Platz für jede und jeden. 500 Mitglieder, sechs Sportarten,
-                ein Vereinsheim mit Biergarten.
+                Platz für jede und jeden. 500 Mitglieder, sechs Sportarten, ein
+                Vereinsheim mit Biergarten.
               </p>
             </div>
 

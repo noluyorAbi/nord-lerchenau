@@ -19,7 +19,17 @@ function md(input: string): { root: LexNode } {
     indent: 0,
     version: 1,
     direction: "ltr",
-    children: [{ type: "text", text, format: 0, version: 1, detail: 0, mode: "normal", style: "" }],
+    children: [
+      {
+        type: "text",
+        text,
+        format: 0,
+        version: 1,
+        detail: 0,
+        mode: "normal",
+        style: "",
+      },
+    ],
   });
   const heading = (tag: "h2" | "h3" | "h4", text: string): LexNode => ({
     type: "heading",
@@ -28,7 +38,17 @@ function md(input: string): { root: LexNode } {
     indent: 0,
     version: 1,
     direction: "ltr",
-    children: [{ type: "text", text, format: 0, version: 1, detail: 0, mode: "normal", style: "" }],
+    children: [
+      {
+        type: "text",
+        text,
+        format: 0,
+        version: 1,
+        detail: 0,
+        mode: "normal",
+        style: "",
+      },
+    ],
   });
   const blocks = input
     .split(/\n\s*\n/)
@@ -52,12 +72,17 @@ function md(input: string): { root: LexNode } {
   };
 }
 
-const MANIFEST_PATH = path.resolve(process.cwd(), "tmp/wix-images/manifest.json");
+const MANIFEST_PATH = path.resolve(
+  process.cwd(),
+  "tmp/wix-images/manifest.json",
+);
 const IMG_DIR = path.resolve(process.cwd(), "tmp/wix-images");
 
 type Manifest = Record<string, { filename: string; alt: string }>;
 
-async function ensureAdminUser(payload: Awaited<ReturnType<typeof getPayload>>) {
+async function ensureAdminUser(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+) {
   const existing = await payload.find({
     collection: "users",
     where: { email: { equals: "admin@svnord.de" } },
@@ -75,12 +100,22 @@ async function ensureAdminUser(payload: Awaited<ReturnType<typeof getPayload>>) 
       name: "SV Nord Admin",
     } as never,
   });
-  console.log("✓ Created admin user: admin@svnord.de / ChangeMeNach-P1 (CHANGE THIS PASSWORD)");
+  console.log(
+    "✓ Created admin user: admin@svnord.de / ChangeMeNach-P1 (CHANGE THIS PASSWORD)",
+  );
 }
 
-async function ensurePerson(payload: Awaited<ReturnType<typeof getPayload>>, p: {
-  name: string; role: string; function: string; phone?: string; email?: string; order: number;
-}) {
+async function ensurePerson(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+  p: {
+    name: string;
+    role: string;
+    function: string;
+    phone?: string;
+    email?: string;
+    order: number;
+  },
+) {
   const existing = await payload.find({
     collection: "people",
     where: { name: { equals: p.name } },
@@ -148,7 +183,13 @@ async function ensureSponsor(
   } else {
     await payload.create({
       collection: "sponsors",
-      data: { name, logo: mediaId, tier, order, ...(url ? { url } : {}) } as never,
+      data: {
+        name,
+        logo: mediaId,
+        tier,
+        order,
+        ...(url ? { url } : {}),
+      } as never,
     });
   }
 }
@@ -254,7 +295,12 @@ async function populateSportSection(
     sport: string;
     teamName: string;
     descriptionMd: string;
-    trainers: Array<{ name: string; role: string; phone?: string; email?: string }>;
+    trainers: Array<{
+      name: string;
+      role: string;
+      phone?: string;
+      email?: string;
+    }>;
   },
 ) {
   // 1. Ensure trainer/leader people exist; collect their IDs
@@ -360,13 +406,62 @@ async function main() {
 
   // 1. Vorstand (from spec §2)
   const vorstand = [
-    { name: "Ralf Kirmeyer", role: "1. Vorstand", function: "vorstand", phone: "0172 9808109", email: "ralf.kirmeyer@svnord.de", order: 1 },
-    { name: "Birgit Höfer", role: "2. Vorstand", function: "vorstand", phone: "0173 9547204", email: "birgit.hoefer@svnord.de", order: 2 },
-    { name: "Britta Feierabend", role: "Kassier", function: "vorstand", phone: "0176 96655106", email: "britta.feierabend@svnord.de", order: 3 },
-    { name: "Fabian Falk", role: "Schriftführer", function: "vorstand", phone: "0170 5859347", email: "fabian.falk@svnord.de", order: 4 },
-    { name: "Felix Kirmeyer", role: "Sportlicher Leiter", function: "sportleitung", phone: "0176 63691739", email: "felix.kirmeyer@svnord.de", order: 5 },
-    { name: "Tobias Treffer", role: "Jugendleitung Großfeld", function: "jugendleitung", phone: "0176 55126535", email: "tobias.treffer@svnord.de", order: 6 },
-    { name: "Ergin Piker", role: "Jugendleitung Kleinfeld", function: "jugendleitung", phone: "0160 5892697", email: "ergin.piker@svnord.de", order: 7 },
+    {
+      name: "Ralf Kirmeyer",
+      role: "1. Vorstand",
+      function: "vorstand",
+      phone: "0172 9808109",
+      email: "ralf.kirmeyer@svnord.de",
+      order: 1,
+    },
+    {
+      name: "Birgit Höfer",
+      role: "2. Vorstand",
+      function: "vorstand",
+      phone: "0173 9547204",
+      email: "birgit.hoefer@svnord.de",
+      order: 2,
+    },
+    {
+      name: "Britta Feierabend",
+      role: "Kassier",
+      function: "vorstand",
+      phone: "0176 96655106",
+      email: "britta.feierabend@svnord.de",
+      order: 3,
+    },
+    {
+      name: "Fabian Falk",
+      role: "Schriftführer",
+      function: "vorstand",
+      phone: "0170 5859347",
+      email: "fabian.falk@svnord.de",
+      order: 4,
+    },
+    {
+      name: "Felix Kirmeyer",
+      role: "Sportlicher Leiter",
+      function: "sportleitung",
+      phone: "0176 63691739",
+      email: "felix.kirmeyer@svnord.de",
+      order: 5,
+    },
+    {
+      name: "Tobias Treffer",
+      role: "Jugendleitung Großfeld",
+      function: "jugendleitung",
+      phone: "0176 55126535",
+      email: "tobias.treffer@svnord.de",
+      order: 6,
+    },
+    {
+      name: "Ergin Piker",
+      role: "Jugendleitung Kleinfeld",
+      function: "jugendleitung",
+      phone: "0160 5892697",
+      email: "ergin.piker@svnord.de",
+      order: 7,
+    },
   ];
 
   for (const p of vorstand) {
@@ -377,23 +472,91 @@ async function main() {
   // Idempotent: ensurePortrait() skips if the Person doc doesn't yet exist
   // (so it also works for people we'll only add later via populateSportSection).
   const portraits = [
-    { personName: "Ralf Kirmeyer", filename: "Ralf_Kirmeyer.jpg", alt: "Porträt Ralf Kirmeyer" },
-    { personName: "Birgit Höfer", filename: "BirgitHoefer.jpg", alt: "Porträt Birgit Höfer" },
-    { personName: "Britta Feierabend", filename: "Britta_Feierabend.jpg", alt: "Porträt Britta Feierabend" },
-    { personName: "Fabian Falk", filename: "FabianFalk.jpg", alt: "Porträt Fabian Falk" },
-    { personName: "Felix Kirmeyer", filename: "Felix_Kirmeyer.jpg", alt: "Porträt Felix Kirmeyer" },
-    { personName: "Tobias Treffer", filename: "Tobias_Treffer.jpg", alt: "Porträt Tobias Treffer" },
-    { personName: "Elisabeth Schillinger", filename: "Elisabeth_Schillinger.jpg", alt: "Porträt Elisabeth Schillinger" },
-    { personName: "Tenja Hirlinger", filename: "Tenja_Hirlinger.jpg", alt: "Porträt Tenja Hirlinger" },
-    { personName: "Bini Hafner", filename: "Bini_Hafner.jpg", alt: "Porträt Bini Hafner" },
-    { personName: "Tobias Tins", filename: "Tobias_Tins.jpg", alt: "Porträt Tobias Tins" },
-    { personName: "Kevin Schwarz", filename: "Kevin_Schwarz.jpg", alt: "Porträt Kevin Schwarz" },
-    { personName: "Vincenzo Tropeano", filename: "Vincenzo_Tropeano.jpg", alt: "Porträt Vincenzo Tropeano" },
-    { personName: "Matthias Brisgies", filename: "Matthias_Brisgies.jpg", alt: "Porträt Matthias Brisgies" },
-    { personName: "Christoph Hafner", filename: "Christoph_Hafner.jpg", alt: "Porträt Christoph Hafner" },
-    { personName: "Florian Brams", filename: "Florian_Brams.jpg", alt: "Porträt Florian Brams" },
-    { personName: "Vincent Balleng", filename: "Vincent_Balleng.jpg", alt: "Porträt Vincent Balleng" },
-    { personName: "Tobias Lippenberger", filename: "Tobias_Lippenberger.jpg", alt: "Porträt Tobias Lippenberger" },
+    {
+      personName: "Ralf Kirmeyer",
+      filename: "Ralf_Kirmeyer.jpg",
+      alt: "Porträt Ralf Kirmeyer",
+    },
+    {
+      personName: "Birgit Höfer",
+      filename: "BirgitHoefer.jpg",
+      alt: "Porträt Birgit Höfer",
+    },
+    {
+      personName: "Britta Feierabend",
+      filename: "Britta_Feierabend.jpg",
+      alt: "Porträt Britta Feierabend",
+    },
+    {
+      personName: "Fabian Falk",
+      filename: "FabianFalk.jpg",
+      alt: "Porträt Fabian Falk",
+    },
+    {
+      personName: "Felix Kirmeyer",
+      filename: "Felix_Kirmeyer.jpg",
+      alt: "Porträt Felix Kirmeyer",
+    },
+    {
+      personName: "Tobias Treffer",
+      filename: "Tobias_Treffer.jpg",
+      alt: "Porträt Tobias Treffer",
+    },
+    {
+      personName: "Elisabeth Schillinger",
+      filename: "Elisabeth_Schillinger.jpg",
+      alt: "Porträt Elisabeth Schillinger",
+    },
+    {
+      personName: "Tenja Hirlinger",
+      filename: "Tenja_Hirlinger.jpg",
+      alt: "Porträt Tenja Hirlinger",
+    },
+    {
+      personName: "Bini Hafner",
+      filename: "Bini_Hafner.jpg",
+      alt: "Porträt Bini Hafner",
+    },
+    {
+      personName: "Tobias Tins",
+      filename: "Tobias_Tins.jpg",
+      alt: "Porträt Tobias Tins",
+    },
+    {
+      personName: "Kevin Schwarz",
+      filename: "Kevin_Schwarz.jpg",
+      alt: "Porträt Kevin Schwarz",
+    },
+    {
+      personName: "Vincenzo Tropeano",
+      filename: "Vincenzo_Tropeano.jpg",
+      alt: "Porträt Vincenzo Tropeano",
+    },
+    {
+      personName: "Matthias Brisgies",
+      filename: "Matthias_Brisgies.jpg",
+      alt: "Porträt Matthias Brisgies",
+    },
+    {
+      personName: "Christoph Hafner",
+      filename: "Christoph_Hafner.jpg",
+      alt: "Porträt Christoph Hafner",
+    },
+    {
+      personName: "Florian Brams",
+      filename: "Florian_Brams.jpg",
+      alt: "Porträt Florian Brams",
+    },
+    {
+      personName: "Vincent Balleng",
+      filename: "Vincent_Balleng.jpg",
+      alt: "Porträt Vincent Balleng",
+    },
+    {
+      personName: "Tobias Lippenberger",
+      filename: "Tobias_Lippenberger.jpg",
+      alt: "Porträt Tobias Lippenberger",
+    },
   ];
   const portraitDir = path.resolve(process.cwd(), "tmp/live-portraits");
   for (const pt of portraits) {
@@ -409,12 +572,46 @@ async function main() {
 
   // 1c. Sponsor logos (mirrored from live site into tmp/live-sponsors/)
   const sponsors = [
-    { name: "a+b Pertler", filename: "sponsor1.avif", tier: "standard" as const, order: 5 },
-    { name: "Autohaus Walter", filename: "sponsor2.avif", url: "https://www.auto-walter.com/", tier: "premium" as const, order: 2 },
-    { name: "CHECK24", filename: "sponsor3.avif", url: "https://www.check24.de/", tier: "premium" as const, order: 1 },
-    { name: "B&W Sport Consulting", filename: "sponsor4.avif", url: "https://www.bwsportconsulting.de/", tier: "standard" as const, order: 6 },
-    { name: "M-net", filename: "sponsor5.avif", url: "https://www.m-net.de/", tier: "premium" as const, order: 3 },
-    { name: "Bromberger Office + Living", filename: "sponsor6.avif", tier: "standard" as const, order: 4 },
+    {
+      name: "a+b Pertler",
+      filename: "sponsor1.avif",
+      tier: "standard" as const,
+      order: 5,
+    },
+    {
+      name: "Autohaus Walter",
+      filename: "sponsor2.avif",
+      url: "https://www.auto-walter.com/",
+      tier: "premium" as const,
+      order: 2,
+    },
+    {
+      name: "CHECK24",
+      filename: "sponsor3.avif",
+      url: "https://www.check24.de/",
+      tier: "premium" as const,
+      order: 1,
+    },
+    {
+      name: "B&W Sport Consulting",
+      filename: "sponsor4.avif",
+      url: "https://www.bwsportconsulting.de/",
+      tier: "standard" as const,
+      order: 6,
+    },
+    {
+      name: "M-net",
+      filename: "sponsor5.avif",
+      url: "https://www.m-net.de/",
+      tier: "premium" as const,
+      order: 3,
+    },
+    {
+      name: "Bromberger Office + Living",
+      filename: "sponsor6.avif",
+      tier: "standard" as const,
+      order: 4,
+    },
   ];
   const sponsorDir = path.resolve(process.cwd(), "tmp/live-sponsors");
   for (const sp of sponsors) {
@@ -747,11 +944,26 @@ async function main() {
         spielklasse: "D-Juniorinnen / Kreisklasse",
       },
     },
-    { name: "Volleyball", sport: "volleyball", category: "allgemein", order: 100 },
-    { name: "Gymnastik", sport: "gymnastik", category: "allgemein", order: 101 },
+    {
+      name: "Volleyball",
+      sport: "volleyball",
+      category: "allgemein",
+      order: 100,
+    },
+    {
+      name: "Gymnastik",
+      sport: "gymnastik",
+      category: "allgemein",
+      order: 101,
+    },
     { name: "Ski", sport: "ski", category: "allgemein", order: 102 },
     { name: "Esport", sport: "esport", category: "allgemein", order: 103 },
-    { name: "Schiedsrichter", sport: "schiedsrichter", category: "allgemein", order: 104 },
+    {
+      name: "Schiedsrichter",
+      sport: "schiedsrichter",
+      category: "allgemein",
+      order: 104,
+    },
   ];
 
   for (const t of teams) {
@@ -761,9 +973,13 @@ async function main() {
   // 3. Optional manifest for image references
   let manifest: Manifest = {};
   try {
-    manifest = JSON.parse(await fs.readFile(MANIFEST_PATH, "utf-8")) as Manifest;
+    manifest = JSON.parse(
+      await fs.readFile(MANIFEST_PATH, "utf-8"),
+    ) as Manifest;
   } catch {
-    console.warn("No image manifest found. Run `bun run download-images` first to import photos.");
+    console.warn(
+      "No image manifest found. Run `bun run download-images` first to import photos.",
+    );
   }
 
   void IMG_DIR;
@@ -784,7 +1000,8 @@ async function main() {
       excerpt: "1:2-Auswärtssieg in Dachau. Platz 3 in der Bezirksliga.",
       publishedAt: new Date("2026-03-04T09:00:00+01:00").toISOString(),
       tags: ["spielbericht"],
-      bodyText: "Nach langer Vorbereitung sind wir endlich in die Punktspiele 2026 gestartet. Bezirksliga – 19. Spieltag (Rückrunde). Auswärts beim ASV Dachau: 2. vs. 4. – ein echter Kracher! Früher Rückstand, starke Reaktion und ein verdienter 1:2-Auswärtssieg. Platz 3 in der Tabelle (punktgleich mit Platz 2). 3. Mannschaft: Matschschlacht gegen den FV Hansa Neuhausen – trotz Top-Chancen bleibt's beim 0:0.",
+      bodyText:
+        "Nach langer Vorbereitung sind wir endlich in die Punktspiele 2026 gestartet. Bezirksliga – 19. Spieltag (Rückrunde). Auswärts beim ASV Dachau: 2. vs. 4. – ein echter Kracher! Früher Rückstand, starke Reaktion und ein verdienter 1:2-Auswärtssieg. Platz 3 in der Tabelle (punktgleich mit Platz 2). 3. Mannschaft: Matschschlacht gegen den FV Hansa Neuhausen – trotz Top-Chancen bleibt's beim 0:0.",
     },
     {
       title: "40 Jahre Eschengarten",
@@ -792,7 +1009,8 @@ async function main() {
       excerpt: "Vier Jahrzehnte Vereinsheim — eine Chronik in Bildern.",
       publishedAt: new Date("2026-02-06T18:00:00+01:00").toISOString(),
       tags: ["verein"],
-      bodyText: "Am 5. Mai 1983 entschlossen sich die Vereinsvorstände des SV Nord München-Lerchenau, des HuVTV Edelweiß-Stamm München und des FC Eintracht München, das von der Stadt München angebotene Fördermodell „Vereinsförderung von selbst errichteten Vereinsheimen\” in Anspruch zu nehmen. Ein Jahr später, am 2. Juli 1984, wurde der Eschengarten in Eigenregie gebaut.",
+      bodyText:
+        "Am 5. Mai 1983 entschlossen sich die Vereinsvorstände des SV Nord München-Lerchenau, des HuVTV Edelweiß-Stamm München und des FC Eintracht München, das von der Stadt München angebotene Fördermodell „Vereinsförderung von selbst errichteten Vereinsheimen\” in Anspruch zu nehmen. Ein Jahr später, am 2. Juli 1984, wurde der Eschengarten in Eigenregie gebaut.",
     },
   ];
 
@@ -827,7 +1045,9 @@ async function main() {
                 indent: 0,
                 version: 1,
                 direction: "ltr",
-                children: [{ type: "text", text: p.bodyText, format: 0, version: 1 }],
+                children: [
+                  { type: "text", text: p.bodyText, format: 0, version: 1 },
+                ],
               },
             ],
           },
@@ -843,7 +1063,9 @@ async function main() {
       name: "SV Nord München-Lerchenau e.V.",
       tagline: "Einmal Nordler, immer Nordler.",
       description: "Traditionsverein im Münchner Norden seit 1947.",
-      social: [{ platform: "instagram", url: "https://www.instagram.com/svnord_ski/" }],
+      social: [
+        { platform: "instagram", url: "https://www.instagram.com/svnord_ski/" },
+      ],
     } as never,
   });
 
@@ -868,7 +1090,10 @@ async function main() {
             { label: "Vorstand", href: "/verein/vorstand" },
             { label: "Chronik", href: "/verein/chronik" },
             { label: "Vereinsheim", href: "/verein/vereinsheim" },
-            { label: "Jugendförderverein", href: "/verein/jugendfoerderverein" },
+            {
+              label: "Jugendförderverein",
+              href: "/verein/jugendfoerderverein",
+            },
           ],
         },
         {
@@ -893,8 +1118,14 @@ async function main() {
         {
           title: "Folgen",
           links: [
-            { label: "Instagram", href: "https://www.instagram.com/svnord_lerchenau/" },
-            { label: "Facebook", href: "https://www.facebook.com/svnordlerchenau/" },
+            {
+              label: "Instagram",
+              href: "https://www.instagram.com/svnord_lerchenau/",
+            },
+            {
+              label: "Facebook",
+              href: "https://www.facebook.com/svnordlerchenau/",
+            },
           ],
         },
       ],
@@ -1139,8 +1370,12 @@ Weitere Infos zum Jugendförderverein per Mail an nordjugend@gmx.de.`,
       ),
       supportBullets: [
         { text: "Zuzahlung zu Ausflügen und Kurzreisen" },
-        { text: "Zuzahlung zur Ausgestaltung von Feierlichkeiten der Nordjugend" },
-        { text: "Zuzahlung zur Unterstützung von Aktivitäten und Trainingsbetrieb" },
+        {
+          text: "Zuzahlung zur Ausgestaltung von Feierlichkeiten der Nordjugend",
+        },
+        {
+          text: "Zuzahlung zur Unterstützung von Aktivitäten und Trainingsbetrieb",
+        },
       ],
       minAnnualFee: 24,
       formPdfUrl: "/downloads/jfv-beitrittserklaerung.pdf",
@@ -1345,7 +1580,10 @@ Ein Platz, zwei Tore und 22 Spieler — das ist das Erste, was jedem zum Thema F
 
 Wenn Ihr Lust habt, Verantwortung im Fußball zu übernehmen, wendet Euch gerne an unseren Schiedsrichterobmann. Er erzählt euch mehr über das Tätigkeitsfeld — neben den aktiven Schiedsrichtern suchen wir weiterhin nach Nachwuchs.`,
     trainers: [
-      { name: "Vincenzo Tropeano", role: "Schiedsrichter-Obmann · Bezirksliga" },
+      {
+        name: "Vincenzo Tropeano",
+        role: "Schiedsrichter-Obmann · Bezirksliga",
+      },
       { name: "Matthias Brisgies", role: "Schiedsrichter (aktiv)" },
       { name: "Kurt Tänzer", role: "Schiedsrichter (passiv)" },
     ],

@@ -1,7 +1,4 @@
-import type {
-  CollectionAfterChangeHook,
-  GlobalAfterChangeHook,
-} from "payload";
+import type { CollectionAfterChangeHook, GlobalAfterChangeHook } from "payload";
 
 function fireRevalidate(payload: {
   type: "collection" | "global";
@@ -12,8 +9,7 @@ function fireRevalidate(payload: {
   const secret = process.env.REVALIDATE_SECRET;
   if (!secret) return;
 
-  const base =
-    process.env.NEXT_PUBLIC_SERVER_URL ?? "http://localhost:3000";
+  const base = process.env.NEXT_PUBLIC_SERVER_URL ?? "http://localhost:3000";
 
   // Fire-and-forget. We don't block the save on the revalidation call.
   void fetch(`${base}/api/revalidate`, {

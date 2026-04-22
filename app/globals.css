@@ -15,10 +15,13 @@
   --color-nord-red: #d43a2f;
 
   /* Fonts */
-  --font-sans: var(--font-inter), var(--font-geist-sans), -apple-system, system-ui, sans-serif;
+  --font-sans:
+    var(--font-inter), var(--font-geist-sans), -apple-system, system-ui,
+    sans-serif;
   --font-display: var(--font-barlow-condensed), "Barlow Condensed", sans-serif;
   --font-serif: var(--font-fraunces), "Fraunces", Georgia, serif;
-  --font-mono: var(--font-jetbrains-mono), var(--font-geist-mono), ui-monospace, monospace;
+  --font-mono:
+    var(--font-jetbrains-mono), var(--font-geist-mono), ui-monospace, monospace;
 
   /* Container width used across pages */
   --container-7xl: 82.5rem; /* 1320px */
@@ -63,11 +66,20 @@
 }
 
 @keyframes marquee-scroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 @keyframes live-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgb(212 58 47 / 0.5); }
-  50% { box-shadow: 0 0 0 8px rgb(212 58 47 / 0); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(212 58 47 / 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgb(212 58 47 / 0);
+  }
 }

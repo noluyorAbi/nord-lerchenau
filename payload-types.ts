@@ -13,53 +13,53 @@
  * via the `definition` "supportedTimezones".
  */
 export type SupportedTimezones =
-  | 'Pacific/Midway'
-  | 'Pacific/Niue'
-  | 'Pacific/Honolulu'
-  | 'Pacific/Rarotonga'
-  | 'America/Anchorage'
-  | 'Pacific/Gambier'
-  | 'America/Los_Angeles'
-  | 'America/Tijuana'
-  | 'America/Denver'
-  | 'America/Phoenix'
-  | 'America/Chicago'
-  | 'America/Guatemala'
-  | 'America/New_York'
-  | 'America/Bogota'
-  | 'America/Caracas'
-  | 'America/Santiago'
-  | 'America/Buenos_Aires'
-  | 'America/Sao_Paulo'
-  | 'Atlantic/South_Georgia'
-  | 'Atlantic/Azores'
-  | 'Atlantic/Cape_Verde'
-  | 'Europe/London'
-  | 'Europe/Berlin'
-  | 'Africa/Lagos'
-  | 'Europe/Athens'
-  | 'Africa/Cairo'
-  | 'Europe/Moscow'
-  | 'Asia/Riyadh'
-  | 'Asia/Dubai'
-  | 'Asia/Baku'
-  | 'Asia/Karachi'
-  | 'Asia/Tashkent'
-  | 'Asia/Calcutta'
-  | 'Asia/Dhaka'
-  | 'Asia/Almaty'
-  | 'Asia/Jakarta'
-  | 'Asia/Bangkok'
-  | 'Asia/Shanghai'
-  | 'Asia/Singapore'
-  | 'Asia/Tokyo'
-  | 'Asia/Seoul'
-  | 'Australia/Brisbane'
-  | 'Australia/Sydney'
-  | 'Pacific/Guam'
-  | 'Pacific/Noumea'
-  | 'Pacific/Auckland'
-  | 'Pacific/Fiji';
+  | "Pacific/Midway"
+  | "Pacific/Niue"
+  | "Pacific/Honolulu"
+  | "Pacific/Rarotonga"
+  | "America/Anchorage"
+  | "Pacific/Gambier"
+  | "America/Los_Angeles"
+  | "America/Tijuana"
+  | "America/Denver"
+  | "America/Phoenix"
+  | "America/Chicago"
+  | "America/Guatemala"
+  | "America/New_York"
+  | "America/Bogota"
+  | "America/Caracas"
+  | "America/Santiago"
+  | "America/Buenos_Aires"
+  | "America/Sao_Paulo"
+  | "Atlantic/South_Georgia"
+  | "Atlantic/Azores"
+  | "Atlantic/Cape_Verde"
+  | "Europe/London"
+  | "Europe/Berlin"
+  | "Africa/Lagos"
+  | "Europe/Athens"
+  | "Africa/Cairo"
+  | "Europe/Moscow"
+  | "Asia/Riyadh"
+  | "Asia/Dubai"
+  | "Asia/Baku"
+  | "Asia/Karachi"
+  | "Asia/Tashkent"
+  | "Asia/Calcutta"
+  | "Asia/Dhaka"
+  | "Asia/Almaty"
+  | "Asia/Jakarta"
+  | "Asia/Bangkok"
+  | "Asia/Shanghai"
+  | "Asia/Singapore"
+  | "Asia/Tokyo"
+  | "Asia/Seoul"
+  | "Australia/Brisbane"
+  | "Australia/Sydney"
+  | "Pacific/Guam"
+  | "Pacific/Noumea"
+  | "Pacific/Auckland"
+  | "Pacific/Fiji";
 
 export interface Config {
   auth: {
@@ -76,10 +76,10 @@ export interface Config {
     fixtures: Fixture;
     events: Event;
     submissions: Submission;
-    'payload-kv': PayloadKv;
-    'payload-locked-documents': PayloadLockedDocument;
-    'payload-preferences': PayloadPreference;
-    'payload-migrations': PayloadMigration;
+    "payload-kv": PayloadKv;
+    "payload-locked-documents": PayloadLockedDocument;
+    "payload-preferences": PayloadPreference;
+    "payload-migrations": PayloadMigration;
   };
   collectionsJoins: {};
   collectionsSelect: {
@@ -92,36 +92,46 @@ export interface Config {
     fixtures: FixturesSelect<false> | FixturesSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
     submissions: SubmissionsSelect<false> | SubmissionsSelect<true>;
-    'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
-    'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
-    'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
-    'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
+    "payload-kv": PayloadKvSelect<false> | PayloadKvSelect<true>;
+    "payload-locked-documents":
+      | PayloadLockedDocumentsSelect<false>
+      | PayloadLockedDocumentsSelect<true>;
+    "payload-preferences":
+      | PayloadPreferencesSelect<false>
+      | PayloadPreferencesSelect<true>;
+    "payload-migrations":
+      | PayloadMigrationsSelect<false>
+      | PayloadMigrationsSelect<true>;
   };
   db: {
     defaultIDType: number;
   };
   fallbackLocale: null;
   globals: {
-    'site-settings': SiteSetting;
+    "site-settings": SiteSetting;
     navigation: Navigation;
-    'home-page': HomePage;
-    'contact-info': ContactInfo;
-    'chronik-page': ChronikPage;
-    'vereinsheim-page': VereinsheimPage;
-    'jugendfoerder-page': JugendfoerderPage;
-    'legal-pages': LegalPage;
-    'faq-page': FaqPage;
+    "home-page": HomePage;
+    "contact-info": ContactInfo;
+    "chronik-page": ChronikPage;
+    "vereinsheim-page": VereinsheimPage;
+    "jugendfoerder-page": JugendfoerderPage;
+    "legal-pages": LegalPage;
+    "faq-page": FaqPage;
   };
   globalsSelect: {
-    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    "site-settings": SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     navigation: NavigationSelect<false> | NavigationSelect<true>;
-    'home-page': HomePageSelect<false> | HomePageSelect<true>;
-    'contact-info': ContactInfoSelect<false> | ContactInfoSelect<true>;
-    'chronik-page': ChronikPageSelect<false> | ChronikPageSelect<true>;
-    'vereinsheim-page': VereinsheimPageSelect<false> | VereinsheimPageSelect<true>;
-    'jugendfoerder-page': JugendfoerderPageSelect<false> | JugendfoerderPageSelect<true>;
-    'legal-pages': LegalPagesSelect<false> | LegalPagesSelect<true>;
-    'faq-page': FaqPageSelect<false> | FaqPageSelect<true>;
+    "home-page": HomePageSelect<false> | HomePageSelect<true>;
+    "contact-info": ContactInfoSelect<false> | ContactInfoSelect<true>;
+    "chronik-page": ChronikPageSelect<false> | ChronikPageSelect<true>;
+    "vereinsheim-page":
+      | VereinsheimPageSelect<false>
+      | VereinsheimPageSelect<true>;
+    "jugendfoerder-page":
+      | JugendfoerderPageSelect<false>
+      | JugendfoerderPageSelect<true>;
+    "legal-pages": LegalPagesSelect<false> | LegalPagesSelect<true>;
+    "faq-page": FaqPageSelect<false> | FaqPageSelect<true>;
   };
   locale: null;
   widgets: {
@@ -175,7 +185,7 @@ export interface User {
       }[]
     | null;
   password?: string | null;
-  collection: 'users';
+  collection: "users";
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -243,7 +253,14 @@ export interface Person {
    * e.g. 1. Vorstand · Sportlicher Leiter · Trainer A1
    */
   role: string;
-  function: 'vorstand' | 'sportleitung' | 'jugendleitung' | 'trainer' | 'zeugwart' | 'spieler' | 'andere';
+  function:
+    | "vorstand"
+    | "sportleitung"
+    | "jugendleitung"
+    | "trainer"
+    | "zeugwart"
+    | "spieler"
+    | "andere";
   photo?: (number | null) | Media;
   phone?: string | null;
   email?: string | null;
@@ -269,8 +286,16 @@ export interface Team {
    * Auto-generated from name. Edit only if you know what you're doing.
    */
   slug: string;
-  sport: 'fussball' | 'volleyball' | 'gymnastik' | 'ski' | 'esport' | 'schiedsrichter';
-  category?: ('senioren' | 'junioren' | 'juniorinnen' | 'bambini' | 'allgemein') | null;
+  sport:
+    | "fussball"
+    | "volleyball"
+    | "gymnastik"
+    | "ski"
+    | "esport"
+    | "schiedsrichter";
+  category?:
+    | ("senioren" | "junioren" | "juniorinnen" | "bambini" | "allgemein")
+    | null;
   /**
    * z.B. A1, B2, F3, Bambini
    */
@@ -321,8 +346,8 @@ export interface Team {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      direction: ("ltr" | "rtl") | null;
+      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
       indent: number;
       version: number;
     };
@@ -364,8 +389,8 @@ export interface Post {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      direction: ("ltr" | "rtl") | null;
+      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
       indent: number;
       version: number;
     };
@@ -373,7 +398,16 @@ export interface Post {
   };
   author?: (number | null) | Person;
   publishedAt: string;
-  tags?: ('spielbericht' | 'verein' | 'jugend' | 'event' | 'sponsoren' | 'allgemein')[] | null;
+  tags?:
+    | (
+        | "spielbericht"
+        | "verein"
+        | "jugend"
+        | "event"
+        | "sponsoren"
+        | "allgemein"
+      )[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -386,7 +420,7 @@ export interface Sponsor {
   name: string;
   logo: number | Media;
   url?: string | null;
-  tier: 'premium' | 'standard';
+  tier: "premium" | "standard";
   order?: number | null;
   updatedAt: string;
   createdAt: string;
@@ -440,8 +474,8 @@ export interface Event {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      direction: ("ltr" | "rtl") | null;
+      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
       indent: number;
       version: number;
     };
@@ -498,44 +532,44 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
-        relationTo: 'users';
+        relationTo: "users";
         value: number | User;
       } | null)
     | ({
-        relationTo: 'media';
+        relationTo: "media";
         value: number | Media;
       } | null)
     | ({
-        relationTo: 'people';
+        relationTo: "people";
         value: number | Person;
       } | null)
     | ({
-        relationTo: 'teams';
+        relationTo: "teams";
         value: number | Team;
       } | null)
     | ({
-        relationTo: 'posts';
+        relationTo: "posts";
         value: number | Post;
       } | null)
     | ({
-        relationTo: 'sponsors';
+        relationTo: "sponsors";
         value: number | Sponsor;
       } | null)
     | ({
-        relationTo: 'fixtures';
+        relationTo: "fixtures";
         value: number | Fixture;
       } | null)
     | ({
-        relationTo: 'events';
+        relationTo: "events";
         value: number | Event;
       } | null)
     | ({
-        relationTo: 'submissions';
+        relationTo: "submissions";
         value: number | Submission;
       } | null);
   globalSlug?: string | null;
   user: {
-    relationTo: 'users';
+    relationTo: "users";
     value: number | User;
   };
   updatedAt: string;
@@ -548,7 +582,7 @@ export interface PayloadLockedDocument {
 export interface PayloadPreference {
   id: number;
   user: {
-    relationTo: 'users';
+    relationTo: "users";
     value: number | User;
   };
   key?: string | null;
@@ -849,7 +883,7 @@ export interface SiteSetting {
   ogImage?: (number | null) | Media;
   social?:
     | {
-        platform: 'instagram' | 'facebook' | 'youtube' | 'x' | 'tiktok';
+        platform: "instagram" | "facebook" | "youtube" | "x" | "tiktok";
         url: string;
         id?: string | null;
       }[]
@@ -986,8 +1020,8 @@ export interface ChronikPage {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      direction: ("ltr" | "rtl") | null;
+      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
       indent: number;
       version: number;
     };
@@ -1012,8 +1046,8 @@ export interface VereinsheimPage {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      direction: ("ltr" | "rtl") | null;
+      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
       indent: number;
       version: number;
     };
@@ -1044,8 +1078,8 @@ export interface JugendfoerderPage {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      direction: ("ltr" | "rtl") | null;
+      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
       indent: number;
       version: number;
     };
@@ -1081,8 +1115,8 @@ export interface LegalPage {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      direction: ("ltr" | "rtl") | null;
+      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
       indent: number;
       version: number;
     };
@@ -1096,8 +1130,8 @@ export interface LegalPage {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      direction: ("ltr" | "rtl") | null;
+      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
       indent: number;
       version: number;
     };
@@ -1117,7 +1151,9 @@ export interface FaqPage {
     | {
         question: string;
         answer: string;
-        group?: ('allgemein' | 'mitgliedschaft' | 'training' | 'vereinsheim') | null;
+        group?:
+          | ("allgemein" | "mitgliedschaft" | "training" | "vereinsheim")
+          | null;
         id?: string | null;
       }[]
     | null;
@@ -1321,7 +1357,7 @@ export interface CollectionsWidget {
   data?: {
     [k: string]: unknown;
   };
-  width: 'full';
+  width: "full";
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1331,7 +1367,6 @@ export interface Auth {
   [k: string]: unknown;
 }
 
-
-declare module 'payload' {
+declare module "payload" {
   export interface GeneratedTypes extends Config {}
 }

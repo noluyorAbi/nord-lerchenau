@@ -2,12 +2,12 @@
 
 This site is one Next.js 16 app with Payload CMS mounted at `/admin`. Deploy target: **Vercel**. Required external services:
 
-| Service | Purpose | Cost |
-|---------|---------|------|
-| **Vercel** | Hosts the Next.js app | Free tier is enough |
-| **Neon** | Production Postgres | Free tier is enough |
-| **Vercel Blob** | Uploaded media (photos, sponsor logos, etc.) | ~Free for this traffic |
-| **Resend** | Contact-form email to `info@svnord.de` | Free tier (3k emails/mo) |
+| Service         | Purpose                                      | Cost                     |
+| --------------- | -------------------------------------------- | ------------------------ |
+| **Vercel**      | Hosts the Next.js app                        | Free tier is enough      |
+| **Neon**        | Production Postgres                          | Free tier is enough      |
+| **Vercel Blob** | Uploaded media (photos, sponsor logos, etc.) | ~Free for this traffic   |
+| **Resend**      | Contact-form email to `info@svnord.de`       | Free tier (3k emails/mo) |
 
 ---
 

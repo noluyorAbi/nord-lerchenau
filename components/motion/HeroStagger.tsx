@@ -14,7 +14,9 @@ export function HeroStagger({ children, className }: Props) {
   useIsoLayoutEffect(() => {
     const root = ref.current;
     if (!root) return;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     const items = root.querySelectorAll<HTMLElement>("[data-hero-item]");
     if (!items.length) return;
     if (reduced) {

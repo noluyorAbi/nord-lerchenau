@@ -86,7 +86,7 @@ export default async function TeamPage({ params }: Props) {
         }
       />
 
-      <div className="mx-auto max-w-7xl px-6 py-10 md:px-10 md:py-14">
+      <div className="mx-auto max-w-5xl px-6 py-10 md:px-8 md:py-14">
         {bfv?.teamId ? (
           <div className="mb-10 overflow-hidden rounded-2xl border border-nord-line bg-nord-ink">
             <div className="relative aspect-[16/9] w-full overflow-hidden">
@@ -131,12 +131,12 @@ export default async function TeamPage({ params }: Props) {
                     </span>
                   ) : null}
                   <div className="text-white">
-                    <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold">
+                    <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold">
                       SV Nord · {bfv?.spielklasse ?? team.league ?? "Fußball"}
                     </div>
                     <div
                       className="mt-0.5 font-display font-black leading-[0.95] tracking-[-0.01em]"
-                      style={{ fontSize: "clamp(22px, 3vw, 36px)" }}
+                      style={{ fontSize: "clamp(24px, 3.2vw, 40px)" }}
                     >
                       {team.name}
                     </div>
@@ -150,61 +150,43 @@ export default async function TeamPage({ params }: Props) {
           </div>
         ) : null}
 
-        <div className="grid gap-10 md:grid-cols-[1.6fr_1fr]">
-          <div className="space-y-10">
-            {hasDescription ? (
-              <div className="prose prose-neutral max-w-none">
-                <RichText data={team.description as SerializedEditorState} />
-              </div>
-            ) : (
-              <div className="rounded-xl border border-dashed border-nord-line bg-white p-8 text-sm text-nord-muted">
-                Noch keine Beschreibung. Pflege die Mannschaftsseite im Admin
-                unter <em>Teams → {team.name}</em>.
-              </div>
-            )}
+        <div className="space-y-10 md:space-y-12">
+          {hasDescription ? (
+            <div className="prose prose-neutral prose-lg max-w-none">
+              <RichText data={team.description as SerializedEditorState} />
+            </div>
+          ) : (
+            <div className="rounded-xl border border-dashed border-nord-line bg-white p-8 text-base text-nord-muted">
+              Noch keine Beschreibung. Pflege die Mannschaftsseite im Admin
+              unter <em>Teams → {team.name}</em>.
+            </div>
+          )}
 
-            {bfv?.teamId ? <BfvMatchesPanel bfv={bfv} /> : null}
-            {bfv?.teamId ? <BfvTablePanel bfv={bfv} /> : null}
-            {team.fupa && resolveFupaSlug(team.fupa) ? (
-              <FupaSquadPanel fupa={team.fupa} teamName={team.name} />
-            ) : bfv?.teamId ? (
-              <BfvSquadPanel bfv={bfv} />
-            ) : null}
-
-            {trainers.length > 0 ? (
-              <div>
-                <h2 className="mb-4 text-sm font-bold uppercase tracking-[0.15em] text-nord-muted">
-                  Trainer
-                </h2>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {trainers.map((trainer) => (
-                    <PersonCard key={trainer.id} person={trainer} />
-                  ))}
+          {bfvUrl ? (
+            <div className="overflow-hidden rounded-2xl bg-nord-ink p-8 text-white md:p-10">
+              <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
+                <div className="min-w-0 flex-1">
+                  <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-nord-gold">
+                    BFV · Offizieller Spielbetrieb
+                  </div>
+                  <div
+                    className="mt-3 font-display font-extrabold leading-tight"
+                    style={{ fontSize: "clamp(28px, 3.4vw, 44px)" }}
+                  >
+                    {bfv?.spielklasse ?? team.league ?? team.name}
+                  </div>
+                  {bfv?.partner ? (
+                    <p className="mt-3 text-base leading-relaxed text-white/75">
+                      {bfv.partner}
+                    </p>
+                  ) : null}
                 </div>
-              </div>
-            ) : null}
-          </div>
-
-          <aside className="space-y-6">
-            {bfvUrl ? (
-              <div className="overflow-hidden rounded-2xl bg-nord-ink p-6 text-white">
-                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold">
-                  BFV · Offizieller Spielbetrieb
-                </div>
-                <div className="mt-3 font-display text-[22px] font-extrabold leading-tight">
-                  {bfv?.spielklasse ?? team.league ?? team.name}
-                </div>
-                {bfv?.partner ? (
-                  <p className="mt-2 text-xs leading-relaxed text-white/70">
-                    {bfv.partner}
-                  </p>
-                ) : null}
-                <div className="mt-5 flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-3">
                   <a
                     href={bfvUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-full bg-nord-gold px-4 py-2.5 font-display text-[12px] font-semibold uppercase tracking-[0.04em] text-nord-navy transition hover:-translate-y-px hover:shadow-[0_8px_20px_rgba(200,169,106,0.4)]"
+                    className="inline-flex items-center gap-2 rounded-full bg-nord-gold px-5 py-3 font-display text-[13px] font-semibold uppercase tracking-[0.06em] text-nord-navy transition hover:-translate-y-px hover:shadow-[0_8px_20px_rgba(200,169,106,0.4)]"
                   >
                     Zum Mannschafts­profil ↗
                   </a>
@@ -212,66 +194,92 @@ export default async function TeamPage({ params }: Props) {
                     href={BFV_CLUB_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-full border border-white/20 px-4 py-2.5 font-display text-[12px] font-semibold uppercase tracking-[0.04em] text-white transition hover:bg-white hover:text-nord-navy"
+                    className="inline-flex items-center gap-2 rounded-full border border-white/25 px-5 py-3 font-display text-[13px] font-semibold uppercase tracking-[0.06em] text-white transition hover:bg-white hover:text-nord-navy"
                   >
                     Vereinsprofil
                   </a>
                 </div>
               </div>
-            ) : null}
+            </div>
+          ) : null}
 
-            {fixturesResult.docs.length > 0 ? (
-              <div className="rounded-xl border border-nord-line bg-white p-5">
-                <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-nord-muted">
-                  Nächste Spiele
-                </div>
-                <ul className="mt-3 space-y-3">
-                  {fixturesResult.docs.map((f) => (
-                    <li key={f.id}>
-                      <div className="text-sm font-semibold text-nord-ink">
+          {bfv?.teamId ? <BfvMatchesPanel bfv={bfv} /> : null}
+          {bfv?.teamId ? <BfvTablePanel bfv={bfv} /> : null}
+          {team.fupa && resolveFupaSlug(team.fupa) ? (
+            <FupaSquadPanel fupa={team.fupa} teamName={team.name} />
+          ) : bfv?.teamId ? (
+            <BfvSquadPanel bfv={bfv} />
+          ) : null}
+
+          {fixturesResult.docs.length > 0 ? (
+            <section className="rounded-2xl border border-nord-line bg-white p-6 md:p-8">
+              <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold">
+                Nächste Termine · Verein
+              </div>
+              <ul className="mt-4 divide-y divide-nord-line/70">
+                {fixturesResult.docs.map((f) => (
+                  <li
+                    key={f.id}
+                    className="flex flex-wrap items-baseline justify-between gap-3 py-3 first:pt-0 last:pb-0"
+                  >
+                    <div>
+                      <div className="font-display text-base font-bold text-nord-ink">
                         {f.isHome ? "vs." : "@"} {f.opponent}
                       </div>
-                      <div className="mt-0.5 text-[11px] text-nord-muted">
+                      <div className="mt-0.5 font-mono text-[11px] uppercase tracking-[0.12em] text-nord-muted">
                         {formatKickoff(new Date(f.kickoff))}
                         {f.venue ? ` · ${f.venue}` : null}
                       </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ) : null}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
 
-            {externalLinks.length > 0 ? (
-              <div className="rounded-xl border border-nord-line bg-white p-5">
-                <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-nord-muted">
-                  Extern
-                </div>
-                <ul className="mt-3 space-y-2">
-                  {externalLinks.map((link) => (
-                    <li key={link.url}>
-                      <a
-                        href={link.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-sm font-semibold text-nord-navy hover:text-nord-navy-2"
-                      >
-                        {link.label} ↗
-                      </a>
-                    </li>
-                  ))}
-                </ul>
+          {externalLinks.length > 0 ? (
+            <section className="rounded-2xl border border-nord-line bg-white p-6 md:p-8">
+              <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold">
+                Externe Links
               </div>
-            ) : null}
+              <ul className="mt-4 flex flex-wrap gap-2.5">
+                {externalLinks.map((link) => (
+                  <li key={link.url}>
+                    <a
+                      href={link.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-nord-line bg-nord-paper-2 px-4 py-2 font-display text-sm font-semibold text-nord-navy transition hover:border-nord-gold hover:bg-white hover:text-nord-navy-2"
+                    >
+                      {link.label} ↗
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
 
-            <div>
-              <Link
-                href="/fussball"
-                className="text-sm text-nord-muted hover:text-nord-ink"
-              >
-                ← Alle Mannschaften
-              </Link>
-            </div>
-          </aside>
+          {trainers.length > 0 ? (
+            <section>
+              <h2 className="mb-5 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
+                Trainer
+              </h2>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {trainers.map((trainer) => (
+                  <PersonCard key={trainer.id} person={trainer} />
+                ))}
+              </div>
+            </section>
+          ) : null}
+
+          <div className="pt-2">
+            <Link
+              href="/fussball"
+              className="font-display text-base text-nord-muted transition hover:text-nord-ink"
+            >
+              ← Alle Mannschaften
+            </Link>
+          </div>
         </div>
       </div>
     </>

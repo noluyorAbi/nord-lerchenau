@@ -1429,24 +1429,165 @@ Unser Angebot enthält Links zu externen Webseiten Dritter, auf deren Inhalte wi
 Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers. Downloads und Kopien dieser Seite sind nur für den privaten, nicht kommerziellen Gebrauch gestattet. Soweit die Inhalte auf dieser Seite nicht vom Betreiber erstellt wurden, werden die Urheberrechte Dritter beachtet. Insbesondere werden Inhalte Dritter als solche gekennzeichnet. Sollten Sie trotzdem auf eine Urheberrechtsverletzung aufmerksam werden, bitten wir um einen entsprechenden Hinweis. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Inhalte umgehend entfernen.`,
       ),
       datenschutzBody: md(
-        `## Datenschutz
+        `## 1. Verantwortlicher
 
-Die Nutzung unserer Webseite ist in der Regel ohne Angabe personenbezogener Daten möglich. Soweit auf unseren Seiten personenbezogene Daten (beispielsweise Name, Anschrift oder eMail-Adressen) erhoben werden, erfolgt dies, soweit möglich, stets auf freiwilliger Basis. Diese Daten werden ohne Ihre ausdrückliche Zustimmung nicht an Dritte weitergegeben.
+Verantwortlicher im Sinne der Datenschutz-Grundverordnung (DSGVO) und anderer nationaler Datenschutzgesetze der Mitgliedsstaaten sowie sonstiger datenschutzrechtlicher Bestimmungen ist:
 
-Wir weisen darauf hin, dass die Datenübertragung im Internet (z.B. bei der Kommunikation per E-Mail) Sicherheitslücken aufweisen kann. Ein lückenloser Schutz der Daten vor dem Zugriff durch Dritte ist nicht möglich.
-
-Der Nutzung von im Rahmen der Impressumspflicht veröffentlichten Kontaktdaten durch Dritte zur Übersendung von nicht ausdrücklich angeforderter Werbung und Informationsmaterialien wird hiermit ausdrücklich widersprochen. Die Betreiber der Seiten behalten sich ausdrücklich rechtliche Schritte im Falle der unverlangten Zusendung von Werbeinformationen, etwa durch Spam-Mails, vor.
-
-## Kontakt
-
-SV Nord München-Lerchenau e.V.
+**SV Nord München-Lerchenau e.V.**
 Ebereschenstraße 17
 80935 München
-info@svnord.de
+Deutschland
 
-## DSGVO-Erweiterung
+Telefon: 0172 2392919
+E-Mail: info@svnord.de
 
-Eine vollständige DSGVO-konforme Datenschutzerklärung (inkl. Hinweise zu Payload CMS, Vercel, Neon sowie Auskunfts- und Löschrechte nach Art. 15–17 DSGVO) wird ergänzt. Anfragen bitte per E-Mail an info@svnord.de.`,
+Vertreten durch den 1. Vorstand Ralf Kirmeyer.
+Eingetragen im Vereinsregister beim Amtsgericht München unter VR 6924.
+
+## 2. Allgemeine Hinweise zur Datenverarbeitung
+
+### Umfang der Verarbeitung personenbezogener Daten
+
+Wir verarbeiten personenbezogene Daten unserer Nutzer grundsätzlich nur, soweit dies zur Bereitstellung einer funktionsfähigen Website sowie unserer Inhalte und Leistungen erforderlich ist. Die Verarbeitung personenbezogener Daten unserer Nutzer erfolgt regelmäßig nur nach Einwilligung des Nutzers. Eine Ausnahme gilt in solchen Fällen, in denen eine vorherige Einholung einer Einwilligung aus tatsächlichen Gründen nicht möglich ist und die Verarbeitung der Daten durch gesetzliche Vorschriften gestattet ist.
+
+### Rechtsgrundlagen der Datenverarbeitung
+
+Soweit wir für Verarbeitungsvorgänge personenbezogener Daten eine Einwilligung der betroffenen Person einholen, dient Art. 6 Abs. 1 lit. a DSGVO als Rechtsgrundlage. Bei der Verarbeitung von personenbezogenen Daten, die zur Erfüllung eines Vertrages erforderlich ist, dient Art. 6 Abs. 1 lit. b DSGVO als Rechtsgrundlage. Dies gilt auch für Verarbeitungsvorgänge, die zur Durchführung vorvertraglicher Maßnahmen erforderlich sind. Soweit eine Verarbeitung zur Erfüllung einer rechtlichen Verpflichtung erforderlich ist, der unser Verein unterliegt, dient Art. 6 Abs. 1 lit. c DSGVO als Rechtsgrundlage. Ist die Verarbeitung zur Wahrung eines berechtigten Interesses unseres Vereins oder eines Dritten erforderlich und überwiegen die Interessen, Grundrechte und Grundfreiheiten des Betroffenen das erstgenannte Interesse nicht, so dient Art. 6 Abs. 1 lit. f DSGVO als Rechtsgrundlage.
+
+### Datenlöschung und Speicherdauer
+
+Die personenbezogenen Daten der betroffenen Person werden gelöscht oder gesperrt, sobald der Zweck der Speicherung entfällt. Eine Speicherung kann darüber hinaus erfolgen, wenn dies durch den europäischen oder nationalen Gesetzgeber in unionsrechtlichen Verordnungen, Gesetzen oder sonstigen Vorschriften, denen der Verantwortliche unterliegt, vorgesehen wurde. Eine Sperrung oder Löschung der Daten erfolgt auch dann, wenn eine durch die genannten Normen vorgeschriebene Speicherfrist abläuft, es sei denn, dass eine Erforderlichkeit zur weiteren Speicherung der Daten für einen Vertragsabschluss oder eine Vertragserfüllung besteht.
+
+## 3. Bereitstellung der Website und Erstellung von Logfiles
+
+Bei jedem Aufruf unserer Internetseite erfasst unser System automatisiert Daten und Informationen vom Computersystem des aufrufenden Rechners.
+
+Folgende Daten werden hierbei erhoben:
+
+- IP-Adresse des Nutzers (gekürzt)
+- Datum und Uhrzeit des Zugriffs
+- Zeitzonendifferenz zur Greenwich Mean Time (GMT)
+- Inhalt der Anforderung (konkrete Seite)
+- Zugriffsstatus / HTTP-Statuscode
+- Jeweils übertragene Datenmenge
+- Website, von der die Anforderung kommt (Referrer)
+- Browser, Betriebssystem, Sprache und Version der Browsersoftware
+
+Die Speicherung in Logfiles erfolgt, um die Funktionsfähigkeit der Website sicherzustellen. Zudem dienen uns die Daten zur Optimierung der Website und zur Sicherstellung der Sicherheit unserer informationstechnischen Systeme. Rechtsgrundlage für die vorübergehende Speicherung der Daten und der Logfiles ist Art. 6 Abs. 1 lit. f DSGVO.
+
+Die Daten werden gelöscht, sobald sie für die Erreichung des Zweckes ihrer Erhebung nicht mehr erforderlich sind. Im Falle der Erfassung der Daten zur Bereitstellung der Website ist dies der Fall, wenn die jeweilige Sitzung beendet ist. Im Falle der Speicherung der Daten in Logfiles ist dies nach spätestens 14 Tagen der Fall.
+
+## 4. Hosting und Content Delivery Network
+
+### Vercel
+
+Diese Website wird bei **Vercel Inc.**, 340 S Lemon Ave #4133, Walnut, CA 91789, USA, gehostet. Vercel verarbeitet Zugriffsdaten (siehe Abschnitt 3) zur Bereitstellung der Website. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Vercel verarbeitet Daten ggf. in den USA; die Datenübermittlung ist durch Standardvertragsklauseln und die DPF-Zertifizierung von Vercel abgesichert.
+
+Weitere Informationen: [vercel.com/legal/privacy-policy](https://vercel.com/legal/privacy-policy)
+
+### Neon (Datenbank)
+
+Inhalte unserer Website sowie Daten aus dem Mitgliedsbereich werden in einer Postgres-Datenbank bei **Neon Inc.**, 2261 Market Street #4668, San Francisco, CA 94114, USA, gespeichert. Neon verarbeitet Daten ggf. in der EU (Frankfurt am Main). Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO.
+
+Weitere Informationen: [neon.tech/privacy-policy](https://neon.tech/privacy-policy)
+
+## 5. Cookies
+
+Unsere Website verwendet funktional notwendige Cookies. Diese Cookies sind erforderlich, um bestimmte Funktionen bereitzustellen (z. B. Navigation, Seitenspeicher). Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO; die Verwendung notwendiger Cookies ist nach § 25 Abs. 2 Nr. 2 TTDSG ohne Einwilligung zulässig.
+
+Wir setzen **keine Tracking- oder Analyse-Cookies** und **keine Marketing-Cookies** ein. Drittanbieter-Cookies werden nur dann geladen, wenn Sie eingebettete Inhalte (z. B. BFV-Spielplan, FuPa-Block) aktiv aufrufen.
+
+## 6. Kontaktformular und E-Mail-Kontakt
+
+Auf unserer Website befindet sich ein Kontaktformular, welches für die elektronische Kontaktaufnahme genutzt werden kann. Nimmt ein Nutzer diese Möglichkeit wahr, so werden die im Eingabeformular eingegebenen Daten an uns übermittelt und gespeichert:
+
+- Name
+- E-Mail-Adresse
+- Telefonnummer (optional)
+- Nachricht
+
+Für die Verarbeitung der Daten wird im Rahmen des Absendevorgangs Ihre Einwilligung eingeholt und auf diese Datenschutzerklärung verwiesen.
+
+Rechtsgrundlage für die Verarbeitung ist Art. 6 Abs. 1 lit. a DSGVO (Einwilligung). Die Daten werden ausschließlich für die Verarbeitung der Konversation verwendet.
+
+Die Daten werden gelöscht, sobald sie für die Erreichung des Zweckes ihrer Erhebung nicht mehr erforderlich sind. Für die personenbezogenen Daten aus der Eingabemaske des Kontaktformulars ist dies dann der Fall, wenn die jeweilige Konversation mit dem Nutzer beendet ist.
+
+### Resend (E-Mail-Versand)
+
+Zum technischen Versand von Kontaktformular-Benachrichtigungen nutzen wir **Resend**, betrieben von Resend Inc., 2261 Market Street #5039, San Francisco, CA 94114, USA. Resend verarbeitet dabei Absender-, Empfänger- und Inhaltsdaten der E-Mail. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Die Datenübermittlung in die USA ist durch Standardvertragsklauseln abgesichert.
+
+Weitere Informationen: [resend.com/legal/privacy-policy](https://resend.com/legal/privacy-policy)
+
+## 7. Mitgliederverwaltung
+
+Zur Mitgliederverwaltung erheben und verarbeiten wir folgende personenbezogene Daten:
+
+- Name, Vorname, Geburtsdatum
+- Anschrift, Telefonnummer, E-Mail-Adresse
+- Bankverbindung (IBAN) für Beitragseinzug
+- Abteilungs- und Mannschaftszugehörigkeit
+- Bei minderjährigen Mitgliedern: Kontaktdaten der Erziehungsberechtigten
+
+Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung bzw. Mitgliedschaftsvertrag) sowie Art. 6 Abs. 1 lit. c DSGVO (gesetzliche Aufbewahrungspflichten).
+
+Mitgliedsdaten werden gelöscht, sobald die Mitgliedschaft endet und gesetzliche Aufbewahrungspflichten (v. a. § 147 AO, § 257 HGB, max. 10 Jahre) erfüllt sind.
+
+## 8. Eingebettete Inhalte Dritter
+
+Auf einzelnen Seiten binden wir Daten folgender Drittanbieter ein:
+
+### BFV (Bayerischer Fußball-Verband)
+
+Spielpläne, Tabellen und Kaderlisten beziehen wir über die öffentliche Widget-API des BFV (widget-prod.bfv.de). Beim Aufruf der entsprechenden Seiten kann Ihre IP-Adresse an den BFV übermittelt werden. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO.
+
+Datenschutzerklärung des BFV: [bfv.de/datenschutz](https://www.bfv.de/datenschutz)
+
+### FuPa
+
+Spielerprofile und Vereinsdaten beziehen wir über die öffentliche API von **FuPa GmbH**, Bärenkampallee 14, 32657 Lemgo. Beim Aufruf der entsprechenden Seiten kann Ihre IP-Adresse an FuPa übermittelt werden. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO.
+
+Datenschutzerklärung von FuPa: [fupa.net/datenschutz](https://www.fupa.net/datenschutz)
+
+### Kartenanbieter (MapLibre / OpenFreeMap)
+
+Zur Darstellung der Karte im Vereinsheim- und Kontakt-Bereich nutzen wir **MapLibre GL JS** mit Kacheldaten von **OpenFreeMap** (Kartendaten © OpenStreetMap-Mitwirkende). Beim Laden der Karte wird Ihre IP-Adresse an den Kacheldienst übermittelt. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO.
+
+### Social-Media-Verlinkungen
+
+Im Footer verlinken wir auf unsere Social-Media-Präsenzen (Instagram, Facebook). Bei einem Klick werden Sie zur jeweiligen Plattform weitergeleitet und es gelten deren Datenschutzbestimmungen. **Wir binden keine Social-Plugins ein**, die bereits beim Laden der Seite Daten übertragen.
+
+## 9. Rechte der betroffenen Person
+
+Werden personenbezogene Daten von Ihnen verarbeitet, sind Sie Betroffener i. S. d. DSGVO und es stehen Ihnen folgende Rechte gegenüber dem Verantwortlichen zu:
+
+- **Recht auf Auskunft** (Art. 15 DSGVO)
+- **Recht auf Berichtigung** (Art. 16 DSGVO)
+- **Recht auf Löschung** (Art. 17 DSGVO)
+- **Recht auf Einschränkung der Verarbeitung** (Art. 18 DSGVO)
+- **Recht auf Datenübertragbarkeit** (Art. 20 DSGVO)
+- **Widerspruchsrecht** gegen Verarbeitungen nach Art. 6 Abs. 1 lit. f DSGVO (Art. 21 DSGVO)
+- **Widerrufsrecht** bei Einwilligungen (Art. 7 Abs. 3 DSGVO)
+
+Zur Ausübung dieser Rechte genügt eine formlose Mitteilung an info@svnord.de.
+
+### Beschwerderecht bei der Aufsichtsbehörde
+
+Sie haben das Recht, sich jederzeit bei einer Aufsichtsbehörde, insbesondere im Mitgliedstaat Ihres gewöhnlichen Aufenthaltsorts, zu beschweren, wenn Sie der Ansicht sind, dass die Verarbeitung der Sie betreffenden personenbezogenen Daten gegen die DSGVO verstößt.
+
+Zuständige Aufsichtsbehörde für Bayern:
+
+**Bayerisches Landesamt für Datenschutzaufsicht**
+Promenade 18, 91522 Ansbach
+Telefon: 0981 180093-0
+Web: [lda.bayern.de](https://www.lda.bayern.de)
+
+## 10. SSL-/TLS-Verschlüsselung
+
+Diese Seite nutzt aus Gründen der Sicherheit und zum Schutz der Übertragung vertraulicher Inhalte eine SSL-/TLS-Verschlüsselung. Sie erkennen eine verschlüsselte Verbindung daran, dass die Adresszeile des Browsers mit „https://" beginnt und am Schloss-Symbol in Ihrer Browserzeile.
+
+## 11. Aktualität und Änderung dieser Datenschutzerklärung
+
+Diese Datenschutzerklärung ist aktuell gültig. Durch die Weiterentwicklung unserer Website und Angebote oder aufgrund geänderter gesetzlicher beziehungsweise behördlicher Vorgaben kann es notwendig werden, diese Datenschutzerklärung zu ändern. Die jeweils aktuelle Datenschutzerklärung kann jederzeit auf dieser Seite abgerufen werden.`,
       ),
     } as never,
   });

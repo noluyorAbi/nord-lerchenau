@@ -9,6 +9,7 @@ import {
 } from "@payloadcms/richtext-lexical";
 import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
 import { buildConfig } from "payload";
+import sharp from "sharp";
 
 import { Events } from "./payload/collections/Events";
 import { Fixtures } from "./payload/collections/Fixtures";
@@ -41,6 +42,7 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URI || "",
     },
   }),
+  sharp,
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [
       ...defaultFeatures,

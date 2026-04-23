@@ -11,6 +11,21 @@ jobs:
     name: Lint · Typecheck · Test
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
     steps:
       - uses: actions/checkout@v4
 
@@ -28,7 +43,7 @@ jobs:
       - name: Build (includes typecheck + generates next-env.d.ts)
         run: bun run build
         env:
-          DATABASE_URI: postgres://ci:ci@localhost:5432/ci
+          DATABASE_URI: postgres://ci:ci@localhost:5432/ci?sslmode=disable
           PAYLOAD_SECRET: ci-secret-ci-secret-ci-secret-ci
           NEXT_PUBLIC_SERVER_URL: http://localhost:3000
           REVALIDATE_SECRET: ci

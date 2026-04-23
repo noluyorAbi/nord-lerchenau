@@ -37,13 +37,41 @@ const FALLBACK_COLUMNS = [
   },
 ];
 
+type SiteGlobal = { name?: string | null };
+type NavGlobal = {
+  footerColumns?: Array<{
+    title?: string | null;
+    links?: Array<{
+      id?: string | null;
+      label?: string | null;
+      href?: string | null;
+    }> | null;
+  }> | null;
+};
+type ContactGlobal = {
+  email?: string | null;
+  phone?: string | null;
+  addresses?: Array<{
+    street?: string | null;
+    postalCode?: string | null;
+    city?: string | null;
+  }> | null;
+};
+
 export async function Footer() {
-  const payload = await getPayloadClient();
-  const [site, nav, contact] = await Promise.all([
-    payload.findGlobal({ slug: "site-settings" }),
-    payload.findGlobal({ slug: "navigation" }),
-    payload.findGlobal({ slug: "contact-info" }),
-  ]);
+  let site: SiteGlobal = {};
+  let nav: NavGlobal = {};
+  let contact: ContactGlobal = {};
+  try {
+    const payload = await getPayloadClient();
+    [site, nav, contact] = (await Promise.all([
+      payload.findGlobal({ slug: "site-settings" }),
+      payload.findGlobal({ slug: "navigation" }),
+      payload.findGlobal({ slug: "contact-info" }),
+    ])) as [SiteGlobal, NavGlobal, ContactGlobal];
+  } catch {
+    // DB unavailable (CI build with empty schema). Fall through to defaults.
+  }
 
   const columns =
     Array.isArray(nav.footerColumns) && nav.footerColumns.length > 0

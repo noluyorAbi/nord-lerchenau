@@ -16,13 +16,17 @@ const FALLBACK_LINKS: NavLink[] = [
 const CTA = { label: "Mitglied werden", href: "/mitgliedschaft" };
 
 export async function Header() {
-  const payload = await getPayloadClient();
-  const nav = await payload.findGlobal({ slug: "navigation" });
-
-  const headerLinks = (nav.header ?? []).filter(
-    (l): l is { id?: string | null; label: string; href: string } =>
-      typeof l?.label === "string" && typeof l?.href === "string",
-  );
+  let headerLinks: NavLink[] = [];
+  try {
+    const payload = await getPayloadClient();
+    const nav = await payload.findGlobal({ slug: "navigation" });
+    headerLinks = (nav.header ?? []).filter(
+      (l): l is { id?: string | null; label: string; href: string } =>
+        typeof l?.label === "string" && typeof l?.href === "string",
+    );
+  } catch {
+    // DB unavailable (e.g. CI build with empty schema). Use fallback.
+  }
 
   const links: NavLink[] =
     headerLinks.length > 0 ? headerLinks : FALLBACK_LINKS;

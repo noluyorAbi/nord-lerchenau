@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 import { Logo } from "@/components/Logo";
 import { MobileMenu } from "@/components/site/MobileMenu";
+import { SiteNav, type NavItem } from "@/components/site/SiteNav";
 
 type NavLink = { label: string; href: string };
 type CTA = { label: string; href: string };
@@ -14,6 +15,69 @@ type Props = {
   links: NavLink[];
   cta: CTA;
 };
+
+const NAV_TREE: NavItem[] = [
+  { label: "Startseite", href: "/" },
+  {
+    label: "Verein",
+    href: "/verein",
+    children: [
+      { label: "Übersicht", href: "/verein" },
+      { label: "Chronik", href: "/verein/chronik" },
+      { label: "Vorstand", href: "/verein/vorstand" },
+      { label: "Vereinsheim", href: "/verein/vereinsheim" },
+      { label: "Jugendförderverein", href: "/verein/jugendfoerderverein" },
+    ],
+  },
+  {
+    label: "Abteilungen",
+    href: "/sport",
+    children: [
+      {
+        label: "Fußball",
+        href: "/fussball",
+        children: [
+          {
+            label: "Herren",
+            href: "/fussball",
+            children: [
+              { label: "1. Mannschaft", href: "/fussball/erste" },
+              { label: "2. Mannschaft", href: "/fussball/zweite" },
+              { label: "3. Mannschaft", href: "/fussball/dritte" },
+            ],
+          },
+          { label: "Damen", href: "/fussball" },
+          { label: "Junioren", href: "/fussball" },
+          { label: "Juniorinnen", href: "/fussball" },
+          { label: "Schiedsrichter", href: "/schiedsrichter" },
+        ],
+      },
+      { label: "Volleyball", href: "/volleyball" },
+      { label: "Gymnastik", href: "/gymnastik" },
+      { label: "Ski", href: "/ski" },
+      { label: "E-Sport", href: "/esport" },
+    ],
+  },
+  {
+    label: "News / Termine",
+    href: "/termine",
+    children: [
+      { label: "News", href: "/news" },
+      { label: "Termine", href: "/termine" },
+    ],
+  },
+  {
+    label: "Kontakt",
+    href: "/kontakt",
+    children: [
+      { label: "Kontakt", href: "/kontakt" },
+      { label: "Mitgliedschaft", href: "/mitgliedschaft" },
+      { label: "Sponsoren", href: "/sponsoren" },
+      { label: "Shop", href: "/shop" },
+      { label: "FAQ", href: "/faq" },
+    ],
+  },
+];
 
 export function HeaderShell({ links, cta }: Props) {
   const pathname = usePathname();
@@ -43,23 +107,7 @@ export function HeaderShell({ links, cta }: Props) {
       <div className="mx-auto flex h-[72px] w-full max-w-[1320px] items-center justify-between gap-6 px-6 md:px-7">
         <Logo variant={glass ? "dark" : "light"} />
 
-        <nav
-          className={`hidden items-center gap-7 font-display text-[15px] font-semibold uppercase tracking-[0.06em] transition-colors duration-300 md:flex ${
-            glass ? "text-white/80" : "text-nord-muted"
-          }`}
-        >
-          {links.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`border-b-2 border-transparent pb-1 transition ${
-                glass ? "hover:text-white" : "hover:text-nord-ink"
-              }`}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
+        <SiteNav items={NAV_TREE} glass={glass} />
 
         <div className="flex items-center gap-3">
           <Link

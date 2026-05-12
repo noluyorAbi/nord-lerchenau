@@ -6,7 +6,7 @@ type NavLink = { label: string; href: string };
 const FALLBACK_LINKS: NavLink[] = [
   { label: "Verein", href: "/verein" },
   { label: "Fußball", href: "/fussball" },
-  { label: "Sport", href: "/sport" },
+  { label: "Sportabteilungen", href: "/sport" },
   { label: "News", href: "/news" },
   { label: "Termine", href: "/termine" },
   { label: "Sponsoren", href: "/sponsoren" },

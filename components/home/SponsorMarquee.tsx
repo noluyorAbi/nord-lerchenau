@@ -62,7 +62,7 @@ export async function SponsorMarquee() {
           <div className="flex w-max animate-[marquee_50s_linear_infinite] items-center gap-6 pr-6 group-hover:[animation-play-state:paused] motion-reduce:animate-none md:gap-8 md:pr-8">
             {doubled.map((s, idx) => {
               const card = (
-                <div className="flex h-24 w-52 shrink-0 items-center justify-center rounded-2xl border border-nord-line bg-white p-4 shadow-[0_4px_14px_-6px_rgba(11,27,63,0.18)] transition hover:-translate-y-0.5 hover:border-nord-gold hover:shadow-[0_10px_24px_-8px_rgba(11,27,63,0.28)] md:h-28 md:w-60 md:p-5">
+                <div className="flex h-24 w-52 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-nord-navy-2/40 bg-nord-navy p-4 shadow-[0_8px_22px_-10px_rgba(11,27,63,0.55)] transition hover:-translate-y-0.5 hover:border-nord-gold hover:shadow-[0_14px_28px_-10px_rgba(11,27,63,0.65)] md:h-28 md:w-60 md:p-5">
                   {s.logoUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -72,7 +72,7 @@ export async function SponsorMarquee() {
                       className="max-h-full max-w-full object-contain"
                     />
                   ) : (
-                    <span className="text-center font-display text-sm font-bold uppercase tracking-[0.06em] text-nord-ink">
+                    <span className="text-center font-display text-sm font-bold uppercase tracking-[0.06em] text-white">
                       {s.name}
                     </span>
                   )}

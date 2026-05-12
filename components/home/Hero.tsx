@@ -70,7 +70,7 @@ export async function Hero({ hero }: Props) {
   };
 
   return (
-    <section className="relative -mt-[72px] flex min-h-[100svh] items-start overflow-hidden text-white md:items-center">
+    <section className="relative -mt-[88px] flex min-h-[100svh] items-start overflow-hidden text-white md:items-center">
       {/* Full-bleed background image */}
       <div
         className="absolute inset-0 bg-cover bg-center"
@@ -80,7 +80,7 @@ export async function Hero({ hero }: Props) {
       <div className="absolute inset-0 bg-[linear-gradient(100deg,rgba(5,14,36,0.94)_0%,rgba(11,27,63,0.78)_45%,rgba(11,27,63,0.35)_100%)]" />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,14,36,0.1)_0%,rgba(5,14,36,0)_35%,rgba(5,14,36,0.55)_100%)]" />
 
-      <div className="relative mx-auto grid w-full max-w-[1320px] items-center gap-10 px-6 pb-14 pt-[calc(72px+2.5rem)] md:grid-cols-[1.2fr_1fr] md:px-7 md:pb-20 md:pt-[calc(72px+3.5rem)]">
+      <div className="relative mx-auto grid w-full max-w-[1320px] items-center gap-10 px-6 pb-14 pt-[calc(88px+2.5rem)] md:grid-cols-[1.2fr_1fr] md:px-7 md:pb-20 md:pt-[calc(88px+3.5rem)]">
         {/* LEFT — headline */}
         <div className="relative flex flex-col justify-between gap-8">
           <HeroStagger>

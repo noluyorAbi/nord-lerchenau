@@ -16,13 +16,13 @@ export function Logo({ href = "/", variant = "light" }: Props) {
         isDark ? "text-white" : "text-nord-ink"
       }`}
     >
-      <ClubLogo size={40} priority />
+      <ClubLogo size={64} priority />
       <span className="flex flex-col leading-none">
-        <span className="font-display text-[20px] font-black tracking-[-0.01em]">
+        <span className="font-display text-[24px] font-black tracking-[-0.01em] md:text-[26px]">
           SV NORD
         </span>
         <span
-          className={`text-[10px] font-semibold tracking-[0.22em] ${
+          className={`text-[11px] font-semibold tracking-[0.22em] ${
             isDark ? "text-white/60" : "text-nord-muted"
           }`}
         >

@@ -104,7 +104,7 @@ export function HeaderShell({ links, cta }: Props) {
           : "border-b border-nord-line bg-nord-paper/85 backdrop-blur-md"
       }`}
     >
-      <div className="mx-auto flex h-[72px] w-full max-w-[1320px] items-center justify-between gap-6 px-6 md:px-7">
+      <div className="mx-auto flex h-[88px] w-full max-w-[1320px] items-center justify-between gap-6 px-6 md:px-7">
         <Logo variant={glass ? "dark" : "light"} />
 
         <SiteNav items={NAV_TREE} glass={glass} />

@@ -10,7 +10,6 @@ import { SponsorMarquee } from "@/components/home/SponsorMarquee";
 import { SportsGrid } from "@/components/home/SportsGrid";
 import { StatStrip } from "@/components/home/StatStrip";
 import { UpcomingEvents } from "@/components/home/UpcomingEvents";
-import { VereinInZahlen } from "@/components/home/VereinInZahlen";
 import { VereinsheimTeaser } from "@/components/home/VereinsheimTeaser";
 import { getPayloadClient } from "@/lib/payload";
 
@@ -33,7 +32,6 @@ export default async function HomePage() {
       {sections.showSports !== false ? <SportsGrid /> : null}
       {sections.showEvents !== false ? <UpcomingEvents /> : null}
       <Heritage />
-      <VereinInZahlen />
       {sections.showVereinsheim !== false ? <VereinsheimTeaser /> : null}
       {sections.showLocation !== false ? <LocationMap /> : null}
       {sections.showSponsors !== false ? <SponsorMarquee /> : null}

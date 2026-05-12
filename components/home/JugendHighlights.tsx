@@ -39,25 +39,38 @@ export async function JugendHighlights() {
   if (teams.length === 0) return null;
 
   return (
-    <section className="border-b border-nord-line bg-white">
-      <div className="mx-auto max-w-[1320px] px-6 py-16 md:px-7 md:py-20">
-        <div className="mb-8 flex items-end justify-between gap-4">
+    <section className="relative overflow-hidden border-b border-nord-line">
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: "url('/jugend-bg.jpg')" }}
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-[linear-gradient(180deg,rgba(11,27,63,0.78)_0%,rgba(11,27,63,0.55)_30%,rgba(244,241,234,0.92)_72%,#f4f1ea_100%)]"
+      />
+      <div className="relative mx-auto max-w-[1320px] px-6 py-16 md:px-7 md:py-24">
+        <div className="mb-10 flex items-end justify-between gap-4 text-white">
           <div>
-            <SectionEyebrow number="02" label="Jugend" />
+            <SectionEyebrow
+              number="02"
+              label="Jugend"
+              className="!text-nord-gold"
+            />
             <h2
-              className="mt-3 font-display font-black leading-[0.95] text-nord-ink"
+              className="mt-3 font-display font-black leading-[0.95] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]"
               style={{ fontSize: "clamp(36px, 4.4vw, 64px)" }}
             >
               Unsere Jugend.
             </h2>
-            <p className="mt-4 max-w-2xl text-base leading-relaxed text-nord-muted md:text-lg">
+            <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/85 md:text-lg">
               Vom Bambini bis zur A-Jugend — über 20 Mannschaften, betreut von
               ehrenamtlichen Trainer:innen mit Herz und Lizenz.
             </p>
           </div>
           <Link
             href="/fussball"
-            className="hidden rounded-full border border-nord-line px-4 py-2.5 font-display text-xs font-semibold uppercase tracking-[0.04em] text-nord-ink transition hover:bg-nord-ink hover:text-white md:inline-flex"
+            className="hidden rounded-full border border-white/40 bg-white/10 px-4 py-2.5 font-display text-xs font-semibold uppercase tracking-[0.04em] text-white backdrop-blur-sm transition hover:bg-white hover:text-nord-navy md:inline-flex"
           >
             Alle Mannschaften →
           </Link>

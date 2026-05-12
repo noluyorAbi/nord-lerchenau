@@ -84,6 +84,9 @@ export default buildConfig({
       password: process.env.PAYLOAD_AUTO_LOGIN_PASSWORD || "open-admin-no-auth",
       prefillOnly: false,
     },
+    components: {
+      beforeDashboard: ["@/payload/components/WelcomeDashboard#default"],
+    },
   },
   onInit: async (payload) => {
     const email = process.env.PAYLOAD_AUTO_LOGIN_EMAIL || "admin@local";

@@ -301,6 +301,10 @@ export interface Team {
    */
   ageGroup?: string | null;
   /**
+   * Jahrgänge, kommagetrennt — z.B. '2006, 2007, 2008'.
+   */
+  birthYears?: string | null;
+  /**
    * z.B. 2025/26
    */
   season?: string | null;
@@ -724,6 +728,7 @@ export interface TeamsSelect<T extends boolean = true> {
   sport?: T;
   category?: T;
   ageGroup?: T;
+  birthYears?: T;
   season?: T;
   league?: T;
   bfv?:

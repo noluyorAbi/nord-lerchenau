@@ -333,18 +333,41 @@ function TeamFace({
   );
 }
 
+const BERLIN_PARTS = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Europe/Berlin",
+  weekday: "short",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+});
+
+function berlinParts(d: Date) {
+  const map: Record<string, string> = {};
+  for (const p of BERLIN_PARTS.formatToParts(d)) {
+    map[p.type] = p.value;
+  }
+  const weekdayIdx = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(
+    map.weekday ?? "",
+  );
+  return {
+    weekday: weekdayIdx >= 0 ? WEEKDAYS[weekdayIdx] : "",
+    day: map.day ?? "",
+    month: map.month ?? "",
+    monthShort: MONTHS_SHORT[Number(map.month ?? "1") - 1] ?? "",
+    hour: map.hour ?? "",
+    minute: map.minute ?? "",
+  };
+}
+
 function formatKickoff(d: Date): string {
-  const wd = WEEKDAYS[d.getDay()];
-  const day = d.getDate();
-  const month = MONTHS_SHORT[d.getMonth()];
-  const hh = d.getHours().toString().padStart(2, "0");
-  const mm = d.getMinutes().toString().padStart(2, "0");
-  return `${wd} · ${day}. ${month} · ${hh}:${mm} Uhr`;
+  const p = berlinParts(d);
+  return `${p.weekday} · ${Number(p.day)}. ${p.monthShort} · ${p.hour}:${p.minute} Uhr`;
 }
 
 function formatShortDate(d: Date): string {
-  const wd = WEEKDAYS[d.getDay()];
-  const day = d.getDate().toString().padStart(2, "0");
-  const month = (d.getMonth() + 1).toString().padStart(2, "0");
-  return `${wd} ${day}.${month}.`;
+  const p = berlinParts(d);
+  return `${p.weekday} ${p.day}.${p.month}.`;
 }

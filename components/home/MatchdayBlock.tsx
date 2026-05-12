@@ -32,6 +32,7 @@ function payloadFixtureToRow(f: Fixture): FixtureRow {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
+    timeZone: "Europe/Berlin",
   });
   const dateStr =
     kickoff
@@ -61,6 +62,7 @@ function fupaMatchToRow(m: FupaMatch): FixtureRow {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
+    timeZone: "Europe/Berlin",
   });
   const dateStr = kickoff
     .toLocaleDateString("de-DE", {
@@ -68,6 +70,7 @@ function fupaMatchToRow(m: FupaMatch): FixtureRow {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
+      timeZone: "Europe/Berlin",
     })
     .replace(",", " ·");
   return {

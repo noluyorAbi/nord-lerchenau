@@ -71,6 +71,14 @@ export const Teams: CollectionConfig = {
       type: "text",
       admin: { description: "z.B. A1, B2, F3, Bambini" },
     },
+    {
+      name: "birthYears",
+      type: "text",
+      admin: {
+        description:
+          "Jahrgänge, kommagetrennt — z.B. '2006, 2007, 2008'. Wird hinter dem Mannschaftstitel angezeigt.",
+      },
+    },
     { name: "season", type: "text", admin: { description: "z.B. 2025/26" } },
     {
       name: "league",

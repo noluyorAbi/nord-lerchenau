@@ -73,13 +73,14 @@ export default async function TeamPage({ params }: Props) {
         eyebrow={team.league ?? bfv?.spielklasse ?? "Fußball"}
         title={team.name}
         lede={
-          bfv?.partner
-            ? `${bfv.partner}${team.season ? ` · Saison ${team.season}` : ""}`
-            : team.ageGroup
-              ? `Altersklasse ${team.ageGroup}${team.season ? ` · Saison ${team.season}` : ""}`
-              : team.season
-                ? `Saison ${team.season}`
-                : undefined
+          [
+            bfv?.partner ??
+              (team.ageGroup ? `Altersklasse ${team.ageGroup}` : null),
+            team.birthYears ? `Jahrgänge ${team.birthYears}` : null,
+            team.season ? `Saison ${team.season}` : null,
+          ]
+            .filter(Boolean)
+            .join(" · ") || undefined
         }
       />
 

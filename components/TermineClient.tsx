@@ -393,6 +393,7 @@ function HerrenCard({ entry, nowMs }: { entry: ShowcaseEntry; nowMs: number }) {
   const day = at.getDate().toString().padStart(2, "0");
   const month = SHORT_MONTHS_DE[at.getMonth()];
   const time = at.toLocaleTimeString("de-DE", {
+    timeZone: "Europe/Berlin",
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
@@ -525,6 +526,7 @@ function FeaturedCard({ item }: { item: AgendaDTO & { atMs: number } }) {
   const weekday = WEEKDAYS_LONG_DE[at.getDay()];
   const dateLine = `${weekday}, ${at.getDate()}. ${MONTHS_DE[at.getMonth()]}`;
   const time = at.toLocaleTimeString("de-DE", {
+    timeZone: "Europe/Berlin",
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
@@ -681,6 +683,7 @@ function AgendaRow({ item }: { item: AgendaDTO & { atMs: number } }) {
   const month = SHORT_MONTHS_DE[at.getMonth()];
   const weekday = WEEKDAYS_DE[at.getDay()];
   const time = at.toLocaleTimeString("de-DE", {
+    timeZone: "Europe/Berlin",
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,

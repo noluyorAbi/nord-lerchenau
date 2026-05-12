@@ -158,9 +158,38 @@ export async function fetchBfvClub(teamId: string): Promise<BfvClub | null> {
   }
 }
 
-/**
- * Parse the BFV "DD.MM.YYYY"/"HH:MM" kickoff format into a JS Date.
- */
+function berlinWallClockToUtc(
+  y: number,
+  mo: number,
+  d: number,
+  h: number,
+  mi: number,
+): Date {
+  for (const offsetH of [1, 2]) {
+    const cand = new Date(Date.UTC(y, mo - 1, d, h - offsetH, mi));
+    const parts = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Europe/Berlin",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    }).formatToParts(cand);
+    const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "";
+    if (
+      Number(get("year")) === y &&
+      Number(get("month")) === mo &&
+      Number(get("day")) === d &&
+      Number(get("hour")) === h &&
+      Number(get("minute")) === mi
+    ) {
+      return cand;
+    }
+  }
+  return new Date(Date.UTC(y, mo - 1, d, h - 1, mi));
+}
+
 export function parseBfvKickoff(
   date: string | null | undefined,
   time: string | null | undefined,
@@ -169,9 +198,20 @@ export function parseBfvKickoff(
   const [d, m, y] = date.split(".");
   if (!d || !m || !y) return null;
   const [hh, mm] = (time ?? "00:00").split(":");
-  const iso = `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}T${(hh ?? "00").padStart(2, "0")}:${(mm ?? "00").padStart(2, "0")}:00`;
-  const parsed = new Date(iso);
-  return Number.isNaN(parsed.getTime()) ? null : parsed;
+  const yN = Number(y);
+  const mN = Number(m);
+  const dN = Number(d);
+  const hN = Number(hh ?? "0");
+  const miN = Number(mm ?? "0");
+  if (
+    Number.isNaN(yN) ||
+    Number.isNaN(mN) ||
+    Number.isNaN(dN) ||
+    Number.isNaN(hN) ||
+    Number.isNaN(miN)
+  )
+    return null;
+  return berlinWallClockToUtc(yN, mN, dN, hN, miN);
 }
 
 export function isLeagueMatch(m: BfvMatch): boolean {

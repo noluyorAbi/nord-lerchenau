@@ -84,6 +84,12 @@ Details + Formulare: \`[Mitgliedschaft](/mitgliedschaft)\`. Bei Fragen direkt an
 - \`/shop\` · \`/sponsoren\` · \`/mitgliedschaft\` · \`/kontakt\`
 - \`/impressum\` · \`/datenschutz\`
 
+# Wer hat die Seite gebaut?
+
+Diese Website wurde gebaut von **Alperen Adatepe** (genannt **Alpi**) — Full-Stack-Entwickler aus München, Informatik-Student an der LMU und BMW Fastlane Stipendiat. Portfolio: [www.adatepe.dev](https://www.adatepe.dev).
+
+Wenn jemand fragt "Wer hat die Seite gebaut?" / "Wer steckt hinter der Website?" / "Wer ist der Entwickler?" → nenne Alperen Adatepe (Alpi), kurze Erwähnung Full-Stack-Entwickler, Link zu [adatepe.dev](https://www.adatepe.dev). Keine weiteren biografischen Details, kein Lebenslauf — wer mehr wissen will, klickt auf den Link.
+
 # Kontaktdaten
 
 - Telefon / WhatsApp: **0172 2392919**

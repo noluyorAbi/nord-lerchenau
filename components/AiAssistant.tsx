@@ -68,27 +68,45 @@ const MD_COMPONENTS: Components = {
     </h4>
   ),
   code: ({ children, ...props }) => {
-    const text = String(children);
+    const text = String(children).trim();
     const inline = !(props as { node?: { position?: unknown } })?.node
       ? true
       : !text.includes("\n");
-    // Path-like inline code → render as clickable link instead of code span.
-    // Catches model output like `/fussball` that should have been [Fußball](/fussball).
-    if (inline && /^\/[a-zA-Z0-9/_-]*$/.test(text.trim())) {
+    if (inline) {
+      // [Label](/path) wrapped in backticks → render as actual link.
+      const mdLink = text.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+      if (mdLink) {
+        const href = mdLink[2];
+        const isExternal = /^https?:\/\//.test(href);
+        return (
+          <a
+            href={href}
+            target={isExternal ? "_blank" : undefined}
+            rel={isExternal ? "noopener noreferrer" : undefined}
+            className="font-semibold text-nord-navy underline decoration-nord-gold/60 underline-offset-2 hover:text-nord-gold"
+          >
+            {mdLink[1]}
+          </a>
+        );
+      }
+      // Bare /path wrapped in backticks → link.
+      if (/^\/[a-zA-Z0-9/_-]*$/.test(text)) {
+        return (
+          <a
+            href={text}
+            className="font-semibold text-nord-navy underline decoration-nord-gold/60 underline-offset-2 hover:text-nord-gold"
+          >
+            {text}
+          </a>
+        );
+      }
       return (
-        <a
-          href={text.trim()}
-          className="font-semibold text-nord-navy underline decoration-nord-gold/60 underline-offset-2 hover:text-nord-gold"
-        >
-          {text.trim()}
-        </a>
+        <code className="rounded bg-nord-paper-2 px-1 py-0.5 font-mono text-[11px] text-nord-navy">
+          {children}
+        </code>
       );
     }
-    return inline ? (
-      <code className="rounded bg-nord-paper-2 px-1 py-0.5 font-mono text-[11px] text-nord-navy">
-        {children}
-      </code>
-    ) : (
+    return (
       <code className="block overflow-x-auto rounded-lg bg-nord-ink p-3 font-mono text-[11px] text-nord-paper">
         {children}
       </code>
@@ -120,10 +138,20 @@ const MD_COMPONENTS: Components = {
   ),
 };
 
+function normalizeLinks(content: string): string {
+  return (
+    content
+      // `[Label](/path)` → [Label](/path)
+      .replace(/`\[([^\]]+)\]\(([^)]+)\)`/g, "[$1]($2)")
+      // `/path` (alone) → [/path](/path)
+      .replace(/`(\/[a-zA-Z0-9/_-]+)`/g, (_, p1: string) => `[${p1}](${p1})`)
+  );
+}
+
 function renderContent(content: string) {
   return (
     <ReactMarkdown remarkPlugins={[remarkGfm]} components={MD_COMPONENTS}>
-      {content}
+      {normalizeLinks(content)}
     </ReactMarkdown>
   );
 }

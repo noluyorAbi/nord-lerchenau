@@ -12,6 +12,8 @@ type Props = {
   eyebrow: string;
   title: string;
   fallbackLede?: string;
+  hideTrainers?: boolean;
+  excludeTrainerNames?: string[];
 };
 
 export async function SportSectionPage({
@@ -19,6 +21,8 @@ export async function SportSectionPage({
   eyebrow,
   title,
   fallbackLede,
+  hideTrainers,
+  excludeTrainerNames,
 }: Props) {
   const payload = await getPayloadClient();
 
@@ -32,9 +36,21 @@ export async function SportSectionPage({
   const team = result.docs[0];
   if (!team) notFound();
 
-  const trainers = (team.trainers ?? []).filter(
-    (t): t is Person => typeof t === "object" && t !== null,
+  const excludeSet = new Set(
+    (excludeTrainerNames ?? []).map((n) => n.toLowerCase().trim()),
   );
+  const trainers = hideTrainers
+    ? []
+    : (team.trainers ?? [])
+        .filter((t): t is Person => typeof t === "object" && t !== null)
+        .filter(
+          (t) =>
+            !excludeSet.has(
+              String(t.name ?? "")
+                .toLowerCase()
+                .trim(),
+            ),
+        );
 
   const hasDescription =
     team.description &&

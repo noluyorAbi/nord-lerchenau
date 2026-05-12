@@ -9,6 +9,7 @@ export default function Page() {
       eyebrow="Sport"
       title="Ski"
       fallbackLede="Skikurse, Touren und das legendäre Ski-Camp."
+      hideTrainers
     />
   );
 }

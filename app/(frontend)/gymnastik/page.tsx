@@ -9,6 +9,7 @@ export default function Page() {
       eyebrow="Sport"
       title="Gymnastik"
       fallbackLede="Seit 1967 — Montag und Mittwoch in der Waldmeisterschule."
+      excludeTrainerNames={["Simone Roth"]}
     />
   );
 }

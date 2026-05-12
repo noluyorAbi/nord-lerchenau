@@ -8,6 +8,7 @@ import {
   JetBrains_Mono,
 } from "next/font/google";
 
+import { AiAssistant } from "@/components/AiAssistant";
 import { ScrollToTopButton } from "@/components/ScrollToTopButton";
 import { SiteSchema } from "@/components/seo/SiteSchema";
 import { Footer } from "@/components/site/Footer";
@@ -151,6 +152,7 @@ export default function FrontendLayout({
         </main>
         <Footer />
         <ScrollToTopButton />
+        <AiAssistant />
         <SiteSchema />
       </body>
     </html>

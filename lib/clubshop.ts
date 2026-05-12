@@ -13,8 +13,7 @@ export type ClubshopProduct = {
   url: string;
 };
 
-const PRODUCT_BLOCK_RE =
-  /<div class="card product-box box-image">([\s\S]*?)<input type="hidden"\s+name="product-name"/g;
+const BLOCK_DELIMITER = "card product-box box-image";
 
 const DATA_ATTR_RE = (name: string) =>
   new RegExp(`data-${name}="([^"]*)"`, "i");
@@ -22,10 +21,11 @@ const IMG_SRC_RE =
   /<img[^>]+class="product-image is-cover"[^>]*src="([^"]+)"|<img[^>]+src="([^"]+)"[^>]*class="product-image is-cover"/i;
 const PRODUCT_LINK_RE =
   /<a\s+href="([^"]+)"[^>]*class="product-image-link is-cover"/i;
-const PRICE_RE = /<span class="product-price[^"]*"[^>]*>\s*([0-9.,]+\s*€\*?)/i;
+const PRICE_RE =
+  /<span class="product-price[^"]*"[^>]*>\s*([0-9.,]+(?:&nbsp;|\s)*€\*?)/i;
 const LIST_PRICE_RE =
-  /<span class="list-price-price">\s*([0-9.,]+\s*€\*?)(?:\s*UVP)?/i;
-const DISCOUNT_RE = /<span>\s*(\d+)\s*&#37;\s*<\/span>/;
+  /<span class="list-price-price">\s*([0-9.,]+(?:&nbsp;|\s)*€\*?)(?:[^<]*UVP)?/i;
+const DISCOUNT_RE = /<span>\s*(\d+)\s*(?:%|&#37;)\s*<\/span>/;
 
 function pick(html: string, re: RegExp): string | null {
   const m = html.match(re);
@@ -36,12 +36,15 @@ function pick(html: string, re: RegExp): string | null {
 function decode(s: string | null): string | null {
   if (!s) return s;
   return s
+    .replace(/&nbsp;/g, " ")
     .replace(/&amp;/g, "&")
     .replace(/&quot;/g, '"')
     .replace(/&#37;/g, "%")
     .replace(/&#039;/g, "'")
     .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">");
+    .replace(/&gt;/g, ">")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function absolutize(url: string | null): string | null {
@@ -52,11 +55,26 @@ function absolutize(url: string | null): string | null {
   return url;
 }
 
-function parseProducts(html: string): ClubshopProduct[] {
+function splitBlocks(html: string): string[] {
+  const positions: number[] = [];
+  let idx = 0;
+  while ((idx = html.indexOf(BLOCK_DELIMITER, idx)) !== -1) {
+    positions.push(idx);
+    idx += BLOCK_DELIMITER.length;
+  }
+  const blocks: string[] = [];
+  for (let i = 0; i < positions.length; i++) {
+    const start = positions[i];
+    const end = i + 1 < positions.length ? positions[i + 1] : html.length;
+    blocks.push(html.slice(start, end));
+  }
+  return blocks;
+}
+
+export function parseProducts(html: string): ClubshopProduct[] {
   const out: ClubshopProduct[] = [];
   const seen = new Set<string>();
-  for (const match of html.matchAll(PRODUCT_BLOCK_RE)) {
-    const block = match[1];
+  for (const block of splitBlocks(html)) {
     const id = pick(block, DATA_ATTR_RE("product-id")) ?? `idx-${out.length}`;
     if (seen.has(id)) continue;
     const name = decode(pick(block, DATA_ATTR_RE("product-name")));

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { PageHero } from "@/components/PageHero";
@@ -123,6 +124,84 @@ export default async function SponsorenPage() {
           >
             Kontakt aufnehmen →
           </Link>
+        </section>
+
+        <section className="mt-10 grid gap-8 rounded-2xl border border-nord-line bg-nord-paper-2 p-8 md:grid-cols-[1fr_auto] md:gap-12 md:p-12">
+          <div>
+            <div className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-nord-gold">
+              Spende
+            </div>
+            <h2 className="text-2xl font-bold tracking-tight text-nord-ink md:text-3xl">
+              Kurzer Pass, großer Impact: Spenden sammeln leicht gemacht!
+            </h2>
+            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-nord-ink md:text-base">
+              Damit wir bei unseren Projekten und Anschaffungen — neue Trikots,
+              Trainingslager und mehr — den nächsten Schritt machen können,
+              brauchen wir eure Unterstützung als „Multiplikatoren“.
+            </p>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-nord-ink md:text-base">
+              Wir haben ab sofort einen QR-Code für Spenden, den ihr ganz
+              einfach an Eltern, Freunde oder Gönner weiterschicken könnt.
+            </p>
+
+            <div className="mt-6 rounded-xl border border-nord-line bg-white p-5">
+              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-nord-gold">
+                Warum das ein Gamechanger ist
+              </div>
+              <ul className="mt-3 space-y-2 text-sm text-nord-ink">
+                <li className="flex gap-2">
+                  <span className="text-nord-gold">›</span>
+                  <span>
+                    <strong>Kein Stress:</strong> Der Spender scannt den Code
+                    einfach mit seiner Banking-App.
+                  </span>
+                </li>
+                <li className="flex gap-2">
+                  <span className="text-nord-gold">›</span>
+                  <span>
+                    <strong>Kein Tippen:</strong> IBAN und Verwendungszweck sind
+                    schon teilweise fertig hinterlegt.
+                  </span>
+                </li>
+                <li className="flex gap-2">
+                  <span className="text-nord-gold">›</span>
+                  <span>
+                    <strong>Schneller Abschluss:</strong> Es dauert keine 30
+                    Sekunden – die Hürde zu helfen war noch nie so niedrig.
+                  </span>
+                </li>
+              </ul>
+            </div>
+
+            <p className="mt-5 max-w-2xl text-sm leading-relaxed text-nord-ink md:text-base">
+              <strong>Eure Mithilfe:</strong> Teilt den QR-Code in euren
+              Team-Gruppen oder zeigt ihn bei den nächsten Elternabenden und
+              Spieltagen. Jede kleine Summe bringt uns weiter — gemeinsam
+              bewegen wir mehr. Danke für euren Einsatz!
+            </p>
+            <p className="mt-4 text-sm italic text-nord-muted">
+              Für Fragen stehe ich euch gerne zur Verfügung.
+              <br />
+              Viele Grüße, Ralf
+            </p>
+            <p className="mt-4 text-xs text-nord-muted">
+              Powered by Zahlen-mit-Code.com
+            </p>
+          </div>
+          <div className="flex justify-center md:justify-end">
+            <div className="self-start rounded-xl border border-nord-line bg-white p-4 shadow-sm">
+              <Image
+                src="/spenden-qr.png"
+                alt="QR-Code für Spende an SV Nord München-Lerchenau"
+                width={240}
+                height={240}
+                className="h-[240px] w-[240px] object-contain"
+              />
+              <p className="mt-3 text-center text-xs font-semibold uppercase tracking-[0.15em] text-nord-muted">
+                Jetzt scannen & spenden
+              </p>
+            </div>
+          </div>
         </section>
       </div>
     </>

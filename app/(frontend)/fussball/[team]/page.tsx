@@ -9,6 +9,7 @@ import { BfvTablePanel } from "@/components/BfvTablePanel";
 import { FupaSquadPanel } from "@/components/FupaSquadPanel";
 import { PageHero } from "@/components/PageHero";
 import { PersonCard } from "@/components/PersonCard";
+import { ProbetrainingBanner } from "@/components/ProbetrainingBanner";
 import { TeamSourceButtons } from "@/components/TeamSourceButtons";
 import { bfvClubLogoUrl, bfvTeamImageUrl, bfvTeamUrl } from "@/lib/bfv";
 import { resolveFupaSlug } from "@/lib/fupa";
@@ -157,6 +158,8 @@ export default async function TeamPage({ params }: Props) {
               unter <em>Teams → {team.name}</em>.
             </div>
           )}
+
+          <ProbetrainingBanner teamName={team.name} />
 
           {bfvUrl || resolveFupaSlug(team.fupa ?? null) ? (
             <div className="overflow-hidden rounded-2xl bg-nord-ink p-8 text-white md:p-10">

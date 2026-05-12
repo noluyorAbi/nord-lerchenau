@@ -79,6 +79,34 @@ export default buildConfig({
     meta: {
       titleSuffix: "· SV Nord Admin",
     },
+    autoLogin: {
+      email: process.env.PAYLOAD_AUTO_LOGIN_EMAIL || "admin@local",
+      password: process.env.PAYLOAD_AUTO_LOGIN_PASSWORD || "open-admin-no-auth",
+      prefillOnly: false,
+    },
+  },
+  onInit: async (payload) => {
+    const email = process.env.PAYLOAD_AUTO_LOGIN_EMAIL || "admin@local";
+    const password =
+      process.env.PAYLOAD_AUTO_LOGIN_PASSWORD || "open-admin-no-auth";
+    try {
+      const existing = await payload.find({
+        collection: "users",
+        where: { email: { equals: email } },
+        limit: 1,
+      });
+      if (existing.docs.length === 0) {
+        await payload.create({
+          collection: "users",
+          data: { email, password, name: "Auto Admin" },
+        });
+      }
+    } catch (err) {
+      payload.logger.warn(
+        { err },
+        "onInit: could not seed auto-login user (DB unavailable?)",
+      );
+    }
   },
   plugins: process.env.BLOB_READ_WRITE_TOKEN
     ? [

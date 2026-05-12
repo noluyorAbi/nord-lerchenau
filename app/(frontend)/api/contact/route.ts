@@ -32,13 +32,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
-  const { name, email, subject, message } = parsed.data;
+  const { name, email, phone, address, subject, message } = parsed.data;
 
   try {
     const client = await getPayloadClient();
     await client.create({
       collection: "submissions",
-      data: { name, email, subject, message },
+      data: { name, email, phone, address, subject, message },
       overrideAccess: true,
     });
   } catch (err) {
@@ -66,6 +66,8 @@ export async function POST(request: Request) {
         text: [
           `Name: ${name}`,
           `E-Mail: ${email}`,
+          phone ? `Telefon: ${phone}` : null,
+          address ? `Adresse: ${address}` : null,
           subject ? `Betreff: ${subject}` : null,
           "",
           message,

@@ -21,7 +21,9 @@ export const Submissions: CollectionConfig = {
   fields: [
     { name: "name", type: "text", required: true },
     { name: "email", type: "email", required: true },
-    { name: "subject", type: "text" },
+    { name: "phone", type: "text", required: true },
+    { name: "address", type: "textarea", required: true },
+    { name: "subject", type: "text", required: true },
     { name: "message", type: "textarea", required: true },
     {
       name: "handled",

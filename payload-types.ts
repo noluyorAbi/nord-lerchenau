@@ -497,7 +497,9 @@ export interface Submission {
   id: number;
   name: string;
   email: string;
-  subject?: string | null;
+  phone: string;
+  address: string;
+  subject: string;
   message: string;
   handled?: boolean | null;
   /**
@@ -824,6 +826,8 @@ export interface EventsSelect<T extends boolean = true> {
 export interface SubmissionsSelect<T extends boolean = true> {
   name?: T;
   email?: T;
+  phone?: T;
+  address?: T;
   subject?: T;
   message?: T;
   handled?: T;

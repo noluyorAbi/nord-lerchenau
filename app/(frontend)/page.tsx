@@ -24,7 +24,7 @@ export default async function HomePage() {
   return (
     <>
       <Hero hero={home.hero} />
-      <StatStrip stats={home.stats} />
+      <StatStrip />
       {sections.showNextMatch !== false ? <MatchdayBlock /> : null}
       <JugendHighlights />
       {sections.showFupa !== false ? <FupaBlock /> : null}

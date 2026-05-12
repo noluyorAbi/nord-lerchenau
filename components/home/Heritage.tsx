@@ -37,7 +37,7 @@ const TIMELINE = [
   {
     year: "2026",
     t: "Heute",
-    d: "Platz 3 Bezirksliga. Einmal Nordler, immer Nordler.",
+    d: "Platz 1 in der Bezirksliga — Aufstieg in die Landesliga.",
   },
 ];
 

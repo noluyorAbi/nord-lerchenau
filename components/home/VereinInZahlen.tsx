@@ -1,12 +1,11 @@
 type Stat = {
   value: string;
   label: string;
-  highlight?: boolean;
 };
 
 const STATS: Stat[] = [
   { value: "630+", label: "Mitglieder" },
-  { value: "25+", label: "lizenzierte Trainer", highlight: true },
+  { value: "25+", label: "lizenzierte Trainer" },
   { value: "26", label: "Mannschaften" },
 ];
 
@@ -25,32 +24,20 @@ export function VereinInZahlen() {
           {STATS.map((s) => (
             <li
               key={s.label}
-              className={`relative overflow-hidden rounded-xl bg-white/[0.07] p-8 ring-1 ring-white/10 md:p-10 ${
-                s.highlight ? "ring-2 ring-[#4d77e8]/70" : ""
-              }`}
+              className="group relative overflow-hidden rounded-xl bg-white/[0.06] p-8 ring-1 ring-white/10 transition duration-300 ease-out hover:-translate-y-1 hover:bg-white/[0.09] hover:ring-2 hover:ring-nord-gold/60 hover:shadow-[0_20px_40px_-20px_rgba(212,160,23,0.45)] md:p-10"
             >
-              {s.highlight ? (
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute -right-10 -top-10 size-40 rounded-full bg-[#4d77e8]/20 blur-2xl"
-                />
-              ) : null}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute -right-10 -top-10 size-40 rounded-full bg-nord-gold/0 blur-2xl transition duration-500 group-hover:bg-nord-gold/20"
+              />
               <div className="relative flex flex-col items-center text-center">
                 <span
-                  className={`inline-flex items-baseline rounded-md font-display font-black leading-none tracking-tight ${
-                    s.highlight
-                      ? "bg-[#4d77e8] px-4 py-2 text-white shadow-[0_8px_24px_-8px_rgba(77,119,232,0.6)]"
-                      : "text-white"
-                  }`}
+                  className="inline-flex items-baseline font-display font-black leading-none tracking-tight text-white transition-colors duration-300 group-hover:text-nord-gold"
                   style={{ fontSize: "clamp(40px, 5vw, 72px)" }}
                 >
                   {s.value}
                 </span>
-                <span
-                  className={`mt-4 font-display text-sm font-bold uppercase tracking-[0.1em] md:text-base ${
-                    s.highlight ? "text-white" : "text-white/85"
-                  }`}
-                >
+                <span className="mt-4 font-display text-sm font-bold uppercase tracking-[0.1em] text-white/85 md:text-base">
                   {s.label}
                 </span>
               </div>

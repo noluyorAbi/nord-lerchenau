@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRef, useState } from "react";
 
 export type NavItem = {
   label: string;
@@ -27,17 +28,41 @@ export function SiteNav({ items, glass }: Props) {
   );
 }
 
+function useHoverOpen() {
+  const [open, setOpen] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  function clear() {
+    if (timer.current) {
+      clearTimeout(timer.current);
+      timer.current = null;
+    }
+  }
+  function show() {
+    clear();
+    setOpen(true);
+  }
+  function hide() {
+    clear();
+    timer.current = setTimeout(() => setOpen(false), 140);
+  }
+  return { open, show, hide };
+}
+
 function TopItem({ item, glass }: { item: NavItem; glass: boolean }) {
   const hasChildren = (item.children?.length ?? 0) > 0;
+  const { open, show, hide } = useHoverOpen();
+
   return (
-    <div className="relative group/top">
+    <div
+      className="relative"
+      onMouseEnter={hasChildren ? show : undefined}
+      onMouseLeave={hasChildren ? hide : undefined}
+    >
       <Link
         href={item.href}
-        className={`flex items-center gap-1 border-b-2 border-transparent pb-1 transition ${
-          glass
-            ? "hover:text-white group-hover/top:text-white"
-            : "hover:text-nord-navy group-hover/top:text-nord-navy"
-        }`}
+        className={`flex items-center gap-1 border-b-2 pb-1 transition ${
+          open ? "border-nord-gold" : "border-transparent"
+        } ${glass ? "hover:text-white" : "hover:text-nord-navy"}`}
       >
         {item.label}
         {hasChildren ? (
@@ -50,49 +75,52 @@ function TopItem({ item, glass }: { item: NavItem; glass: boolean }) {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="opacity-70 transition group-hover/top:rotate-180"
+            className={`opacity-80 transition-transform ${open ? "rotate-180" : ""}`}
             aria-hidden
           >
             <path d="M3 4.5 6 7.5l3-3" />
           </svg>
         ) : null}
       </Link>
-      {hasChildren ? (
-        <div className="invisible absolute left-0 top-full pt-3 opacity-0 transition group-hover/top:visible group-hover/top:opacity-100">
-          <Submenu items={item.children!} level={1} />
+      {hasChildren && open ? (
+        <div
+          className="absolute left-0 top-full pt-3"
+          onMouseEnter={show}
+          onMouseLeave={hide}
+        >
+          <Submenu items={item.children!} />
         </div>
       ) : null}
     </div>
   );
 }
 
-function Submenu({ items, level }: { items: NavItem[]; level: number }) {
+function Submenu({ items }: { items: NavItem[] }) {
   return (
-    <ul className="min-w-[220px] overflow-hidden rounded-lg border border-white/10 bg-nord-navy/95 py-1.5 font-display text-[14px] font-medium tracking-normal text-white shadow-[0_24px_50px_-20px_rgba(0,0,0,0.5)] backdrop-blur-md">
+    <ul className="min-w-[240px] overflow-hidden rounded-xl border border-white/15 bg-[#0b1b3f] py-1.5 font-display text-[14px] font-semibold tracking-wide text-white shadow-[0_28px_60px_-12px_rgba(0,0,0,0.6)]">
       {items.map((child) => (
-        <SubItem key={child.href + child.label} item={child} level={level} />
+        <SubItem key={child.href + child.label} item={child} />
       ))}
     </ul>
   );
 }
 
-function SubItem({ item, level }: { item: NavItem; level: number }) {
+function SubItem({ item }: { item: NavItem }) {
   const hasChildren = (item.children?.length ?? 0) > 0;
-  const groupCls =
-    level === 1 ? "group/sub1" : level === 2 ? "group/sub2" : "group/sub3";
-  const showCls =
-    level === 1
-      ? "group-hover/sub1:visible group-hover/sub1:opacity-100"
-      : level === 2
-        ? "group-hover/sub2:visible group-hover/sub2:opacity-100"
-        : "group-hover/sub3:visible group-hover/sub3:opacity-100";
+  const { open, show, hide } = useHoverOpen();
 
   return (
-    <li className={`relative ${groupCls}`}>
+    <li
+      className="relative"
+      onMouseEnter={hasChildren ? show : undefined}
+      onMouseLeave={hasChildren ? hide : undefined}
+    >
       <Link
         href={item.href}
-        className={`flex items-center justify-between gap-4 px-4 py-2 normal-case transition hover:bg-white/10 ${
-          hasChildren ? "pr-3" : ""
+        className={`flex items-center justify-between gap-4 px-4 py-2.5 normal-case transition ${
+          open
+            ? "bg-white/10 text-nord-gold"
+            : "text-white hover:bg-white/10 hover:text-nord-gold"
         }`}
       >
         <span>{item.label}</span>
@@ -106,18 +134,20 @@ function SubItem({ item, level }: { item: NavItem; level: number }) {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="opacity-60"
+            className="opacity-70"
             aria-hidden
           >
             <path d="M4.5 3 7.5 6l-3 3" />
           </svg>
         ) : null}
       </Link>
-      {hasChildren ? (
+      {hasChildren && open ? (
         <div
-          className={`invisible absolute left-full top-0 pl-1 opacity-0 transition ${showCls}`}
+          className="absolute left-full top-0 pl-2"
+          onMouseEnter={show}
+          onMouseLeave={hide}
         >
-          <Submenu items={item.children!} level={level + 1} />
+          <Submenu items={item.children!} />
         </div>
       ) : null}
     </li>

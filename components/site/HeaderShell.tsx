@@ -30,7 +30,7 @@ const NAV_TREE: NavItem[] = [
     ],
   },
   {
-    label: "Sportabteilungen",
+    label: "Abteilungen",
     href: "/sport",
     children: [
       {

@@ -7,6 +7,8 @@ import {
   useState,
   type FormEvent,
 } from "react";
+import ReactMarkdown, { type Components } from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 type Message = {
   role: "user" | "assistant";
@@ -23,43 +25,94 @@ const SUGGESTIONS = [
   "Wo ist das Vereinsheim?",
 ];
 
-function renderMarkdownInline(text: string): React.ReactNode {
-  const parts: React.ReactNode[] = [];
-  const linkRe = /\[([^\]]+)\]\(([^)]+)\)/g;
-  let lastIndex = 0;
-  let key = 0;
-  for (const match of text.matchAll(linkRe)) {
-    const idx = match.index ?? 0;
-    if (idx > lastIndex) {
-      parts.push(text.slice(lastIndex, idx));
-    }
-    const label = match[1];
-    const href = match[2];
-    const isExternal = /^https?:\/\//.test(href);
-    parts.push(
+const MD_COMPONENTS: Components = {
+  a: ({ href, children, ...rest }) => {
+    const isExternal = typeof href === "string" && /^https?:\/\//.test(href);
+    return (
       <a
-        key={`l${key++}`}
+        {...rest}
         href={href}
         target={isExternal ? "_blank" : undefined}
         rel={isExternal ? "noopener noreferrer" : undefined}
         className="font-semibold text-nord-navy underline decoration-nord-gold/60 underline-offset-2 hover:text-nord-gold"
       >
-        {label}
-      </a>,
+        {children}
+      </a>
     );
-    lastIndex = idx + match[0].length;
-  }
-  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
-  return parts;
-}
+  },
+  p: ({ children }) => <p className="my-1 first:mt-0 last:mb-0">{children}</p>,
+  strong: ({ children }) => (
+    <strong className="font-bold text-nord-ink">{children}</strong>
+  ),
+  em: ({ children }) => <em className="italic">{children}</em>,
+  ul: ({ children }) => (
+    <ul className="my-1.5 list-disc space-y-0.5 pl-5">{children}</ul>
+  ),
+  ol: ({ children }) => (
+    <ol className="my-1.5 list-decimal space-y-0.5 pl-5">{children}</ol>
+  ),
+  li: ({ children }) => <li className="leading-snug">{children}</li>,
+  h1: ({ children }) => (
+    <h3 className="mt-2 mb-1 font-display text-base font-black tracking-tight">
+      {children}
+    </h3>
+  ),
+  h2: ({ children }) => (
+    <h3 className="mt-2 mb-1 font-display text-[15px] font-black tracking-tight">
+      {children}
+    </h3>
+  ),
+  h3: ({ children }) => (
+    <h4 className="mt-2 mb-1 font-display text-sm font-black tracking-tight">
+      {children}
+    </h4>
+  ),
+  code: ({ children, ...props }) => {
+    const inline = !(props as { node?: { position?: unknown } })?.node
+      ? true
+      : !String(children).includes("\n");
+    return inline ? (
+      <code className="rounded bg-nord-paper-2 px-1 py-0.5 font-mono text-[11px] text-nord-navy">
+        {children}
+      </code>
+    ) : (
+      <code className="block overflow-x-auto rounded-lg bg-nord-ink p-3 font-mono text-[11px] text-nord-paper">
+        {children}
+      </code>
+    );
+  },
+  pre: ({ children }) => (
+    <pre className="my-2 overflow-x-auto rounded-lg bg-nord-ink p-3 text-[11px] text-nord-paper">
+      {children}
+    </pre>
+  ),
+  blockquote: ({ children }) => (
+    <blockquote className="my-2 border-l-2 border-nord-gold/60 pl-3 italic text-nord-muted">
+      {children}
+    </blockquote>
+  ),
+  hr: () => <hr className="my-3 border-nord-line" />,
+  table: ({ children }) => (
+    <div className="my-2 overflow-x-auto">
+      <table className="w-full border-collapse text-xs">{children}</table>
+    </div>
+  ),
+  th: ({ children }) => (
+    <th className="border border-nord-line bg-nord-paper-2 px-2 py-1 text-left font-bold">
+      {children}
+    </th>
+  ),
+  td: ({ children }) => (
+    <td className="border border-nord-line px-2 py-1">{children}</td>
+  ),
+};
 
 function renderContent(content: string) {
-  const lines = content.split("\n");
-  return lines.map((line, i) => (
-    <span key={i} className="block whitespace-pre-wrap">
-      {renderMarkdownInline(line)}
-    </span>
-  ));
+  return (
+    <ReactMarkdown remarkPlugins={[remarkGfm]} components={MD_COMPONENTS}>
+      {content}
+    </ReactMarkdown>
+  );
 }
 
 export function AiAssistant() {

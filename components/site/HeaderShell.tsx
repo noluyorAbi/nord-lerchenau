@@ -39,16 +39,17 @@ const NAV_TREE: NavItem[] = [
         children: [
           {
             label: "Herren",
-            href: "/fussball",
+            href: "/fussball/herren",
             children: [
+              { label: "Alle Herren-Teams", href: "/fussball/herren" },
               { label: "1. Mannschaft", href: "/fussball/erste" },
               { label: "2. Mannschaft", href: "/fussball/zweite" },
               { label: "3. Mannschaft", href: "/fussball/dritte" },
             ],
           },
-          { label: "Damen", href: "/fussball" },
-          { label: "Junioren", href: "/fussball" },
-          { label: "Juniorinnen", href: "/fussball" },
+          { label: "Junioren", href: "/fussball/junioren" },
+          { label: "Juniorinnen", href: "/fussball/juniorinnen" },
+          { label: "Bambinis", href: "/fussball/bambini" },
           { label: "Schiedsrichter", href: "/schiedsrichter" },
         ],
       },

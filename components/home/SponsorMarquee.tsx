@@ -45,9 +45,9 @@ export async function SponsorMarquee() {
   const doubled = [...sponsors, ...sponsors];
 
   return (
-    <section className="border-b border-nord-line bg-white">
-      <div className="mx-auto max-w-7xl px-6 py-14 md:px-10">
-        <div className="mb-6 flex items-baseline justify-between gap-4">
+    <section className="border-y border-nord-line bg-nord-paper-2">
+      <div className="mx-auto max-w-7xl px-6 py-14 md:px-10 md:py-16">
+        <div className="mb-7 flex items-baseline justify-between gap-4">
           <div className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-nord-gold">
             Unsere Sponsoren
           </div>
@@ -58,21 +58,21 @@ export async function SponsorMarquee() {
             Alle Partner →
           </a>
         </div>
-        <div className="group relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]">
-          <div className="flex w-max animate-[marquee_45s_linear_infinite] items-center gap-10 pr-10 group-hover:[animation-play-state:paused] motion-reduce:animate-none md:gap-14 md:pr-14">
+        <div className="group relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_4%,black_96%,transparent)]">
+          <div className="flex w-max animate-[marquee_50s_linear_infinite] items-center gap-6 pr-6 group-hover:[animation-play-state:paused] motion-reduce:animate-none md:gap-8 md:pr-8">
             {doubled.map((s, idx) => {
               const card = (
-                <div className="flex h-20 w-44 shrink-0 items-center justify-center rounded-xl bg-nord-paper-2 p-3 transition hover:bg-nord-navy md:h-24 md:w-52 md:p-4">
+                <div className="flex h-24 w-52 shrink-0 items-center justify-center rounded-2xl border border-nord-line bg-white p-4 shadow-[0_4px_14px_-6px_rgba(11,27,63,0.18)] transition hover:-translate-y-0.5 hover:border-nord-gold hover:shadow-[0_10px_24px_-8px_rgba(11,27,63,0.28)] md:h-28 md:w-60 md:p-5">
                   {s.logoUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={s.logoUrl}
                       alt={`Logo ${s.name}`}
                       loading="lazy"
-                      className="max-h-full max-w-full object-contain opacity-90 transition group-hover:opacity-100"
+                      className="max-h-full max-w-full object-contain"
                     />
                   ) : (
-                    <span className="text-center font-display text-sm font-bold uppercase tracking-[0.06em] text-nord-ink/70">
+                    <span className="text-center font-display text-sm font-bold uppercase tracking-[0.06em] text-nord-ink">
                       {s.name}
                     </span>
                   )}

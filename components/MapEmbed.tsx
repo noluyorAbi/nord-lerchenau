@@ -171,7 +171,7 @@ export function MapEmbed({
           width: 28px;
           height: 28px;
           border-radius: 9999px;
-          background: #1a3dbc;
+          background: #0b1b3f;
           color: #c8a96a;
           box-shadow:
             0 0 0 2px #ffffff,
@@ -202,7 +202,7 @@ export function MapEmbed({
           color: #5b6475 !important;
         }
         .maplibregl-ctrl-attrib a {
-          color: #1a3dbc !important;
+          color: #0b1b3f !important;
         }
         .maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib-button {
           background-color: rgba(255, 255, 255, 0.9) !important;
@@ -215,7 +215,7 @@ export function MapEmbed({
         }
         .maplibregl-ctrl-group button {
           background: #ffffff !important;
-          color: #1a3dbc !important;
+          color: #0b1b3f !important;
           width: 34px !important;
           height: 34px !important;
         }
@@ -234,7 +234,7 @@ export function MapEmbed({
           font-weight: 600;
           letter-spacing: 0.08em;
           text-transform: uppercase;
-          color: #1a3dbc;
+          color: #0b1b3f;
           padding: 4px 6px;
         }
         .maplibregl-popup-content {

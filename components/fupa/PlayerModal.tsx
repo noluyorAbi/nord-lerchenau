@@ -110,7 +110,7 @@ function PlayerCard({
           </>
         ) : (
           <div
-            className="size-full bg-[linear-gradient(135deg,#1a3dbc_0%,#0f2d8f_60%,#6ec7ea_120%)]"
+            className="size-full bg-[linear-gradient(135deg,#0b1b3f_0%,#14306e_60%,#6ec7ea_120%)]"
             aria-hidden
           />
         )}

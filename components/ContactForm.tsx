@@ -211,7 +211,7 @@ function SelectField({
         required={required}
         defaultValue={defaultValue ?? ""}
         aria-invalid={Boolean(error)}
-        className="mt-1.5 w-full appearance-none rounded-lg border border-nord-line bg-white bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22none%22 stroke=%22%231a3dbc%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M5 8l5 5 5-5%22/></svg>')] bg-[length:18px_18px] bg-[right_0.75rem_center] bg-no-repeat px-3 py-2.5 pr-10 text-sm text-nord-ink focus:border-nord-navy-2 focus:outline-none focus:ring-2 focus:ring-nord-sky/50"
+        className="mt-1.5 w-full appearance-none rounded-lg border border-nord-line bg-white bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22none%22 stroke=%22%230b1b3f%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M5 8l5 5 5-5%22/></svg>')] bg-[length:18px_18px] bg-[right_0.75rem_center] bg-no-repeat px-3 py-2.5 pr-10 text-sm text-nord-ink focus:border-nord-navy-2 focus:outline-none focus:ring-2 focus:ring-nord-sky/50"
       >
         {placeholder ? (
           <option value="" disabled>

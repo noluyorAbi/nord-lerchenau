@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { PageHero } from "@/components/PageHero";
@@ -35,6 +36,28 @@ export default function SkiPage() {
       />
 
       <div className="mx-auto max-w-7xl px-6 py-14 md:px-10 md:py-20">
+        <div className="mb-12 grid gap-3 md:grid-cols-2">
+          <div className="overflow-hidden rounded-2xl border border-nord-line">
+            <Image
+              src="/sport/ski-hero.jpg"
+              alt="SV Nord Ski-Abteilung auf der Piste"
+              width={1200}
+              height={1240}
+              priority
+              className="h-full w-full object-cover"
+            />
+          </div>
+          <div className="overflow-hidden rounded-2xl border border-nord-line">
+            <Image
+              src="/sport/ski-action.jpg"
+              alt="Ski-Action der SV Nord Skigruppe"
+              width={1600}
+              height={1200}
+              className="h-full w-full object-cover"
+            />
+          </div>
+        </div>
+
         <div className="grid gap-12 md:grid-cols-[1.6fr_1fr]">
           <article>
             <div className="mb-4 font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold">
@@ -56,6 +79,19 @@ export default function SkiPage() {
               <p className="italic text-nord-muted">Eure SV Nord Ski-Crew</p>
             </div>
 
+            <figure className="mt-10 overflow-hidden rounded-2xl border border-nord-line">
+              <Image
+                src="/sport/ski-gruppe.jpg"
+                alt="Ski-Gruppe des SV Nord"
+                width={800}
+                height={780}
+                className="h-auto w-full object-cover"
+              />
+              <figcaption className="bg-nord-paper-2 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-nord-muted">
+                Ski-Crew SV Nord
+              </figcaption>
+            </figure>
+
             <section className="mt-12">
               <h2 className="mb-5 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
                 Unsere Skilehrer
@@ -70,10 +106,10 @@ export default function SkiPage() {
                       {initials(p.name)}
                     </span>
                     <div className="min-w-0">
-                      <div className="font-display text-base font-black leading-tight text-nord-ink">
+                      <div className="text-xl font-extrabold leading-tight tracking-tight text-nord-ink md:text-[22px]">
                         {p.name}
                       </div>
-                      <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.14em] text-nord-muted">
+                      <div className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-nord-muted">
                         {p.role}
                       </div>
                     </div>

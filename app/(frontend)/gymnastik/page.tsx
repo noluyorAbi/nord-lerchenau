@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { PageHero } from "@/components/PageHero";
 
 export const dynamic = "force-dynamic";
@@ -33,6 +35,17 @@ export default function GymnastikPage() {
       />
 
       <div className="mx-auto max-w-7xl px-6 py-14 md:px-10 md:py-20">
+        <div className="mb-12 overflow-hidden rounded-2xl border border-nord-line">
+          <Image
+            src="/sport/gymnastik-hero.jpg"
+            alt="Gymnastikgruppe SV Nord beim Training"
+            width={1600}
+            height={1085}
+            priority
+            className="h-auto w-full object-cover"
+          />
+        </div>
+
         <div className="grid gap-12 md:grid-cols-[1.6fr_1fr]">
           <article>
             <div className="mb-4 font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold">
@@ -67,6 +80,19 @@ export default function GymnastikPage() {
               </p>
             </div>
 
+            <figure className="mt-10 overflow-hidden rounded-2xl border border-nord-line">
+              <Image
+                src="/sport/gymnastik-gruppe.jpg"
+                alt="SV Nord Gymnastikgruppe"
+                width={800}
+                height={530}
+                className="h-auto w-full object-cover"
+              />
+              <figcaption className="bg-nord-paper-2 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-nord-muted">
+                Unsere Gymnastikgruppe
+              </figcaption>
+            </figure>
+
             <section className="mt-12">
               <h2 className="mb-5 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
                 Unser Team der Gymnastik-Abteilung
@@ -77,10 +103,10 @@ export default function GymnastikPage() {
                     key={c.name}
                     className="rounded-2xl border border-nord-line bg-white p-6"
                   >
-                    <div className="font-display text-lg font-black leading-tight text-nord-ink">
+                    <div className="text-2xl font-extrabold leading-tight tracking-tight text-nord-ink md:text-[26px]">
                       {c.name}
                     </div>
-                    <div className="mt-1 font-mono text-[11px] uppercase tracking-[0.14em] text-nord-muted">
+                    <div className="mt-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-nord-muted">
                       {c.role}
                     </div>
                     <div className="mt-4 space-y-1.5 border-t border-nord-line pt-4 text-sm">

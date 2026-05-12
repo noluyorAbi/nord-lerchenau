@@ -87,22 +87,46 @@ function parseProducts(html: string): ClubshopProduct[] {
 export async function fetchClubshopProducts(): Promise<{
   products: ClubshopProduct[];
   shopUrl: string;
+  ok: boolean;
+  reason?: string;
 }> {
   try {
     const res = await fetch(CLUBSHOP_URL, {
       headers: {
         "User-Agent":
-          "Mozilla/5.0 (compatible; SVNordBot/1.0; +https://nord-lerchenau.vercel.app)",
-        Accept: "text/html",
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        Accept:
+          "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "Accept-Language": "de-DE,de;q=0.9,en;q=0.8",
+        Referer: "https://www.11teamsports.com/",
       },
-      next: { revalidate: 3600 },
+      next: { revalidate: 600 },
     });
     if (!res.ok) {
-      return { products: [], shopUrl: CLUBSHOP_URL };
+      return {
+        products: [],
+        shopUrl: CLUBSHOP_URL,
+        ok: false,
+        reason: `HTTP ${res.status}`,
+      };
     }
     const html = await res.text();
-    return { products: parseProducts(html), shopUrl: CLUBSHOP_URL };
-  } catch {
-    return { products: [], shopUrl: CLUBSHOP_URL };
+    const products = parseProducts(html);
+    if (products.length === 0) {
+      return {
+        products: [],
+        shopUrl: CLUBSHOP_URL,
+        ok: false,
+        reason: "parsed-zero",
+      };
+    }
+    return { products, shopUrl: CLUBSHOP_URL, ok: true };
+  } catch (err) {
+    return {
+      products: [],
+      shopUrl: CLUBSHOP_URL,
+      ok: false,
+      reason: err instanceof Error ? err.message : "unknown",
+    };
   }
 }

@@ -10,10 +10,14 @@ export const metadata: Metadata = {
   alternates: { canonical: "/shop" },
 };
 
-export const revalidate = 3600;
+export const revalidate = 600;
 
 export default async function ShopPage() {
-  const { products, shopUrl } = await fetchClubshopProducts();
+  const result = await fetchClubshopProducts();
+  const { products, shopUrl } = result;
+  if (!result.ok) {
+    console.error("[/shop] clubshop fetch failed:", result.reason);
+  }
 
   return (
     <>

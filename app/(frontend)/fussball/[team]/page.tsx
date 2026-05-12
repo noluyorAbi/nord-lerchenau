@@ -110,7 +110,7 @@ export default async function TeamPage({ params }: Props) {
                 </>
               ) : (
                 <div
-                  className="size-full bg-[linear-gradient(135deg,#0b1b3f_0%,#142a64_60%,#6ec7ea_120%)]"
+                  className="size-full bg-[linear-gradient(135deg,#1a3dbc_0%,#0f2d8f_60%,#6ec7ea_120%)]"
                   aria-hidden
                 />
               )}

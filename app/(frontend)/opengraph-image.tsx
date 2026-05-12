@@ -22,7 +22,7 @@ export default async function OpengraphImage() {
         display: "flex",
         position: "relative",
         background:
-          "linear-gradient(135deg, #050e24 0%, #0b1b3f 45%, #142a64 100%)",
+          "linear-gradient(135deg, #050e24 0%, #1a3dbc 45%, #0f2d8f 100%)",
         color: "#ffffff",
         fontFamily: "sans-serif",
         overflow: "hidden",
@@ -306,7 +306,7 @@ export default async function OpengraphImage() {
                 inset: 34,
                 borderRadius: 999,
                 background:
-                  "radial-gradient(circle at 35% 25%, #20387a 0%, #0b1b3f 60%, #050e24 100%)",
+                  "radial-gradient(circle at 35% 25%, #20387a 0%, #1a3dbc 60%, #050e24 100%)",
                 boxShadow: "inset 0 0 40px rgba(0,0,0,0.5)",
                 display: "flex",
               }}
@@ -332,7 +332,7 @@ export default async function OpengraphImage() {
               padding: "10px 20px",
               borderRadius: 8,
               background: "#c8a96a",
-              color: "#0b1b3f",
+              color: "#1a3dbc",
               fontSize: 13,
               fontWeight: 800,
               letterSpacing: "0.24em",

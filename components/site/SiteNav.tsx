@@ -97,11 +97,13 @@ function TopItem({ item, glass }: { item: NavItem; glass: boolean }) {
 
 function Submenu({ items }: { items: NavItem[] }) {
   return (
-    <ul className="min-w-[240px] overflow-hidden rounded-xl border border-white/15 bg-[#0b1b3f] py-1.5 font-display text-[14px] font-semibold tracking-wide text-white shadow-[0_28px_60px_-12px_rgba(0,0,0,0.6)]">
-      {items.map((child) => (
-        <SubItem key={child.href + child.label} item={child} />
-      ))}
-    </ul>
+    <div className="min-w-[240px] rounded-xl border border-white/15 bg-[#0b1b3f] shadow-[0_28px_60px_-12px_rgba(0,0,0,0.6)]">
+      <ul className="py-1.5 font-display text-[14px] font-semibold tracking-wide text-white">
+        {items.map((child) => (
+          <SubItem key={child.href + child.label} item={child} />
+        ))}
+      </ul>
+    </div>
   );
 }
 

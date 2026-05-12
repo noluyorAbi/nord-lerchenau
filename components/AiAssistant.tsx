@@ -68,9 +68,22 @@ const MD_COMPONENTS: Components = {
     </h4>
   ),
   code: ({ children, ...props }) => {
+    const text = String(children);
     const inline = !(props as { node?: { position?: unknown } })?.node
       ? true
-      : !String(children).includes("\n");
+      : !text.includes("\n");
+    // Path-like inline code → render as clickable link instead of code span.
+    // Catches model output like `/fussball` that should have been [Fußball](/fussball).
+    if (inline && /^\/[a-zA-Z0-9/_-]*$/.test(text.trim())) {
+      return (
+        <a
+          href={text.trim()}
+          className="font-semibold text-nord-navy underline decoration-nord-gold/60 underline-offset-2 hover:text-nord-gold"
+        >
+          {text.trim()}
+        </a>
+      );
+    }
     return inline ? (
       <code className="rounded bg-nord-paper-2 px-1 py-0.5 font-mono text-[11px] text-nord-navy">
         {children}

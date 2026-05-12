@@ -84,40 +84,72 @@ function parseProducts(html: string): ClubshopProduct[] {
   return out;
 }
 
+async function fetchViaFirecrawl(apiKey: string): Promise<string> {
+  const res = await fetch("https://api.firecrawl.dev/v2/scrape", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      url: CLUBSHOP_URL,
+      formats: ["html"],
+      onlyMainContent: false,
+      waitFor: 1500,
+    }),
+    next: { revalidate: 600 },
+  });
+  if (!res.ok) {
+    throw new Error(`firecrawl HTTP ${res.status}`);
+  }
+  const data = (await res.json()) as {
+    success?: boolean;
+    data?: { html?: string; rawHtml?: string };
+    error?: string;
+  };
+  const html = data?.data?.html ?? data?.data?.rawHtml ?? "";
+  if (!html) {
+    throw new Error(data?.error ?? "firecrawl empty html");
+  }
+  return html;
+}
+
+async function fetchDirect(): Promise<string> {
+  const res = await fetch(CLUBSHOP_URL, {
+    headers: {
+      "User-Agent":
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+      Accept:
+        "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+      "Accept-Language": "de-DE,de;q=0.9,en;q=0.8",
+      Referer: "https://www.11teamsports.com/",
+    },
+    next: { revalidate: 600 },
+  });
+  if (!res.ok) {
+    throw new Error(`direct HTTP ${res.status}`);
+  }
+  return res.text();
+}
+
 export async function fetchClubshopProducts(): Promise<{
   products: ClubshopProduct[];
   shopUrl: string;
   ok: boolean;
   reason?: string;
 }> {
+  const firecrawlKey = process.env.FIRECRAWL_API_KEY;
   try {
-    const res = await fetch(CLUBSHOP_URL, {
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-        Accept:
-          "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-        "Accept-Language": "de-DE,de;q=0.9,en;q=0.8",
-        Referer: "https://www.11teamsports.com/",
-      },
-      next: { revalidate: 600 },
-    });
-    if (!res.ok) {
-      return {
-        products: [],
-        shopUrl: CLUBSHOP_URL,
-        ok: false,
-        reason: `HTTP ${res.status}`,
-      };
-    }
-    const html = await res.text();
+    const html = firecrawlKey
+      ? await fetchViaFirecrawl(firecrawlKey)
+      : await fetchDirect();
     const products = parseProducts(html);
     if (products.length === 0) {
       return {
         products: [],
         shopUrl: CLUBSHOP_URL,
         ok: false,
-        reason: "parsed-zero",
+        reason: firecrawlKey ? "firecrawl-parsed-zero" : "direct-parsed-zero",
       };
     }
     return { products, shopUrl: CLUBSHOP_URL, ok: true };

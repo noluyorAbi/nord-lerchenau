@@ -44,15 +44,27 @@ export function MembershipCta() {
             <div className="flex flex-col items-start gap-3 md:items-end">
               <Link
                 href="/mitgliedschaft"
-                className="inline-flex items-center gap-2.5 rounded-full bg-nord-gold px-6 py-3.5 font-display text-sm font-semibold uppercase tracking-[0.04em] text-nord-navy transition hover:-translate-y-px hover:shadow-[0_12px_30px_rgba(200,169,106,0.4)]"
+                className="group inline-flex items-center gap-2.5 rounded-full bg-nord-gold px-6 py-3.5 font-display text-sm font-semibold uppercase tracking-[0.04em] text-nord-navy transition duration-200 hover:-translate-y-0.5 hover:brightness-105"
               >
-                Mitglied werden →
+                Mitglied werden
+                <span
+                  aria-hidden
+                  className="transition-transform duration-200 group-hover:translate-x-1"
+                >
+                  →
+                </span>
               </Link>
               <Link
                 href="/sponsoren"
-                className="inline-flex items-center gap-2.5 rounded-full border border-white/25 px-6 py-3.5 font-display text-sm font-semibold uppercase tracking-[0.04em] text-white transition hover:bg-white hover:text-nord-navy"
+                className="group inline-flex items-center gap-2.5 rounded-full border border-white/25 px-6 py-3.5 font-display text-sm font-semibold uppercase tracking-[0.04em] text-white transition duration-200 hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-nord-navy"
               >
                 Sponsor werden
+                <span
+                  aria-hidden
+                  className="transition-transform duration-200 group-hover:translate-x-1"
+                >
+                  →
+                </span>
               </Link>
             </div>
           </div>

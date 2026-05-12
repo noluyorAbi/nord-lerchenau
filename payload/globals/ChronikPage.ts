@@ -6,12 +6,33 @@ import { revalidateGlobalOnChange } from "../hooks/revalidate";
 
 export const ChronikPage: GlobalConfig = {
   slug: "chronik-page",
-  admin: { group: "Settings" },
+  label: "Chronik (Vereinsgeschichte)",
+  admin: {
+    group: "4. Seiten",
+    description: "Inhalte der Seite /chronik.",
+  },
   access: { read: anyone, update: authenticated },
   hooks: { afterChange: [revalidateGlobalOnChange("chronik-page")] },
   fields: [
-    { name: "heroImage", type: "upload", relationTo: "media" },
-    { name: "intro", type: "textarea" },
-    { name: "body", type: "richText", required: true },
+    {
+      name: "heroImage",
+      type: "upload",
+      relationTo: "media",
+      label: "Titelbild",
+      admin: { description: "Großes Bild oben auf der Chronik-Seite." },
+    },
+    {
+      name: "intro",
+      type: "textarea",
+      label: "Einleitung",
+      admin: { description: "Kurzer Absatz unter der Überschrift." },
+    },
+    {
+      name: "body",
+      type: "richText",
+      required: true,
+      label: "Haupttext",
+      admin: { description: "Die eigentliche Vereinsgeschichte." },
+    },
   ],
 };

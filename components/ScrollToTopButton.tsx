@@ -9,7 +9,7 @@ type Props = {
 };
 
 export function ScrollToTopButton({
-  threshold = 400,
+  threshold = 200,
   label = "Nach oben",
   className,
 }: Props) {
@@ -35,20 +35,20 @@ export function ScrollToTopButton({
       tabIndex={visible ? 0 : -1}
       className={
         className ??
-        `group fixed bottom-6 right-6 z-40 inline-flex size-12 items-center justify-center rounded-full border border-nord-line bg-white/90 text-nord-navy shadow-lg backdrop-blur-sm transition hover:-translate-y-0.5 hover:border-nord-gold hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nord-gold md:bottom-8 md:right-8 ${
+        `group fixed bottom-6 right-6 z-40 inline-flex size-14 items-center justify-center rounded-full bg-nord-navy text-nord-gold shadow-[0_14px_30px_-8px_rgba(11,27,63,0.45)] ring-1 ring-nord-gold/40 transition duration-200 hover:-translate-y-0.5 hover:bg-nord-gold hover:text-nord-navy hover:ring-nord-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nord-gold md:bottom-8 md:right-8 ${
           visible
-            ? "pointer-events-auto opacity-100"
-            : "pointer-events-none opacity-0"
+            ? "pointer-events-auto translate-y-0 opacity-100"
+            : "pointer-events-none translate-y-4 opacity-0"
         }`
       }
     >
       <svg
-        width="18"
-        height="18"
+        width="22"
+        height="22"
         viewBox="0 0 20 20"
         fill="none"
         stroke="currentColor"
-        strokeWidth="2"
+        strokeWidth="2.4"
         strokeLinecap="round"
         strokeLinejoin="round"
         className="transition-transform group-hover:-translate-y-0.5"

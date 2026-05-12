@@ -36,13 +36,17 @@ export const Submissions: CollectionConfig = {
       type: "checkbox",
       defaultValue: false,
       label: "Erledigt",
-      admin: { description: "Häkchen setzen, wenn die Anfrage beantwortet ist." },
+      admin: {
+        description: "Häkchen setzen, wenn die Anfrage beantwortet ist.",
+      },
     },
     {
       name: "notes",
       type: "textarea",
       label: "Interne Notizen",
-      admin: { description: "Nur für Vereins-Admins sichtbar — nicht öffentlich." },
+      admin: {
+        description: "Nur für Vereins-Admins sichtbar — nicht öffentlich.",
+      },
     },
   ],
   timestamps: true,

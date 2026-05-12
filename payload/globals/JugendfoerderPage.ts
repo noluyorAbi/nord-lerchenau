@@ -7,97 +7,112 @@ import { revalidateGlobalOnChange } from "../hooks/revalidate";
 export const JugendfoerderPage: GlobalConfig = {
   slug: "jugendfoerder-page",
   label: "Jugendförderverein",
-  admin: { group: "Seiten" },
+  admin: {
+    group: "4. Seiten",
+    description: "Inhalte der Seite /jugendfoerderverein.",
+  },
   access: { read: anyone, update: authenticated },
   hooks: { afterChange: [revalidateGlobalOnChange("jugendfoerder-page")] },
   fields: [
     {
       name: "intro",
       type: "textarea",
+      label: "Einleitung",
       admin: {
         description:
-          "Kurztext unter dem Seitentitel (Hero-Lede). Optional — wenn leer, fällt die Seite auf einen Standardtext zurück.",
+          "Kurztext unter dem Seitentitel. Wenn leer, wird ein Standardtext angezeigt.",
       },
     },
     {
       name: "body",
       type: "richText",
       required: true,
+      label: "Haupttext",
       admin: {
         description:
-          "Haupttext. Komplette Ansprache an Eltern und Freunde des SV Nord.",
+          "Ansprache an Eltern und Freunde des SV Nord — was macht der Jugendförderverein?",
       },
     },
     {
       name: "supportBullets",
       type: "array",
-      label: "Unsere Unterstützung",
+      label: "Was wir unterstützen (Aufzählung)",
       admin: {
         description:
-          "Liste der konkreten Aktivitäten, die der Förderverein unterstützt. Erscheint als Aufzählung auf der Seite.",
+          "Konkrete Aktivitäten, die der Förderverein unterstützt. Erscheint als Liste.",
       },
-      fields: [{ name: "text", type: "text", required: true }],
+      fields: [
+        { name: "text", type: "text", required: true, label: "Eintrag" },
+      ],
     },
     {
       name: "minAnnualFee",
       type: "number",
       defaultValue: 24,
-      admin: { description: "Mindest-Jahresbeitrag in Euro." },
+      label: "Mindest-Jahresbeitrag (€)",
     },
     {
       name: "formPdfUrl",
       type: "text",
       defaultValue: "/downloads/jfv-beitrittserklaerung.pdf",
+      label: "Beitrittserklärung (PDF-Link)",
       admin: {
         description:
-          "URL zur Beitrittserklärung (PDF). Standard liegt unter /downloads/.",
+          "Pfad zur PDF-Beitrittserklärung. Standard liegt unter /downloads/.",
       },
     },
     {
       name: "primaryContactEmail",
       type: "email",
       defaultValue: "nordjugend@gmx.de",
-      admin: { description: "Hauptkontakt für Interessent:innen." },
+      label: "Hauptkontakt-E-Mail",
+      admin: { description: "Für Interessent:innen sichtbar." },
     },
     {
       name: "boardMemberName",
       type: "text",
       defaultValue: "Ergin Piker",
+      label: "Vorstand: Name",
     },
     {
       name: "boardRole",
       type: "text",
       defaultValue: "1. Vorstand",
+      label: "Vorstand: Rolle",
     },
     {
       name: "boardContactEmail",
       type: "email",
       defaultValue: "ergin.piker@svnord.de",
+      label: "Vorstand: E-Mail",
     },
     {
       name: "iban",
       type: "text",
+      label: "Spenden-IBAN",
       admin: {
         description:
-          "Optional — nur ausfüllen, wenn eine Direktspende-IBAN veröffentlicht werden soll.",
+          "Optional. Nur ausfüllen, wenn eine Direktspende-IBAN veröffentlicht werden soll.",
       },
     },
     {
       name: "contactEmail",
       type: "email",
+      label: "(veraltet) Kontakt-E-Mail",
       admin: {
         hidden: true,
         description:
-          "Veraltet. Bitte 'Hauptkontakt-E-Mail' (primaryContactEmail) verwenden. Feld bleibt für Datenkompatibilität bestehen.",
+          "Veraltet. Bitte 'Hauptkontakt-E-Mail' verwenden. Feld bleibt nur für Datenkompatibilität.",
       },
     },
     {
       name: "heroImage",
       type: "upload",
       relationTo: "media",
+      label: "Titelbild (Reserve)",
       admin: {
         description:
-          "Optionales Titelbild. Aktuell auf der Seite nicht eingeblendet — Reserve für spätere Hero-Gestaltung.",
+          "Optionales Titelbild. Aktuell nicht eingeblendet — Reserve für spätere Gestaltung.",
       },
     },
   ],

@@ -10,8 +10,12 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export const Media: CollectionConfig = {
   slug: "media",
+  labels: { singular: "Bild", plural: "Bilder & Medien" },
   admin: {
-    group: "System",
+    useAsTitle: "filename",
+    description:
+      "Alle hochgeladenen Bilder. 'Alt-Text' ist Pflicht (Beschreibung für Screenreader & SEO).",
+    group: "9. System",
   },
   access: {
     create: authenticated,
@@ -34,8 +38,29 @@ export const Media: CollectionConfig = {
     mimeTypes: ["image/*"],
   },
   fields: [
-    { name: "alt", type: "text", required: true },
-    { name: "caption", type: "text" },
-    { name: "credit", type: "text" },
+    {
+      name: "alt",
+      type: "text",
+      required: true,
+      label: "Alt-Text (Bildbeschreibung)",
+      admin: {
+        description:
+          "Kurze Beschreibung des Bildinhalts. Pflicht! Wird für Screenreader und Google verwendet.",
+      },
+    },
+    {
+      name: "caption",
+      type: "text",
+      label: "Bildunterschrift",
+      admin: {
+        description: "Optional. Wird unter dem Bild angezeigt.",
+      },
+    },
+    {
+      name: "credit",
+      type: "text",
+      label: "Bildquelle / Fotograf:in",
+      admin: { description: "Optional. z.B. 'Foto: Max Mustermann'." },
+    },
   ],
 };

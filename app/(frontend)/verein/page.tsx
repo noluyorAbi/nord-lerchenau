@@ -29,7 +29,7 @@ const CARDS: FeatureCard[] = [
     title: "Chronik",
     desc: "Von 38 Gründern und einer Kuhhaut zu heute. 78 Jahre SV Nord in 7 Kapiteln, Zeittafel und Ehrentafel.",
     meta: "1947 → heute",
-    tone: "navy",
+    tone: "paper",
   },
   {
     href: "/verein/vorstand",
@@ -98,27 +98,15 @@ export default function VereinPage() {
 
       <section className="mx-auto max-w-7xl px-6 pt-8 pb-14 md:px-10 md:pt-12 md:pb-20">
         <div className="mb-12 grid grid-cols-2 gap-3 md:grid-cols-4">
-          {STATS.map((stat, idx) => (
+          {STATS.map((stat) => (
             <div
               key={stat.label}
-              className={`rounded-2xl p-5 md:p-6 ${
-                idx === 0
-                  ? "bg-nord-navy text-white"
-                  : "border border-nord-line bg-white text-nord-ink"
-              }`}
+              className="group rounded-2xl border border-nord-line bg-white p-5 text-nord-ink transition duration-300 ease-out hover:-translate-y-0.5 hover:border-nord-gold/60 hover:shadow-[0_18px_36px_-22px_rgba(212,160,23,0.45)] md:p-6"
             >
-              <div
-                className={`font-display text-4xl font-black leading-none tracking-tight md:text-5xl ${
-                  idx === 0 ? "text-nord-gold" : ""
-                }`}
-              >
+              <div className="font-display text-4xl font-black leading-none tracking-tight transition-colors duration-300 group-hover:text-nord-gold md:text-5xl">
                 {stat.value}
               </div>
-              <div
-                className={`mt-3 font-mono text-[10px] font-semibold uppercase tracking-[0.15em] ${
-                  idx === 0 ? "text-white/70" : "text-nord-muted"
-                }`}
-              >
+              <div className="mt-3 font-mono text-[10px] font-semibold uppercase tracking-[0.15em] text-nord-muted">
                 {stat.label}
               </div>
             </div>

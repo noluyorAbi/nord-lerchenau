@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import { PageHero } from "@/components/PageHero";
-import { ScrollToTopButton } from "@/components/ScrollToTopButton";
 
 export const dynamic = "force-dynamic";
 
@@ -213,8 +212,6 @@ export default function VereinPage() {
           </div>
         </aside>
       </section>
-
-      <ScrollToTopButton />
     </>
   );
 }

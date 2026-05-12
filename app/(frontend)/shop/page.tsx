@@ -1,7 +1,67 @@
 import type { Metadata } from "next";
 
 import { PageHero } from "@/components/PageHero";
-import { fetchClubshopProducts } from "@/lib/clubshop";
+import { fetchClubshopProducts, type ClubshopProduct } from "@/lib/clubshop";
+
+type StarterSlot = {
+  step: number;
+  title: string;
+  blurb: string;
+  matchers: RegExp[];
+  excluders?: RegExp[];
+};
+
+const STARTER_SLOTS: StarterSlot[] = [
+  {
+    step: 1,
+    title: "T-Shirt",
+    blurb: "Atmungsaktiv fürs Training und für drunter unter dem Trikot.",
+    matchers: [/t-?shirt/i, /\btee\b/i, /trainingsshirt/i],
+    excluders: [/langarm/i, /sleeves/i, /socken/i, /short/i],
+  },
+  {
+    step: 2,
+    title: "Kurze Hose",
+    blurb:
+      "Trainings-Short in Vereinsfarben, auch perfekt fürs Hallentraining.",
+    matchers: [/\bshort\b/i, /shorts/i, /kurze\s*hose/i],
+  },
+  {
+    step: 3,
+    title: "Rucksack",
+    blurb: "Tiro Rucksack für Schuhe, Trikot und Schienbeinschoner.",
+    matchers: [/rucksack/i, /backpack/i],
+  },
+  {
+    step: 4,
+    title: "Trainingsanzug",
+    blurb: "Jacke + Hose im Set für An- und Abreise rund ums Spiel.",
+    matchers: [
+      /trainingsanzug/i,
+      /präsentationsanzug/i,
+      /trainingsjacke/i,
+      /jogginghose/i,
+    ],
+    excluders: [/kids/i],
+  },
+];
+
+function pickStarterProducts(
+  products: ClubshopProduct[],
+): Array<{ slot: StarterSlot; product: ClubshopProduct | null }> {
+  const used = new Set<string>();
+  return STARTER_SLOTS.map((slot) => {
+    const product =
+      products.find((p) => {
+        if (used.has(p.id)) return false;
+        const hay = `${p.name} ${p.manufacturer ?? ""}`;
+        if (slot.excluders?.some((re) => re.test(hay))) return false;
+        return slot.matchers.some((re) => re.test(hay));
+      }) ?? null;
+    if (product) used.add(product.id);
+    return { slot, product };
+  });
+}
 
 export const metadata: Metadata = {
   title: "Vereinsshop",
@@ -18,6 +78,8 @@ export default async function ShopPage() {
   if (!result.ok) {
     console.error("[/shop] clubshop fetch failed:", result.reason);
   }
+
+  const starterPicks = pickStarterProducts(products);
 
   return (
     <>
@@ -56,6 +118,101 @@ export default async function ShopPage() {
             </a>
           </div>
         </section>
+
+        {products.length > 0 ? (
+          <section className="mt-12 overflow-hidden rounded-2xl border border-nord-gold/40 bg-gradient-to-br from-white via-nord-paper-2 to-white p-7 md:p-10">
+            <div className="mb-7 grid gap-4 md:grid-cols-[1.6fr_1fr] md:items-end md:gap-8">
+              <div>
+                <div className="inline-flex items-center gap-2 rounded-full border border-nord-gold/40 bg-nord-gold/10 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-nord-navy">
+                  <span className="size-1.5 rounded-full bg-nord-gold" />
+                  Starterpaket
+                </div>
+                <h3
+                  className="mt-3 font-display font-black leading-[1.05] tracking-tight text-nord-ink"
+                  style={{ fontSize: "clamp(24px, 3vw, 36px)" }}
+                >
+                  Du bist neu? Damit startest du komplett.
+                </h3>
+                <p className="mt-2 max-w-xl text-sm leading-relaxed text-nord-muted md:text-base">
+                  Vier Basics, die jedes neue Mitglied im Schrank haben sollte —
+                  alle direkt im Clubshop verfügbar.
+                </p>
+              </div>
+              <a
+                href={shopUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 self-start rounded-full bg-nord-ink px-5 py-3 font-mono text-[11px] font-bold uppercase tracking-[0.15em] text-white transition hover:-translate-y-px hover:bg-nord-navy-2 md:self-end"
+              >
+                Komplette Auswahl ↗
+              </a>
+            </div>
+            <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {starterPicks.map(({ slot, product }) => (
+                <li key={slot.step}>
+                  <a
+                    href={product?.url ?? shopUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex h-full flex-col gap-3 rounded-xl border border-nord-line bg-white p-4 transition hover:-translate-y-0.5 hover:border-nord-gold hover:shadow-md"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="inline-flex size-7 items-center justify-center rounded-full bg-nord-navy text-[12px] font-black text-nord-gold">
+                        {slot.step}
+                      </span>
+                      <span className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-muted">
+                        {product ? "Im Shop" : "Vorschlag"}
+                      </span>
+                    </div>
+                    <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-nord-paper-2">
+                      {product?.imageUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={product.imageUrl}
+                          alt={product.name}
+                          loading="lazy"
+                          className="absolute inset-0 size-full object-contain p-3 transition group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center font-display text-2xl font-black text-nord-line">
+                          {slot.title}
+                        </div>
+                      )}
+                    </div>
+                    <div className="font-display text-base font-black leading-tight text-nord-ink">
+                      {slot.title}
+                    </div>
+                    {product ? (
+                      <>
+                        <div className="line-clamp-2 font-display text-xs font-semibold leading-snug text-nord-muted">
+                          {product.manufacturer
+                            ? `${product.manufacturer} · `
+                            : ""}
+                          {product.name}
+                        </div>
+                        {product.price ? (
+                          <div className="font-display text-sm font-black text-nord-navy">
+                            {product.price}
+                            {product.listPrice &&
+                            product.listPrice !== product.price ? (
+                              <span className="ml-2 font-mono text-[11px] font-normal text-nord-muted line-through">
+                                {product.listPrice}
+                              </span>
+                            ) : null}
+                          </div>
+                        ) : null}
+                      </>
+                    ) : (
+                      <p className="text-xs leading-relaxed text-nord-muted">
+                        {slot.blurb}
+                      </p>
+                    )}
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </section>
+        ) : null}
 
         {products.length > 0 ? (
           <section className="mt-12">

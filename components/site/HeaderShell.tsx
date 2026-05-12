@@ -66,6 +66,7 @@ const NAV_TREE: NavItem[] = [
       { label: "Termine", href: "/termine" },
     ],
   },
+  { label: "Shop", href: "/shop" },
   {
     label: "Kontakt",
     href: "/kontakt",
@@ -73,7 +74,6 @@ const NAV_TREE: NavItem[] = [
       { label: "Kontakt", href: "/kontakt" },
       { label: "Mitgliedschaft", href: "/mitgliedschaft" },
       { label: "Sponsoren", href: "/sponsoren" },
-      { label: "Shop", href: "/shop" },
       { label: "FAQ", href: "/faq" },
     ],
   },

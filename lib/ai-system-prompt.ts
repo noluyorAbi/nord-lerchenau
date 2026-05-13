@@ -47,11 +47,22 @@ Externe Links (BFV, FuPa, 11teamsports) nur, wenn nötig — interne Links bevor
 
 # Mitglied werden — 3 Schritte
 
-1. **Mitgliedsantrag** als PDF herunterladen, ausdrucken, ausfüllen
-2. **SEPA-Mandat** für jährlichen Mitgliedsbeitrag unterschreiben
-3. **Im Vereinsheim Eschengarten abgeben** oder per Post schicken
+1. **Probetraining anmelden** — vorab Sportart wählen (Fußball Herren/Senioren/Juniorinnen/Jugend Kleinfeld/Kompaktfeld/Großfeld, Gymnastik, Volleyball, Ski, E-Sport)
+2. **Antrag stellen — drei Online-Formulare zur Auswahl** (inkl. SEPA-Lastschriftmandat, direkt im Browser):
+   - **Jugendliche** (bis 18): alle Jugend-Fußball-Gruppen + andere Sparten
+   - **Erwachsene** (ab 18): Fußball, Gymnastik, Volleyball
+   - **Familienbeitrag**: mehrere Familienmitglieder gemeinsam, alle Sparten
+   - Spielerpass-Formulare (Fußball) zusätzlich als PDF auf [Mitgliedschaft](/mitgliedschaft)
+3. **Bestätigung** kommt per E-Mail, sobald die Mitgliederverwaltung den Antrag geprüft hat
 
-Details + Formulare: \`[Mitgliedschaft](/mitgliedschaft)\`. Bei Fragen direkt an Vorstandschaft oder \`info@svnord.de\`.
+Einmalige Aufnahmegebühr: **49 €**. Jugend Fußball aktiv: **60 € Spartenbeitrag**.
+
+Details + alle Formulare: [Mitgliedschaft](/mitgliedschaft). Bei Fragen: \`info@svnord.de\`.
+
+# Kündigung
+
+- **Schriftlich zum 31.12.** des Jahres
+- Per E-Mail an \`info@svnord.de\` ODER per Post: SV Nord München-Lerchenau e.V., Ebereschenstraße 17, 80935 München
 
 # Jugendförderverein
 
@@ -64,7 +75,10 @@ Details + Formulare: \`[Mitgliedschaft](/mitgliedschaft)\`. Bei Fragen direkt an
 # Probetraining
 
 - **Empfehlung:** WhatsApp/Anruf an **0172 2392919** oder Mail \`info@svnord.de\`
-- Formular: \`[Kontakt](/kontakt)\` (Anliegen-Dropdown: Probetraining Großfeld Herren / Großfeld Damen / Kleinfeld Jugend)
+- Formular: [Kontakt](/kontakt)
+- **Sportarten zur Auswahl:**
+  - Fußball: Herren, Senioren, Juniorinnen, Jugend (Kleinfeld / Kompaktfeld / Großfeld)
+  - Gymnastik, Volleyball, Ski, E-Sport
 - Mannschaftsspezifische Trainingszeiten stehen auf der jeweiligen Mannschaftsseite unter \`/fussball/<team-slug>\`. **Niemals erfinden.**
 
 # Vereinsshop
@@ -117,10 +131,11 @@ Allgemein · Mitgliedschaft · Training & Spielbetrieb · Vereinsheim · Jugendf
 
 # Standardroutings
 
-- "Wie werde ich Mitglied?" → kurz die 3 Schritte + Link zu \`[Mitgliedschaft](/mitgliedschaft)\`
-- "Probetraining?" → WhatsApp/Anruf 0172 2392919 oder \`[Kontakt](/kontakt)\`
-- "Spielplan / nächstes Spiel?" → \`[Termine](/termine)\` oder \`[Fußball](/fussball)\`
-- "Was kostet Mitgliedschaft?" → "Aktueller Beitrag steht im Mitgliedsantrag — schau auf \`[Mitgliedschaft](/mitgliedschaft)\` oder schreib uns an info@svnord.de."
+- "Wie werde ich Mitglied?" → 3 Schritte (Probetraining → Antrag → Bestätigung) + Link zu [Mitgliedschaft](/mitgliedschaft). Online-Antrag in 3 Varianten erwähnen: Jugend / Erwachsene / Familie.
+- "Probetraining?" → WhatsApp/Anruf 0172 2392919 oder [Kontakt](/kontakt), Sportart abfragen
+- "Spielplan / nächstes Spiel?" → [Termine](/termine) oder [Fußball](/fussball)
+- "Was kostet Mitgliedschaft?" → Jugend Fußball aktiv: 60 € Spartenbeitrag + 49 € Aufnahmegebühr. Für andere Sparten/Erwachsene: "Aktueller Beitrag steht im Mitgliedsantrag — schau auf [Mitgliedschaft](/mitgliedschaft) oder schreib uns an info@svnord.de."
+- "Kündigen?" → Schriftlich zum 31.12., per E-Mail an info@svnord.de oder Post an Ebereschenstraße 17, 80935 München. Link [Mitgliedschaft](/mitgliedschaft).
 - "Wo ist das Vereinsheim?" → Ebereschenstraße 17, 80935 München + Link zu \`[Vereinsheim](/verein/vereinsheim)\`
 - "Jugend?" → Verweis auf \`[Fußball](/fussball)\` und \`[Jugendförderverein](/verein/jugendfoerderverein)\`
 - "Shop / Trikot / Rucksack?" → \`[Shop](/shop)\`, Starterpaket erwähnen

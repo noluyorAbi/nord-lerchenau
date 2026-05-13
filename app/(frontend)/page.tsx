@@ -1,6 +1,7 @@
 import { FupaBlock } from "@/components/home/FupaBlock";
 import { Heritage } from "@/components/home/Heritage";
 import { Hero } from "@/components/home/Hero";
+import { InstagramTeaser } from "@/components/home/InstagramTeaser";
 import { JugendHighlights } from "@/components/home/JugendHighlights";
 import { LocationMap } from "@/components/home/LocationMap";
 import { MatchdayBlock } from "@/components/home/MatchdayBlock";
@@ -29,6 +30,7 @@ export default async function HomePage() {
       <JugendHighlights />
       {sections.showFupa !== false ? <FupaBlock /> : null}
       {sections.showNews !== false ? <NewsGrid /> : null}
+      {sections.showInstagram !== false ? <InstagramTeaser /> : null}
       {sections.showSports !== false ? <SportsGrid /> : null}
       {sections.showEvents !== false ? <UpcomingEvents /> : null}
       <Heritage />

@@ -160,6 +160,12 @@ export const HomePage: GlobalConfig = {
           defaultValue: true,
           label: "Mitglied-werden-Aufruf",
         },
+        {
+          name: "showInstagram",
+          type: "checkbox",
+          defaultValue: true,
+          label: "Instagram-Teaser",
+        },
       ],
     },
   ],

@@ -965,6 +965,7 @@ export interface HomePage {
     showVereinsheim?: boolean | null;
     showLocation?: boolean | null;
     showMembershipCta?: boolean | null;
+    showInstagram?: boolean | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1269,6 +1270,7 @@ export interface HomePageSelect<T extends boolean = true> {
         showVereinsheim?: T;
         showLocation?: T;
         showMembershipCta?: T;
+        showInstagram?: T;
       };
   updatedAt?: T;
   createdAt?: T;

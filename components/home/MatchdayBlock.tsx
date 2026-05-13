@@ -8,10 +8,12 @@ import {
   getFupaUpcoming,
   isOurTeam,
   pickUpcoming,
+  resolveFupaSlug,
   type FupaMatch,
 } from "@/lib/fupa";
 import { getPayloadClient } from "@/lib/payload";
-import type { Fixture } from "@/payload-types";
+import { fetchWeekendMatches, type WeekendTeam } from "@/lib/weekend";
+import type { Fixture, Team } from "@/payload-types";
 
 type FixtureRow = {
   comp: string;
@@ -22,6 +24,7 @@ type FixtureRow = {
   date: string;
   venue: string;
   featured?: boolean;
+  teamLabel?: string;
 };
 
 function payloadFixtureToRow(f: Fixture): FixtureRow {
@@ -55,8 +58,12 @@ function payloadFixtureToRow(f: Fixture): FixtureRow {
   };
 }
 
-function fupaMatchToRow(m: FupaMatch): FixtureRow {
-  const isHome = isOurTeam(m.homeTeam);
+function fupaMatchToRow(
+  m: FupaMatch,
+  ourSlug: string = FUPA_TEAM_SLUG,
+  teamLabel?: string,
+): FixtureRow {
+  const isHome = isOurTeam(m.homeTeam, ourSlug);
   const kickoff = new Date(m.kickoff);
   const timeStr = kickoff.toLocaleTimeString("de-DE", {
     hour: "2-digit",
@@ -85,29 +92,62 @@ function fupaMatchToRow(m: FupaMatch): FixtureRow {
     date: dateStr,
     venue: isHome ? "Eschengarten" : "auswärts",
     featured: isHome,
+    teamLabel,
   };
 }
 
 export async function MatchdayBlock() {
   const payload = await getPayloadClient();
-  const [fixtures, standings, fupaUpcoming] = await Promise.all([
+  const now = new Date();
+
+  const [teams, fixtures, standings, fupaUpcoming] = await Promise.all([
+    payload.find({
+      collection: "teams",
+      where: { sport: { equals: "fussball" } },
+      sort: "order",
+      limit: 100,
+      depth: 0,
+    }),
     payload.find({
       collection: "fixtures",
-      where: { kickoff: { greater_than: new Date().toISOString() } },
+      where: { kickoff: { greater_than: now.toISOString() } },
       sort: "kickoff",
-      limit: 5,
+      limit: 10,
       depth: 1,
     }),
     getFupaStanding(),
     getFupaUpcoming(),
   ]);
 
-  const rows: FixtureRow[] =
-    fixtures.docs.length > 0
-      ? fixtures.docs.map(payloadFixtureToRow)
-      : pickUpcoming(fupaUpcoming, 5).map(fupaMatchToRow);
+  const weekendTeams: WeekendTeam[] = (teams.docs as Team[])
+    .map((t) => {
+      const fupaSlug = resolveFupaSlug(t.fupa, now);
+      if (!fupaSlug) return null;
+      return { name: t.name, slug: t.slug, fupaSlug };
+    })
+    .filter((t): t is WeekendTeam => t !== null);
 
-  const dateHeader = rows[0]?.date ?? "—";
+  const weekendMatches = await fetchWeekendMatches(weekendTeams, now);
+
+  let rows: FixtureRow[];
+  if (weekendMatches.length > 0) {
+    rows = weekendMatches.map((wm) =>
+      fupaMatchToRow(wm.match, wm.team.fupaSlug, wm.team.name),
+    );
+  } else if (fixtures.docs.length > 0) {
+    rows = fixtures.docs.map(payloadFixtureToRow);
+  } else {
+    rows = pickUpcoming(fupaUpcoming, 5).map((m) => fupaMatchToRow(m));
+  }
+
+  const useWeekend = weekendMatches.length > 0;
+  const uniqueDates = Array.from(new Set(rows.map((r) => r.date)));
+  const dateHeader = useWeekend
+    ? uniqueDates.length > 1
+      ? `${uniqueDates[0]} – ${uniqueDates[uniqueDates.length - 1]}`
+      : (uniqueDates[0] ?? "—")
+    : (rows[0]?.date ?? "—");
+  const showRowDate = useWeekend && uniqueDates.length > 1;
   const standingRows = standings?.standings ?? [];
   const table = standingRows.slice(0, 8);
 
@@ -136,8 +176,12 @@ export async function MatchdayBlock() {
           {rows.length > 0 ? (
             <div className="overflow-hidden rounded-2xl border border-nord-line bg-nord-paper-2">
               <div className="flex items-center justify-between bg-nord-navy px-5 py-3.5 font-mono text-xs uppercase tracking-[0.18em] text-white">
-                <span>Spielplan · {dateHeader}</span>
-                <span className="text-nord-gold">Eschengarten</span>
+                <span>
+                  {useWeekend ? "Wochenendplan" : "Spielplan"} · {dateHeader}
+                </span>
+                <span className="text-nord-gold">
+                  {useWeekend ? `${rows.length} Spiele` : "Eschengarten"}
+                </span>
               </div>
               {rows.map((f, i) => (
                 <div
@@ -151,13 +195,20 @@ export async function MatchdayBlock() {
                       {f.time}
                     </div>
                     <div className="mt-1 font-mono text-[10px] tracking-[0.12em] text-nord-muted">
-                      Uhr
+                      {showRowDate ? f.date.split(" ·")[0] : "Uhr"}
                     </div>
                   </div>
                   <div className="min-w-0">
-                    <div className="truncate font-mono text-[10px] uppercase tracking-[0.18em] text-nord-muted">
-                      {f.comp}
-                      {f.md ? ` · ${f.md}` : ""}
+                    <div className="flex flex-wrap items-center gap-2">
+                      {f.teamLabel ? (
+                        <span className="inline-flex items-center rounded-full bg-nord-navy/10 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-nord-navy">
+                          {f.teamLabel}
+                        </span>
+                      ) : null}
+                      <span className="truncate font-mono text-[10px] uppercase tracking-[0.18em] text-nord-muted">
+                        {f.comp}
+                        {f.md ? ` · ${f.md}` : ""}
+                      </span>
                     </div>
                     <div className="mt-1 font-display text-[16px] font-extrabold leading-snug sm:text-[20px]">
                       {f.home} <span className="text-nord-gold">vs</span>{" "}

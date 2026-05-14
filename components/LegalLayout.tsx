@@ -50,11 +50,7 @@ export function LegalLayout({
         </div>
 
         <div className="grid gap-10 md:grid-cols-[1fr_280px] md:gap-12">
-          <article className="min-w-0">
-            <div className="prose prose-neutral max-w-none prose-headings:font-display prose-headings:font-black prose-headings:tracking-tight prose-h2:mt-12 prose-h2:scroll-mt-24 prose-h2:border-b prose-h2:border-nord-line prose-h2:pb-2 prose-h3:mt-8 prose-h3:scroll-mt-24 prose-a:text-nord-navy hover:prose-a:text-nord-gold prose-strong:text-nord-ink prose-li:my-1">
-              {children}
-            </div>
-          </article>
+          <article className="min-w-0">{children}</article>
 
           <aside className="space-y-5 md:sticky md:top-24 md:h-fit md:self-start">
             {contact ? (

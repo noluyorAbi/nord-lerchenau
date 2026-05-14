@@ -440,7 +440,16 @@ export function AiAssistant() {
         </form>
 
         <div className="border-t border-nord-line bg-nord-paper-2/40 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-nord-muted">
-          Powered by OpenAI · Keine personenbezogenen Antworten
+          Built by{" "}
+          <a
+            href="https://www.adatepe.dev"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-nord-navy hover:text-nord-gold"
+          >
+            adatepe.dev
+          </a>{" "}
+          · Keine personenbezogenen Antworten
         </div>
       </div>
     </>

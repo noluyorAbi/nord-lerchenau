@@ -2,30 +2,12 @@ import Link from "next/link";
 
 import { FadeUp } from "@/components/motion/FadeUp";
 import { SectionEyebrow } from "@/components/SectionEyebrow";
+import {
+  formatNewsDate,
+  newsHeroForPost,
+  newsTagLabel,
+} from "@/lib/news-visual";
 import { getPayloadClient } from "@/lib/payload";
-
-const TAG_LABELS: Record<string, string> = {
-  spielbericht: "Spielbericht",
-  verein: "Verein",
-  jugend: "Jugend",
-  event: "Event",
-  sponsoren: "Sponsoren",
-  allgemein: "Allgemein",
-};
-
-const FALLBACK_HEROS = [
-  "https://static.wixstatic.com/media/c475b1_0044f4621b4b4f15abf848cb4ca04d91~mv2.jpeg/v1/fill/w_800,h_600,fp_0.50_0.50,q_90,enc_avif,quality_auto/c475b1_0044f4621b4b4f15abf848cb4ca04d91~mv2.webp",
-  "https://static.wixstatic.com/media/c475b1_ca34576225d1483da1bacc3857628dc6~mv2.jpeg/v1/fill/w_800,h_600,fp_0.50_0.50,q_90,enc_avif,quality_auto/c475b1_ca34576225d1483da1bacc3857628dc6~mv2.webp",
-  "https://static.wixstatic.com/media/c475b1_b1a4d2cf2d32458baa8dd16ded02d949~mv2.jpeg/v1/fill/w_800,h_600,q_90,enc_avif,quality_auto/fussballstarakademie.jpeg",
-];
-
-function formatDate(d: string | Date) {
-  return new Date(d).toLocaleDateString("de-DE", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-}
 
 export async function NewsGrid() {
   const payload = await getPayloadClient();
@@ -40,9 +22,8 @@ export async function NewsGrid() {
 
   const [featured, ...side] = result.docs;
   const featuredTag = Array.isArray(featured.tags) ? featured.tags[0] : null;
-  const featuredLabel = featuredTag
-    ? (TAG_LABELS[featuredTag] ?? featuredTag)
-    : "News";
+  const featuredLabel = newsTagLabel(featuredTag);
+  const featuredHero = newsHeroForPost(featured.slug, featuredTag);
 
   return (
     <section className="border-b border-nord-line bg-nord-paper-2">
@@ -70,36 +51,49 @@ export async function NewsGrid() {
           <FadeUp>
             <Link
               href={`/news/${featured.slug}`}
-              className="group relative block min-h-[360px] overflow-hidden rounded-2xl bg-black md:min-h-[480px]"
+              className="group relative block min-h-[360px] overflow-hidden rounded-2xl bg-nord-ink md:min-h-[520px]"
             >
-              <div
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                style={{
-                  backgroundImage: `url(${FALLBACK_HEROS[0]})`,
-                }}
-              />
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.1)_30%,rgba(0,0,0,0.85)_100%)]" />
-              <div className="absolute left-5 top-5">
-                <span className="inline-flex items-center rounded-full border border-nord-gold bg-black/50 px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-gold backdrop-blur">
+              {featuredHero.kind === "image" ? (
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                  style={{ backgroundImage: `url(${featuredHero.src})` }}
+                />
+              ) : (
+                <div
+                  className="absolute inset-0 transition-transform duration-700 group-hover:scale-105"
+                  style={{ background: featuredHero.css }}
+                >
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.12),transparent_60%)]" />
+                  <div className="absolute right-[-40px] top-[-40px] font-display text-[280px] font-black leading-none text-white/[0.06]">
+                    {featured.title.charAt(0)}
+                  </div>
+                </div>
+              )}
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.15)_30%,rgba(0,0,0,0.9)_100%)]" />
+              <div className="absolute left-5 top-5 flex items-center gap-2">
+                <span className="inline-flex items-center rounded-full border border-nord-gold bg-black/55 px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-gold backdrop-blur">
                   {featuredLabel}
                 </span>
+                <span className="inline-flex items-center rounded-full border border-white/30 bg-white/10 px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-white backdrop-blur">
+                  Top-Story
+                </span>
               </div>
-              <div className="absolute bottom-0 left-0 right-0 p-6 text-white md:p-7">
+              <div className="absolute bottom-0 left-0 right-0 p-6 text-white md:p-8">
                 <div className="font-mono text-[11px] uppercase tracking-[0.14em] opacity-80">
-                  {formatDate(featured.publishedAt)}
+                  {formatNewsDate(featured.publishedAt)}
                 </div>
                 <h3
                   className="mt-2.5 font-display font-black leading-[0.98] tracking-[-0.01em]"
-                  style={{ fontSize: "clamp(28px, 3.5vw, 40px)" }}
+                  style={{ fontSize: "clamp(28px, 3.6vw, 44px)" }}
                 >
                   {featured.title}
                 </h3>
                 {featured.excerpt ? (
-                  <p className="mt-2 max-w-[560px] text-sm leading-relaxed opacity-85">
+                  <p className="mt-3 max-w-[620px] text-sm leading-relaxed opacity-90">
                     {featured.excerpt}
                   </p>
                 ) : null}
-                <div className="mt-4 font-display text-sm font-extrabold uppercase tracking-[0.06em] text-nord-gold">
+                <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-nord-gold/60 bg-nord-gold/15 px-4 py-1.5 font-display text-xs font-extrabold uppercase tracking-[0.08em] text-nord-gold backdrop-blur transition group-hover:bg-nord-gold group-hover:text-nord-navy">
                   Bericht lesen →
                 </div>
               </div>
@@ -109,28 +103,44 @@ export async function NewsGrid() {
           {/* Side cards */}
           {side.map((post, idx) => {
             const tag = Array.isArray(post.tags) ? post.tags[0] : null;
-            const tagLabel = tag ? (TAG_LABELS[tag] ?? tag) : "News";
-            const fallbackImg = FALLBACK_HEROS[idx + 1] ?? FALLBACK_HEROS[0];
+            const tagLabel = newsTagLabel(tag);
+            const hero = newsHeroForPost(post.slug, tag);
             return (
               <FadeUp key={post.id} delay={(idx + 1) * 0.08}>
                 <Link
                   href={`/news/${post.slug}`}
-                  className="group flex h-full flex-col overflow-hidden rounded-2xl border border-nord-line bg-nord-paper transition hover:-translate-y-0.5 hover:shadow-md"
+                  className="group flex h-full flex-col overflow-hidden rounded-2xl border border-nord-line bg-white transition hover:-translate-y-1 hover:border-nord-gold/40 hover:shadow-lg"
                 >
-                  <div
-                    className="aspect-[4/3] border-b border-nord-line bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
-                    style={{ backgroundImage: `url(${fallbackImg})` }}
-                  />
+                  <div className="relative aspect-[4/3] overflow-hidden border-b border-nord-line">
+                    {hero.kind === "image" ? (
+                      <div
+                        className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                        style={{ backgroundImage: `url(${hero.src})` }}
+                      />
+                    ) : (
+                      <div
+                        className="absolute inset-0 transition-transform duration-500 group-hover:scale-110"
+                        style={{ background: hero.css }}
+                      >
+                        <div className="absolute right-[-20px] top-[-20px] font-display text-[140px] font-black leading-none text-white/[0.09]">
+                          {post.title.charAt(0)}
+                        </div>
+                        <div className="absolute bottom-3 left-4 font-mono text-[10px] uppercase tracking-[0.18em] text-white/70">
+                          SV Nord · {tagLabel}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                   <div className="flex flex-1 flex-col gap-2.5 p-5">
                     <div className="flex items-center justify-between">
-                      <span className="inline-flex items-center rounded-full border border-nord-navy px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-navy">
+                      <span className="inline-flex items-center rounded-full border border-nord-navy/40 bg-nord-navy/5 px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-navy">
                         {tagLabel}
                       </span>
                       <span className="font-mono text-[10px] tracking-[0.1em] text-nord-muted">
-                        {formatDate(post.publishedAt)}
+                        {formatNewsDate(post.publishedAt)}
                       </span>
                     </div>
-                    <h3 className="m-0 font-display text-[22px] font-extrabold leading-[1.05]">
+                    <h3 className="m-0 font-display text-[22px] font-extrabold leading-[1.08] tracking-[-0.01em] text-nord-ink">
                       {post.title}
                     </h3>
                     {post.excerpt ? (
@@ -138,6 +148,9 @@ export async function NewsGrid() {
                         {post.excerpt}
                       </p>
                     ) : null}
+                    <div className="mt-auto pt-2 font-display text-[11px] font-extrabold uppercase tracking-[0.08em] text-nord-navy transition group-hover:text-nord-gold">
+                      Bericht lesen →
+                    </div>
                   </div>
                 </Link>
               </FadeUp>

@@ -37,7 +37,7 @@ const SPORT_GROUPS: Array<{
   },
   {
     id: "esport",
-    label: "E-Sport",
+    label: "eSport",
     match: (r) => /eregionalliga|elandesliga|e-sport/i.test(r),
     accent: "bg-purple-100 text-purple-900",
   },
@@ -70,6 +70,10 @@ function initialsOf(name: string): string {
     .toUpperCase();
 }
 
+function stripPhone(p: Person): Person {
+  return { ...p, phone: null };
+}
+
 export default async function VorstandPage() {
   const payload = await getPayloadClient();
   const result = await payload.find({
@@ -81,6 +85,8 @@ export default async function VorstandPage() {
     limit: 100,
     depth: 1,
   });
+
+  result.docs = result.docs.map(stripPhone);
 
   const vorstand = VORSTAND_NAMES.map((n) =>
     result.docs.find((p) => p.name === n),

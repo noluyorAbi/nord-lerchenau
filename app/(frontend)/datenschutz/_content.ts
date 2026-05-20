@@ -17,9 +17,9 @@ export const DATENSCHUTZ_SECTIONS: LegalSection[] = [
         rows: [
           { k: "Verein", v: "SV Nord München-Lerchenau e.V." },
           { k: "Adresse", v: "Ebereschenstraße 17, 80935 München" },
-          { k: "Telefon", v: "0172 2392919", href: "tel:+491722392919" },
           { k: "E-Mail", v: "info@svnord.de", href: "mailto:info@svnord.de" },
-          { k: "Vertretung", v: "1. Vorstand Ralf Kirmeyer" },
+          { k: "1. Vorstand", v: "Ralf Kirmeyer" },
+          { k: "2. Vorstand", v: "Birgit Höfer" },
           { k: "Vereinsregister", v: "Amtsgericht München · VR 6924" },
         ],
       },

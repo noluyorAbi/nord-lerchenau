@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { FupaBlock } from "@/components/home/FupaBlock";
 import { PageHero } from "@/components/PageHero";
 import { BFV_CLUB_URL } from "@/lib/bfv";
 import {
@@ -234,6 +235,7 @@ export default async function FussballPage() {
           </div>
         </section>
       </div>
+      <FupaBlock />
     </>
   );
 }

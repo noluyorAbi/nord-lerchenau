@@ -219,7 +219,7 @@ export default async function ChronikPage() {
               {
                 k: "2010er – heute",
                 t: "Moderne Tradition",
-                d: "Über 500 Mitglieder, 5 Abteilungen, neue Sportarten wie Esport, digitale Vereinsführung.",
+                d: "Über 600 Mitglieder, 5 Abteilungen, neue Sportarten wie eSport, digitale Vereinsführung.",
               },
             ].map((era, i) => (
               <article

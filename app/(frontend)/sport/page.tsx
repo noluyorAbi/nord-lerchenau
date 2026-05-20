@@ -21,12 +21,7 @@ const CARDS = [
     desc: "Seit 1967. Montag und Mittwoch abends — Frauen und Männer willkommen.",
   },
   {
-    title: "Ski",
-    href: "/ski",
-    desc: "Seit über 20 Jahren. Ausgebildete Skilehrer, vom Einsteiger bis zum Könner.",
-  },
-  {
-    title: "E-Sport",
+    title: "eSport",
     href: "/esport",
     desc: "Zwei Mannschaften in der BFV-eLeague. Ab 16 Jahren — wir suchen Nachwuchs.",
   },
@@ -34,6 +29,11 @@ const CARDS = [
     title: "Schiedsrichter",
     href: "/schiedsrichter",
     desc: "Ohne Schiri kein Spiel. Aktive Unparteiische und Nachwuchs beim SV Nord.",
+  },
+  {
+    title: "Ski",
+    href: "/ski",
+    desc: "Seit über 20 Jahren. Ausgebildete Skilehrer, vom Einsteiger bis zum Könner.",
   },
 ];
 
@@ -43,9 +43,20 @@ export default function SportPage() {
       <PageHero
         eyebrow="Abteilungen"
         title="Unsere Sportarten"
-        lede="Sechs Abteilungen unter einem Dach — Fußball, Volleyball, Gymnastik, Ski, E-Sport und Schiedsrichter."
+        lede="Sechs Abteilungen unter einem Dach — Fußball, Volleyball, Gymnastik, eSport, Schiedsrichter und Ski."
       />
       <section className="mx-auto max-w-7xl px-6 py-16 md:px-10 md:py-20">
+        <div className="mb-10 rounded-2xl border border-nord-line bg-nord-paper-2 p-6 md:p-8">
+          <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
+            Qualifizierte Übungsleiter
+          </div>
+          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-nord-ink md:text-base">
+            Unsere Trainer und Übungsleiter besitzen{" "}
+            <strong>Trainerlizenzen der C-Lizenz und höher</strong> und bilden
+            sich kontinuierlich weiter — vom Bambini-Training bis zur
+            Bezirksliga.
+          </p>
+        </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {CARDS.map((card) => (
             <Link

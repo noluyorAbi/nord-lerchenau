@@ -3,8 +3,17 @@ import Link from "next/link";
 
 import { PageHero } from "@/components/PageHero";
 import { getPayloadClient } from "@/lib/payload";
+import { FALLBACK_SPONSORS } from "@/lib/sponsors-fallback";
 
 export const dynamic = "force-dynamic";
+
+type ListSponsor = {
+  id: string | number;
+  name: string;
+  url?: string | null;
+  tier: string;
+  logo?: { url?: string | null; filename?: string | null } | number | null;
+};
 
 export default async function SponsorenPage() {
   const payload = await getPayloadClient();
@@ -15,8 +24,20 @@ export default async function SponsorenPage() {
     depth: 1,
   });
 
-  const premium = result.docs.filter((s) => s.tier === "premium");
-  const standard = result.docs.filter((s) => s.tier === "standard");
+  const dbSponsors = result.docs as unknown as ListSponsor[];
+  const sponsors: ListSponsor[] =
+    dbSponsors.length > 0
+      ? dbSponsors
+      : FALLBACK_SPONSORS.map((s) => ({
+          id: s.id,
+          name: s.name,
+          url: s.url,
+          tier: s.tier,
+          logo: null,
+        }));
+
+  const premium = sponsors.filter((s) => s.tier === "premium");
+  const standard = sponsors.filter((s) => s.tier === "standard");
 
   return (
     <>
@@ -35,8 +56,8 @@ export default async function SponsorenPage() {
             <p className="text-base leading-relaxed text-nord-ink">
               Der SV Nord München-Lerchenau e.V. ist ein traditioneller
               Sportverein im Münchner Norden, der im Jahr 1947 gegründet wurde.
-              Derzeit haben wir rund 500 Mitglieder in Fußball, Volleyball,
-              Gymnastik, Ski und Esport.
+              Derzeit haben wir über 600 Mitglieder in Fußball, Volleyball,
+              Gymnastik, Ski und eSport.
             </p>
             <p className="mt-3 text-base leading-relaxed text-nord-ink">
               Im Fußballbereich stellen wir zwei Herren- und elf
@@ -102,7 +123,7 @@ export default async function SponsorenPage() {
           </section>
         ) : null}
 
-        {result.docs.length === 0 ? (
+        {sponsors.length === 0 ? (
           <div className="rounded-xl border border-dashed border-nord-line bg-white p-10 text-center text-sm text-nord-muted">
             Noch keine Sponsoren erfasst. Pflege sie im Admin unter{" "}
             <em>Verein → Sponsors</em>.
@@ -209,20 +230,12 @@ export default async function SponsorenPage() {
 }
 
 type SponsorProps = {
-  sponsor: Awaited<
-    ReturnType<Awaited<ReturnType<typeof getPayloadClient>>["find"]>
-  > extends { docs: Array<infer T> }
-    ? T
-    : never;
+  sponsor: ListSponsor;
   size: "large" | "small";
 };
 
 function SponsorCard({ sponsor, size }: SponsorProps) {
-  const s = sponsor as unknown as {
-    name: string;
-    url?: string | null;
-    logo?: { url?: string | null; filename?: string | null } | number | null;
-  };
+  const s = sponsor;
   const logo = typeof s.logo === "object" && s.logo ? s.logo : null;
   const logoUrl = logo
     ? logo.filename

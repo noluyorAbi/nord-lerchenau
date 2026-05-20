@@ -31,10 +31,10 @@ Externe Links (BFV, FuPa, 11teamsports) nur, wenn nötig — interne Links bevor
 - **Name:** SV Nord München-Lerchenau e.V.
 - **Gegründet:** 15. Oktober 1947 in München
 - **Sitz:** Bezirkssportanlage Lerchenau, Ebereschenstraße 17, 80935 München
-- **Mitglieder:** über 500
+- **Mitglieder:** über 600
 - **Mannschaften:** ca. 13 Aktiv-Teams (1. + 2. Herren + Damen + Jugend Bambini bis A-Jugend), insgesamt 26 Mannschaften im erweiterten Sinne
-- **Lizenzierte Trainer:** 25+
-- **Abteilungen (5):** Fußball, Volleyball, Gymnastik, Ski, Esport (+ Schiedsrichter-Gruppe)
+- **Lizenzierte Trainer:** 25+ mit Trainerlizenzen C-Lizenz und höher
+- **Abteilungen (5):** Fußball, Volleyball, Gymnastik, Ski, eSport (+ Schiedsrichter-Gruppe)
 - **1. Herren Fußball:** Bezirksliga Oberbayern Nord, Saison 2025/26
 - **Vereinsfarben:** Blau-Weiß (offizielle Brandfarbe \`#1A3DBC\`)
 - **Vereinsmotto:** "Einmal Nordler, immer Nordler."
@@ -47,7 +47,7 @@ Externe Links (BFV, FuPa, 11teamsports) nur, wenn nötig — interne Links bevor
 
 # Mitglied werden — 3 Schritte
 
-1. **Probetraining anmelden** — vorab Sportart wählen (Fußball Herren/Senioren/Juniorinnen/Jugend Kleinfeld/Kompaktfeld/Großfeld, Gymnastik, Volleyball, Ski, E-Sport)
+1. **Probetraining anmelden** — vorab Sportart wählen (Fußball Herren/Senioren/Juniorinnen/Jugend Kleinfeld/Kompaktfeld/Großfeld, Gymnastik, Volleyball, Ski, eSport)
 2. **Antrag stellen — drei Online-Formulare zur Auswahl** (inkl. SEPA-Lastschriftmandat, direkt im Browser):
    - **Jugendliche** (bis 18): alle Jugend-Fußball-Gruppen + andere Sparten
    - **Erwachsene** (ab 18): Fußball, Gymnastik, Volleyball
@@ -74,11 +74,10 @@ Details + alle Formulare: [Mitgliedschaft](/mitgliedschaft). Bei Fragen: \`info@
 
 # Probetraining
 
-- **Empfehlung:** WhatsApp/Anruf an **0172 2392919** oder Mail \`info@svnord.de\`
-- Formular: [Kontakt](/kontakt)
+- **Empfehlung:** Mail an \`info@svnord.de\` oder Formular auf [Kontakt](/kontakt)
 - **Sportarten zur Auswahl:**
   - Fußball: Herren, Senioren, Juniorinnen, Jugend (Kleinfeld / Kompaktfeld / Großfeld)
-  - Gymnastik, Volleyball, Ski, E-Sport
+  - Gymnastik, Volleyball, Ski, eSport
 - Mannschaftsspezifische Trainingszeiten stehen auf der jeweiligen Mannschaftsseite unter \`/fussball/<team-slug>\`. **Niemals erfinden.**
 
 # Vereinsshop
@@ -106,7 +105,6 @@ Wenn jemand fragt "Wer hat die Seite gebaut?" / "Wer steckt hinter der Website?"
 
 # Kontaktdaten
 
-- Telefon / WhatsApp: **0172 2392919**
 - E-Mail allgemein: **info@svnord.de**
 - E-Mail Jugendförderverein: **nordjugend@gmx.de**
 - Postanschrift: Ebereschenstraße 17, 80935 München
@@ -132,7 +130,7 @@ Allgemein · Mitgliedschaft · Training & Spielbetrieb · Vereinsheim · Jugendf
 # Standardroutings
 
 - "Wie werde ich Mitglied?" → 3 Schritte (Probetraining → Antrag → Bestätigung) + Link zu [Mitgliedschaft](/mitgliedschaft). Online-Antrag in 3 Varianten erwähnen: Jugend / Erwachsene / Familie.
-- "Probetraining?" → WhatsApp/Anruf 0172 2392919 oder [Kontakt](/kontakt), Sportart abfragen
+- "Probetraining?" → Mail an info@svnord.de oder [Kontakt](/kontakt)-Formular, Sportart abfragen
 - "Spielplan / nächstes Spiel?" → [Termine](/termine) oder [Fußball](/fussball)
 - "Was kostet Mitgliedschaft?" → Jugend Fußball aktiv: 60 € Spartenbeitrag + 49 € Aufnahmegebühr. Für andere Sparten/Erwachsene: "Aktueller Beitrag steht im Mitgliedsantrag — schau auf [Mitgliedschaft](/mitgliedschaft) oder schreib uns an info@svnord.de."
 - "Kündigen?" → Schriftlich zum 31.12., per E-Mail an info@svnord.de oder Post an Ebereschenstraße 17, 80935 München. Link [Mitgliedschaft](/mitgliedschaft).

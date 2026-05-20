@@ -7,6 +7,12 @@ import { PersonCard } from "@/components/PersonCard";
 import { getPayloadClient } from "@/lib/payload";
 import type { Media, Person } from "@/payload-types";
 
+export type StaticContact = {
+  name: string;
+  role?: string;
+  email?: string;
+};
+
 type Props = {
   sport: "volleyball" | "gymnastik" | "ski" | "esport" | "schiedsrichter";
   eyebrow: string;
@@ -14,6 +20,7 @@ type Props = {
   fallbackLede?: string;
   hideTrainers?: boolean;
   excludeTrainerNames?: string[];
+  staticContacts?: StaticContact[];
 };
 
 export async function SportSectionPage({
@@ -23,6 +30,7 @@ export async function SportSectionPage({
   fallbackLede,
   hideTrainers,
   excludeTrainerNames,
+  staticContacts,
 }: Props) {
   const payload = await getPayloadClient();
 
@@ -112,6 +120,48 @@ export async function SportSectionPage({
                 <div className="grid gap-4 sm:grid-cols-2">
                   {trainers.map((trainer) => (
                     <PersonCard key={trainer.id} person={trainer} />
+                  ))}
+                </div>
+              </div>
+            ) : staticContacts && staticContacts.length > 0 ? (
+              <div className="mt-12">
+                <h2 className="mb-4 text-sm font-bold uppercase tracking-[0.15em] text-nord-muted">
+                  Ansprechpartner
+                </h2>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {staticContacts.map((c) => (
+                    <div
+                      key={c.name}
+                      className="overflow-hidden rounded-xl border border-nord-line bg-white p-5"
+                    >
+                      <div className="flex size-16 items-center justify-center rounded-full bg-gradient-to-br from-nord-navy to-nord-navy-2 text-lg font-bold text-white">
+                        {c.name
+                          .split(/\s+/)
+                          .map((p) => p[0])
+                          .filter(Boolean)
+                          .slice(0, 2)
+                          .join("")
+                          .toUpperCase()}
+                      </div>
+                      <h3 className="mt-4 text-base font-bold tracking-tight text-nord-ink">
+                        {c.name}
+                      </h3>
+                      {c.role ? (
+                        <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-nord-sky">
+                          {c.role}
+                        </div>
+                      ) : null}
+                      {c.email ? (
+                        <div className="mt-3 text-xs text-nord-muted">
+                          <a
+                            href={`mailto:${c.email}`}
+                            className="hover:text-nord-ink"
+                          >
+                            {c.email}
+                          </a>
+                        </div>
+                      ) : null}
+                    </div>
                   ))}
                 </div>
               </div>

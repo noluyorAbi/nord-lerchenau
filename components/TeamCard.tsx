@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { bfvTeamImageUrl } from "@/lib/bfv";
-import type { Team } from "@/payload-types";
+import type { Person, Team } from "@/payload-types";
 
 type Props = { team: Team };
 
@@ -15,6 +15,11 @@ export function TeamCard({ team }: Props) {
     team.league ??
     (team.ageGroup ? `Altersklasse ${team.ageGroup}` : null) ??
     "Mannschaft";
+
+  const trainerNames = (team.trainers ?? [])
+    .filter((t): t is Person => typeof t === "object" && t !== null)
+    .map((t) => t.name)
+    .filter((n): n is string => typeof n === "string" && n.length > 0);
 
   const teamImage = bfvTeamImageUrl(team.bfv?.teamId);
 
@@ -69,6 +74,14 @@ export function TeamCard({ team }: Props) {
         <div className="mt-1 font-mono text-[11px] uppercase tracking-[0.08em] text-nord-muted">
           {sublabel}
         </div>
+        {trainerNames.length > 0 ? (
+          <div className="mt-2 line-clamp-2 text-[12px] leading-snug text-nord-ink/80">
+            <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-nord-muted">
+              Trainer ·{" "}
+            </span>
+            {trainerNames.join(", ")}
+          </div>
+        ) : null}
         {hasBfv ? (
           <div className="mt-auto pt-3 font-mono text-[10px] uppercase tracking-[0.12em] text-nord-navy transition group-hover:text-nord-gold">
             Tabelle &middot; Spielplan →

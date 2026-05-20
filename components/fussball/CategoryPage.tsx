@@ -9,9 +9,12 @@ import {
 } from "@/lib/fussball-categories";
 import { getPayloadClient } from "@/lib/payload";
 
-type Props = { slug: FussballCategorySlug };
+type Props = {
+  slug: FussballCategorySlug;
+  belowIntro?: React.ReactNode;
+};
 
-export async function CategoryPage({ slug }: Props) {
+export async function CategoryPage({ slug, belowIntro }: Props) {
   const def = FUSSBALL_CATEGORIES[slug];
   const payload = await getPayloadClient();
 
@@ -25,7 +28,7 @@ export async function CategoryPage({ slug }: Props) {
     },
     sort: "order",
     limit: 100,
-    depth: 0,
+    depth: 1,
   });
 
   const teams = result.docs;
@@ -90,6 +93,8 @@ export async function CategoryPage({ slug }: Props) {
             </ul>
           </div>
         </section>
+
+        {belowIntro ?? null}
 
         {teams.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-nord-line bg-white p-10 text-center text-sm text-nord-muted">

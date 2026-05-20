@@ -1,4 +1,5 @@
 import { CategoryPage } from "@/components/fussball/CategoryPage";
+import { U8Showcase } from "@/components/fussball/U8Showcase";
 
 export const dynamic = "force-dynamic";
 
@@ -8,5 +9,5 @@ export const metadata = {
 };
 
 export default function JuniorenPage() {
-  return <CategoryPage slug="junioren" />;
+  return <CategoryPage slug="junioren" belowIntro={<U8Showcase />} />;
 }

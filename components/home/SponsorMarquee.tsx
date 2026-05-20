@@ -1,4 +1,5 @@
 import { getPayloadClient } from "@/lib/payload";
+import { FALLBACK_SPONSORS } from "@/lib/sponsors-fallback";
 
 type Sponsor = {
   id: number | string;
@@ -17,7 +18,7 @@ export async function SponsorMarquee() {
     depth: 1,
   });
 
-  const sponsors: Sponsor[] = result.docs.map((doc) => {
+  const dbSponsors: Sponsor[] = result.docs.map((doc) => {
     const d = doc as unknown as {
       id: number | string;
       name: string;
@@ -39,6 +40,17 @@ export async function SponsorMarquee() {
       logoUrl,
     };
   });
+
+  const sponsors: Sponsor[] =
+    dbSponsors.length > 0
+      ? dbSponsors
+      : FALLBACK_SPONSORS.map((s) => ({
+          id: s.id,
+          name: s.name,
+          url: s.url,
+          tier: s.tier,
+          logoUrl: null,
+        }));
 
   if (sponsors.length === 0) return null;
 

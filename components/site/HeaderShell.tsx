@@ -56,7 +56,7 @@ const NAV_TREE: NavItem[] = [
       { label: "Volleyball", href: "/volleyball" },
       { label: "Gymnastik", href: "/gymnastik" },
       { label: "Ski", href: "/ski" },
-      { label: "E-Sport", href: "/esport" },
+      { label: "eSport", href: "/esport" },
     ],
   },
   {

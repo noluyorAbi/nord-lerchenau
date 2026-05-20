@@ -9,6 +9,13 @@ export default function Page() {
       eyebrow="Sport"
       title="Volleyball"
       fallbackLede="Hobby & Mixed — Volleyball beim SV Nord für alle Spielstärken."
+      staticContacts={[
+        {
+          name: "Elisabeth Schillinger",
+          role: "Ansprechpartnerin Volleyball",
+          email: "info@svnord.de",
+        },
+      ]}
     />
   );
 }

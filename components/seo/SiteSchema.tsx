@@ -28,8 +28,8 @@ export function SiteSchema() {
     },
     slogan: "Einmal Nordler, immer Nordler.",
     description:
-      "Traditionsverein im Münchner Norden seit 1947. Fußball, Volleyball, Gymnastik, Ski und Esport. Rund 600 Mitglieder.",
-    sport: ["Fußball", "Volleyball", "Gymnastik", "Ski", "Esport"],
+      "Traditionsverein im Münchner Norden seit 1947. Fußball, Volleyball, Gymnastik, Ski und eSport. Über 600 Mitglieder.",
+    sport: ["Fußball", "Volleyball", "Gymnastik", "Ski", "eSport"],
     memberOf: {
       "@type": "SportsOrganization",
       name: "Bayerischer Fußball-Verband",

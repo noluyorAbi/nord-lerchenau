@@ -47,7 +47,8 @@ export default function GymnastikPage() {
                 Wir trainieren jeden{" "}
                 <strong>Montag von 19:00 bis 20:00 Uhr</strong> in der
                 Waldmeisterschule und jeden{" "}
-                <strong>Mittwoch von 19:00 bis 20:00 Uhr</strong> im Pfarrsaal.
+                <strong>Mittwoch von 19:00 bis 20:00 Uhr</strong> in der
+                Waldmeisterschule.
               </p>
               <p>
                 Jeder ist herzlich willkommen, Frauen wie Männer. In den
@@ -136,7 +137,7 @@ export default function GymnastikPage() {
                     Mittwoch
                   </dt>
                   <dd className="text-right font-display text-[13px] font-bold text-nord-ink">
-                    19:00–20:00 · Pfarrsaal
+                    19:00–20:00 · Waldmeisterschule
                   </dd>
                 </div>
                 <div className="flex items-baseline justify-between gap-3 py-2 first:pt-0 last:pb-0">

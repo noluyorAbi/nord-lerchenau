@@ -55,7 +55,7 @@ const SPORTS_TREE: {
   { name: "Gymnastik" },
   { name: "Volleyball" },
   { name: "Ski" },
-  { name: "E-Sport" },
+  { name: "eSport" },
 ];
 
 const WIX_PDF = "https://www.svnord-lerchenau.de/_files/ugd/c475b1_";

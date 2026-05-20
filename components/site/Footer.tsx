@@ -32,7 +32,10 @@ const FALLBACK_COLUMNS = [
   {
     title: "Folgen",
     links: [
-      { label: "Instagram", href: "https://www.instagram.com/svnord_ski/" },
+      {
+        label: "Instagram",
+        href: "https://www.instagram.com/svnord_lerchenau/",
+      },
     ],
   },
 ];

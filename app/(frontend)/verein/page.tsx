@@ -93,7 +93,7 @@ export default function VereinPage() {
       <PageHero
         eyebrow="Der Verein"
         title="SV Nord München-Lerchenau e.V."
-        lede="Traditionsverein im Münchner Norden seit 1947. Über 500 Mitglieder in fünf Abteilungen, getragen von ehrenamtlichem Engagement."
+        lede="Traditionsverein im Münchner Norden seit 1947. Über 600 Mitglieder in fünf Abteilungen, getragen von ehrenamtlichem Engagement."
       />
 
       <section className="mx-auto max-w-7xl px-6 pt-8 pb-14 md:px-10 md:pt-12 md:pb-20">

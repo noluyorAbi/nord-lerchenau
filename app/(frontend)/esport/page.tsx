@@ -7,8 +7,8 @@ export default function Page() {
     <SportSectionPage
       sport="esport"
       eyebrow="Sport"
-      title="Esport"
-      fallbackLede="Neu beim SV Nord — Esport als Abteilung."
+      title="eSport"
+      fallbackLede="Neu beim SV Nord — eSport als Abteilung."
     />
   );
 }

@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { SectionEyebrow } from "@/components/SectionEyebrow";
+import { isOurBfvTeam, type BfvMatch } from "@/lib/bfv";
 import {
   FUPA_TEAM_SLUG,
   FUPA_TEAM_URL,
@@ -12,7 +13,7 @@ import {
   type FupaMatch,
 } from "@/lib/fupa";
 import { getPayloadClient } from "@/lib/payload";
-import { fetchWeekendMatches, type WeekendTeam } from "@/lib/weekend";
+import { fetchWeekendEntries, type WeekendTeam } from "@/lib/weekend";
 import type { Fixture, Team } from "@/payload-types";
 
 type FixtureRow = {
@@ -55,6 +56,44 @@ function payloadFixtureToRow(f: Fixture): FixtureRow {
     date: dateStr,
     venue: f.venue ?? (f.isHome ? "Eschengarten" : "auswärts"),
     featured: Boolean(f.isHome),
+  };
+}
+
+function bfvMatchToRow(
+  m: BfvMatch,
+  kickoff: Date,
+  bfvTeamId: string,
+  teamLabel?: string,
+): FixtureRow {
+  const side = isOurBfvTeam(m, bfvTeamId);
+  const isHome = side === "home";
+  const timeStr = kickoff.toLocaleTimeString("de-DE", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "Europe/Berlin",
+  });
+  const dateStr = kickoff
+    .toLocaleDateString("de-DE", {
+      weekday: "short",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      timeZone: "Europe/Berlin",
+    })
+    .replace(",", " ·");
+  const home = m.homeTeamName ?? "SV Nord";
+  const away = m.guestTeamName ?? "Gegner";
+  return {
+    comp: m.competitionName ?? "BFV",
+    md: "",
+    home,
+    away,
+    time: timeStr,
+    date: dateStr,
+    venue: isHome ? "Eschengarten" : "auswärts",
+    featured: isHome,
+    teamLabel,
   };
 }
 
@@ -120,19 +159,27 @@ export async function MatchdayBlock() {
   ]);
 
   const weekendTeams: WeekendTeam[] = (teams.docs as Team[])
-    .map((t) => {
+    .map<WeekendTeam | null>((t) => {
       const fupaSlug = resolveFupaSlug(t.fupa, now);
-      if (!fupaSlug) return null;
-      return { name: t.name, slug: t.slug, fupaSlug };
+      const bfvTeamId = t.bfv?.teamId ?? null;
+      if (!fupaSlug && !bfvTeamId) return null;
+      return {
+        name: t.name,
+        slug: t.slug,
+        fupaSlug: fupaSlug ?? null,
+        bfvTeamId,
+      };
     })
     .filter((t): t is WeekendTeam => t !== null);
 
-  const weekendMatches = await fetchWeekendMatches(weekendTeams, now);
+  const weekendEntries = await fetchWeekendEntries(weekendTeams, now);
 
   let rows: FixtureRow[];
-  if (weekendMatches.length > 0) {
-    rows = weekendMatches.map((wm) =>
-      fupaMatchToRow(wm.match, wm.team.fupaSlug, wm.team.name),
+  if (weekendEntries.length > 0) {
+    rows = weekendEntries.map((e) =>
+      e.source === "fupa"
+        ? fupaMatchToRow(e.fupa, e.team.fupaSlug ?? FUPA_TEAM_SLUG, e.team.name)
+        : bfvMatchToRow(e.bfv, e.kickoff, e.team.bfvTeamId ?? "", e.team.name),
     );
   } else if (fixtures.docs.length > 0) {
     rows = fixtures.docs.map(payloadFixtureToRow);
@@ -140,7 +187,7 @@ export async function MatchdayBlock() {
     rows = pickUpcoming(fupaUpcoming, 5).map((m) => fupaMatchToRow(m));
   }
 
-  const useWeekend = weekendMatches.length > 0;
+  const useWeekend = weekendEntries.length > 0;
   const uniqueDates = Array.from(new Set(rows.map((r) => r.date)));
   const dateHeader = useWeekend
     ? uniqueDates.length > 1

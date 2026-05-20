@@ -26,7 +26,7 @@ export function Logo({ href = "/", variant = "light" }: Props) {
             isDark ? "text-white/60" : "text-nord-muted"
           }`}
         >
-          MÜNCHEN-LERCHENAU · 1947
+          MÜNCHEN-LERCHENAU e. V. · 1947
         </span>
       </span>
     </Link>

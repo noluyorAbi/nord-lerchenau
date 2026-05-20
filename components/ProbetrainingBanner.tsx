@@ -28,7 +28,6 @@ export async function ProbetrainingBanner({ teamName }: Props) {
     phone = info.phone ?? null;
     email = info.email ?? null;
   } catch {
-    phone = "0172 2392919";
     email = "info@svnord.de";
   }
 

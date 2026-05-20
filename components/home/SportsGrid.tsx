@@ -46,18 +46,8 @@ const SPORTS: Sport[] = [
     sub: "seit",
   },
   {
-    slug: "ski",
-    name: "Ski & Snowboard",
-    href: "/ski",
-    caption: "Tagesfahrten · Kurse auf Anfrage",
-    lead: "Vom Sudelfeld bis in die Dolomiten — Skiabteilung on tour.",
-    img: "https://static.wixstatic.com/media/c475b1_0f367fff3b8c4479b017bc365d97efd7~mv2.jpg/v1/fill/w_1200,h_1500,al_c,q_90,enc_avif,quality_auto/c475b1_0f367fff3b8c4479b017bc365d97efd7~mv2.jpg",
-    count: "∞",
-    sub: "Tage",
-  },
-  {
     slug: "esport",
-    name: "Esport",
+    name: "eSport",
     href: "/esport",
     caption: "eRegionalliga · FC26",
     lead: "Zwei Teams, ein Controller — seit 2 Jahren virtuell für Nord am Ball.",
@@ -74,6 +64,16 @@ const SPORTS: Sport[] = [
     img: "https://static.wixstatic.com/media/c475b1_1ff71a66773a43b48a4035481abe6042~mv2_d_2048_1535_s_2.jpg/v1/fill/w_1200,h_1500,al_t,q_90,enc_avif,quality_auto/c475b1_1ff71a66773a43b48a4035481abe6042~mv2_d_2048_1535_s_2.jpg",
     count: "12",
     sub: "Pfeifen",
+  },
+  {
+    slug: "ski",
+    name: "Ski & Snowboard",
+    href: "/ski",
+    caption: "Tagesfahrten · Kurse auf Anfrage",
+    lead: "Vom Sudelfeld bis in die Dolomiten — Skiabteilung on tour.",
+    img: "https://static.wixstatic.com/media/c475b1_0f367fff3b8c4479b017bc365d97efd7~mv2.jpg/v1/fill/w_1200,h_1500,al_c,q_90,enc_avif,quality_auto/c475b1_0f367fff3b8c4479b017bc365d97efd7~mv2.jpg",
+    count: "∞",
+    sub: "Tage",
   },
 ];
 

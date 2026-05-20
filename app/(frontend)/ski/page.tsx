@@ -10,10 +10,8 @@ type Skilehrer = {
 };
 
 const SKILEHRER: Skilehrer[] = [
-  { name: "Bini Hafner", role: "1. Vorsitzender / Skilehrer" },
+  { name: "Korbinian Hafner", role: "1. Vorsitzender / Skilehrer" },
   { name: "Tobias Tins", role: "2. Vorsitzender / Skilehrer" },
-  { name: "Fabian Falk", role: "Skilehrer" },
-  { name: "Christoph Hafner", role: "Skilehrer" },
 ];
 
 function initials(name: string): string {

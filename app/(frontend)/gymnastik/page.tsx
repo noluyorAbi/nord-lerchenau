@@ -1,178 +1,57 @@
-import { PageHero } from "@/components/PageHero";
+import { SportSectionPage } from "@/components/SportSectionPage";
 
 export const dynamic = "force-dynamic";
 
-type Contact = {
-  name: string;
-  role: string;
-  phone?: string;
-  email?: string;
-};
-
-const CONTACTS: Contact[] = [
-  {
-    name: "Elisabeth Schillinger",
-    role: "1. Abteilungsleiterin",
-    phone: "0176 646 61 724",
-    email: "info@svnord.de",
-  },
-  {
-    name: "Tenja Hirlinger",
-    role: "Vertretung",
-    phone: "0171 856 60 64",
-  },
-];
-
-export default function GymnastikPage() {
+export default function Page() {
   return (
-    <>
-      <PageHero
-        eyebrow="Sport"
-        title="Gymnastik"
-        lede="Seit 1967 — über 50 Jahre Gymnastik beim SV Nord. Montag und Mittwoch, Frauen und Männer willkommen."
-      />
-
-      <div className="mx-auto max-w-7xl px-6 py-14 md:px-10 md:py-20">
-        <div className="grid gap-12 md:grid-cols-[1.6fr_1fr]">
-          <article>
-            <div className="mb-4 font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold">
-              Herzlich Willkommen bei der Gymnastik-Abteilung
-            </div>
-            <div className="prose prose-neutral max-w-none">
-              <p>
-                Unsere Gymnastikabteilung wurde <strong>1967</strong> gegründet
-                und ist somit schon über 50 Jahre alt.
-              </p>
-              <p>
-                Wir trainieren jeden{" "}
-                <strong>Montag von 19:00 bis 20:00 Uhr</strong> in der
-                Waldmeisterschule und jeden{" "}
-                <strong>Mittwoch von 19:00 bis 20:00 Uhr</strong> in der
-                Waldmeisterschule.
-              </p>
-              <p>
-                Jeder ist herzlich willkommen, Frauen wie Männer. In den
-                Schulferien ist kein Training.
-              </p>
-              <p>
-                Aktuell sind wir <strong>35 Mitglieder</strong> in der
-                Gymnastikgruppe. Das haben wir vor allem unserer verlässlichen
-                und kompetenten Trainerin zu verdanken.
-              </p>
-              <p>
-                Habt ihr Lust bekommen? So meldet euch gerne bei uns, wir freuen
-                uns.
-              </p>
-              <p className="italic text-nord-muted">
-                Eure SV Nord Gymnastikgruppe
-              </p>
-            </div>
-
-            <section className="mt-12">
-              <h2 className="mb-5 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
-                Unser Team der Gymnastik-Abteilung
-              </h2>
-              <div className="grid gap-4 sm:grid-cols-2">
-                {CONTACTS.map((c) => (
-                  <article
-                    key={c.name}
-                    className="rounded-2xl border border-nord-line bg-white p-6"
-                  >
-                    <div className="text-2xl font-extrabold leading-tight tracking-tight text-nord-ink md:text-[26px]">
-                      {c.name}
-                    </div>
-                    <div className="mt-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-nord-muted">
-                      {c.role}
-                    </div>
-                    <div className="mt-4 space-y-1.5 border-t border-nord-line pt-4 text-sm">
-                      {c.phone ? (
-                        <div className="flex items-center gap-2 text-nord-ink">
-                          <span className="w-12 shrink-0 font-mono text-[10px] uppercase tracking-[0.14em] text-nord-muted">
-                            Tel.
-                          </span>
-                          <a
-                            href={`tel:${c.phone.replace(/\s/g, "")}`}
-                            className="font-semibold transition hover:text-nord-navy"
-                          >
-                            {c.phone}
-                          </a>
-                        </div>
-                      ) : null}
-                      {c.email ? (
-                        <div className="flex items-center gap-2 text-nord-ink">
-                          <span className="w-12 shrink-0 font-mono text-[10px] uppercase tracking-[0.14em] text-nord-muted">
-                            Mail
-                          </span>
-                          <a
-                            href={`mailto:${c.email}`}
-                            className="truncate font-semibold transition hover:text-nord-navy"
-                          >
-                            {c.email}
-                          </a>
-                        </div>
-                      ) : null}
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </section>
-          </article>
-
-          <aside className="space-y-5 md:sticky md:top-24 md:h-fit md:self-start">
-            <div className="rounded-2xl border border-nord-line bg-white p-6">
-              <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold">
-                Trainingszeiten
-              </div>
-              <dl className="mt-3 divide-y divide-nord-line/70 text-sm">
-                <div className="flex items-baseline justify-between gap-3 py-2 first:pt-0 last:pb-0">
-                  <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-nord-muted">
-                    Montag
-                  </dt>
-                  <dd className="text-right font-display text-[13px] font-bold text-nord-ink">
-                    19:00–20:00 · Waldmeisterschule
-                  </dd>
-                </div>
-                <div className="flex items-baseline justify-between gap-3 py-2 first:pt-0 last:pb-0">
-                  <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-nord-muted">
-                    Mittwoch
-                  </dt>
-                  <dd className="text-right font-display text-[13px] font-bold text-nord-ink">
-                    19:00–20:00 · Waldmeisterschule
-                  </dd>
-                </div>
-                <div className="flex items-baseline justify-between gap-3 py-2 first:pt-0 last:pb-0">
-                  <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-nord-muted">
-                    Ferien
-                  </dt>
-                  <dd className="text-right font-display text-[13px] font-bold text-nord-ink">
-                    Kein Training
-                  </dd>
-                </div>
-              </dl>
-            </div>
-
-            <div className="rounded-2xl bg-nord-ink p-6 text-white">
-              <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold">
-                Auf einen Blick
-              </div>
-              <dl className="mt-3 space-y-2 text-sm">
-                <div className="flex items-baseline justify-between gap-3">
-                  <dt className="text-white/70">Gegründet</dt>
-                  <dd className="font-display font-bold">1967</dd>
-                </div>
-                <div className="flex items-baseline justify-between gap-3">
-                  <dt className="text-white/70">Mitglieder</dt>
-                  <dd className="font-display font-bold">35</dd>
-                </div>
-                <div className="flex items-baseline justify-between gap-3">
-                  <dt className="text-white/70">Offen für</dt>
-                  <dd className="font-display font-bold">Alle</dd>
-                </div>
-              </dl>
-            </div>
-          </aside>
-        </div>
-      </div>
-    </>
+    <SportSectionPage
+      sport="gymnastik"
+      eyebrow="Sport"
+      title="Gymnastik"
+      fallbackLede="Seit 1967 in Bewegung — Montag und Mittwoch, Frauen wie Männer, jedes Alter willkommen."
+      intro="Über 50 Jahre Gymnastik beim SV Nord. Zweimal pro Woche treffen wir uns in der Waldmeisterschule für Mobilität, Kraft und Ausgleich. Ein 35-köpfiger Stamm, lockerer Ton, fundiertes Training — Einsteiger:innen sind ausdrücklich willkommen."
+      pills={["Seit 1967", "35 Aktive", "Mo & Mi 19:00", "Waldmeisterschule"]}
+      stats={[
+        { label: "Gegründet", value: "1967" },
+        { label: "Mitglieder", value: "35" },
+        { label: "Training", value: "Mo + Mi · 19–20 Uhr" },
+        { label: "Halle", value: "Waldmeisterschule" },
+        { label: "Offen für", value: "alle Erwachsenen" },
+      ]}
+      highlights={[
+        {
+          eyebrow: "Training",
+          title: "Zweimal pro Woche",
+          body: "Montag und Mittwoch je 19:00–20:00 Uhr in der Waldmeisterschule. In den Schulferien pausieren wir — sonst läuft die Stunde verlässlich, das ganze Jahr.",
+          accent: "navy",
+        },
+        {
+          eyebrow: "Trainerteam",
+          title: "Kompetent & verlässlich",
+          body: "Unser Stamm von 35 Aktiven lebt von einer verlässlichen, fachlich starken Trainerin. Frauen und Männer trainieren gemeinsam — Spaß und Gemeinschaft inklusive.",
+          accent: "sky",
+        },
+      ]}
+      cta={{
+        title: "Komm vorbei — die erste Stunde ist gratis.",
+        body: "Schreib uns kurz, dann sagen wir dir, wann der nächste Termin ist. Sportschuhe und Lust auf Bewegung reichen.",
+        mailSubject: "Gymnastik — Probetraining",
+        primaryLabel: "Probetraining anfragen",
+      }}
+      hideTrainers
+      staticContacts={[
+        {
+          name: "Elisabeth Schillinger",
+          role: "1. Abteilungsleiterin",
+          phone: "0176 646 61 724",
+          email: "info@svnord.de",
+        },
+        {
+          name: "Tenja Hirlinger",
+          role: "Vertretung",
+          phone: "0171 856 60 64",
+        },
+      ]}
+    />
   );
 }

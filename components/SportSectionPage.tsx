@@ -12,6 +12,7 @@ export type StaticContact = {
   name: string;
   role?: string;
   email?: string;
+  phone?: string;
 };
 
 export type SportStat = { label: string; value: string };
@@ -305,14 +306,24 @@ export async function SportSectionPage({
                           {c.role}
                         </div>
                       ) : null}
-                      {c.email ? (
-                        <a
-                          href={`mailto:${c.email}`}
-                          className="mt-3 inline-block text-xs font-semibold text-nord-muted transition hover:text-nord-navy"
-                        >
-                          {c.email}
-                        </a>
-                      ) : null}
+                      <div className="mt-3 space-y-1 text-xs">
+                        {c.phone ? (
+                          <a
+                            href={`tel:${c.phone.replace(/\s/g, "")}`}
+                            className="block font-semibold text-nord-muted transition hover:text-nord-navy"
+                          >
+                            ☎ {c.phone}
+                          </a>
+                        ) : null}
+                        {c.email ? (
+                          <a
+                            href={`mailto:${c.email}`}
+                            className="block font-semibold text-nord-muted transition hover:text-nord-navy"
+                          >
+                            ✉ {c.email}
+                          </a>
+                        ) : null}
+                      </div>
                     </article>
                   ))}
                 </div>

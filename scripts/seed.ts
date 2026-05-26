@@ -1073,7 +1073,10 @@ async function main() {
       tagline: "Einmal Nordler, immer Nordler.",
       description: "Traditionsverein im Münchner Norden seit 1947.",
       social: [
-        { platform: "instagram", url: "https://www.instagram.com/svnord_ski/" },
+        {
+          platform: "instagram",
+          url: "https://www.instagram.com/svnord_lerchenau/",
+        },
       ],
     } as never,
   });

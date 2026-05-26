@@ -6,12 +6,20 @@ import { formatKickoff, formatShortDate } from "@/lib/format-date";
 import {
   FUPA_TEAM_SLUG,
   fupaImage,
+  fupaMatchUrl,
   getFupaStanding,
   getFupaUpcoming,
   isOurTeam,
   pickNext,
+  resolveFupaSlug,
 } from "@/lib/fupa";
-import type { HomePage } from "@/payload-types";
+import { getPayloadClient } from "@/lib/payload";
+import {
+  fetchUpcomingAcrossTeams,
+  type WeekendFupaEntry,
+  type WeekendTeam,
+} from "@/lib/weekend";
+import type { HomePage, Team } from "@/payload-types";
 
 type Props = { hero: HomePage["hero"] };
 
@@ -22,12 +30,56 @@ export async function Hero({ hero }: Props) {
     getFupaUpcoming(),
     getFupaStanding(),
   ]);
-  const nextMatch = pickNext(upcoming);
+  const herrenMatch = pickNext(upcoming);
   const ourRank = standings?.standings.find((r) =>
     isOurTeam(r.team, FUPA_TEAM_SLUG),
   )?.rank;
 
-  const isHome = nextMatch ? isOurTeam(nextMatch.homeTeam) : false;
+  // Fallback: keine 1.-Herren-Partie → nächste Partie einer anderen
+  // Mannschaft (Jugend, 2. Herren etc.) in den kommenden 60 Tagen.
+  let fallbackEntry: WeekendFupaEntry | null = null;
+  if (!herrenMatch) {
+    try {
+      const payload = await getPayloadClient();
+      const now = new Date();
+      const teamsRes = await payload.find({
+        collection: "teams",
+        where: { sport: { equals: "fussball" } },
+        sort: "order",
+        limit: 100,
+        depth: 0,
+      });
+      const teams: WeekendTeam[] = (teamsRes.docs as Team[])
+        .map<WeekendTeam | null>((t) => {
+          const fupaSlug = resolveFupaSlug(t.fupa, now);
+          if (!fupaSlug || fupaSlug === FUPA_TEAM_SLUG) return null;
+          return {
+            name: t.name,
+            slug: t.slug,
+            fupaSlug,
+            bfvTeamId: t.bfv?.teamId ?? null,
+          };
+        })
+        .filter((t): t is WeekendTeam => t !== null);
+      if (teams.length > 0) {
+        const entries = await fetchUpcomingAcrossTeams(teams, now, 60);
+        fallbackEntry =
+          entries.find((e): e is WeekendFupaEntry => e.source === "fupa") ??
+          null;
+      }
+    } catch {
+      fallbackEntry = null;
+    }
+  }
+
+  const usingFallback = !herrenMatch && Boolean(fallbackEntry);
+  const nextMatch = herrenMatch ?? fallbackEntry?.fupa ?? null;
+  const matchSlug = usingFallback
+    ? (fallbackEntry?.team.fupaSlug ?? FUPA_TEAM_SLUG)
+    : FUPA_TEAM_SLUG;
+  const teamLabel = usingFallback ? (fallbackEntry?.team.name ?? null) : null;
+
+  const isHome = nextMatch ? isOurTeam(nextMatch.homeTeam, matchSlug) : false;
   const opponent = nextMatch
     ? isHome
       ? nextMatch.awayTeam
@@ -49,10 +101,12 @@ export async function Hero({ hero }: Props) {
   const compLabel =
     nextMatch?.competition?.shortName ??
     nextMatch?.competition?.middleName ??
-    "Bezirksliga";
+    (usingFallback ? "Jugend-Liga" : "Bezirksliga");
   const matchDayBadge = kickoffDate ? formatKickoff(kickoffDate) : "";
   const matchDateLine = kickoffDate
-    ? `${formatShortDate(kickoffDate)} · ${venueLabel}`
+    ? usingFallback && teamLabel
+      ? `${teamLabel} · ${formatShortDate(kickoffDate)} · ${venueLabel}`
+      : `${formatShortDate(kickoffDate)} · ${venueLabel}`
     : "Noch kein Spiel geplant";
 
   const line1 = hero?.headlineLine1 ?? "Einmal Nordler,";
@@ -91,9 +145,11 @@ export async function Hero({ hero }: Props) {
                     className="size-1.5 rounded-full bg-nord-red"
                     style={{ animation: "live-pulse 1.8s infinite" }}
                   />
-                  {isHome
-                    ? "Heimspieltag · Eschengarten"
-                    : "Auswärts · Ligaspiel"}
+                  {usingFallback
+                    ? `Herren spielfrei · ${teamLabel ?? "Jugend"} am Ball`
+                    : isHome
+                      ? "Heimspieltag · Eschengarten"
+                      : "Auswärts · Ligaspiel"}
                 </span>
                 {matchDayBadge ? (
                   <span className="font-mono text-[11px] text-white/60">
@@ -172,6 +228,7 @@ export async function Hero({ hero }: Props) {
           kickoffTime={kickoffTime}
           compLabel={compLabel}
           matchDateLine={matchDateLine}
+          matchUrl={fupaMatchUrl(nextMatch?.slug)}
         />
       </div>
     </section>

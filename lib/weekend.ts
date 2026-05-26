@@ -1,8 +1,4 @@
-import {
-  fetchBfvMatches,
-  parseBfvKickoff,
-  type BfvMatch,
-} from "@/lib/bfv";
+import { fetchBfvMatches, parseBfvKickoff, type BfvMatch } from "@/lib/bfv";
 import { getFupaUpcoming, type FupaMatch } from "@/lib/fupa";
 
 export type WeekendTeam = {
@@ -29,42 +25,35 @@ export type WeekendBfvEntry = {
 export type WeekendEntry = WeekendFupaEntry | WeekendBfvEntry;
 
 /**
- * Fri/Sat/Sun window covering "this weekend" if we are already in it,
- * otherwise the next upcoming Fri–Sun block.
+ * "Wochenendplan"-Fenster: ab heute bis zum Sonntag (inkl.) des
+ * kommenden Wochenendes. So tauchen auch Werktags-Spiele der Jugend
+ * (Mo–Fr) in der laufenden Woche im Plan auf.
  */
 export function getUpcomingWeekendWindow(now: Date = new Date()): {
   start: Date;
   end: Date;
 } {
-  const day = now.getDay();
+  const day = now.getDay(); // 0 = Sonntag, 6 = Samstag
   const start = new Date(now);
+  start.setHours(0, 0, 0, 0);
   const end = new Date(now);
-  if (day === 0) {
-    start.setHours(0, 0, 0, 0);
-    end.setHours(23, 59, 59, 999);
-  } else if (day === 5 || day === 6) {
-    const daysToSun = 7 - day;
-    start.setHours(0, 0, 0, 0);
-    end.setDate(end.getDate() + daysToSun);
-    end.setHours(23, 59, 59, 999);
-  } else {
-    const daysToFri = 5 - day;
-    start.setDate(start.getDate() + daysToFri);
-    start.setHours(0, 0, 0, 0);
-    end.setDate(end.getDate() + daysToFri + 2);
-    end.setHours(23, 59, 59, 999);
-  }
+  const daysToSun = (7 - day) % 7; // bis zum nächsten Sonntag
+  end.setDate(end.getDate() + daysToSun);
+  end.setHours(23, 59, 59, 999);
   return { start, end };
 }
 
-export async function fetchWeekendEntries(
-  teams: WeekendTeam[],
-  now: Date = new Date(),
-): Promise<WeekendEntry[]> {
-  const { start, end } = getUpcomingWeekendWindow(now);
-  const startMs = start.getTime();
-  const endMs = end.getTime();
+// "SPIELFREI" = spielfreies Wochenende, kein echtes Spiel. BFV listet diese
+// Einträge dennoch in /matches — wir filtern sie überall raus.
+function isSpielfrei(name: string | null | undefined): boolean {
+  return /^\s*spielfrei\s*$/i.test(name ?? "");
+}
 
+async function fetchEntriesInWindow(
+  teams: WeekendTeam[],
+  startMs: number,
+  endMs: number,
+): Promise<WeekendEntry[]> {
   const results = await Promise.all(
     teams.map(async (team): Promise<WeekendEntry[]> => {
       const out: WeekendEntry[] = [];
@@ -75,11 +64,20 @@ export async function fetchWeekendEntries(
           for (const m of matches) {
             const d = new Date(m.kickoff);
             const ts = d.getTime();
-            if (ts >= startMs && ts <= endMs) {
-              const key = `${ts}:${m.homeTeam?.name?.short ?? ""}:${m.awayTeam?.name?.short ?? ""}`;
-              seen.add(key);
-              out.push({ source: "fupa", kickoff: d, fupa: m, team });
+            if (ts < startMs || ts > endMs) continue;
+            if (
+              isSpielfrei(m.homeTeam?.name?.full) ||
+              isSpielfrei(m.homeTeam?.name?.middle) ||
+              isSpielfrei(m.homeTeam?.name?.short) ||
+              isSpielfrei(m.awayTeam?.name?.full) ||
+              isSpielfrei(m.awayTeam?.name?.middle) ||
+              isSpielfrei(m.awayTeam?.name?.short)
+            ) {
+              continue;
             }
+            const key = `${ts}:${m.homeTeam?.name?.short ?? ""}:${m.awayTeam?.name?.short ?? ""}`;
+            seen.add(key);
+            out.push({ source: "fupa", kickoff: d, fupa: m, team });
           }
         }
       }
@@ -92,6 +90,9 @@ export async function fetchWeekendEntries(
             const ts = d.getTime();
             if (ts < startMs || ts > endMs) continue;
             if (m.result && m.result !== "-:-" && m.result.trim() !== "") {
+              continue;
+            }
+            if (isSpielfrei(m.homeTeamName) || isSpielfrei(m.guestTeamName)) {
               continue;
             }
             const key = `${ts}:${m.homeTeamName ?? ""}:${m.guestTeamName ?? ""}`;
@@ -107,6 +108,29 @@ export async function fetchWeekendEntries(
   return results
     .flat()
     .sort((a, b) => a.kickoff.getTime() - b.kickoff.getTime());
+}
+
+export async function fetchWeekendEntries(
+  teams: WeekendTeam[],
+  now: Date = new Date(),
+): Promise<WeekendEntry[]> {
+  const { start, end } = getUpcomingWeekendWindow(now);
+  return fetchEntriesInWindow(teams, start.getTime(), end.getTime());
+}
+
+/**
+ * Fetch upcoming matches across many teams over a rolling window
+ * (default: next 60 days). Used for cross-team fallback (e.g. when
+ * the 1. Herren has nothing scheduled this weekend).
+ */
+export async function fetchUpcomingAcrossTeams(
+  teams: WeekendTeam[],
+  now: Date = new Date(),
+  daysAhead: number = 60,
+): Promise<WeekendEntry[]> {
+  const startMs = now.getTime();
+  const endMs = startMs + daysAhead * 24 * 60 * 60 * 1000;
+  return fetchEntriesInWindow(teams, startMs, endMs);
 }
 
 // Legacy fupa-only entry helper kept for backwards-compatibility with the

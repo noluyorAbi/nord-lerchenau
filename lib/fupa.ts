@@ -7,6 +7,11 @@ export function fupaTeamUrl(slug: string): string {
   return `https://www.fupa.net/team/${slug}`;
 }
 
+export function fupaMatchUrl(slug: string | null | undefined): string | null {
+  if (!slug) return null;
+  return `https://www.fupa.net/match/${slug}`;
+}
+
 const API = "https://api.fupa.net/v1";
 const STREAM = "https://stream.fupa.net/v1";
 const REVALIDATE = 1800; // 30 min
@@ -511,6 +516,20 @@ export function matchForm(
   return "D";
 }
 
+// "SPIELFREI" markiert ein spielfreies Wochenende — kein echtes Spiel.
+function isSpielfreiTeam(t: FupaMatch["homeTeam"]): boolean {
+  const re = /^\s*spielfrei\s*$/i;
+  return (
+    re.test(t?.name?.full ?? "") ||
+    re.test(t?.name?.middle ?? "") ||
+    re.test(t?.name?.short ?? "")
+  );
+}
+
+export function isSpielfreiMatch(m: FupaMatch): boolean {
+  return isSpielfreiTeam(m.homeTeam) || isSpielfreiTeam(m.awayTeam);
+}
+
 export function pickNext(
   matches: FupaMatch[] | null | undefined,
 ): FupaMatch | null {
@@ -518,6 +537,7 @@ export function pickNext(
   const now = Date.now();
   const future = matches
     .filter((m) => new Date(m.kickoff).getTime() >= now)
+    .filter((m) => !isSpielfreiMatch(m))
     .sort((a, b) => +new Date(a.kickoff) - +new Date(b.kickoff));
   return future[0] ?? null;
 }
@@ -541,6 +561,7 @@ export function pickUpcoming(
   const now = Date.now();
   return [...matches]
     .filter((m) => new Date(m.kickoff).getTime() >= now)
+    .filter((m) => !isSpielfreiMatch(m))
     .sort((a, b) => +new Date(a.kickoff) - +new Date(b.kickoff))
     .slice(0, n);
 }

@@ -11,6 +11,13 @@ const VORSTAND_NAMES = [
   "Fabian Falk",
 ];
 
+// Ski-Abteilung: per Vereinsangabe nur Korbinian (alias "Bini") Hafner und
+// Tobias Tins öffentlich auf der Vorstand-Seite anzeigen.
+const SKI_ALLOWED = new Set(["Bini Hafner", "Korbinian Hafner", "Tobias Tins"]);
+
+// Gymnastik: Simone Roth wurde vom Verein abgemeldet.
+const GYMNASTIK_BLOCKED = new Set(["Simone Roth"]);
+
 const SPORT_GROUPS: Array<{
   id: string;
   label: string;
@@ -97,10 +104,16 @@ export default async function VorstandPage() {
     (p) => p.function === "jugendleitung",
   );
 
-  const sportSubgroups = SPORT_GROUPS.map((group) => ({
-    ...group,
-    people: sportleitung.filter((p) => group.match(p.role ?? "")),
-  })).filter((g) => g.people.length > 0);
+  const sportSubgroups = SPORT_GROUPS.map((group) => {
+    let people = sportleitung.filter((p) => group.match(p.role ?? ""));
+    if (group.id === "ski") {
+      people = people.filter((p) => SKI_ALLOWED.has(p.name));
+    }
+    if (group.id === "gymnastik") {
+      people = people.filter((p) => !GYMNASTIK_BLOCKED.has(p.name));
+    }
+    return { ...group, people };
+  }).filter((g) => g.people.length > 0);
 
   const ungrouped = sportleitung.filter(
     (p) => !SPORT_GROUPS.some((g) => g.match(p.role ?? "")),

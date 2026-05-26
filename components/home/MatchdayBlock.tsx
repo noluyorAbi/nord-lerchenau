@@ -13,7 +13,11 @@ import {
   type FupaMatch,
 } from "@/lib/fupa";
 import { getPayloadClient } from "@/lib/payload";
-import { fetchWeekendEntries, type WeekendTeam } from "@/lib/weekend";
+import {
+  fetchUpcomingAcrossTeams,
+  fetchWeekendEntries,
+  type WeekendTeam,
+} from "@/lib/weekend";
 import type { Fixture, Team } from "@/payload-types";
 
 type FixtureRow = {
@@ -172,11 +176,26 @@ export async function MatchdayBlock() {
     })
     .filter((t): t is WeekendTeam => t !== null);
 
-  const weekendEntries = await fetchWeekendEntries(weekendTeams, now);
+  let entries = await fetchWeekendEntries(weekendTeams, now);
+  let mode: "weekend" | "extended" = "weekend";
+
+  // Wenn das Wochenend-Fenster kein Jugend-Spiel hergibt (Pfingsten,
+  // Saisonpause etc.), auf 14 Tage erweitern damit Jugend trotzdem sichtbar.
+  const hasYouth = entries.some((e) => {
+    const t = (teams.docs as Team[]).find((x) => x.slug === e.team.slug);
+    return t?.category === "junioren" || t?.category === "juniorinnen";
+  });
+  if (!hasYouth) {
+    const extended = await fetchUpcomingAcrossTeams(weekendTeams, now, 14);
+    if (extended.length > entries.length) {
+      entries = extended.slice(0, 12);
+      mode = "extended";
+    }
+  }
 
   let rows: FixtureRow[];
-  if (weekendEntries.length > 0) {
-    rows = weekendEntries.map((e) =>
+  if (entries.length > 0) {
+    rows = entries.map((e) =>
       e.source === "fupa"
         ? fupaMatchToRow(e.fupa, e.team.fupaSlug ?? FUPA_TEAM_SLUG, e.team.name)
         : bfvMatchToRow(e.bfv, e.kickoff, e.team.bfvTeamId ?? "", e.team.name),
@@ -187,7 +206,8 @@ export async function MatchdayBlock() {
     rows = pickUpcoming(fupaUpcoming, 5).map((m) => fupaMatchToRow(m));
   }
 
-  const useWeekend = weekendEntries.length > 0;
+  const useWeekend = entries.length > 0;
+  const isExtended = mode === "extended";
   const uniqueDates = Array.from(new Set(rows.map((r) => r.date)));
   const dateHeader = useWeekend
     ? uniqueDates.length > 1
@@ -208,7 +228,7 @@ export async function MatchdayBlock() {
               className="mt-3 font-display font-black leading-[0.95] text-nord-ink"
               style={{ fontSize: "clamp(40px, 5vw, 72px)" }}
             >
-              Wochenendplan.
+              {isExtended ? "Nächste Spiele." : "Wochenendplan."}
             </h2>
           </div>
           <Link
@@ -224,7 +244,12 @@ export async function MatchdayBlock() {
             <div className="overflow-hidden rounded-2xl border border-nord-line bg-nord-paper-2">
               <div className="flex items-center justify-between bg-nord-navy px-5 py-3.5 font-mono text-xs uppercase tracking-[0.18em] text-white">
                 <span>
-                  {useWeekend ? "Wochenendplan" : "Spielplan"} · {dateHeader}
+                  {isExtended
+                    ? "Nächste Spiele"
+                    : useWeekend
+                      ? "Wochenendplan"
+                      : "Spielplan"}{" "}
+                  · {dateHeader}
                 </span>
                 <span className="text-nord-gold">
                   {useWeekend ? `${rows.length} Spiele` : "Eschengarten"}
@@ -346,7 +371,7 @@ export async function MatchdayBlock() {
                         {r.team.name.middle}
                         {us ? (
                           <span className="ml-2 text-[10px] tracking-[0.18em] text-nord-gold">
-                            UNS
+                            WIR
                           </span>
                         ) : null}
                       </span>

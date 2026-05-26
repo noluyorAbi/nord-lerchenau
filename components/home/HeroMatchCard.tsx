@@ -14,6 +14,7 @@ type Props = {
   kickoffTime: string;
   compLabel: string;
   matchDateLine: string;
+  matchUrl?: string | null;
 };
 
 const TILT_MAX_X = 14;
@@ -27,6 +28,7 @@ export function HeroMatchCard({
   kickoffTime,
   compLabel,
   matchDateLine,
+  matchUrl,
 }: Props) {
   const cardRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
@@ -237,13 +239,25 @@ export function HeroMatchCard({
                     {kickoffTime}
                   </div>
                 </div>
-                <Link
-                  href="/fussball"
-                  style={{ transform: "translateZ(25px)" }}
-                  className="inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-2.5 font-display text-[11px] font-semibold uppercase tracking-[0.04em] text-nord-navy transition hover:-translate-y-px hover:bg-nord-gold hover:shadow-[0_10px_24px_rgba(200,169,106,0.4)]"
-                >
-                  Spielinfo →
-                </Link>
+                {matchUrl ? (
+                  <a
+                    href={matchUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ transform: "translateZ(25px)" }}
+                    className="inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-2.5 font-display text-[11px] font-semibold uppercase tracking-[0.04em] text-nord-navy transition hover:-translate-y-px hover:bg-nord-gold hover:shadow-[0_10px_24px_rgba(200,169,106,0.4)]"
+                  >
+                    Spielinfo ↗
+                  </a>
+                ) : (
+                  <Link
+                    href="/fussball"
+                    style={{ transform: "translateZ(25px)" }}
+                    className="inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-2.5 font-display text-[11px] font-semibold uppercase tracking-[0.04em] text-nord-navy transition hover:-translate-y-px hover:bg-nord-gold hover:shadow-[0_10px_24px_rgba(200,169,106,0.4)]"
+                  >
+                    Spielinfo →
+                  </Link>
+                )}
               </div>
             </>
           ) : (

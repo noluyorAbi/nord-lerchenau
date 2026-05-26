@@ -1627,10 +1627,6 @@ Habt ihr Lust bekommen? Meldet euch gerne bei uns — wir freuen uns!
         name: "Dr. Nicole Abbrederis",
         role: "Trainerin Gymnastik",
       },
-      {
-        name: "Simone Roth",
-        role: "Trainerin Gymnastik",
-      },
     ],
   });
   await ensureTeamPhoto(payload, {
@@ -1676,16 +1672,6 @@ Wir freuen uns auf Dich. *Eure SV Nord Ski-Crew.*`,
     trainers: [
       { name: "Bini Hafner", role: "1. Vorsitzender · Skilehrer" },
       { name: "Tobias Tins", role: "2. Vorsitzender · Skilehrer" },
-      { name: "Theresa Hafner", role: "Schriftführerin · Skilehrerin" },
-      { name: "Melina Stenger", role: "Schriftführerin · Skilehrerin" },
-      { name: "Fabian Falk", role: "Skilehrer" },
-      { name: "Christoph Hafner", role: "Skilehrer" },
-      { name: "David Wünsch", role: "Skilehrer" },
-      { name: "Elias Lilli", role: "Skilehrer" },
-      { name: "Franzi Wagner", role: "Skilehrerin" },
-      { name: "Jonas Lilli", role: "Skilehrer" },
-      { name: "Laura Wünsch", role: "Skilehrerin" },
-      { name: "Luisa Seidl", role: "Skilehrerin" },
     ],
   });
   await ensureTeamPhoto(payload, {

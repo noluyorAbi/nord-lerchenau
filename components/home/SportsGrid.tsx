@@ -85,7 +85,7 @@ const SPORTS: Sport[] = [
     body: "Aktive Unparteiische im BFV-Spielbetrieb — von der Kreisklasse bis zur Bezirksliga. 12 Nordler in Schwarz, und wir suchen Verstärkung.",
     pills: ["BFV-Lizenz", "Ehrenamt", "Nachwuchs"],
     count: "12",
-    sub: "Pfeifen",
+    sub: "Aktive",
     theme: "schiri",
   },
   {

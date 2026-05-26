@@ -8,8 +8,8 @@ export default function Page() {
       sport="schiedsrichter"
       eyebrow="Spielbetrieb"
       title="Schiedsrichter"
-      fallbackLede="Ohne Schiri kein Spiel — zwölf Nordler:innen leiten aktiv im BFV-Spielbetrieb."
-      intro="Schiedsrichter:in beim SV Nord ist mehr als Wochenenddienst. Ihr seid Botschafter:innen des Vereins, sorgt für faire Spiele und gebt dem Spielbetrieb Struktur. Wir stellen aktive Unparteiische von der Kreisklasse bis zur Bezirksliga."
+      fallbackLede="Ohne Schiri kein Spiel — zwölf Nordler pfeifen aktiv im BFV-Spielbetrieb."
+      intro="Schiedsrichter:in beim SV Nord ist mehr als Wochenende pfeifen. Ihr seid Botschafter:innen des Vereins, sorgt für faire Spiele und gebt dem Spielbetrieb Struktur. Wir stellen aktive Unparteiische von der Kreisklasse bis zur Bezirksliga."
       pills={[
         "BFV-Lizenz",
         "Ehrenamt",

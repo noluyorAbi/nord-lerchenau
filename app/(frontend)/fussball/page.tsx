@@ -222,9 +222,8 @@ export default async function FussballPage() {
                   Schiedsrichter
                 </h3>
                 <p className="mt-3 max-w-prose text-sm leading-relaxed text-nord-muted">
-                  Unsere Schiedsrichter:innen leiten aktiv Partien im
-                  BFV-Spielbetrieb und sorgen für faire Bedingungen auf den
-                  Plätzen.
+                  Unsere Schiedsrichter pfeifen aktiv im BFV-Spielbetrieb und
+                  sorgen für faire Bedingungen auf den Plätzen.
                 </p>
               </div>
               <div className="relative mt-6 flex items-end justify-end gap-3">

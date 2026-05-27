@@ -49,8 +49,11 @@ export const ContactInfo: GlobalConfig = {
     {
       name: "phone",
       type: "text",
-      defaultValue: "0172 2392919",
       label: "Haupt-Telefonnummer",
+      admin: {
+        description:
+          "Optional. Wird auf /kontakt angezeigt, wenn gesetzt. Leer lassen, wenn keine zentrale Nummer veröffentlicht werden soll.",
+      },
     },
     {
       name: "email",

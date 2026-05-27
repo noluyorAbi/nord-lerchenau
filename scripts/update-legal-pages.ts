@@ -245,7 +245,6 @@ Verantwortlicher im Sinne der Datenschutz-Grundverordnung (DSGVO) und anderer na
 **SV Nord München-Lerchenau e.V.**
 Ebereschenstraße 17, 80935 München, Deutschland
 
-- **Telefon:** 0172 2392919
 - **E-Mail:** [info@svnord.de](mailto:info@svnord.de)
 
 Vertreten durch den 1. Vorstand Ralf Kirmeyer. Eingetragen im Vereinsregister beim Amtsgericht München unter VR 6924.

@@ -111,6 +111,26 @@ export default async function TerminePage() {
     items.push(item);
   }
 
+  // Static fallback events — surface high-priority Vereinstermine
+  // even before they are pflegt in the Admin.
+  const STATIC_EVENTS: EventDTO[] = [
+    {
+      kind: "event",
+      at: "2026-07-24T16:30:00+02:00",
+      id: "static-sommerfest-2026",
+      title: "SV Nord-Sommerfest 2026 (Fr./Sa. 24./25.07.)",
+      location: "BSA Ebereschenstraße · Eschengarten",
+      description:
+        "Freitag ab 16:30 Kiga-Turnier, U19/U17/U15W-Turniere und Senioren A-Spiel. Samstag ab 08:30 Vormittags-, Mittags- und Nachmittagsturniere aller Jugendmannschaften, Spiele Zweite/Dritte, 17:30 Erste Mannschaft. Ab 18:30 gemeinsam im Eschengarten. Einmal Nordler – immer Nordler.",
+    },
+  ];
+  for (const e of STATIC_EVENTS) {
+    const d = new Date(e.at);
+    if (Number.isNaN(d.getTime()) || d.getTime() < now) continue;
+    if (items.some((it) => it.kind === "event" && it.id === e.id)) continue;
+    items.push(e);
+  }
+
   items.sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime());
 
   const teamOptions = [...teamCounts.values()].sort((a, b) =>

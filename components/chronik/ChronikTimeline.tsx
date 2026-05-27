@@ -51,9 +51,9 @@ const CHAPTERS: Array<{
   },
   {
     id: "VII",
-    era: "2004–2015",
-    title: "Stadtangebote und Rückschläge",
-    match: (y) => y >= 2004 && y <= 2015,
+    era: "2004–heute",
+    title: "Stadtangebote, Rückschläge & Moderne",
+    match: (y) => y >= 2004,
   },
 ];
 
@@ -303,6 +303,65 @@ const ENTRIES: Entry[] = [
     body: "Folge der Auflösung von Handball und Ski.",
     tag: "loss",
   },
+  {
+    year: 2016,
+    title: "Wiedereingliederung der Skiabteilung",
+    body: "Skiabteilung kehrt zurück in den Hauptverein.",
+    tag: "section",
+  },
+  {
+    year: 2017,
+    title: "70-Jahrfeier SV Nord",
+    tag: "milestone",
+  },
+  {
+    year: 2021,
+    title: "(Wieder-)Gründung Ü32",
+    body: "Start mit Teilnahme an Coronameisterschaft, anschließend 3 Aufstiege in 4 Jahren (2022, 2024, 2025).",
+    tag: "team",
+  },
+  {
+    year: 2022,
+    title: "Modernisierung BSA Ebereschenstraße",
+    body: "Sanierung der Bezirkssportanlage 2019–2023.",
+    tag: "build",
+  },
+  {
+    year: 2022,
+    title: "75-Jahrfeier SV Nord",
+    body: "07.07.–10.07.2022.",
+    tag: "milestone",
+  },
+  {
+    year: 2024,
+    title: "Verstärkter Einsatz Videoanalyse",
+    body: "Systematische Videoanalyse im Jugend- und Herrenbereich.",
+    tag: "leadership",
+  },
+  {
+    year: 2025,
+    title: "Eigener Fanshop im Internet",
+    body: "Erstmals eigener Online-Vereinsshop in Vereinsfarben.",
+    tag: "leadership",
+  },
+  {
+    year: 2026,
+    title: "Bezirksligameisterschaft & Aufstieg in die Landesliga",
+    body: "Saison 2025/26 — erstmaliger Aufstieg in die Landesliga.",
+    tag: "team",
+  },
+  {
+    year: 2026,
+    title: "Ü32 in der Bezirksoberliga",
+    body: "Antritt in der höchsten Spielklasse.",
+    tag: "team",
+  },
+  {
+    year: 2026,
+    title: "Starker Ausbau Juniorinnen-Bereich",
+    body: "Systematischer Auf- und Ausbau des Mädchen-/Juniorinnenbereichs.",
+    tag: "section",
+  },
 ];
 
 const FILTERS: Array<{ id: Entry["tag"] | "all"; label: string }> = [
@@ -370,10 +429,23 @@ export function ChronikTimeline() {
       if (!map.has(c)) map.set(c, []);
       map.get(c)!.push(e);
     }
-    return CHAPTERS.filter((c) => map.has(c.id)).map((c) => ({
-      ...c,
-      items: map.get(c.id)!,
-    }));
+    // Sort each chapter's items newest first by year, then by date (desc).
+    const dateKey = (e: Entry) => {
+      if (!e.date) return e.year * 10000;
+      const m = e.date.match(/^(\d{2})\.(\d{2})\.?/);
+      if (!m) return e.year * 10000;
+      const day = Number(m[1]);
+      const month = Number(m[2]);
+      return e.year * 10000 + month * 100 + day;
+    };
+    for (const [, items] of map) {
+      items.sort((a, b) => dateKey(b) - dateKey(a));
+    }
+    // Render chapters newest first (reverse of declaration order).
+    return [...CHAPTERS]
+      .reverse()
+      .filter((c) => map.has(c.id))
+      .map((c) => ({ ...c, items: map.get(c.id)! }));
   }, [filtered]);
 
   return (

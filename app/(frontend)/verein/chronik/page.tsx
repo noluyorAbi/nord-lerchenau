@@ -1,13 +1,16 @@
 import Link from "next/link";
 
+import { ChronikEhrentafel } from "@/components/chronik/ChronikEhrentafel";
 import { ChronikNarrative } from "@/components/chronik/ChronikNarrative";
 import { ChronikTimeline } from "@/components/chronik/ChronikTimeline";
+import { ChronikVorstandschaften } from "@/components/chronik/ChronikVorstandschaften";
 import { PageHero } from "@/components/PageHero";
 import { getPayloadClient } from "@/lib/payload";
 
 export const dynamic = "force-dynamic";
 
 const FOUNDED = 1947;
+const CHRONIK_ZEITSCHRIFTEN_URL = "https://my.hidrive.com/share/j-39fs2i9w";
 
 const STATS = [
   {
@@ -47,8 +50,11 @@ const ERAS = [
 const SECTIONS = [
   { id: "stats", label: "Highlights" },
   { id: "eras", label: "Epochen" },
-  { id: "narrative", label: "Erzählung" },
   { id: "timeline", label: "Zeittafel" },
+  { id: "vorstandschaften", label: "Vorstandschaften" },
+  { id: "ehrentafel", label: "Ehrentafel" },
+  { id: "narrative", label: "Erzählung" },
+  { id: "zeitschriften", label: "Zeitschriften" },
   { id: "kontakt", label: "Mitschreiben" },
 ];
 
@@ -245,55 +251,122 @@ export default async function ChronikPage() {
           </div>
         </section>
 
-        <div className="grid gap-12 xl:grid-cols-[1.05fr_1fr] xl:gap-10">
-          <section
-            id="narrative"
-            className="min-w-0 scroll-mt-28"
-            aria-label="Erzählung"
-          >
-            <div className="mb-5 flex items-baseline justify-between gap-4 border-b border-nord-line pb-2">
-              <div>
-                <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
-                  03 · Erzählung
-                </div>
-                <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-nord-ink md:text-4xl">
-                  Die Geschichte hinter den Zahlen.
-                </h2>
+        <section
+          id="timeline"
+          className="mb-16 scroll-mt-28"
+          aria-label="Zeittafel"
+        >
+          <div className="mb-5 flex items-baseline justify-between gap-4 border-b border-nord-line pb-2">
+            <div>
+              <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
+                03 · Zeittafel
               </div>
-              <span className="hidden font-mono text-[10px] uppercase tracking-[0.14em] text-nord-muted md:inline">
-                Langform
-              </span>
+              <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-nord-ink md:text-4xl">
+                Stationen seit 1947 — neueste zuerst.
+              </h2>
             </div>
-            <p className="mb-5 text-sm leading-relaxed text-nord-muted">
-              Wie aus 38 Gründern eine Gemeinschaft im Münchner Norden wurde.
-            </p>
-            <ChronikNarrative />
-          </section>
+            <span className="hidden font-mono text-[10px] uppercase tracking-[0.14em] text-nord-muted md:inline">
+              Filterbar
+            </span>
+          </div>
+          <p className="mb-5 text-sm leading-relaxed text-nord-muted">
+            Filtere nach Kategorie oder Jahrzehnt — über 60 Stationen,
+            chronologisch von 2026 zurück zu 1947.
+          </p>
+          <ChronikTimeline />
+        </section>
 
-          <section
-            id="timeline"
-            className="min-w-0 scroll-mt-28"
-            aria-label="Zeittafel"
-          >
-            <div className="mb-5 flex items-baseline justify-between gap-4 border-b border-nord-line pb-2">
-              <div>
-                <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
-                  04 · Zeittafel
-                </div>
-                <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-nord-ink md:text-4xl">
-                  Stationen seit 1947.
-                </h2>
+        <section
+          id="vorstandschaften"
+          className="mb-16 scroll-mt-28"
+          aria-label="Vorstandschaften"
+        >
+          <div className="mb-5 flex items-baseline justify-between gap-4 border-b border-nord-line pb-2">
+            <div>
+              <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
+                04 · Vorstandschaften
               </div>
-              <span className="hidden font-mono text-[10px] uppercase tracking-[0.14em] text-nord-muted md:inline">
-                Filterbar
-              </span>
+              <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-nord-ink md:text-4xl">
+                79 Jahre Vorstandschaft, chronologisch.
+              </h2>
             </div>
-            <p className="mb-5 text-sm leading-relaxed text-nord-muted">
-              Filtere nach Kategorie oder Jahrzehnt — über 50 Stationen.
+          </div>
+          <ChronikVorstandschaften />
+        </section>
+
+        <section
+          id="ehrentafel"
+          className="mb-16 scroll-mt-28"
+          aria-label="Ehrentafel"
+        >
+          <div className="mb-5 flex items-baseline justify-between gap-4 border-b border-nord-line pb-2">
+            <div>
+              <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
+                05 · Ehrentafel
+              </div>
+              <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-nord-ink md:text-4xl">
+                Ehrenvorstände und Ehrenmitglieder.
+              </h2>
+            </div>
+          </div>
+          <ChronikEhrentafel />
+        </section>
+
+        <section
+          id="narrative"
+          className="mb-16 scroll-mt-28"
+          aria-label="Erzählung"
+        >
+          <div className="mb-5 flex items-baseline justify-between gap-4 border-b border-nord-line pb-2">
+            <div>
+              <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
+                06 · Erzählung
+              </div>
+              <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-nord-ink md:text-4xl">
+                Die Geschichte hinter den Zahlen.
+              </h2>
+            </div>
+            <span className="hidden font-mono text-[10px] uppercase tracking-[0.14em] text-nord-muted md:inline">
+              Langform
+            </span>
+          </div>
+          <p className="mb-5 text-sm leading-relaxed text-nord-muted">
+            Wie aus 38 Gründern eine Gemeinschaft im Münchner Norden wurde.
+          </p>
+          <ChronikNarrative />
+        </section>
+
+        <section
+          id="zeitschriften"
+          className="mb-16 scroll-mt-28"
+          aria-label="Chronik Zeitschriften"
+        >
+          <div className="mb-5 flex items-baseline justify-between gap-4 border-b border-nord-line pb-2">
+            <div>
+              <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
+                07 · Chronik Zeitschriften
+              </div>
+              <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-nord-ink md:text-4xl">
+                Original-Vereinszeitschriften zum Stöbern.
+              </h2>
+            </div>
+          </div>
+          <div className="rounded-2xl border border-nord-line bg-white p-6 md:p-8">
+            <p className="max-w-prose text-sm leading-relaxed text-nord-ink md:text-base">
+              30 Jahre Vereinszeitung (1979–2009) als digitale Sammlung im
+              HiDrive-Archiv. Geschichten, Fotos, Anekdoten — direkt aus erster
+              Hand.
             </p>
-            <ChronikTimeline />
-          </section>
-        </div>
+            <a
+              href={CHRONIK_ZEITSCHRIFTEN_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex items-center gap-2 rounded-full bg-nord-ink px-5 py-3 font-mono text-[11px] font-bold uppercase tracking-[0.15em] text-white transition hover:-translate-y-px hover:bg-nord-navy-2"
+            >
+              Zum Zeitschriften-Archiv ↗
+            </a>
+          </div>
+        </section>
 
         <section id="kontakt" className="mt-16 scroll-mt-28">
           <div className="overflow-hidden rounded-3xl border border-nord-line bg-gradient-to-br from-nord-paper-2 via-white to-white p-8 md:p-10">

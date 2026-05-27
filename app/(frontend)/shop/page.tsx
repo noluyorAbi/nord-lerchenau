@@ -94,7 +94,7 @@ export default async function ShopPage() {
           <div className="flex flex-col items-start gap-6 md:flex-row md:items-end md:justify-between">
             <div className="min-w-0 flex-1">
               <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-nord-gold">
-                Offizieller Partner · 11teamsports
+                Vereinsshop
               </div>
               <h2
                 className="mt-3 font-display font-extrabold leading-tight"
@@ -123,9 +123,15 @@ export default async function ShopPage() {
           <section className="mt-12 overflow-hidden rounded-2xl border border-nord-gold/40 bg-gradient-to-br from-white via-nord-paper-2 to-white p-7 md:p-10">
             <div className="mb-7 grid gap-4 md:grid-cols-[1.6fr_1fr] md:items-end md:gap-8">
               <div>
-                <div className="inline-flex items-center gap-2 rounded-full border border-nord-gold/40 bg-nord-gold/10 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-nord-navy">
-                  <span className="size-1.5 rounded-full bg-nord-gold" />
-                  Starterpaket
+                <div className="flex flex-wrap items-center gap-2">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-nord-gold/40 bg-nord-gold/10 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-nord-navy">
+                    <span className="size-1.5 rounded-full bg-nord-gold" />
+                    Starterpaket
+                  </div>
+                  <div className="inline-flex items-center gap-2 rounded-full bg-nord-ink px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-nord-gold">
+                    <span className="size-1.5 rounded-full bg-nord-gold" />
+                    Offizieller Partner · 11teamsports
+                  </div>
                 </div>
                 <h3
                   className="mt-3 font-display font-black leading-[1.05] tracking-tight text-nord-ink"

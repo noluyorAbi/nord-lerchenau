@@ -143,6 +143,51 @@ export default async function FussballPage() {
           </div>
         </section>
 
+        <section className="mb-12">
+          <div className="mb-5 flex items-baseline justify-between border-b border-nord-line pb-2">
+            <h2 className="font-display text-2xl font-black tracking-tight text-nord-ink md:text-3xl">
+              Säulen der Abteilung
+            </h2>
+            <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.15em] text-nord-muted">
+              Vier Bereiche
+            </span>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <FussballPillar
+              eyebrow="Erwachsen"
+              title="Fußball — Erwachsene"
+              body="Bezirksliga, Reserve, Dritte, Ehrenliga und Senioren. Vom ambitionierten Spieltag bis zur Altherrenrunde — alle Erwachsenenmannschaften des SV Nord."
+              href="/fussball/herren"
+              meta="5 Herrenmannschaften · Ehrenliga"
+              tone="navy"
+            />
+            <FussballPillar
+              eyebrow="Jugend"
+              title="Fußball — Jugend"
+              body="Großfeld, Kompaktfeld und Kleinfeld. Direkte Ansprechpartner für Eltern und Jugendspieler — von der A-Jugend bis zu den Bambinis."
+              href="/fussball/junioren"
+              meta="15 Jugendmannschaften"
+              tone="sky"
+            />
+            <FussballPillar
+              eyebrow="Torwart"
+              title="Fußball — Torwart"
+              body="Spezielles Torwart-Training für alle Altersklassen. Wir suchen Talente und bilden eigene Torhüter:innen aus. Spielerbetreuung ab den Junioren."
+              href="/fussball"
+              meta="Position · Training"
+              tone="gold"
+            />
+            <FussballPillar
+              eyebrow="Organisation"
+              title="PR, Events, Equipment, Organisation"
+              body="Hinter den Kulissen: Öffentlichkeitsarbeit, Vereinsevents, Material- und Trikotverwaltung, organisatorischer Backbone der Abteilung. Namen folgen."
+              href="/fussball"
+              meta="Ehrenamt · Backbone"
+              tone="paper"
+            />
+          </div>
+        </section>
+
         <section>
           <div className="mb-5 flex items-baseline justify-between border-b border-nord-line pb-2">
             <h2 className="font-display text-2xl font-black tracking-tight text-nord-ink md:text-3xl">
@@ -237,5 +282,62 @@ export default async function FussballPage() {
       </div>
       <FupaBlock />
     </>
+  );
+}
+
+type PillarTone = "navy" | "paper" | "sky" | "gold";
+
+function FussballPillar({
+  eyebrow,
+  title,
+  body,
+  href,
+  meta,
+  tone,
+}: {
+  eyebrow: string;
+  title: string;
+  body: string;
+  href: string;
+  meta: string;
+  tone: PillarTone;
+}) {
+  const tones = TONE_CLASSES[tone];
+  return (
+    <Link
+      href={href}
+      className={`group relative flex flex-col justify-between overflow-hidden rounded-2xl p-6 transition hover:-translate-y-0.5 hover:shadow-xl md:p-8 ${tones.card}`}
+    >
+      <div className="relative">
+        <div
+          className={`flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[0.2em] ${tones.eyebrow}`}
+        >
+          <span className="size-1.5 rounded-full bg-current" />
+          {eyebrow}
+        </div>
+        <h3 className="mt-3 font-display text-2xl font-black leading-tight tracking-tight md:text-3xl">
+          {title}
+        </h3>
+        <p
+          className={`mt-3 max-w-prose text-sm leading-relaxed ${
+            tone === "navy" ? "text-white/80" : "text-current/80"
+          }`}
+        >
+          {body}
+        </p>
+      </div>
+      <div className="relative mt-6 flex items-end justify-between gap-3">
+        <span
+          className={`font-mono text-[10px] font-semibold uppercase tracking-[0.15em] ${tones.meta}`}
+        >
+          {meta}
+        </span>
+        <span
+          className={`font-mono text-[11px] font-bold uppercase tracking-[0.15em] transition group-hover:translate-x-0.5 ${tones.arrow}`}
+        >
+          Ansehen →
+        </span>
+      </div>
+    </Link>
   );
 }

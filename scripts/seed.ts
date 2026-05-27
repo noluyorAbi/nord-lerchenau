@@ -621,6 +621,13 @@ async function main() {
       tier: "standard" as const,
       order: 7,
     },
+    {
+      name: "Get Flashed Media GmbH",
+      filename: "sponsor-get-flashed-media.avif",
+      url: "https://www.getflashedmedia.de/",
+      tier: "standard" as const,
+      order: 8,
+    },
   ];
   const sponsorDir = path.resolve(process.cwd(), "tmp/live-sponsors");
   for (const sp of sponsors) {
@@ -1065,6 +1072,90 @@ async function main() {
     });
   }
 
+  // 4b. Events — Sommerfest 2026 + Sichtung A/B-Jugend.
+  const events: Array<{
+    title: string;
+    startsAt: string;
+    endsAt?: string;
+    location?: string;
+    descriptionMd: string;
+    ctaUrl?: string;
+  }> = [
+    {
+      title: "SV Nord-Sommerfest 2026",
+      startsAt: "2026-07-24T16:30:00+02:00",
+      endsAt: "2026-07-25T22:00:00+02:00",
+      location: "BSA Ebereschenstraße · Eschengarten",
+      descriptionMd: `## Programm Freitag, 24.07.2026
+
+- Ab 16:30 · SV Nord-Kiga-Turnier ⚽
+- 17:30 · U19-Turnier (2008/09) — KL · 5 Teams
+- 17:30 · U17-Turnier (2010/11) — KL · 6 Teams
+- 17:30 · U15W-Turnier (2011/12) — KL · 5 Teams
+- 19:00 · Senioren A-Spiel
+
+## Programm Samstag, 25.07.2026
+
+### Vormittag (ab 08:30)
+
+- U7 (2020) · Mittel 4+1 · 8 Teams
+- U8 (2019) · Mittel 4+1 · 8 Teams
+- U9_2 (2018) · schwach 4+1 · 8 Teams
+- U11_2 (2016) · Mittel 7:7 · 8 Teams
+
+### Mittag
+
+- U13 (2014) · KK 9:9 · 5 Teams
+- U11_1 (2016) · Stark 7:7 · 8 Teams
+- U15 (2012) · KK · 5 Teams
+- U11W (2015+) · schwach 7:7 · 6 Teams
+- U17W (2009/2010) · KL · 5 Teams
+
+### Nachmittag
+
+- U9_1 (2018) · Mittel 4+1 · 8 Teams
+- U13W (2013+) · schwach 7:7 · 6 Teams
+- U14 (2013) · Gruppe · 5 Teams
+- Spiel Zweite & Dritte Mannschaft
+- **17:30 · SV Nord Erste Mannschaft — Gegner offen**
+
+### Ausklang
+
+Ab 18:30 Uhr gemeinsam im Eschengarten. Grillen, Kuchen und mehr.
+
+**Einmal Nordler — immer Nordler.** Freunde, Verwandte, Bekannte — alle willkommen.`,
+      ctaUrl: "https://mytman.io/turnier/?turnier_id=8699",
+    },
+    {
+      title: "Sichtung A/B-Jugend 09.05.2026",
+      startsAt: "2026-05-09T10:00:00+02:00",
+      location: "BSA Ebereschenstraße",
+      descriptionMd: `## Einladung zur Sichtung
+
+Sichtung der Spieler:innen für die A- und B-Jugend zur Saison 2026/27. Pünktlich erscheinen — Schuhe und Schienbeinschoner mitbringen.`,
+    },
+  ];
+
+  for (const ev of events) {
+    const existing = await payload.find({
+      collection: "events",
+      where: { title: { equals: ev.title } },
+      limit: 1,
+    });
+    if (existing.docs.length > 0) continue;
+    await payload.create({
+      collection: "events",
+      data: {
+        title: ev.title,
+        startsAt: ev.startsAt,
+        ...(ev.endsAt ? { endsAt: ev.endsAt } : {}),
+        ...(ev.location ? { location: ev.location } : {}),
+        description: md(ev.descriptionMd),
+        ...(ev.ctaUrl ? { ctaUrl: ev.ctaUrl } : {}),
+      } as never,
+    });
+  }
+
   // 5. Globals
   await payload.updateGlobal({
     slug: "site-settings",
@@ -1155,7 +1246,7 @@ async function main() {
           city: "München",
         },
       ],
-      phone: "0172 2392919",
+      phone: "",
       email: "info@svnord.de",
       openingHours: [
         { day: "Montag", hours: "Ruhetag" },
@@ -1354,7 +1445,9 @@ Unsere modernen Trainings- und Spielbedingungen bieten beste Voraussetzungen fü
 
 ## Gastronomie
 
-Die Gaststätte Eschengarten wird von einer eigenen Wirtsfamilie betrieben und ist an sechs Tagen die Woche geöffnet. Reservierungen direkt unter +49 (0)89 351 1899 oder auf www.eschengarten.com.`,
+Die Gaststätte Eschengarten wird von einer eigenen Wirtsfamilie betrieben und ist an sechs Tagen die Woche geöffnet. Reservierungen direkt unter +49 (0)89 351 1899 oder auf www.eschengarten.com.
+
+Auf Google Maps: [Eschengarten · Saisonale Speisekarte · Ebereschenstraße 17, Munich-Feldmoching-Hasenbergl](https://www.google.com/maps/search/?api=1&query=Eschengarten+Ebereschenstra%C3%9Fe+17+M%C3%BCnchen).`,
       ),
     } as never,
   });
@@ -1450,7 +1543,6 @@ Ebereschenstraße 17
 80935 München
 Deutschland
 
-Telefon: 0172 2392919
 E-Mail: info@svnord.de
 
 Vertreten durch den 1. Vorstand Ralf Kirmeyer.
@@ -1655,7 +1747,12 @@ Wir spielen jeden Freitag von 19:00 bis 21:00 Uhr in der Waldmeisterschule. In d
 Wenn Ihr Lust habt Volleyball zu spielen, meldet Euch doch gerne bei uns. Wir freuen uns auf euch!
 
 *Euer SV Nord Volleyball Team*`,
-    trainers: [],
+    trainers: [
+      {
+        name: "Elisabeth Schillinger",
+        role: "Ansprechpartnerin Volleyball",
+      },
+    ],
   });
   await ensureTeamPhoto(payload, {
     teamSlug: slug("Volleyball"),

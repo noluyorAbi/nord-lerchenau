@@ -53,10 +53,10 @@ const NAV_TREE: NavItem[] = [
           { label: "Schiedsrichter", href: "/schiedsrichter" },
         ],
       },
-      { label: "Volleyball", href: "/volleyball" },
       { label: "Gymnastik", href: "/gymnastik" },
-      { label: "Ski", href: "/ski" },
+      { label: "Volleyball", href: "/volleyball" },
       { label: "eSport", href: "/esport" },
+      { label: "Ski", href: "/ski" },
     ],
   },
   {
@@ -67,6 +67,7 @@ const NAV_TREE: NavItem[] = [
       { label: "Termine", href: "/termine" },
     ],
   },
+  { label: "Sponsoren", href: "/sponsoren" },
   { label: "Shop", href: "/shop" },
   {
     label: "Kontakt",
@@ -74,7 +75,6 @@ const NAV_TREE: NavItem[] = [
     children: [
       { label: "Kontakt", href: "/kontakt" },
       { label: "Mitgliedschaft", href: "/mitgliedschaft" },
-      { label: "Sponsoren", href: "/sponsoren" },
       { label: "FAQ", href: "/faq" },
     ],
   },

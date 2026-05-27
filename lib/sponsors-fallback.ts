@@ -48,4 +48,10 @@ export const FALLBACK_SPONSORS: FallbackSponsor[] = [
     url: "https://www.swm.de",
     tier: "standard",
   },
+  {
+    id: "get-flashed-media",
+    name: "Get Flashed Media GmbH",
+    url: "https://www.getflashedmedia.de/",
+    tier: "standard",
+  },
 ];

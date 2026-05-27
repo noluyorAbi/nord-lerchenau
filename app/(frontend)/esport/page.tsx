@@ -38,6 +38,19 @@ export default function Page() {
         mailSubject: "eSport — Probe-Match",
         primaryLabel: "Probe-Match anfragen",
       }}
+      hideTrainers
+      staticContacts={[
+        {
+          name: "Erich Popp",
+          role: "Trainer E-Sport",
+          email: "info@svnord.de",
+        },
+        {
+          name: "Kevin Schwarz",
+          role: "Kapitän · eRegionalliga",
+          email: "info@svnord.de",
+        },
+      ]}
     />
   );
 }

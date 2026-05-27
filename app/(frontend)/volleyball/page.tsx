@@ -38,6 +38,7 @@ export default function Page() {
         mailSubject: "Volleyball — Probetraining",
         primaryLabel: "Probetraining anfragen",
       }}
+      hideTrainers
       staticContacts={[
         {
           name: "Elisabeth Schillinger",

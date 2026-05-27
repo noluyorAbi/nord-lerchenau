@@ -18,6 +18,9 @@ const SKI_ALLOWED = new Set(["Bini Hafner", "Korbinian Hafner", "Tobias Tins"]);
 // Gymnastik: Simone Roth wurde vom Verein abgemeldet.
 const GYMNASTIK_BLOCKED = new Set(["Simone Roth"]);
 
+// eSport: öffentlich nur Trainer Erich Popp und Kapitän Kevin Schwarz anzeigen.
+const ESPORT_ALLOWED = new Set(["Erich Popp", "Kevin Schwarz"]);
+
 const SPORT_GROUPS: Array<{
   id: string;
   label: string;
@@ -41,6 +44,12 @@ const SPORT_GROUPS: Array<{
     label: "Gymnastik",
     match: (r) => /gymnastik/i.test(r),
     accent: "bg-emerald-100 text-emerald-900",
+  },
+  {
+    id: "volleyball",
+    label: "Volleyball",
+    match: (r) => /volleyball/i.test(r),
+    accent: "bg-amber-100 text-amber-900",
   },
   {
     id: "esport",
@@ -111,6 +120,9 @@ export default async function VorstandPage() {
     }
     if (group.id === "gymnastik") {
       people = people.filter((p) => !GYMNASTIK_BLOCKED.has(p.name));
+    }
+    if (group.id === "esport") {
+      people = people.filter((p) => ESPORT_ALLOWED.has(p.name));
     }
     return { ...group, people };
   }).filter((g) => g.people.length > 0);

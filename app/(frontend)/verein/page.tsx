@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 const STATS = [
   { value: "1947", label: "Gegründet" },
-  { value: "500+", label: "Mitglieder" },
+  { value: "600+", label: "Mitglieder" },
   { value: "5", label: "Abteilungen" },
   { value: "78", label: "Jahre" },
 ];

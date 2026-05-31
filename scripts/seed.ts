@@ -816,11 +816,11 @@ async function main() {
       category: "junioren",
       ageGroup: "U13",
       order: 15,
-      league: "U13 Kreisklasse Nord",
+      league: "U13 Gruppe Nord",
       bfv: {
         teamId: "011MIB2F00000000VTVG0001VTR8C1K7",
         slug: "sv-nord-lerchenau-u13",
-        spielklasse: "D-Junioren / Kreisklasse",
+        spielklasse: "D-Junioren / Gruppe Nord",
       },
     },
     {
@@ -830,11 +830,11 @@ async function main() {
       category: "junioren",
       ageGroup: "U12",
       order: 16,
-      league: "U12 Gruppe Nord 01 RR",
+      league: "U12 Kreisklasse Nord",
       bfv: {
         teamId: "01793QVOBS000000VV0AG80NVSPDBCDD",
         slug: "sv-nord-lerchenau-u12",
-        spielklasse: "D-Junioren / Gruppe Nord",
+        spielklasse: "D-Junioren / Kreisklasse",
       },
     },
     {
@@ -1728,7 +1728,7 @@ Habt ihr Lust bekommen? Meldet euch gerne bei uns — wir freuen uns!
     teamSlug: slug("Gymnastik"),
     filename: "gymnastik-hero.jpg",
     alt: "SV Nord Gymnastik-Abteilung",
-    filePath: path.resolve(process.cwd(), "tmp/live-sport-hero/gymnastik.jpg"),
+    filePath: path.resolve(process.cwd(), "public/sport/gymnastik-hero.jpg"),
   });
 
   await populateSportSection(payload, {
@@ -1758,7 +1758,7 @@ Wenn Ihr Lust habt Volleyball zu spielen, meldet Euch doch gerne bei uns. Wir fr
     teamSlug: slug("Volleyball"),
     filename: "volleyball-hero.jpg",
     alt: "SV Nord Volleyball-Abteilung",
-    filePath: path.resolve(process.cwd(), "tmp/live-sport-hero/volleyball.jpg"),
+    filePath: path.resolve(process.cwd(), "public/sport/volleyball-hero.jpg"),
   });
 
   await populateSportSection(payload, {
@@ -1778,7 +1778,7 @@ Wir freuen uns auf Dich. *Eure SV Nord Ski-Crew.*`,
     teamSlug: slug("Ski"),
     filename: "ski-hero.jpg",
     alt: "SV Nord Ski-Abteilung",
-    filePath: path.resolve(process.cwd(), "tmp/live-sport-hero/ski.jpg"),
+    filePath: path.resolve(process.cwd(), "public/sport/ski-hero.jpg"),
   });
 
   await populateSportSection(payload, {

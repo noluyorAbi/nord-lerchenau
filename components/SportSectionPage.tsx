@@ -60,6 +60,12 @@ const RICH_TEXT_CLS = [
   "[&_a]:font-semibold [&_a]:text-nord-navy [&_a]:underline-offset-2 hover:[&_a]:underline",
 ].join(" ");
 
+const STATIC_HERO: Partial<Record<Props["sport"], string>> = {
+  gymnastik: "/sport/gymnastik-hero.jpg",
+  volleyball: "/sport/volleyball-hero.jpg",
+  ski: "/sport/ski-hero.jpg",
+};
+
 function highlightStyles(accent: SportHighlight["accent"] = "navy") {
   switch (accent) {
     case "gold":
@@ -135,15 +141,17 @@ export async function SportSectionPage({
 
   const photo =
     team.photo && typeof team.photo === "object" ? (team.photo as Media) : null;
-  const heroSrc =
+  // Media uploads only resolve when an absolute (Blob) URL is stored. On envs
+  // without Blob storage the uploaded file lives on ephemeral disk and 404s,
+  // so fall back to the tracked static hero shipped in /public/sport.
+  const mediaHeroSrc =
     photo && typeof photo.url === "string" && photo.url
       ? /^https?:\/\//.test(photo.url) &&
         !photo.url.includes("/api/media/file/")
         ? photo.url
-        : photo.filename
-          ? `/uploads/${photo.filename}`
-          : null
+        : null
       : null;
+  const heroSrc = mediaHeroSrc ?? STATIC_HERO[sport] ?? null;
 
   return (
     <>

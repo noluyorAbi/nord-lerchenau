@@ -116,7 +116,7 @@ export async function CategoryPage({ slug, belowIntro, leadership }: Props) {
                   <ul className="mt-2 space-y-1">
                     {g.names.map((n) => (
                       <li
-                        key={n}
+                        key={`${g.role}-${n}`}
                         className="font-display text-base font-semibold text-nord-ink"
                       >
                         {n}

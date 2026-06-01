@@ -3,26 +3,11 @@ import Link from "next/link";
 import { FupaBlock } from "@/components/home/FupaBlock";
 import { PageHero } from "@/components/PageHero";
 import { BFV_CLUB_URL } from "@/lib/bfv";
-import {
-  FUSSBALL_CATEGORIES,
-  type FussballCategorySlug,
-} from "@/lib/fussball-categories";
 import { getPayloadClient } from "@/lib/payload";
 
 export const dynamic = "force-dynamic";
 
 type CardTone = "navy" | "paper" | "sky" | "gold";
-
-const CARD_TONES: Record<
-  FussballCategorySlug | "schiedsrichter",
-  { tone: CardTone; eyebrowOverride?: string }
-> = {
-  herren: { tone: "navy" },
-  junioren: { tone: "sky" },
-  juniorinnen: { tone: "paper" },
-  bambini: { tone: "gold" },
-  schiedsrichter: { tone: "paper", eyebrowOverride: "Spielbetrieb" },
-};
 
 const TONE_CLASSES: Record<
   CardTone,
@@ -65,16 +50,7 @@ export default async function FussballPage() {
     depth: 0,
   });
 
-  const counts = {
-    senioren: result.docs.filter((t) => t.category === "senioren").length,
-    junioren: result.docs.filter((t) => t.category === "junioren").length,
-    juniorinnen: result.docs.filter((t) => t.category === "juniorinnen").length,
-    bambini: result.docs.filter((t) => t.category === "bambini").length,
-  };
-
   const bfvCount = result.docs.filter((t) => t.bfv?.teamId).length;
-
-  const cats = Object.values(FUSSBALL_CATEGORIES);
 
   return (
     <>
@@ -127,17 +103,15 @@ export default async function FussballPage() {
               </li>
               <li>
                 <div className="font-semibold text-nord-ink">
-                  Tobias Treffer
+                  Felix Kirmeyer
                 </div>
                 <div className="text-xs text-nord-muted">
-                  Jugendleitung Großfeld
+                  Fußball-Erwachsene
                 </div>
               </li>
               <li>
                 <div className="font-semibold text-nord-ink">Ergin Piker</div>
-                <div className="text-xs text-nord-muted">
-                  Jugendleitung Kleinfeld
-                </div>
+                <div className="text-xs text-nord-muted">Fußball-Jugend</div>
               </li>
             </ul>
           </div>
@@ -149,7 +123,7 @@ export default async function FussballPage() {
               Säulen der Abteilung
             </h2>
             <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.15em] text-nord-muted">
-              Vier Bereiche
+              Fünf Bereiche
             </span>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
@@ -178,6 +152,14 @@ export default async function FussballPage() {
               tone="gold"
             />
             <FussballPillar
+              eyebrow="Spielbetrieb"
+              title="Schiedsrichter"
+              body="Aktive Unparteiische im BFV-Spielbetrieb — von der Kreisklasse bis zur Bezirksliga. Sie sorgen für faire Bedingungen auf den Plätzen."
+              href="/schiedsrichter"
+              meta="BFV · Ehrenamt"
+              tone="sky"
+            />
+            <FussballPillar
               eyebrow="Organisation"
               title="PR, Events, Equipment, Organisation"
               body="Hinter den Kulissen: Öffentlichkeitsarbeit, Vereinsevents, Material- und Trikotverwaltung, organisatorischer Backbone der Abteilung. Namen folgen."
@@ -185,98 +167,6 @@ export default async function FussballPage() {
               meta="Ehrenamt · Backbone"
               tone="paper"
             />
-          </div>
-        </section>
-
-        <section>
-          <div className="mb-5 flex items-baseline justify-between border-b border-nord-line pb-2">
-            <h2 className="font-display text-2xl font-black tracking-tight text-nord-ink md:text-3xl">
-              Kategorien
-            </h2>
-            <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.15em] text-nord-muted">
-              {result.docs.length} Teams insgesamt
-            </span>
-          </div>
-          <div className="grid gap-4 md:grid-cols-6 md:auto-rows-[minmax(200px,auto)] lg:gap-5">
-            {cats.map((c, idx) => {
-              const tone = CARD_TONES[c.slug].tone;
-              const tones = TONE_CLASSES[tone];
-              const count = counts[c.category];
-              const span =
-                idx === 0
-                  ? "md:col-span-4"
-                  : idx === 1
-                    ? "md:col-span-2"
-                    : "md:col-span-2";
-              return (
-                <Link
-                  key={c.slug}
-                  href={`/fussball/${c.slug}`}
-                  className={`group relative flex flex-col justify-between overflow-hidden rounded-2xl p-6 transition hover:-translate-y-0.5 hover:shadow-xl md:p-8 ${tones.card} ${span}`}
-                >
-                  <div className="relative">
-                    <div
-                      className={`flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[0.2em] ${tones.eyebrow}`}
-                    >
-                      <span className="size-1.5 rounded-full bg-current" />
-                      {c.eyebrow}
-                    </div>
-                    <h3
-                      className={`mt-3 font-display font-black leading-[1.02] tracking-tight ${
-                        idx === 0
-                          ? "text-3xl md:text-5xl"
-                          : "text-2xl md:text-3xl"
-                      }`}
-                    >
-                      {c.label}
-                    </h3>
-                    <p
-                      className={`mt-3 max-w-prose text-sm leading-relaxed ${
-                        tone === "navy" ? "text-white/80" : "text-current/80"
-                      }`}
-                    >
-                      {c.lede}
-                    </p>
-                  </div>
-                  <div className="relative mt-6 flex items-end justify-between gap-3">
-                    <span
-                      className={`font-mono text-[10px] font-semibold uppercase tracking-[0.15em] ${tones.meta}`}
-                    >
-                      {count} {count === 1 ? "Team" : "Teams"}
-                    </span>
-                    <span
-                      className={`font-mono text-[11px] font-bold uppercase tracking-[0.15em] transition group-hover:translate-x-0.5 ${tones.arrow}`}
-                    >
-                      Ansehen →
-                    </span>
-                  </div>
-                </Link>
-              );
-            })}
-
-            <Link
-              href="/schiedsrichter"
-              className={`group relative flex flex-col justify-between overflow-hidden rounded-2xl p-6 transition hover:-translate-y-0.5 hover:shadow-xl md:col-span-6 md:p-8 ${TONE_CLASSES.paper.card}`}
-            >
-              <div className="relative">
-                <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-nord-gold">
-                  <span className="size-1.5 rounded-full bg-current" />
-                  Spielbetrieb
-                </div>
-                <h3 className="mt-3 font-display text-2xl font-black leading-tight tracking-tight md:text-3xl">
-                  Schiedsrichter
-                </h3>
-                <p className="mt-3 max-w-prose text-sm leading-relaxed text-nord-muted">
-                  Unsere Schiedsrichter pfeifen aktiv im BFV-Spielbetrieb und
-                  sorgen für faire Bedingungen auf den Plätzen.
-                </p>
-              </div>
-              <div className="relative mt-6 flex items-end justify-end gap-3">
-                <span className="font-mono text-[11px] font-bold uppercase tracking-[0.15em] text-nord-navy transition group-hover:translate-x-0.5">
-                  Zur Seite →
-                </span>
-              </div>
-            </Link>
           </div>
         </section>
       </div>

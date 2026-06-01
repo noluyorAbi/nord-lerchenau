@@ -8,5 +8,13 @@ export const metadata = {
 };
 
 export default function HerrenPage() {
-  return <CategoryPage slug="herren" />;
+  return (
+    <CategoryPage
+      slug="herren"
+      leadership={[
+        { role: "Sportlicher Leiter", names: ["Felix Kirmeyer"] },
+        { role: "Fußball-Erwachsene", names: ["Felix Kirmeyer"] },
+      ]}
+    />
+  );
 }

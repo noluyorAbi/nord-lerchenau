@@ -17,8 +17,9 @@ const FALLBACK_COLUMNS = [
     title: "Sport",
     links: [
       { label: "Fußball", href: "/fussball" },
-      { label: "Volleyball", href: "/volleyball" },
       { label: "Gymnastik", href: "/gymnastik" },
+      { label: "Volleyball", href: "/volleyball" },
+      { label: "eSport", href: "/esport" },
       { label: "Ski", href: "/ski" },
     ],
   },

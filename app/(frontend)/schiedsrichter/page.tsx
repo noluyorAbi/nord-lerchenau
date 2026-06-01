@@ -17,7 +17,7 @@ export default function Page() {
         "Nachwuchs willkommen",
       ]}
       stats={[
-        { label: "Schiris", value: "Aktiv" },
+        { label: "Aktive Schiris", value: "4" },
         { label: "Verband", value: "BFV" },
         { label: "Spielklassen", value: "Kreis bis Bezirk" },
         { label: "Lizenz", value: "C/B möglich" },

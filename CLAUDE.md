@@ -1,5 +1,20 @@
 @AGENTS.md
 
+## Design Skills — MANDATORY
+
+Before any UI/frontend/design work, ALWAYS consider invoking these skills:
+
+- `emilkowal-animations` — Emil Kowalski animation principles (motion, interactions)
+- `design-with-taste` — opinionated taste-driven UI design
+- `design-principles` — impeccable design fundamentals
+- `design-motion-principles` — motion + visual design principles
+
+Rules:
+
+1. Any task touching UI, components, animations, transitions, layouts, or visual design → invoke relevant skill(s) FIRST.
+2. Even 10% chance a design skill applies → invoke it.
+3. These skills are the reference standard. Default system design opinions yield to them.
+
 ## Standard pre-handoff checks
 
 Run all three on every change before reporting work as done. Fix every error — never report green if any step fails.

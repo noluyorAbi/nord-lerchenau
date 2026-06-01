@@ -34,12 +34,6 @@ const SPORT_GROUPS: Array<{
     accent: "bg-nord-navy text-white",
   },
   {
-    id: "ski",
-    label: "Ski",
-    match: (r) => /skilehrer|skilehrerin|ski/i.test(r),
-    accent: "bg-nord-sky/20 text-nord-navy",
-  },
-  {
     id: "gymnastik",
     label: "Gymnastik",
     match: (r) => /gymnastik/i.test(r),
@@ -62,6 +56,13 @@ const SPORT_GROUPS: Array<{
     label: "Schiedsrichter",
     match: (r) => /schiedsrichter/i.test(r),
     accent: "bg-rose-100 text-rose-900",
+  },
+  // Ski-Abteilung laut Vereinswunsch ans Ende der Sportlichen Leitung.
+  {
+    id: "ski",
+    label: "Ski",
+    match: (r) => /skilehrer|skilehrerin|ski/i.test(r),
+    accent: "bg-nord-sky/20 text-nord-navy",
   },
 ];
 

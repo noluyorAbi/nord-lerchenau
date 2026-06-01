@@ -9,12 +9,15 @@ import {
 } from "@/lib/fussball-categories";
 import { getPayloadClient } from "@/lib/payload";
 
+export type LeadershipGroup = { role: string; names: string[] };
+
 type Props = {
   slug: FussballCategorySlug;
   belowIntro?: React.ReactNode;
+  leadership?: LeadershipGroup[];
 };
 
-export async function CategoryPage({ slug, belowIntro }: Props) {
+export async function CategoryPage({ slug, belowIntro, leadership }: Props) {
   const def = FUSSBALL_CATEGORIES[slug];
   const payload = await getPayloadClient();
 
@@ -93,6 +96,38 @@ export async function CategoryPage({ slug, belowIntro }: Props) {
             </ul>
           </div>
         </section>
+
+        {leadership && leadership.length > 0 ? (
+          <section className="mb-10">
+            <div className="mb-5 flex items-baseline justify-between border-b border-nord-line pb-2">
+              <h2 className="font-display text-2xl font-black tracking-tight text-nord-ink md:text-3xl">
+                Sportliche Leitung
+              </h2>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {leadership.map((g) => (
+                <div
+                  key={g.role}
+                  className="rounded-xl border border-nord-line bg-white p-5"
+                >
+                  <div className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-nord-gold">
+                    {g.role}
+                  </div>
+                  <ul className="mt-2 space-y-1">
+                    {g.names.map((n) => (
+                      <li
+                        key={`${g.role}-${n}`}
+                        className="font-display text-base font-semibold text-nord-ink"
+                      >
+                        {n}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : null}
 
         {belowIntro ?? null}
 

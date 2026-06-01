@@ -77,3 +77,9 @@ next-env.d.ts
 !/public/uploads/Tobias_Lippenberger.jpg
 
 /tmp/
+
+# local artifacts
+.playwright-mcp/
+ruvector.db
+agentdb.rvf
+agentdb.rvf.lock

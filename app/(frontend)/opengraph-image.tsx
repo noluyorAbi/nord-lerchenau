@@ -239,7 +239,7 @@ export default async function OpengraphImage() {
                   fontWeight: 700,
                 }}
               >
-                Fussball · Volleyball · Gymnastik · eSport · Ski
+                Fußball · Gymnastik · Volleyball · eSport · Ski
               </div>
               <div
                 style={{

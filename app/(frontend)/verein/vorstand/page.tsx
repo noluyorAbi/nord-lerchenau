@@ -1,5 +1,6 @@
 import { PageHero } from "@/components/PageHero";
 import { getPayloadClient } from "@/lib/payload";
+import { publicUploadSrc } from "@/lib/publicUploads";
 import type { Media, Person } from "@/payload-types";
 
 export const dynamic = "force-dynamic";
@@ -73,8 +74,7 @@ function portraitUrl(photo: Person["photo"]): string | null {
   if (/^https?:\/\//.test(url) && !url.includes("/api/media/file/")) {
     return url;
   }
-  if (m.filename) return `/uploads/${m.filename}`;
-  return null;
+  return publicUploadSrc(m.filename);
 }
 
 function initialsOf(name: string): string {

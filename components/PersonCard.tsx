@@ -1,4 +1,5 @@
 import type { Media, Person } from "@/payload-types";
+import { publicUploadSrc } from "@/lib/publicUploads";
 
 type Props = { person: Person };
 
@@ -10,11 +11,9 @@ function portraitUrl(photo: Person["photo"]): string | null {
   if (/^https?:\/\//.test(url) && !url.includes("/api/media/file/")) {
     return url;
   }
-  // Local upload adapter — Payload's /api/media/file/ route isn't reachable
-  // from Vercel's serverless runtime, but the file ships with the build at
-  // public/uploads/<filename>, which Next.js serves directly.
-  if (m.filename) return `/uploads/${m.filename}`;
-  return null;
+  // Otherwise serve the asset shipped in public/uploads (resolved by
+  // normalised filename, since Payload names drift from the static files).
+  return publicUploadSrc(m.filename);
 }
 
 export function PersonCard({ person }: Props) {

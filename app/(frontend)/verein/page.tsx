@@ -57,6 +57,15 @@ const CARDS: FeatureCard[] = [
   },
 ];
 
+const SOCIAL_MEDIA_TEAM = [
+  "Tobias Tins",
+  "Tobias Treffer",
+  "Dominik Besel",
+  "Andi Weiß",
+  "Marko Rakita",
+  "Tamay Piker",
+];
+
 const TONE_CLASSES: Record<
   CardTone,
   { card: string; eyebrow: string; meta: string; arrow: string }
@@ -93,7 +102,7 @@ export default function VereinPage() {
       <PageHero
         eyebrow="Der Verein"
         title="SV Nord München-Lerchenau e.V."
-        lede="Traditionsverein im Münchner Norden seit 1947. Über 600 Mitglieder in fünf Abteilungen, getragen von ehrenamtlichem Engagement."
+        lede="Traditionsverein im Münchner Norden seit 1947 — über 600 Mitglieder, fünf Abteilungen."
       />
 
       <section className="mx-auto max-w-7xl px-6 pt-8 pb-14 md:px-10 md:pt-12 md:pb-20">
@@ -174,6 +183,32 @@ export default function VereinPage() {
             );
           })}
         </div>
+
+        <section className="mt-12 border-t border-nord-line pt-6">
+          <div className="flex items-baseline gap-3">
+            <span className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-nord-muted">
+              Social Media
+            </span>
+            <span className="font-mono text-[11px] tracking-[0.15em] text-nord-muted/60">
+              {SOCIAL_MEDIA_TEAM.length}
+            </span>
+          </div>
+          <ul className="mt-5 grid gap-x-10 gap-y-px sm:grid-cols-2 lg:grid-cols-3">
+            {SOCIAL_MEDIA_TEAM.map((name, i) => (
+              <li
+                key={name}
+                className="group flex items-baseline gap-3 border-b border-nord-line/70 py-3"
+              >
+                <span className="font-mono text-[11px] tabular-nums tracking-[0.15em] text-nord-gold">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span className="font-display text-lg font-bold tracking-tight text-nord-ink transition-colors group-hover:text-nord-gold">
+                  {name}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
 
         <aside className="mt-12 rounded-2xl border border-dashed border-nord-line bg-white p-8 md:p-10">
           <div className="grid gap-6 md:grid-cols-[2fr_1fr] md:items-center">

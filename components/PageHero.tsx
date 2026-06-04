@@ -20,12 +20,12 @@ export function PageHero({ eyebrow, title, lede }: Props) {
         ) : null}
         <h1
           className="mt-4 font-display font-black leading-[0.92] tracking-[-0.02em] text-nord-ink [word-break:break-word] [hyphens:auto]"
-          style={{ fontSize: "clamp(40px, 8vw, 120px)" }}
+          style={{ fontSize: "clamp(40px, 8vw, 96px)" }}
         >
           {title}
         </h1>
         {lede ? (
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-nord-muted md:text-lg">
+          <p className="mt-4 max-w-3xl text-base leading-relaxed text-nord-muted md:text-lg">
             {lede}
           </p>
         ) : null}

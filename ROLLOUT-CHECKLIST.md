@@ -10,6 +10,65 @@
 
 ---
 
+## ⏱ STAND 2026-06-26 — was JETZT noch zu tun ist
+
+Branch `feat/pre-rollout-wishes` umgesetzt + live getestet (prettier/lint/tsc/build + Playwright-Run, alle grün).
+**Code-seitig rollout-ready.** Die Detail-Tabellen weiter unten sind der ursprüngliche Stand 2026-05;
+diese Sektion ist der aktuelle Stand und hat Vorrang.
+
+### ✅ Diese Session erledigt (im Branch)
+
+Umgesetzt: alte PDF-Formulare raus + 4. Online-Formular; Tablet-Burger unter 1024px + News-Grid;
+Bezirksliga-Tabelle Home zu /fussball (alle Teams, S/U/N, kompakt); Hero-Bilderlauf (4 Fotos, reduced-motion);
+Vereinsname-Kicker + `e. V.`-Schreibweise; IG-Fake-Zahlen raus (ehrlicher CTA); `next/image` + `jugend-bg.jpg`
+von 1.6MB auf 195KB; Shop-Starterpaket blau; D2-2014-Foto (in IG-Galerie). Alle 4 Vereinsplaner-Formulare
+live verifiziert (Überschrift = Label: Jugendliche/Erwachsene/Familien/Beitragsfreie). Satzung-PDF valide.
+
+### 🔒 MUSS für Go-Live (kritischer Pfad)
+
+1. **DNS umstellen** (→ Ralf): `svnord-lerchenau.de` auf Vercel zeigen. Strato-SSH ist nutzlos (kein Next-Host),
+   nur DNS-Records. **MX/Mail `info@svnord.de` nicht brechen.**
+2. **Env nach Domain** (→ Dev, ~5 Min): `NEXT_PUBLIC_SERVER_URL` setzen + Fallbacks `app/(frontend)/layout.tsx:54`,
+   `components/seo/SiteSchema.tsx:4`, Prod-Redeploy. Siehe TODO.md.
+3. **Prod-DB-Stand prüfen/reseeden** (→ Dev+CMS): sicherstellen, dass live die korrigierten Daten zeigen
+   (U13/U12-Spielklasse, Vorstand, Sponsoren). Sonst alte Inhalte.
+4. **HiDrive `SPlCBi6iX` besorgen** (→ Ralf): Ralfs letzte „Was noch fehlt"-Liste (13.06), nicht einsehbar →
+   abgleichen bevor „scharf geschaltet".
+5. **Branch mergen** (→ Dev): `feat/pre-rollout-wishes` → `main`.
+
+### 📝 KANN parallel/danach — CMS-Daten eintippen (kein Code nötig)
+
+6. Jugend-Jahrgänge (`birthYears`) — nur A1 U19 = 2006/07/08 bekannt, Rest von Verein.
+7. Trainer an Fußball/Jugend-Teams (Feld da, leer).
+8. Echte Mannschaftsfotos (`team.photo` ungenutzt; aktuell BFV/Platzhalter).
+9. Volleyball Mittwoch-Trainingszeit (Waldmeisterschule) im CMS prüfen.
+
+### ❓ KANN danach — Entscheidungen Ralf/Felix
+
+- 4. Formular „Aufnahmeantrag für Beitragsfreie" = das von Ralf gemeinte?
+- Hero-Fotos (4 Stück) + Shop-Blauton so ok?
+- D2-2014-Foto prominenter platzieren (z.B. Chronik) statt nur IG-Galerie?
+- Echter IG-Feed statt Eigenbau-Clone?
+- Spenden-QR auf der Seite gewünscht?
+
+### ✨ Optional / Polish (kein Blocker)
+
+- eyebrow-Nummern Home neu sequenzieren (zeigt 01, 02, 04, 03, 06).
+- Weitere `<img>` zu `next/image`, restliche Galerie-JPGs verkleinern.
+- `apple-icon` 404 (vorbestehend, harmlos).
+
+### ⚠️ Dev-Env-Gotcha (für nächsten Agent)
+
+`bun run dev` lädt default `.env.local` — die hat **keine** Secrets → Home crasht „missing secret key".
+Echte Dev-Env: `bun --env-file=.env.local.dev run dev`. (Build merkt's nicht, weil `/` dynamisch ist.)
+
+### Nicht live geprüft (diese Session)
+
+reduced-motion-Hero nur code-verifiziert. Seiten esport/gymnastik/ski/volleyball/schiedsrichter/kontakt/
+impressum/datenschutz/chronik/vorstand/sponsoren/termine/news-detail: im Audit DONE, aber nicht im Live-Run.
+
+---
+
 ## 0. Kontext für den nächsten Agent
 
 - **Projekt:** Vereinswebsite, Next.js (App Router, `app/(frontend)`) + Payload CMS + Postgres (Neon), deployt auf **Vercel** (`nord-lerchenau.vercel.app`).

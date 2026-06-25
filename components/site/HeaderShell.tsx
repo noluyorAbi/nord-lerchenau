@@ -113,7 +113,7 @@ export function HeaderShell({ links, cta }: Props) {
         <div className="flex items-center gap-3">
           <Link
             href={cta.href}
-            className="hidden items-center gap-2 rounded-full bg-nord-gold px-4 py-2.5 font-display text-xs font-semibold uppercase tracking-[0.04em] text-nord-navy transition hover:-translate-y-px hover:shadow-[0_8px_20px_rgba(200,169,106,0.4)] md:inline-flex"
+            className="hidden items-center gap-2 rounded-full bg-nord-gold px-4 py-2.5 font-display text-xs font-semibold uppercase tracking-[0.04em] text-nord-navy transition hover:-translate-y-px hover:shadow-[0_8px_20px_rgba(200,169,106,0.4)] lg:inline-flex"
           >
             {cta.label}
           </Link>

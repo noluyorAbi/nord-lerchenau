@@ -46,9 +46,9 @@ export async function NewsGrid() {
           </Link>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-[2fr_1fr_1fr]">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr]">
           {/* Featured */}
-          <FadeUp>
+          <FadeUp className="md:col-span-2 lg:col-span-1">
             <Link
               href={`/news/${featured.slug}`}
               className="group relative block min-h-[360px] overflow-hidden rounded-2xl bg-nord-ink md:min-h-[520px]"

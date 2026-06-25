@@ -27,7 +27,7 @@ export function MobileMenu({ links, cta, theme = "light" }: Props) {
         <button
           type="button"
           aria-label="Menü öffnen"
-          className={`inline-flex size-10 items-center justify-center rounded-md transition md:hidden ${triggerColor}`}
+          className={`inline-flex size-10 items-center justify-center rounded-md transition lg:hidden ${triggerColor}`}
         >
           <svg
             width="20"

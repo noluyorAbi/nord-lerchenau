@@ -17,7 +17,7 @@ type Props = {
 export function SiteNav({ items, glass }: Props) {
   return (
     <nav
-      className={`hidden items-center gap-6 font-display text-[15px] font-semibold uppercase tracking-[0.06em] transition-colors duration-300 md:flex ${
+      className={`hidden items-center gap-6 font-display text-[15px] font-semibold uppercase tracking-[0.06em] transition-colors duration-300 lg:flex ${
         glass ? "text-white/85" : "text-nord-ink/85"
       }`}
     >

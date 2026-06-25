@@ -34,6 +34,12 @@ const ONLINE_FORMS: {
     body: "Mehrere Familienmitglieder gemeinsam anmelden — alle Sparten möglich.",
     href: "https://formular.vereinsplaner.com/f7f432f8-41ff-4794-b6e7-b075c71639d0",
   },
+  {
+    tag: "Beitragsfrei",
+    title: "Aufnahmeantrag für Beitragsfreie",
+    body: "Für Erwachsene und Jugendliche, solange eine beitragsfreie Tätigkeit ausgeübt wird.",
+    href: "https://formular.vereinsplaner.com/7fba1dc8-500b-4c76-89c4-40d2acaecd0b",
+  },
 ];
 
 const SPORTS_TREE: {
@@ -58,66 +64,11 @@ const SPORTS_TREE: {
   { name: "eSport" },
 ];
 
-const WIX_PDF = "https://www.svnord-lerchenau.de/_files/ugd/c475b1_";
-
-type Download = { label: string; href: string; hint?: string };
-type DownloadGroup = { group: string; items: Download[] };
-
-const DOWNLOADS: DownloadGroup[] = [
-  {
-    group: "Spielerpass Fußball",
-    items: [
-      {
-        label: "Passantrag Erwachsene",
-        href: `${WIX_PDF}087ec7628edd451e910b491f4d23896d.pdf`,
-      },
-      {
-        label: "Passantrag Jugend",
-        href: `${WIX_PDF}4c76d2eddec7416bb37e15956b3cb7f0.pdf`,
-      },
-      {
-        label: "Spieler aus dem Ausland (10–17)",
-        href: `${WIX_PDF}0c7fa8d5317240e8a552ec7321509b9d.pdf`,
-      },
-      {
-        label: "DFB-Zusatzerklärung",
-        href: `${WIX_PDF}1e6da086b72a4e8fab43bba5ab26efae.pdf`,
-      },
-    ],
-  },
-  {
-    group: "Einverständniserklärungen",
-    items: [
-      {
-        label: "Spieler-Passfoto (bis U13)",
-        href: `${WIX_PDF}baed2f01b4464a31b3990e7c4923c9b5.pdf`,
-      },
-      {
-        label: "Spieler-Passfoto (ab U14)",
-        href: `${WIX_PDF}f6fe69b8098b465188ab5144c3b32b57.pdf`,
-      },
-      {
-        label: "Veröffentlichung von Bildern",
-        href: `${WIX_PDF}2b37a95d1c304bdd8cbf32bb3e11a8c1.pdf`,
-      },
-    ],
-  },
-  {
-    group: "Vereinsdokumente",
-    items: [
-      {
-        label: "Satzung",
-        href: "/downloads/satzung-2026-05.pdf",
-        hint: "Stand Mai 2026 · VR 6924",
-      },
-      {
-        label: "Jugendfußballkonzept",
-        href: `${WIX_PDF}a49715fb5199401ea7ad093e1664eabd.pdf`,
-        hint: "Mia san Nord · Erlebnis vor Ergebnis",
-      },
-    ],
-  },
-];
+const SATZUNG = {
+  label: "Satzung (PDF)",
+  href: "/downloads/satzung-2026-05.pdf",
+  hint: "Stand Mai 2026 · VR 6924",
+};
 
 export default async function MitgliedschaftPage() {
   const payload = await getPayloadClient();
@@ -145,7 +96,7 @@ export default async function MitgliedschaftPage() {
             Antrag inkl. SEPA-Lastschriftmandat online ausfüllen. Wähle die
             passende Variante. Einmalige Aufnahmegebühr 49 €.
           </p>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {ONLINE_FORMS.map((form) => (
               <a
                 key={form.href}
@@ -225,9 +176,9 @@ export default async function MitgliedschaftPage() {
                 Antrag stellen
               </h3>
               <p className="mt-2 text-sm text-nord-muted">
-                Online-Antrag in drei Varianten: Jugend, Erwachsene oder
-                Familienbeitrag. Spielerpass-Formulare (Fußball) weiterhin als
-                PDF.
+                Online-Antrag in vier Varianten: Jugend, Erwachsene,
+                Familienbeitrag oder beitragsfrei. Komplett im Browser ausfüllen
+                und absenden.
               </p>
               <a
                 href="#online-formulare"
@@ -271,55 +222,31 @@ export default async function MitgliedschaftPage() {
         <section className="mb-16">
           <div className="mb-5 flex items-end justify-between gap-4">
             <h2 className="text-sm font-bold uppercase tracking-[0.15em] text-nord-muted">
-              Formulare & Anträge
+              Vereinsdokumente
             </h2>
             <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-nord-muted">
               PDF · Direkt-Download
             </span>
           </div>
-          <div className="grid gap-4 md:grid-cols-3">
-            {DOWNLOADS.map((group) => (
-              <div
-                key={group.group}
-                className="flex flex-col gap-3 rounded-xl border border-nord-line bg-white p-5"
-              >
-                <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-nord-gold">
-                  {group.group}
-                </div>
-                <ul className="space-y-2">
-                  {group.items.map((item) => (
-                    <li key={item.href}>
-                      <a
-                        href={item.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group flex items-start justify-between gap-3 rounded-lg border border-nord-line/60 bg-nord-paper-2 px-3 py-2.5 transition hover:border-nord-gold hover:bg-white"
-                      >
-                        <span className="flex-1 text-sm font-semibold text-nord-ink">
-                          {item.label}
-                          {item.hint ? (
-                            <span className="block text-[11px] font-normal text-nord-muted">
-                              {item.hint}
-                            </span>
-                          ) : null}
-                        </span>
-                        <span
-                          className="shrink-0 text-nord-gold transition-transform group-hover:translate-x-0.5"
-                          aria-hidden
-                        >
-                          ↓
-                        </span>
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-          <p className="mt-4 text-xs text-nord-muted">
-            Alle Formulare werden ausgefüllt per Post an die Vereinsadresse
-            geschickt oder im Vereinsheim Eschengarten abgegeben.
-          </p>
+          <a
+            href={SATZUNG.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex max-w-md items-start justify-between gap-3 rounded-xl border border-nord-line bg-white px-5 py-4 transition hover:border-nord-gold hover:shadow-sm"
+          >
+            <span className="flex-1 text-sm font-semibold text-nord-ink">
+              {SATZUNG.label}
+              <span className="block text-[11px] font-normal text-nord-muted">
+                {SATZUNG.hint}
+              </span>
+            </span>
+            <span
+              className="shrink-0 text-nord-gold transition-transform group-hover:translate-x-0.5"
+              aria-hidden
+            >
+              ↓
+            </span>
+          </a>
         </section>
 
         <section className="mb-16 rounded-2xl border border-nord-line bg-nord-paper-2 p-8 md:p-10">

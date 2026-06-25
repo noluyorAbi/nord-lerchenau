@@ -120,12 +120,12 @@ export default async function ShopPage() {
         </section>
 
         {products.length > 0 ? (
-          <section className="mt-12 overflow-hidden rounded-2xl border border-nord-gold/40 bg-gradient-to-br from-white via-nord-paper-2 to-white p-7 md:p-10">
+          <section className="mt-12 overflow-hidden rounded-2xl border border-blue-600/40 bg-gradient-to-br from-white via-nord-paper-2 to-white p-7 md:p-10">
             <div className="mb-7 grid gap-4 md:grid-cols-[1.6fr_1fr] md:items-end md:gap-8">
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <div className="inline-flex items-center gap-2 rounded-full border border-nord-gold/40 bg-nord-gold/10 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-nord-navy">
-                    <span className="size-1.5 rounded-full bg-nord-gold" />
+                  <div className="inline-flex items-center gap-2 rounded-full border border-blue-600/40 bg-blue-600/10 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-blue-700">
+                    <span className="size-1.5 rounded-full bg-blue-600" />
                     Starterpaket
                   </div>
                   <div className="inline-flex items-center gap-2 rounded-full bg-nord-ink px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-nord-gold">
@@ -148,7 +148,7 @@ export default async function ShopPage() {
                 href={shopUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 self-start rounded-full bg-nord-ink px-5 py-3 font-mono text-[11px] font-bold uppercase tracking-[0.15em] text-white transition hover:-translate-y-px hover:bg-nord-navy-2 md:self-end"
+                className="inline-flex items-center justify-center gap-2 self-start rounded-full bg-blue-600 px-5 py-3 font-mono text-[11px] font-bold uppercase tracking-[0.15em] text-white transition hover:-translate-y-px hover:bg-blue-700 md:self-end"
               >
                 Komplette Auswahl ↗
               </a>
@@ -160,10 +160,10 @@ export default async function ShopPage() {
                     href={product?.url ?? shopUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex h-full flex-col gap-3 rounded-xl border border-nord-line bg-white p-4 transition hover:-translate-y-0.5 hover:border-nord-gold hover:shadow-md"
+                    className="group flex h-full flex-col gap-3 rounded-xl border border-nord-line bg-white p-4 transition hover:-translate-y-0.5 hover:border-blue-600 hover:shadow-md"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="inline-flex size-7 items-center justify-center rounded-full bg-nord-navy text-[12px] font-black text-nord-gold">
+                      <span className="inline-flex size-7 items-center justify-center rounded-full bg-blue-600 text-[12px] font-black text-white">
                         {slot.step}
                       </span>
                       <span className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-muted">

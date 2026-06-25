@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -12,6 +13,9 @@ type GalleryShot = {
   src: string;
   caption: string;
   sub: string;
+  /** Intrinsic pixel size — lets next/image reserve space and avoid layout shift. */
+  w: number;
+  h: number;
   span?: "wide" | "tall" | "default";
 };
 
@@ -20,79 +24,116 @@ const GALLERY: GalleryShot[] = [
     src: "/sport/u8/loewen.jpg",
     caption: "U8 Löwen",
     sub: "F-Junioren · U8-I",
+    w: 1674,
+    h: 1148,
     span: "wide",
   },
   {
     src: "/sport/u8/trainerteam.jpg",
     caption: "Trainerteam U8",
     sub: "Unsere Jugendtrainer",
+    w: 900,
+    h: 1600,
   },
   {
     src: "/sport/u8/tiger.jpg",
     caption: "U8 Tiger",
     sub: "F-Junioren · U8-II",
+    w: 1829,
+    h: 1148,
   },
   {
     src: "/sport/u8/team-2.jpg",
     caption: "Trainer U8",
     sub: "Eschengarten",
+    w: 900,
+    h: 1600,
   },
   {
     src: "/news/historischer-aufstieg-in-die-landesliga.jpg",
     caption: "Historischer Aufstieg",
     sub: "1. Herren · Bezirksliga → Landesliga",
+    w: 1600,
+    h: 1066,
     span: "tall",
   },
   {
     src: "/sport/u8/team-3.jpg",
     caption: "Trainer U8",
     sub: "Jugendarbeit beim SV Nord",
+    w: 900,
+    h: 1600,
   },
   {
     src: "/sport/ski-action.jpg",
     caption: "Ski-Abteilung",
     sub: "Tagesfahrten & Camps",
+    w: 1600,
+    h: 1200,
   },
   {
     src: "/sport/u8/team-4.jpg",
     caption: "Trainer U8",
     sub: "Die jüngsten Nordler",
+    w: 900,
+    h: 1600,
   },
   {
     src: "/sport/ski-gruppe.jpg",
     caption: "Ski-Gruppe",
     sub: "Vom Einsteiger bis zum Könner",
+    w: 800,
+    h: 600,
   },
   {
     src: "/sport/gymnastik-gruppe.jpg",
     caption: "Gymnastik",
     sub: "Seit 1967 in der Waldmeisterschule",
+    w: 1000,
+    h: 666,
     span: "wide",
   },
   {
     src: "/sport/u8/team-5.jpg",
     caption: "Trainer U8",
     sub: "Fußballkindergarten & F-Junioren",
+    w: 1600,
+    h: 900,
   },
   {
     src: "/news/karger-kommt.jpg",
     caption: "Neuzugang",
     sub: "Karger kommt",
+    w: 1600,
+    h: 2280,
   },
   {
     src: "/sport/gymnastik-hero.jpg",
     caption: "Gymnastik in Bewegung",
     sub: "Montag & Mittwoch · 19–20 Uhr",
+    w: 1600,
+    h: 1085,
   },
   {
     src: "/sport/ski-hero.jpg",
     caption: "Auf der Piste",
     sub: "Skifahren mit dem SV Nord",
+    w: 1408,
+    h: 792,
+  },
+  {
+    src: "/teams/d2-2014.jpg",
+    caption: "D-Junioren D2 · 2014",
+    sub: "Mannschaftsfoto · Archiv",
+    w: 1600,
+    h: 1200,
   },
   {
     src: "/jugend-bg.jpg",
     caption: "Jugend am Eschengarten",
     sub: "Von den Bambini bis zur A-Jugend",
+    w: 1600,
+    h: 1200,
     span: "wide",
   },
 ];
@@ -149,20 +190,29 @@ function IgScreenClone({ onOpen }: { onOpen: (idx: number) => void }) {
         <div className="flex items-center gap-6 px-4 pt-5">
           <div className="rounded-full bg-[linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5)] p-[2.5px]">
             <div className="rounded-full bg-white p-[2px]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src="/svnord-logo.png"
                 alt="SV Nord Wappen"
+                width={74}
+                height={74}
                 className="size-[74px] rounded-full object-cover"
                 loading="lazy"
               />
             </div>
           </div>
-          <div className="flex flex-1 justify-around text-center">
-            <IgStat value="319" label="Beiträge" />
-            <IgStat value="1.354" label="Follower" />
-            <IgStat value="509" label="Gefolgt" />
-          </div>
+          {/* Honest CTA instead of fabricated follower counts. */}
+          <a
+            href={IG_PROFILE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 text-[13px] leading-snug"
+          >
+            <div className="font-bold">Folge uns auf Instagram</div>
+            <div className="mt-0.5 text-[#1f3a8a]">@{IG_HANDLE}</div>
+            <div className="mt-0.5 text-black/55">
+              Tägliche Einblicke aus dem Eschengarten.
+            </div>
+          </a>
         </div>
 
         {/* Name + bio */}
@@ -227,10 +277,11 @@ function IgScreenClone({ onOpen }: { onOpen: (idx: number) => void }) {
               className="flex w-14 shrink-0 flex-col items-center gap-1"
             >
               <div className="rounded-full border border-black/15 p-[2px]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={h.src}
                   alt={h.label}
+                  width={48}
+                  height={48}
                   className="size-12 rounded-full object-cover"
                   loading="lazy"
                 />
@@ -297,28 +348,18 @@ function IgScreenClone({ onOpen }: { onOpen: (idx: number) => void }) {
               onClick={() => onOpen(idx)}
               className="relative aspect-square overflow-hidden bg-black/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0095f6]"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={shot.src}
                 alt={shot.caption}
+                fill
                 loading="lazy"
-                className="size-full object-cover"
+                sizes="128px"
+                className="object-cover"
               />
             </button>
           ))}
         </div>
       </div>
-    </div>
-  );
-}
-
-function IgStat({ value, label }: { value: string; label: string }) {
-  return (
-    <div>
-      <div className="font-display text-[17px] font-black leading-none">
-        {value}
-      </div>
-      <div className="mt-0.5 text-[12px] text-black/55">{label}</div>
     </div>
   );
 }
@@ -539,10 +580,25 @@ export function InstagramTeaser() {
                 — direkt aus dem Eschengarten.
               </p>
 
-              <div className="mt-6 grid grid-cols-3 gap-3 border-t border-nord-line pt-5">
-                <Stat label="Beiträge" value="319" sub="auf Instagram" />
-                <Stat label="Follower" value="1.354" sub="& wächst" />
-                <Stat label="Mitglieder" value="600+" sub="Nordler" />
+              <div className="mt-6 border-t border-nord-line pt-5">
+                <Link
+                  href={IG_PROFILE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center justify-between gap-4 rounded-xl bg-nord-paper-2 px-4 py-3 transition hover:bg-nord-ink hover:text-nord-paper"
+                >
+                  <span className="min-w-0">
+                    <span className="block font-display text-sm font-black tracking-tight text-nord-ink transition group-hover:text-nord-paper">
+                      Folge uns auf Instagram
+                    </span>
+                    <span className="mt-0.5 block font-mono text-[10px] uppercase tracking-[0.14em] text-nord-muted transition group-hover:text-nord-paper/70">
+                      @{IG_HANDLE} · tägliche Einblicke
+                    </span>
+                  </span>
+                  <span className="shrink-0 font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-nord-gold transition group-hover:translate-x-0.5">
+                    Folgen ↗
+                  </span>
+                </Link>
               </div>
 
               <div className="mt-6 flex flex-wrap gap-2">
@@ -632,12 +688,15 @@ export function InstagramTeaser() {
                 onClick={() => setLightboxIdx(idx)}
                 className="group relative mb-3 block w-full break-inside-avoid overflow-hidden rounded-[20px] bg-nord-navy text-left shadow-sm ring-1 ring-nord-line transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_-18px_rgba(11,27,63,0.55)] hover:ring-2 hover:ring-nord-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-nord-gold"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={shot.src}
                   alt={shot.caption}
+                  width={shot.w}
+                  height={shot.h}
                   loading="lazy"
-                  className="block h-auto w-full object-cover transition duration-[600ms] ease-[cubic-bezier(0.2,0.7,0.1,1)] group-hover:scale-[1.04]"
+                  sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
+                  style={{ width: "100%", height: "auto" }}
+                  className="block object-cover transition duration-[600ms] ease-[cubic-bezier(0.2,0.7,0.1,1)] group-hover:scale-[1.04]"
                 />
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 top-1/2 bg-[linear-gradient(180deg,rgba(11,27,63,0)_0%,rgba(8,18,46,0.85)_100%)]" />
 
@@ -769,10 +828,13 @@ export function InstagramTeaser() {
             className="relative flex max-h-[92vh] w-full max-w-5xl flex-col items-center gap-4"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={activeShot.src}
               alt={activeShot.caption}
+              width={activeShot.w}
+              height={activeShot.h}
+              sizes="100vw"
+              style={{ width: "auto", height: "auto" }}
               className="max-h-[80vh] w-auto max-w-full rounded-2xl object-contain shadow-2xl"
             />
             <div className="w-full max-w-2xl rounded-2xl bg-white/[0.06] px-5 py-4 text-center backdrop-blur">
@@ -791,27 +853,5 @@ export function InstagramTeaser() {
         </div>
       ) : null}
     </section>
-  );
-}
-
-function Stat({
-  label,
-  value,
-  sub,
-}: {
-  label: string;
-  value: string;
-  sub: string;
-}) {
-  return (
-    <div className="rounded-xl bg-nord-paper-2 p-3 text-center">
-      <div className="font-display text-2xl font-black leading-none text-nord-navy">
-        {value}
-      </div>
-      <div className="mt-1.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em] text-nord-muted">
-        {label}
-      </div>
-      <div className="mt-0.5 text-[10px] text-nord-muted/80">{sub}</div>
-    </div>
   );
 }

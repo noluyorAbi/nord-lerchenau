@@ -23,7 +23,20 @@ import type { HomePage, Team } from "@/payload-types";
 
 type Props = { hero: HomePage["hero"] };
 
-const HERO_BG = "https://image.fupa.net/team-image/HV6MiTsJZKMu/1920x1080.webp";
+// Hero-Bilderlauf: 3 bis 5 starke Querformat-Fotos aus /public. Zum Tauschen
+// einfach die Pfade ändern oder Einträge ergänzen/entfernen; die Animation
+// passt sich automatisch an die Anzahl der Bilder an. Erstes Bild wird bei
+// aktivierter Bewegungsreduktion (prefers-reduced-motion) statisch gezeigt.
+const HERO_SLIDES = [
+  "/news/historischer-aufstieg-in-die-landesliga.jpg",
+  "/sport/u8/tiger.jpg",
+  "/sport/u8/loewen.jpg",
+  "/sport/u8/team-5.jpg",
+] as const;
+
+// Sekunden pro Bild; die Überblendung dauert HERO_FADE_MS.
+const HERO_PER_SLIDE_S = 5.5;
+const HERO_FADE_MS = 800;
 
 export async function Hero({ hero }: Props) {
   const [upcoming, standings] = await Promise.all([
@@ -123,13 +136,54 @@ export async function Hero({ hero }: Props) {
     href: hero?.secondaryCtaHref ?? "/verein",
   };
 
+  const slideCount = HERO_SLIDES.length;
+  const totalS = slideCount * HERO_PER_SLIDE_S;
+  // Anteil eines Bildes am Gesamtzyklus und Anteil der Überblendung.
+  const visiblePct = 100 / slideCount;
+  const fadePct = (HERO_FADE_MS / 1000 / totalS) * 100;
+  // Reiner CSS-Bilderlauf (kein Client-JS): N gestapelte Layer teilen sich
+  // eine Keyframe-Animation, jedes Layer per negativem animation-delay in
+  // sein Zeitfenster verschoben. Überblendung nur via opacity (GPU). Bei
+  // prefers-reduced-motion wird die Animation gestoppt; nur Bild 1 bleibt
+  // sichtbar (alle weiteren Layer auf opacity:0).
+  const heroSlideshowCss = `
+    .hero-slide {
+      opacity: 0;
+      animation: hero-crossfade ${totalS}s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+    }
+    .hero-slide:first-child { opacity: 1; }
+    @keyframes hero-crossfade {
+      0% { opacity: 1; }
+      ${(visiblePct - fadePct).toFixed(3)}% { opacity: 1; }
+      ${visiblePct.toFixed(3)}% { opacity: 0; }
+      ${(100 - fadePct).toFixed(3)}% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-slide { animation: none; opacity: 0; }
+      .hero-slide:first-child { opacity: 1; }
+    }
+  `;
+
   return (
     <section className="relative -mt-[88px] flex min-h-[100svh] items-start overflow-hidden text-white md:items-center">
-      {/* Full-bleed background image */}
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${HERO_BG})` }}
-      />
+      {/* Full-bleed Bilderlauf: gestapelte Layer mit CSS-Crossfade */}
+      <style dangerouslySetInnerHTML={{ __html: heroSlideshowCss }} />
+      <div className="absolute inset-0" aria-hidden="true">
+        {HERO_SLIDES.map((src, i) => (
+          <div
+            key={src}
+            className="hero-slide absolute inset-0 bg-cover bg-center"
+            style={{
+              backgroundImage: `url(${src})`,
+              // Vorwärts-Reihenfolge: Layer i wird ab i*HERO_PER_SLIDE_S sichtbar.
+              // Negativer Delay verschiebt rückwärts, daher (slideCount - i).
+              animationDelay:
+                i === 0 ? "0s" : `-${(slideCount - i) * HERO_PER_SLIDE_S}s`,
+            }}
+          />
+        ))}
+      </div>
       {/* Darken the left/bottom for text legibility, let the right breathe */}
       <div className="absolute inset-0 bg-[linear-gradient(100deg,rgba(5,14,36,0.94)_0%,rgba(11,27,63,0.78)_45%,rgba(11,27,63,0.35)_100%)]" />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,14,36,0.1)_0%,rgba(5,14,36,0)_35%,rgba(5,14,36,0.55)_100%)]" />
@@ -160,6 +214,11 @@ export async function Hero({ hero }: Props) {
             </HeroItem>
 
             <HeroItem>
+              {/* Vollständiger Vereinsname als Kicker, schmales geschütztes
+                  Leerzeichen (U+202F) vor „e. V." */}
+              <p className="mb-3 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.45)]">
+                SV Nord München-Lerchenau e.&#8239;V.
+              </p>
               <h1
                 className="font-display font-black text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.4)]"
                 style={{

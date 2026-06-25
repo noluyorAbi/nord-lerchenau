@@ -1,8 +1,11 @@
 import Link from "next/link";
 
+import { StandingsTable } from "@/components/fussball/StandingsTable";
 import { FupaBlock } from "@/components/home/FupaBlock";
 import { PageHero } from "@/components/PageHero";
+import { SectionEyebrow } from "@/components/SectionEyebrow";
 import { BFV_CLUB_URL } from "@/lib/bfv";
+import { getFupaStanding } from "@/lib/fupa";
 import { getPayloadClient } from "@/lib/payload";
 
 export const dynamic = "force-dynamic";
@@ -42,13 +45,16 @@ const TONE_CLASSES: Record<
 export default async function FussballPage() {
   const payload = await getPayloadClient();
 
-  const result = await payload.find({
-    collection: "teams",
-    where: { sport: { equals: "fussball" } },
-    sort: "order",
-    limit: 200,
-    depth: 0,
-  });
+  const [result, standings] = await Promise.all([
+    payload.find({
+      collection: "teams",
+      where: { sport: { equals: "fussball" } },
+      sort: "order",
+      limit: 200,
+      depth: 0,
+    }),
+    getFupaStanding(),
+  ]);
 
   const bfvCount = result.docs.filter((t) => t.bfv?.teamId).length;
 
@@ -168,6 +174,21 @@ export default async function FussballPage() {
               tone="paper"
             />
           </div>
+        </section>
+
+        <section className="mb-4">
+          <div className="mb-5 flex items-baseline justify-between border-b border-nord-line pb-2">
+            <div>
+              <SectionEyebrow number="03" label="Tabelle" />
+              <h2 className="mt-2 font-display text-2xl font-black tracking-tight text-nord-ink md:text-3xl">
+                Bezirksliga Oberbayern Nord
+              </h2>
+            </div>
+            <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.15em] text-nord-muted">
+              Herren 1 · live von fupa
+            </span>
+          </div>
+          <StandingsTable standings={standings} />
         </section>
       </div>
       <FupaBlock />

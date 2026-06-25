@@ -19,7 +19,7 @@ or a new domain), do all of:
 3. Update the hardcoded WIX fallbacks still in code:
    - `app/(frontend)/layout.tsx:54`
    - `components/seo/SiteSchema.tsx:4`
-   (change default `"https://svnord-lerchenau.de"` → new domain)
+     (change default `"https://svnord-lerchenau.de"` → new domain)
 
 **Note:** sport hero images (Gymnastik/Volleyball/Ski) are served from static
 `/public/sport/*-hero.jpg`, independent of this var. CMS-uploaded media (portraits,

@@ -39,9 +39,9 @@ Live-Seite.
    - Sportliche Leitung: Felix Kirmeyer (Sportlicher Leiter),
      Felix Kirmeyer (Fußball-Erwachsene), Ergin Piker (Fußball-Jugend).
 4. **Sportliche Leitung auf Unterseiten** (`components/fussball/CategoryPage.tsx`
-   + `app/(frontend)/fussball/herren|junioren/page.tsx`):
-   - Herren: Felix Kirmeyer (Sportlicher Leiter / Fußball-Erwachsene).
-   - Junioren: Felix Kirmeyer (Sportlicher Leiter), Ergin Piker
+   - `app/(frontend)/fussball/herren|junioren/page.tsx`):
+   * Herren: Felix Kirmeyer (Sportlicher Leiter / Fußball-Erwachsene).
+   * Junioren: Felix Kirmeyer (Sportlicher Leiter), Ergin Piker
      (Fußball-Jugend), Großfeld (Besel, Tiesler, Jeremic), Kompaktfeld
      (Helmreich, Wurm), Kleinfeld (Wimmer, Krusche), Mädl's (Piker, Yousaf).
 5. **Vorstand** (`app/(frontend)/verein/vorstand/page.tsx`): Ski-Gruppe ans

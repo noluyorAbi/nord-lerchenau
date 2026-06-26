@@ -37,6 +37,12 @@ export const FALLBACK_SPONSORS: FallbackSponsor[] = [
     tier: "premium",
   },
   {
+    id: "wohnen-und-gut-leben",
+    name: "Wohnen und gut leben",
+    url: "https://www.wohnen-und-gut-leben.de",
+    tier: "premium",
+  },
+  {
     id: "bs-hagenbusch",
     name: "BrandSchutz Benedict Hagenbusch",
     url: "https://www.bs-bh.de/",

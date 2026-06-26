@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { PageHero } from "@/components/PageHero";
 import { getPayloadClient } from "@/lib/payload";
 import { publicUploadSrc } from "@/lib/publicUploads";
@@ -21,6 +23,14 @@ const GYMNASTIK_BLOCKED = new Set(["Simone Roth"]);
 
 // eSport: öffentlich nur Trainer Erich Popp und Kapitän Kevin Schwarz anzeigen.
 const ESPORT_ALLOWED = new Set(["Erich Popp", "Kevin Schwarz"]);
+
+// 2026_06_02 Vereinswunsch: Trainerin Abbrederis nicht mehr öffentlich anzeigen.
+// Substring-Match auf den Nachnamen, da der volle Vorname in den Daten variieren kann.
+const BLOCKED_NAME_SUBSTRINGS = ["Abbrederis"];
+
+function isBlockedName(name: string): boolean {
+  return BLOCKED_NAME_SUBSTRINGS.some((s) => name.includes(s));
+}
 
 const SPORT_GROUPS: Array<{
   id: string;
@@ -116,6 +126,8 @@ export default async function VorstandPage() {
 
   const sportSubgroups = SPORT_GROUPS.map((group) => {
     let people = sportleitung.filter((p) => group.match(p.role ?? ""));
+    // 2026_06_02 Vereinswunsch: Abbrederis aus allen Abteilungen ausblenden.
+    people = people.filter((p) => !isBlockedName(p.name));
     if (group.id === "ski") {
       people = people.filter((p) => SKI_ALLOWED.has(p.name));
     }
@@ -129,7 +141,9 @@ export default async function VorstandPage() {
   }).filter((g) => g.people.length > 0);
 
   const ungrouped = sportleitung.filter(
-    (p) => !SPORT_GROUPS.some((g) => g.match(p.role ?? "")),
+    (p) =>
+      !SPORT_GROUPS.some((g) => g.match(p.role ?? "")) &&
+      !isBlockedName(p.name),
   );
 
   const totalPeople = result.docs.length;
@@ -145,9 +159,10 @@ export default async function VorstandPage() {
       <div className="mx-auto max-w-7xl px-6 py-14 md:px-10 md:py-20">
         <div className="mb-12 grid grid-cols-2 gap-3 md:grid-cols-4">
           <StatTile value={vorstand.length} label="Vorstand" tone="navy" />
+          {/* 2026_06_02 Vereinswunsch: nur Abteilungsleitung anzeigen, daher Anzahl der Abteilungen statt aller Trainer. */}
           <StatTile
-            value={sportleitung.length}
-            label="Sportleitung"
+            value={sportSubgroups.length}
+            label="Abteilungen"
             tone="sky"
           />
           <StatTile
@@ -163,15 +178,37 @@ export default async function VorstandPage() {
           title="Die Vier an der Spitze"
           sub="Gewählte Vorstandschaft nach Vereinssatzung."
         />
-        <div className="mb-20 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mb-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {vorstand.map((p, idx) => (
             <FeaturedPersonCard key={p.id} person={p} order={idx + 1} />
           ))}
         </div>
 
+        {/* 2026_06_02 Vereinswunsch: "Punkt unter dem Vorstand" zum Kinder- & Jugendschutz. */}
+        <Link
+          href="/verein/jugendschutz"
+          className="group mb-20 flex items-center justify-between gap-4 rounded-2xl border border-nord-line bg-nord-paper-2 px-5 py-4 transition hover:-translate-y-0.5 hover:border-nord-gold hover:bg-white md:px-7 md:py-5"
+        >
+          <div className="min-w-0">
+            <div className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-nord-gold">
+              Schutzkonzept
+            </div>
+            <div className="mt-1 font-display text-lg font-black tracking-tight text-nord-ink md:text-xl">
+              Kinder- &amp; Jugendschutz
+            </div>
+            <p className="mt-0.5 text-sm text-nord-muted">
+              Erweitertes Führungszeugnis, Prävention und Ansprechstellen im
+              Verdachtsfall.
+            </p>
+          </div>
+          <span className="shrink-0 font-mono text-[11px] font-bold uppercase tracking-[0.15em] text-nord-navy transition group-hover:translate-x-0.5">
+            Mehr →
+          </span>
+        </Link>
+
         <SectionHeader
           eyebrow="Sportliche Leitung"
-          title="Trainer und Abteilungsleitung"
+          title="Abteilungsleitung"
           sub="Pro Abteilung gruppiert."
         />
         <div className="mb-20 space-y-12">

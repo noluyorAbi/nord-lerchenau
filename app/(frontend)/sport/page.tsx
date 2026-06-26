@@ -13,17 +13,17 @@ const CARDS = [
   {
     title: "Gymnastik",
     href: "/gymnastik",
-    desc: "Seit 1967. Montag und Mittwoch abends — Frauen und Männer willkommen.",
+    desc: "Seit 1967. Montag und Mittwoch abends, Frauen und Männer willkommen.",
   },
   {
     title: "Volleyball",
     href: "/volleyball",
-    desc: "Hobby & Mixed — jeden Freitag 19–21 Uhr in der Waldmeisterschule.",
+    desc: "Hobby & Mixed, jeden Freitag 19-20 Uhr in der Waldmeisterschule.",
   },
   {
     title: "eSport",
     href: "/esport",
-    desc: "Zwei Mannschaften in der BFV-eLeague. Ab 16 Jahren — wir suchen Nachwuchs.",
+    desc: "Zwei Mannschaften in der BFV-eLeague. Ab 16 Jahren, wir suchen Nachwuchs.",
   },
   {
     title: "Schiedsrichter",
@@ -150,7 +150,7 @@ export default function SportPage() {
       <PageHero
         eyebrow="Abteilungen"
         title="Unsere Sportarten"
-        lede="Sechs Abteilungen unter einem Dach — Fußball, Gymnastik, Volleyball, eSport, Schiedsrichter und Ski."
+        lede="Sechs Abteilungen unter einem Dach: Fußball, Gymnastik, Volleyball, eSport, Schiedsrichter und Ski."
       />
       <section className="mx-auto max-w-7xl px-6 py-16 md:px-10 md:py-20">
         <div className="mb-10 rounded-2xl border border-nord-line bg-nord-paper-2 p-6 md:p-8">
@@ -160,7 +160,7 @@ export default function SportPage() {
           <p className="mt-2 max-w-3xl text-sm leading-relaxed text-nord-ink md:text-base">
             Unsere Trainer und Übungsleiter besitzen{" "}
             <strong>Trainerlizenzen der C-Lizenz und höher</strong> und bilden
-            sich kontinuierlich weiter — vom Bambini-Training bis zur
+            sich kontinuierlich weiter, vom Bambini-Training bis zur
             Bezirksliga.
           </p>
           <p className="mt-2">

@@ -55,6 +55,14 @@ const CARDS: FeatureCard[] = [
     meta: "Ab 24 € jährlich",
     tone: "gold",
   },
+  {
+    href: "/verein/jugendschutz",
+    eyebrow: "Schutzkonzept",
+    title: "Kinder- & Jugendschutz",
+    desc: "Erweitertes Führungszeugnis für alle Trainer, klare Prävention und Ansprechstellen im Verdachtsfall.",
+    meta: "Schutz & Prävention",
+    tone: "navy",
+  },
 ];
 
 const SOCIAL_MEDIA_TEAM = [
@@ -102,7 +110,7 @@ export default function VereinPage() {
       <PageHero
         eyebrow="Der Verein"
         title="SV Nord München-Lerchenau e.V."
-        lede="Traditionsverein im Münchner Norden seit 1947 — über 600 Mitglieder, fünf Abteilungen."
+        lede="Traditionsverein im Münchner Norden seit 1947: über 600 Mitglieder, fünf Abteilungen."
       />
 
       <section className="mx-auto max-w-7xl px-6 pt-8 pb-14 md:px-10 md:pt-12 md:pb-20">
@@ -130,9 +138,7 @@ export default function VereinPage() {
                 ? "md:col-span-4 md:row-span-2"
                 : idx === 1
                   ? "md:col-span-2 md:row-span-2"
-                  : idx === 2
-                    ? "md:col-span-3"
-                    : "md:col-span-3";
+                  : "md:col-span-2";
             return (
               <Link
                 key={card.href}

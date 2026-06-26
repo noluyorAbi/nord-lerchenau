@@ -142,8 +142,7 @@ export async function SportSectionPage({
   const photo =
     team.photo && typeof team.photo === "object" ? (team.photo as Media) : null;
   // Media uploads only resolve when an absolute (Blob) URL is stored. On envs
-  // without Blob storage the uploaded file lives on ephemeral disk and 404s,
-  // so fall back to the tracked static hero shipped in /public/sport.
+  // without Blob storage the uploaded file lives on ephemeral disk and 404s.
   const mediaHeroSrc =
     photo && typeof photo.url === "string" && photo.url
       ? /^https?:\/\//.test(photo.url) &&
@@ -151,7 +150,11 @@ export async function SportSectionPage({
         ? photo.url
         : null
       : null;
-  const heroSrc = mediaHeroSrc ?? STATIC_HERO[sport] ?? null;
+  // Prefer the curated, tracked static hero whenever we ship one for this sport;
+  // only use a CMS/Blob upload where no static hero exists. This prevents a dead
+  // Blob URL (e.g. the Ski team photo that was never uploaded) from rendering as
+  // a broken image.
+  const heroSrc = STATIC_HERO[sport] ?? mediaHeroSrc ?? null;
 
   return (
     <>

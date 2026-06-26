@@ -628,6 +628,13 @@ async function main() {
       tier: "standard" as const,
       order: 8,
     },
+    {
+      name: "Wohnen und gut leben",
+      filename: "sponsor-wohnen-und-gut-leben.avif",
+      url: "https://www.wohnen-und-gut-leben.de",
+      tier: "premium" as const,
+      order: 9,
+    },
   ];
   const sponsorDir = path.resolve(process.cwd(), "tmp/live-sponsors");
   for (const sp of sponsors) {
@@ -1736,11 +1743,11 @@ Habt ihr Lust bekommen? Meldet euch gerne bei uns — wir freuen uns!
     teamName: "Volleyball",
     descriptionMd: `## Willkommen bei der Volleyball-Abteilung
 
-Unser Team ist zwischen 30 und 75 Jahren alt — Gemeinschaft und Spaß am Spiel stehen bei uns im Vordergrund. Wir treffen uns seit 1984 als Familienvolleyballer und wurden dann beim SV Nord als eigene Abteilung aufgenommen.
+Unser Team ist zwischen 30 und 75 Jahren alt. Gemeinschaft und Spaß am Spiel stehen bei uns im Vordergrund. Wir treffen uns seit 1984 als Familienvolleyballer und wurden dann beim SV Nord als eigene Abteilung aufgenommen.
 
 ## Training
 
-Wir spielen jeden Freitag von 19:00 bis 21:00 Uhr in der Waldmeisterschule. In den Schulferien ist kein Training.
+Wir spielen jeden Freitag von 19:00 bis 20:00 Uhr in der Waldmeisterschule. In den Schulferien ist kein Training.
 
 ## Mitmachen
 

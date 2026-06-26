@@ -66,7 +66,7 @@ function pickStarterProducts(
 export const metadata: Metadata = {
   title: "Vereinsshop",
   description:
-    "Der offizielle SV Nord München-Lerchenau Fanshop bei 11teamsports — Trainingskollektion und Fanartikel in Vereinsfarben.",
+    "Der offizielle SV Nord München-Lerchenau Fanshop bei 11teamsports: Trainingskollektion und Fanartikel in Vereinsfarben.",
   alternates: { canonical: "/shop" },
 };
 
@@ -86,41 +86,12 @@ export default async function ShopPage() {
       <PageHero
         eyebrow="Vereinsshop"
         title="Unser eigener Vereinsshop."
-        lede="Liebe Nordler! Der digitale Fanshop beim Partner 11teamsports ist online. Trainingskollektion, Taschen und Fan-Artikel im offiziellen SV-Nord-Design — direkt in Vereinsfarben bestellbar."
+        lede="Liebe Nordler! Der digitale Fanshop beim Partner 11teamsports ist online. Trainingskollektion, Taschen und Fan-Artikel im offiziellen SV-Nord-Design, direkt in Vereinsfarben bestellbar."
       />
 
       <div className="mx-auto max-w-6xl px-6 py-12 md:px-8 md:py-16">
-        <section className="overflow-hidden rounded-2xl bg-nord-ink p-8 text-white md:p-12">
-          <div className="flex flex-col items-start gap-6 md:flex-row md:items-end md:justify-between">
-            <div className="min-w-0 flex-1">
-              <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-nord-gold">
-                Vereinsshop
-              </div>
-              <h2
-                className="mt-3 font-display font-extrabold leading-tight"
-                style={{ fontSize: "clamp(28px, 3.6vw, 44px)" }}
-              >
-                Zum digitalen Fanshop
-              </h2>
-              <p className="mt-3 max-w-prose text-base leading-relaxed text-white/75">
-                Alle Artikel werden direkt über{" "}
-                <span className="font-semibold text-white">11teamsports</span>{" "}
-                versendet. Auswahl wird stündlich aktualisiert.
-              </p>
-            </div>
-            <a
-              href={shopUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 rounded-full bg-nord-gold px-6 py-3.5 font-display text-sm font-semibold uppercase tracking-[0.06em] text-nord-navy transition hover:-translate-y-px hover:shadow-[0_12px_30px_rgba(200,169,106,0.4)]"
-            >
-              Shop öffnen ↗
-            </a>
-          </div>
-        </section>
-
         {products.length > 0 ? (
-          <section className="mt-12 overflow-hidden rounded-2xl border border-blue-600/40 bg-gradient-to-br from-white via-nord-paper-2 to-white p-7 md:p-10">
+          <section className="mb-12 overflow-hidden rounded-2xl border border-blue-600/40 bg-gradient-to-br from-white via-nord-paper-2 to-white p-7 md:p-10">
             <div className="mb-7 grid gap-4 md:grid-cols-[1.6fr_1fr] md:items-end md:gap-8">
               <div>
                 <div className="flex flex-wrap items-center gap-2">
@@ -140,7 +111,7 @@ export default async function ShopPage() {
                   Du bist neu? Damit startest du komplett.
                 </h3>
                 <p className="mt-2 max-w-xl text-sm leading-relaxed text-nord-muted md:text-base">
-                  Vier Basics, die jedes neue Mitglied im Schrank haben sollte —
+                  Vier Basics, die jedes neue Mitglied im Schrank haben sollte,
                   alle direkt im Clubshop verfügbar.
                 </p>
               </div>
@@ -219,6 +190,35 @@ export default async function ShopPage() {
             </ol>
           </section>
         ) : null}
+
+        <section className="overflow-hidden rounded-2xl bg-nord-ink p-8 text-white md:p-12">
+          <div className="flex flex-col items-start gap-6 md:flex-row md:items-end md:justify-between">
+            <div className="min-w-0 flex-1">
+              <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-nord-gold">
+                Vereinsshop
+              </div>
+              <h2
+                className="mt-3 font-display font-extrabold leading-tight"
+                style={{ fontSize: "clamp(28px, 3.6vw, 44px)" }}
+              >
+                Zum digitalen Fanshop
+              </h2>
+              <p className="mt-3 max-w-prose text-base leading-relaxed text-white/75">
+                Alle Artikel werden direkt über{" "}
+                <span className="font-semibold text-white">11teamsports</span>{" "}
+                versendet. Auswahl wird stündlich aktualisiert.
+              </p>
+            </div>
+            <a
+              href={shopUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-3 rounded-full bg-nord-gold px-6 py-3.5 font-display text-sm font-semibold uppercase tracking-[0.06em] text-nord-navy transition hover:-translate-y-px hover:shadow-[0_12px_30px_rgba(200,169,106,0.4)]"
+            >
+              Shop öffnen ↗
+            </a>
+          </div>
+        </section>
 
         {products.length > 0 ? (
           <section className="mt-12">
@@ -305,7 +305,7 @@ export default async function ShopPage() {
             Match-Trikots und einheitliche Spielausstattung gibt es nicht im
             öffentlichen Clubshop. Für offizielle Trikots, Trainingsanzüge und
             Aufwärmshirts in den Teamfarben wendet euch bitte an die sportliche
-            Leitung bzw. eure Trainer:innen — die Abteilung bündelt Bestellungen
+            Leitung bzw. eure Trainer:innen. Die Abteilung bündelt Bestellungen
             und sorgt für einheitliches Auftreten auf dem Platz.
           </p>
         </section>

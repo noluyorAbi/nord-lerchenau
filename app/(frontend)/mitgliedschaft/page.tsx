@@ -4,8 +4,8 @@ import { getPayloadClient } from "@/lib/payload";
 export const dynamic = "force-dynamic";
 
 const BENEFITS = [
-  "Training auf eigenem Platz im Eschengarten",
-  "Teilnahme an allen Vereinsveranstaltungen (Sommerfest, Weihnachtsfeier u.a.)",
+  "Training auf eigenem Platz im Eschengarten der Bezirkssportanlage Ebereschenstraße 17 und Hallentraining in der Grundschule Waldmeisterstraße 38",
+  "Teilnahme an allen Vereinsveranstaltungen (Sommerfest, Weihnachtsfeier u. a.)",
   "Freier Eintritt zu allen Heimspielen",
   "Mitbestimmung in der Jahreshauptversammlung",
 ];
@@ -31,7 +31,7 @@ const ONLINE_FORMS: {
   {
     tag: "Familienbeitrag",
     title: "Familienmitgliedschaft",
-    body: "Mehrere Familienmitglieder gemeinsam anmelden — alle Sparten möglich.",
+    body: "Mehrere Familienmitglieder gemeinsam anmelden, alle Sparten möglich.",
     href: "https://formular.vereinsplaner.com/f7f432f8-41ff-4794-b6e7-b075c71639d0",
   },
   {
@@ -210,9 +210,14 @@ export default async function MitgliedschaftPage() {
             {BENEFITS.map((b) => (
               <li
                 key={b}
-                className="flex items-start gap-2 text-sm text-nord-muted"
+                className="flex items-start gap-2.5 text-sm text-nord-muted"
               >
-                <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-nord-gold" />
+                <span
+                  aria-hidden
+                  className="mt-0.5 shrink-0 font-bold text-nord-gold"
+                >
+                  ✓
+                </span>
                 {b}
               </li>
             ))}

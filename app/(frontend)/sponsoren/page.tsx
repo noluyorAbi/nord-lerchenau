@@ -224,6 +224,26 @@ export default async function SponsorenPage() {
             </div>
           </div>
         </section>
+
+        <section className="mt-10 rounded-2xl bg-gradient-to-br from-nord-navy to-nord-navy-2 p-8 text-white md:p-12">
+          <div className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-nord-gold">
+            Jugendförderverein
+          </div>
+          <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
+            Unsere Jugend braucht Sie
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm text-white/80 md:text-base">
+            Mit dem Jugendförderverein unterstützen Sie gezielt die
+            Nachwuchsarbeit des SV Nord München-Lerchenau. Jeder Beitrag kommt
+            direkt unseren jungen Spielerinnen und Spielern zugute.
+          </p>
+          <Link
+            href="/verein/jugendfoerderverein"
+            className="mt-6 inline-flex rounded-lg bg-nord-gold px-5 py-3 text-sm font-semibold text-nord-navy hover:brightness-110"
+          >
+            Zum Jugendförderverein →
+          </Link>
+        </section>
       </div>
     </>
   );

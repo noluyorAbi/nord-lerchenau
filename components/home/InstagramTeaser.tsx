@@ -43,6 +43,21 @@ const GALLERY: GalleryShot[] = [
     h: 1200,
   },
   {
+    src: "/trainingslager/trainingslager-teamabend.jpg",
+    caption: "Trainingslager Garmisch",
+    sub: "Teamabend in Weiß",
+    w: 1600,
+    h: 1200,
+    span: "wide",
+  },
+  {
+    src: "/trainingslager/trainingslager-feier.jpg",
+    caption: "Mannschaftsabend",
+    sub: "Trainingslager 2026",
+    w: 1600,
+    h: 1200,
+  },
+  {
     src: "/sport/u8/loewen.jpg",
     caption: "U8 Löwen",
     sub: "F-Junioren · U8-I",

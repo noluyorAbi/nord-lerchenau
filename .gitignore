@@ -83,3 +83,8 @@ next-env.d.ts
 ruvector.db
 agentdb.rvf
 agentdb.rvf.lock
+
+# secrets / credentials, never commit (local-only reference notes)
+CREDENTIALS.local.md
+*.local.md
+*.secrets.md

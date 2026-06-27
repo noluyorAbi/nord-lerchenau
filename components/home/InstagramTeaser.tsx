@@ -21,6 +21,28 @@ type GalleryShot = {
 
 const GALLERY: GalleryShot[] = [
   {
+    src: "/fans/spieltag-garmisch.jpg",
+    caption: "Spieltag in den Bergen",
+    sub: "Auswärtsfahrt der Nordler",
+    w: 1600,
+    h: 1200,
+    span: "wide",
+  },
+  {
+    src: "/fans/tribuene-garmisch.jpg",
+    caption: "Volle Tribüne",
+    sub: "Mitgereiste Fans des SV Nord",
+    w: 1600,
+    h: 1200,
+  },
+  {
+    src: "/fans/fans-garmisch.jpg",
+    caption: "Mitten unter Nordlern",
+    sub: "Einmal Nordler, immer Nordler",
+    w: 1600,
+    h: 1200,
+  },
+  {
     src: "/sport/u8/loewen.jpg",
     caption: "U8 Löwen",
     sub: "F-Junioren · U8-I",

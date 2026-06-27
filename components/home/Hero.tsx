@@ -23,14 +23,16 @@ import type { HomePage, Team } from "@/payload-types";
 
 type Props = { hero: HomePage["hero"] };
 
-// Hero-Bilderlauf: 3 bis 5 starke Querformat-Fotos aus /public. Zum Tauschen
+// Hero-Bilderlauf: starke Querformat-Fotos aus /public. Zum Tauschen
 // einfach die Pfade ändern oder Einträge ergänzen/entfernen; die Animation
 // passt sich automatisch an die Anzahl der Bilder an. Erstes Bild wird bei
 // aktivierter Bewegungsreduktion (prefers-reduced-motion) statisch gezeigt.
 const HERO_SLIDES = [
   "/news/historischer-aufstieg-in-die-landesliga.jpg",
+  "/fans/spieltag-garmisch.jpg",
   "/sport/u8/tiger.jpg",
   "/sport/u8/loewen.jpg",
+  "/fans/tribuene-garmisch.jpg",
   "/sport/u8/team-5.jpg",
 ] as const;
 

@@ -32,7 +32,10 @@ export const ChronikPage: GlobalConfig = {
       type: "richText",
       required: true,
       label: "Haupttext",
-      admin: { description: "Die eigentliche Vereinsgeschichte." },
+      admin: {
+        description:
+          "Hinweis: Die Vereinschronik wird aktuell im Code gepflegt. Dieses Feld wird derzeit nicht auf der Seite angezeigt.",
+      },
     },
   ],
 };

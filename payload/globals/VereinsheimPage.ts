@@ -19,6 +19,7 @@ export const VereinsheimPage: GlobalConfig = {
       type: "upload",
       relationTo: "media",
       label: "Titelbild",
+      admin: { hidden: true },
     },
     {
       name: "intro",
@@ -31,7 +32,7 @@ export const VereinsheimPage: GlobalConfig = {
       name: "gallery",
       type: "array",
       label: "Bildergalerie",
-      admin: { description: "Mehrere Fotos vom Vereinsheim." },
+      admin: { hidden: true, description: "Mehrere Fotos vom Vereinsheim." },
       fields: [
         {
           name: "image",

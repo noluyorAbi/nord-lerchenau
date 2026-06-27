@@ -34,9 +34,19 @@ import { VereinsheimPage } from "./payload/globals/VereinsheimPage";
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
+// Fail fast on Vercel if the JWT secret is missing: an empty secret produces
+// forgeable tokens. Locally (no VERCEL env) fall back to a placeholder so the
+// build and typecheck can still run without secrets present.
+const PAYLOAD_SECRET = process.env.PAYLOAD_SECRET;
+if (!PAYLOAD_SECRET && process.env.VERCEL) {
+  throw new Error(
+    "PAYLOAD_SECRET is required in production (Vercel). Refusing to start with a forgeable token secret.",
+  );
+}
+
 export default buildConfig({
   serverURL: process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000",
-  secret: process.env.PAYLOAD_SECRET || "",
+  secret: PAYLOAD_SECRET || "dev-insecure-secret-change-in-prod",
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URI || "",
@@ -79,37 +89,12 @@ export default buildConfig({
     meta: {
       titleSuffix: "· SV Nord Admin",
     },
-    autoLogin: {
-      email: process.env.PAYLOAD_AUTO_LOGIN_EMAIL || "admin@local",
-      password: process.env.PAYLOAD_AUTO_LOGIN_PASSWORD || "open-admin-no-auth",
-      prefillOnly: false,
-    },
+    // No autoLogin: the admin requires a real login. Accounts are provisioned
+    // by scripts/seed.ts (ensureAdminUser). Auto-login would expose the whole
+    // CMS to anonymous visitors and must never run in production.
     components: {
       beforeDashboard: ["@/payload/components/WelcomeDashboard#default"],
     },
-  },
-  onInit: async (payload) => {
-    const email = process.env.PAYLOAD_AUTO_LOGIN_EMAIL || "admin@local";
-    const password =
-      process.env.PAYLOAD_AUTO_LOGIN_PASSWORD || "open-admin-no-auth";
-    try {
-      const existing = await payload.find({
-        collection: "users",
-        where: { email: { equals: email } },
-        limit: 1,
-      });
-      if (existing.docs.length === 0) {
-        await payload.create({
-          collection: "users",
-          data: { email, password, name: "Auto Admin" },
-        });
-      }
-    } catch (err) {
-      payload.logger.warn(
-        { err },
-        "onInit: could not seed auto-login user (DB unavailable?)",
-      );
-    }
   },
   plugins: process.env.BLOB_READ_WRITE_TOKEN
     ? [

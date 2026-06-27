@@ -26,6 +26,9 @@ export const HomePage: GlobalConfig = {
           name: "pretitle",
           type: "text",
           label: "Kleine Zeile darüber",
+          admin: {
+            description: "Kleiner Text über der Hauptüberschrift.",
+          },
           defaultValue: "Heimspieltag · Sa 14:30 · Eschengarten",
         },
         {
@@ -80,7 +83,7 @@ export const HomePage: GlobalConfig = {
       type: "array",
       maxRows: 4,
       label: "Statistik-Kacheln",
-      admin: { description: "Bis zu 4 Zahlen-Kacheln unter dem Hero." },
+      admin: { hidden: true },
       fields: [
         {
           name: "label",
@@ -117,6 +120,7 @@ export const HomePage: GlobalConfig = {
           type: "checkbox",
           defaultValue: true,
           label: "Fupa-Block (Liga · Ergebnisse · Torjäger · News)",
+          admin: { hidden: true },
         },
         {
           name: "showNews",
@@ -147,12 +151,14 @@ export const HomePage: GlobalConfig = {
           type: "checkbox",
           defaultValue: true,
           label: "Vereinsheim-Block",
+          admin: { hidden: true },
         },
         {
           name: "showLocation",
           type: "checkbox",
           defaultValue: true,
           label: "Anfahrt / Karte",
+          admin: { hidden: true },
         },
         {
           name: "showMembershipCta",

@@ -92,16 +92,25 @@ async function ensureAdminUser(
     console.log("✓ Admin user already exists");
     return;
   }
+  // Password must come from the environment; no hardcoded default so a known
+  // literal can never ship to production.
+  const password = process.env.PAYLOAD_ADMIN_PASSWORD;
+  if (!password) {
+    console.warn(
+      "⚠ PAYLOAD_ADMIN_PASSWORD not set, skipping admin user creation. Set it and re-run to create admin@svnord.de.",
+    );
+    return;
+  }
   await payload.create({
     collection: "users",
     data: {
       email: "admin@svnord.de",
-      password: "ChangeMeNach-P1",
+      password,
       name: "SV Nord Admin",
     } as never,
   });
   console.log(
-    "✓ Created admin user: admin@svnord.de / ChangeMeNach-P1 (CHANGE THIS PASSWORD)",
+    "✓ Created admin user: admin@svnord.de (password from PAYLOAD_ADMIN_PASSWORD)",
   );
 }
 

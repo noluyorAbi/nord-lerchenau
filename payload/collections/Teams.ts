@@ -91,7 +91,7 @@ export const Teams: CollectionConfig = {
       label: "Jahrgänge",
       admin: {
         description:
-          "Kommagetrennt, z.B. '2006, 2007, 2008'. Erscheint hinter dem Mannschaftstitel.",
+          "Jahrgänge, z. B. 2006, 2007, 2008. Erscheinen im Mannschaftstitel.",
       },
     },
     {
@@ -209,6 +209,10 @@ export const Teams: CollectionConfig = {
       type: "upload",
       relationTo: "media",
       label: "Mannschaftsfoto",
+      admin: {
+        description:
+          "Hinweis: Sport-Hero-Bilder kommen derzeit aus statischen Dateien. Dieses Feld wird aktuell nicht verwendet.",
+      },
     },
     {
       name: "externalLinks",

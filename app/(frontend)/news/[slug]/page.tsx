@@ -10,9 +10,21 @@ import {
   newsHeroForPost,
   newsTagLabel,
 } from "@/lib/news-visual";
+import { publicUploadSrc } from "@/lib/publicUploads";
+import type { Media, Post } from "@/payload-types";
 import config from "@/payload.config";
 
 export const dynamic = "force-dynamic";
+
+// Resolve an uploaded heroImage to a URL the same way PersonCard/SponsorMarquee
+// do; returns null when none is set so callers fall back to newsHeroForPost().
+function heroImageSrc(heroImage: Post["heroImage"]): string | null {
+  if (!heroImage || typeof heroImage !== "object") return null;
+  const m = heroImage as Media;
+  const url = m.url ?? "";
+  if (/^https?:\/\//.test(url) && !url.includes("/api/media/file/")) return url;
+  return publicUploadSrc(m.filename);
+}
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -47,7 +59,7 @@ export default async function NewsPost({ params, searchParams }: Props) {
     },
     sort: "-publishedAt",
     limit: 3,
-    depth: 0,
+    depth: 1,
   });
 
   const author =
@@ -58,7 +70,10 @@ export default async function NewsPost({ params, searchParams }: Props) {
   const publishedDate = formatNewsDate(post.publishedAt);
   const tag = Array.isArray(post.tags) ? post.tags[0] : null;
   const tagLabel = tag ? newsTagLabel(tag) : "News";
-  const hero = newsHeroForPost(post.slug, tag);
+  const heroImg = heroImageSrc(post.heroImage);
+  const hero = heroImg
+    ? ({ kind: "image", src: heroImg } as const)
+    : newsHeroForPost(post.slug, tag);
 
   return (
     <>
@@ -159,7 +174,10 @@ export default async function NewsPost({ params, searchParams }: Props) {
               {related.docs.map((p) => {
                 const t = Array.isArray(p.tags) ? p.tags[0] : null;
                 const tl = newsTagLabel(t);
-                const h = newsHeroForPost(p.slug, t);
+                const img = heroImageSrc(p.heroImage);
+                const h = img
+                  ? ({ kind: "image", src: img } as const)
+                  : newsHeroForPost(p.slug, t);
                 return (
                   <Link
                     key={p.id}

@@ -46,6 +46,7 @@ export const Events: CollectionConfig = {
       type: "date",
       label: "Ende",
       admin: {
+        hidden: true,
         date: { pickerAppearance: "dayAndTime" },
         description: "Optional. Wann endet sie?",
       },
@@ -60,20 +61,26 @@ export const Events: CollectionConfig = {
       name: "description",
       type: "richText",
       label: "Beschreibung",
-      admin: { description: "Programmpunkte, Ablauf, Hinweise." },
+      admin: {
+        description: "Hinweis: aktuell nicht auf der Termine-Seite sichtbar.",
+      },
     },
     {
       name: "image",
       type: "upload",
       relationTo: "media",
       label: "Bild",
-      admin: { description: "Optional. Foto oder Plakat zum Termin." },
+      admin: {
+        hidden: true,
+        description: "Optional. Foto oder Plakat zum Termin.",
+      },
     },
     {
       name: "ctaUrl",
       type: "text",
       label: "Anmelde-Link",
       admin: {
+        hidden: true,
         description:
           "Optional. Externer Link, z.B. zur Online-Anmeldung oder Eventseite.",
       },

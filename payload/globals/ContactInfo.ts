@@ -9,8 +9,7 @@ export const ContactInfo: GlobalConfig = {
   label: "Kontaktdaten",
   admin: {
     group: "5. Einstellungen",
-    description:
-      "Adressen, Bankverbindung, Ansprechpartner — Footer + /kontakt.",
+    description: "Adressen, Kontakt und Öffnungszeiten (Footer und /kontakt).",
   },
   access: { read: anyone, update: authenticated },
   hooks: { afterChange: [revalidateGlobalOnChange("contact-info")] },
@@ -66,7 +65,10 @@ export const ContactInfo: GlobalConfig = {
       name: "iban",
       type: "text",
       label: "IBAN",
-      admin: { description: "Für Mitgliedsbeiträge und Spenden." },
+      admin: {
+        hidden: true,
+        description: "Für Mitgliedsbeiträge und Spenden.",
+      },
     },
     {
       name: "openingHours",
@@ -78,14 +80,14 @@ export const ContactInfo: GlobalConfig = {
           type: "text",
           required: true,
           label: "Tag(e)",
-          admin: { description: "z.B. 'Mo–Fr', 'Sa', 'So'." },
+          admin: { description: "z.B. 'Mo bis Fr', 'Sa', 'So'." },
         },
         {
           name: "hours",
           type: "text",
           required: true,
           label: "Uhrzeit",
-          admin: { description: "z.B. '17:00–22:00' oder 'geschlossen'." },
+          admin: { description: "z.B. '17:00 bis 22:00' oder 'geschlossen'." },
         },
       ],
     },

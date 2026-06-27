@@ -7,10 +7,22 @@ import {
   newsTagLabel,
 } from "@/lib/news-visual";
 import { getPayloadClient } from "@/lib/payload";
+import { publicUploadSrc } from "@/lib/publicUploads";
+import type { Media, Post } from "@/payload-types";
 
 export const dynamic = "force-dynamic";
 
 const PAGE_SIZE = 12;
+
+// Resolve an uploaded heroImage to a URL the same way PersonCard/SponsorMarquee
+// do; returns null when none is set so callers fall back to newsHeroForPost().
+function heroImageSrc(heroImage: Post["heroImage"]): string | null {
+  if (!heroImage || typeof heroImage !== "object") return null;
+  const m = heroImage as Media;
+  const url = m.url ?? "";
+  if (/^https?:\/\//.test(url) && !url.includes("/api/media/file/")) return url;
+  return publicUploadSrc(m.filename);
+}
 
 type Props = {
   searchParams: Promise<{ page?: string }>;
@@ -26,7 +38,7 @@ export default async function NewsIndex({ searchParams }: Props) {
     sort: "-publishedAt",
     page,
     limit: PAGE_SIZE,
-    depth: 0,
+    depth: 1,
   });
 
   return (
@@ -34,7 +46,7 @@ export default async function NewsIndex({ searchParams }: Props) {
       <PageHero
         eyebrow="Aktuelles"
         title="News & Berichte"
-        lede="Spielberichte, Vereinsmeldungen, Jugendnews und Events — alle Geschichten aus Nord auf einen Blick."
+        lede="Spielberichte, Vereinsmeldungen, Jugendnews und Events, alle Geschichten aus Nord auf einen Blick."
       />
 
       <div className="mx-auto max-w-[1320px] px-6 py-14 md:px-7 md:py-20">
@@ -48,7 +60,10 @@ export default async function NewsIndex({ searchParams }: Props) {
             {result.docs.map((post) => {
               const tag = Array.isArray(post.tags) ? post.tags[0] : null;
               const tagLabel = newsTagLabel(tag);
-              const hero = newsHeroForPost(post.slug, tag);
+              const img = heroImageSrc(post.heroImage);
+              const hero = img
+                ? ({ kind: "image", src: img } as const)
+                : newsHeroForPost(post.slug, tag);
               return (
                 <Link
                   key={post.id}

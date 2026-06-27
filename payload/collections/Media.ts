@@ -53,6 +53,7 @@ export const Media: CollectionConfig = {
       type: "text",
       label: "Bildunterschrift",
       admin: {
+        hidden: true,
         description: "Optional. Wird unter dem Bild angezeigt.",
       },
     },
@@ -60,7 +61,10 @@ export const Media: CollectionConfig = {
       name: "credit",
       type: "text",
       label: "Bildquelle / Fotograf:in",
-      admin: { description: "Optional. z.B. 'Foto: Max Mustermann'." },
+      admin: {
+        hidden: true,
+        description: "Optional. z.B. 'Foto: Max Mustermann'.",
+      },
     },
   ],
 };

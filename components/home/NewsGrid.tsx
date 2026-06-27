@@ -8,6 +8,20 @@ import {
   newsTagLabel,
 } from "@/lib/news-visual";
 import { getPayloadClient } from "@/lib/payload";
+import { publicUploadSrc } from "@/lib/publicUploads";
+import type { Media, Post } from "@/payload-types";
+
+// Resolve an uploaded heroImage to a URL the same way PersonCard/SponsorMarquee
+// do: prefer an absolute blob/CDN URL, otherwise the asset shipped in
+// public/uploads. Returns null when no usable image is set, so callers fall
+// back to the deterministic newsHeroForPost() visual.
+function heroImageSrc(heroImage: Post["heroImage"]): string | null {
+  if (!heroImage || typeof heroImage !== "object") return null;
+  const m = heroImage as Media;
+  const url = m.url ?? "";
+  if (/^https?:\/\//.test(url) && !url.includes("/api/media/file/")) return url;
+  return publicUploadSrc(m.filename);
+}
 
 export async function NewsGrid() {
   const payload = await getPayloadClient();
@@ -15,7 +29,7 @@ export async function NewsGrid() {
     collection: "posts",
     sort: "-publishedAt",
     limit: 3,
-    depth: 0,
+    depth: 1,
   });
 
   if (result.docs.length === 0) return null;
@@ -23,7 +37,10 @@ export async function NewsGrid() {
   const [featured, ...side] = result.docs;
   const featuredTag = Array.isArray(featured.tags) ? featured.tags[0] : null;
   const featuredLabel = newsTagLabel(featuredTag);
-  const featuredHero = newsHeroForPost(featured.slug, featuredTag);
+  const featuredImg = heroImageSrc(featured.heroImage);
+  const featuredHero = featuredImg
+    ? ({ kind: "image", src: featuredImg } as const)
+    : newsHeroForPost(featured.slug, featuredTag);
 
   return (
     <section className="border-b border-nord-line bg-nord-paper-2">
@@ -104,7 +121,10 @@ export async function NewsGrid() {
           {side.map((post, idx) => {
             const tag = Array.isArray(post.tags) ? post.tags[0] : null;
             const tagLabel = newsTagLabel(tag);
-            const hero = newsHeroForPost(post.slug, tag);
+            const img = heroImageSrc(post.heroImage);
+            const hero = img
+              ? ({ kind: "image", src: img } as const)
+              : newsHeroForPost(post.slug, tag);
             return (
               <FadeUp key={post.id} delay={(idx + 1) * 0.08}>
                 <Link

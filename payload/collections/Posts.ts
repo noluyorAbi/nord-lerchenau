@@ -21,19 +21,6 @@ export const Posts: CollectionConfig = {
     description:
       "Vereinsnews, Spielberichte und Ankündigungen. Erscheint unter /news.",
     group: "1. Inhalte",
-    livePreview: {
-      url: ({ data }) => {
-        const postSlug = typeof data?.slug === "string" ? data.slug : "new";
-        const base =
-          process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000";
-        return `${base}/news/${postSlug}?preview=1`;
-      },
-      breakpoints: [
-        { label: "Mobile", name: "mobile", width: 375, height: 667 },
-        { label: "Tablet", name: "tablet", width: 768, height: 1024 },
-        { label: "Desktop", name: "desktop", width: 1440, height: 900 },
-      ],
-    },
   },
   access: {
     create: authenticated,
@@ -70,7 +57,7 @@ export const Posts: CollectionConfig = {
       label: "Kurzfassung",
       admin: {
         description:
-          "1–2 Sätze. Wird in der News-Übersicht als Teaser angezeigt.",
+          "1 bis 2 Sätze. Wird in der News-Übersicht als Teaser angezeigt.",
       },
     },
     {
@@ -78,7 +65,10 @@ export const Posts: CollectionConfig = {
       type: "upload",
       relationTo: "media",
       label: "Titelbild",
-      admin: { description: "Großes Bild ganz oben im Artikel." },
+      admin: {
+        description:
+          "Optionales Titelbild der News. Wird angezeigt, wenn gesetzt.",
+      },
     },
     {
       name: "body",

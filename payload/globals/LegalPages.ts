@@ -8,6 +8,7 @@ export const LegalPages: GlobalConfig = {
   slug: "legal-pages",
   label: "Impressum & Datenschutz",
   admin: {
+    hidden: true,
     group: "4. Seiten",
     description: "Pflichttexte für /impressum und /datenschutz.",
   },

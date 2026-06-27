@@ -9,7 +9,8 @@ export const SiteSettings: GlobalConfig = {
   label: "Allgemeine Einstellungen",
   admin: {
     group: "5. Einstellungen",
-    description: "Vereinsname, Tagline, Social-Links — global verwendet.",
+    description:
+      "Vereinsname und SEO-Angaben (Beschreibung, Teilen-Bild), global verwendet.",
   },
   access: { read: anyone, update: authenticated },
   hooks: { afterChange: [revalidateGlobalOnChange("site-settings")] },
@@ -19,37 +20,36 @@ export const SiteSettings: GlobalConfig = {
       type: "text",
       required: true,
       label: "Vereinsname",
+      admin: {
+        description: "Wird global verwendet (z.B. im Footer).",
+      },
       defaultValue: "SV Nord München-Lerchenau e.V.",
     },
     {
       name: "tagline",
       type: "text",
       label: "Vereins-Motto",
+      admin: { hidden: true },
       defaultValue: "Einmal Nordler, immer Nordler.",
     },
     {
       name: "description",
       type: "textarea",
       label: "Kurzbeschreibung (SEO)",
-      admin: {
-        description:
-          "1–2 Sätze. Wird in Google-Suchergebnissen und beim Teilen angezeigt.",
-      },
+      admin: { hidden: true },
     },
     {
       name: "ogImage",
       type: "upload",
       relationTo: "media",
       label: "Teilen-Bild (Social Media)",
-      admin: {
-        description:
-          "Bild beim Teilen in WhatsApp/Facebook etc. Empfohlen: 1200×630 px.",
-      },
+      admin: { hidden: true },
     },
     {
       name: "social",
       type: "array",
       label: "Social-Media-Profile",
+      admin: { hidden: true },
       fields: [
         {
           name: "platform",

@@ -63,7 +63,7 @@ export default async function FussballPage() {
       <PageHero
         eyebrow="Fußball"
         title="Unsere Mannschaften"
-        lede="Unsere Fußballabteilung existiert seit 1947. In der Saison 2025/26 stellen wir 15 Jugendmannschaften, 5 Herrenmannschaften und eine Ehrenligamannschaft."
+        lede="Unsere Fußballabteilung existiert seit 1947. In der Saison 2026/27 stellen wir 15 Jugendmannschaften, 5 Herrenmannschaften und eine Ehrenligamannschaft."
       />
       <div className="mx-auto max-w-7xl px-6 py-12 md:px-10 md:py-16">
         <section className="mb-12 grid gap-6 rounded-2xl bg-nord-paper-2 p-8 md:grid-cols-[1.4fr_1fr] md:p-10">
@@ -73,7 +73,7 @@ export default async function FussballPage() {
             </div>
             <p className="text-base leading-relaxed text-nord-ink">
               Unsere Fußballabteilung existiert seit dem Jahre 1947. Wir stellen
-              in der Saison 2025/2026 fünfzehn Jugendmannschaften, fünf
+              in der Saison 2026/2027 fünfzehn Jugendmannschaften, fünf
               Herrenmannschaften und eine Ehrenligamannschaft. Wir freuen uns
               über alle Fußballbegeisterten von Jung bis Alt.
             </p>

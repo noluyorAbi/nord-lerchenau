@@ -381,7 +381,7 @@ async function ensureTeam(
     category: t.category,
     ageGroup: t.ageGroup,
     order: t.order,
-    season: "2025/26",
+    season: "2026/27",
     league: t.league,
     bfv: t.bfv,
     fupa: t.fupa,

@@ -61,7 +61,7 @@ export async function BfvSquadPanel({ bfv }: Props) {
             Kader · BFV
           </div>
           <div className="mt-0.5 font-display text-sm font-bold text-nord-ink">
-            {sorted.length} Spieler · Saison {squad.season ?? "25/26"}
+            {sorted.length} Spieler · Saison {squad.season ?? "26/27"}
           </div>
         </div>
         {profileUrl ? (
@@ -130,7 +130,7 @@ export async function BfvSquadPanel({ bfv }: Props) {
       </ul>
 
       <div className="border-t border-nord-line bg-nord-paper-2 px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.14em] text-nord-muted">
-        Quelle · BFV Kaderliste · Saison {squad.season ?? "25/26"}
+        Quelle · BFV Kaderliste · Saison {squad.season ?? "26/27"}
       </div>
     </section>
   );

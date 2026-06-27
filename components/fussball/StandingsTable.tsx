@@ -10,21 +10,25 @@ type Props = {
 };
 
 /**
- * Vollständige Bezirksliga-Tabelle für die /fussball-Seite. Zeigt ALLE
+ * Vollständige Landesliga-Tabelle für die /fussball-Seite. Zeigt ALLE
  * Mannschaften (keine Kürzung), Spalten Platz · Team · Sp · S · U · N · TD · Pkt.
  * Kompakt gehalten (enge Zeilenhöhe, tabular-nums), monochrom mit dezent
  * hervorgehobener SV-Nord-Zeile. Die TD-Spalte erscheint erst ab sm.
  */
 export function StandingsTable({ standings }: Props) {
   const rows = standings?.standings ?? [];
-  const roundLabel = standings?.round?.number
-    ? `${standings.round.number}. Spieltag · 25/26`
-    : "Saison 25/26";
+  // Vorsaison: solange noch kein Spiel gespielt ist, liefert fupa einen
+  // Default-Spieltag (z.B. 34). Dann nur die Saison zeigen statt "X. Spieltag".
+  const anyPlayed = rows.some((r) => (r.matches ?? 0) > 0);
+  const roundLabel =
+    anyPlayed && standings?.round?.number
+      ? `${standings.round.number}. Spieltag · 26/27`
+      : "Saison 26/27";
 
   return (
     <div className="flex flex-col overflow-hidden rounded-2xl bg-nord-ink text-white">
       <div className="flex items-center justify-between border-b border-white/10 px-5 py-3.5 font-mono text-xs uppercase tracking-[0.18em]">
-        <span>Bezirksliga OBB · Nord</span>
+        <span>Landesliga Südost</span>
         <span className="text-nord-gold">{roundLabel}</span>
       </div>
 

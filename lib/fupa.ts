@@ -1,6 +1,6 @@
 export const FUPA_CLUB_SLUG = "sv-nord-muenchen-lerchenau";
 export const FUPA_CLUB_URL = `https://www.fupa.net/club/${FUPA_CLUB_SLUG}`;
-export const FUPA_TEAM_SLUG = "sv-nord-muenchen-lerchenau-m1-2025-26";
+export const FUPA_TEAM_SLUG = "sv-nord-muenchen-lerchenau-m1-2026-27";
 export const FUPA_TEAM_URL = `https://www.fupa.net/team/${FUPA_TEAM_SLUG}`;
 
 export function fupaTeamUrl(slug: string): string {
@@ -163,8 +163,8 @@ export function getFupaPlayerStats(slug: string = FUPA_TEAM_SLUG) {
   );
 }
 
-export const FUPA_COMPETITION_SLUG = "bezirksliga-oberbayern-nord";
-export const FUPA_SEASON_SLUG = "2025-26";
+export const FUPA_COMPETITION_SLUG = "bayern-landesliga-suedost";
+export const FUPA_SEASON_SLUG = "2026-27";
 
 export function getFupaStanding(
   competition: string = FUPA_COMPETITION_SLUG,

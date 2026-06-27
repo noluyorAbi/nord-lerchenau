@@ -339,7 +339,7 @@ export default async function OpengraphImage() {
               textTransform: "uppercase",
             }}
           >
-            Tabellenführer · 2025/26
+            Aufsteiger · Landesliga Südost
           </div>
 
           {/* Coordinates tag */}

@@ -62,7 +62,7 @@ export async function FupaBlock() {
     .slice(0, 5);
 
   const compLabel = team?.competition.middleName ?? "Landesliga";
-  const seasonLabel = team?.competition.season.name ?? "25/26";
+  const seasonLabel = team?.competition.season.name ?? "26/27";
 
   return (
     <section className="border-b border-nord-line bg-nord-ink text-white">

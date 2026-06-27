@@ -353,10 +353,10 @@ export function SportsGrid() {
             const theme = THEMES[sport.theme];
             const { Icon, Decor } = theme;
             return (
-              <FadeUp key={sport.slug} delay={(idx % 3) * 0.07}>
+              <FadeUp key={sport.slug} delay={(idx % 3) * 0.06}>
                 <Link
                   href={sport.href}
-                  className={`group relative block aspect-[4/5] overflow-hidden rounded-2xl text-white shadow-sm ring-1 ring-black/5 transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_50px_-20px_rgba(11,27,63,0.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nord-gold focus-visible:ring-offset-2 ${theme.bg}`}
+                  className={`group relative block aspect-[4/5] overflow-hidden rounded-2xl text-white shadow-sm ring-1 ring-black/5 transition duration-300 ease-out hover:-translate-y-1 hover:ring-white/15 active:scale-[0.99] motion-reduce:transform-none hover:shadow-[0_24px_50px_-20px_rgba(11,27,63,0.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nord-gold focus-visible:ring-offset-2 ${theme.bg}`}
                 >
                   <Decor />
 

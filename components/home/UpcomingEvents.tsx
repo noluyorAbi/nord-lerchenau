@@ -65,7 +65,7 @@ export async function UpcomingEvents() {
             });
             return (
               <FadeUp key={event.id} delay={idx * 0.08}>
-                <div className="flex items-center gap-4 rounded-2xl border border-nord-line bg-nord-paper p-4 md:p-5">
+                <div className="flex items-center gap-4 rounded-2xl border border-nord-line bg-nord-paper p-4 transition-colors duration-200 ease-out hover:border-nord-ink/20 md:p-5">
                   <div className="flex min-w-14 flex-col items-center justify-center rounded-xl bg-nord-navy px-3 py-3 text-white">
                     <span className="font-display text-2xl font-black leading-none">
                       {day}

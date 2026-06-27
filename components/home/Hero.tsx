@@ -165,6 +165,16 @@ export async function Hero({ hero }: Props) {
       .hero-slide { animation: none; opacity: 0; }
       .hero-slide:first-child { opacity: 1; }
     }
+    @keyframes hero-scroll-bob {
+      0%, 100% { transform: translateY(0); opacity: 0.55; }
+      50% { transform: translateY(6px); opacity: 1; }
+    }
+    .hero-scroll-cue {
+      animation: hero-scroll-bob 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-scroll-cue { animation: none; opacity: 0.7; }
+    }
   `;
 
   return (
@@ -291,6 +301,25 @@ export async function Hero({ hero }: Props) {
           matchDateLine={matchDateLine}
           matchUrl={fupaMatchUrl(nextMatch?.slug)}
         />
+      </div>
+
+      {/* Sanfter Scroll-Hinweis: reine CSS-Bewegung (kein Client-JS),
+          bei prefers-reduced-motion ruhend sichtbar. */}
+      <div
+        className="pointer-events-none absolute inset-x-0 bottom-5 hidden justify-center md:flex"
+        aria-hidden="true"
+      >
+        <svg
+          className="hero-scroll-cue size-6 text-white/70 drop-shadow-[0_1px_6px_rgba(0,0,0,0.5)]"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="m6 9 6 6 6-6" />
+        </svg>
       </div>
     </section>
   );

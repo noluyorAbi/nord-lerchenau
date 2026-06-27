@@ -68,16 +68,16 @@ export async function NewsGrid() {
           <FadeUp className="md:col-span-2 lg:col-span-1">
             <Link
               href={`/news/${featured.slug}`}
-              className="group relative block min-h-[360px] overflow-hidden rounded-2xl bg-nord-ink md:min-h-[520px]"
+              className="group relative block min-h-[360px] overflow-hidden rounded-2xl bg-nord-ink transition-transform duration-200 ease-out hover:-translate-y-1 motion-reduce:transform-none md:min-h-[520px]"
             >
               {featuredHero.kind === "image" ? (
                 <div
-                  className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-300 ease-out group-hover:scale-[1.03] motion-reduce:transform-none motion-reduce:transition-none"
                   style={{ backgroundImage: `url(${featuredHero.src})` }}
                 />
               ) : (
                 <div
-                  className="absolute inset-0 transition-transform duration-700 group-hover:scale-105"
+                  className="absolute inset-0 transition-transform duration-300 ease-out group-hover:scale-[1.03] motion-reduce:transform-none motion-reduce:transition-none"
                   style={{ background: featuredHero.css }}
                 >
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.12),transparent_60%)]" />
@@ -129,17 +129,17 @@ export async function NewsGrid() {
               <FadeUp key={post.id} delay={(idx + 1) * 0.08}>
                 <Link
                   href={`/news/${post.slug}`}
-                  className="group flex h-full flex-col overflow-hidden rounded-2xl border border-nord-line bg-white transition hover:-translate-y-1 hover:border-nord-gold/40 hover:shadow-lg"
+                  className="group flex h-full flex-col overflow-hidden rounded-2xl border border-nord-line bg-white transition duration-200 ease-out hover:-translate-y-1 hover:border-nord-gold/40 hover:shadow-lg motion-reduce:transform-none"
                 >
                   <div className="relative aspect-[4/3] overflow-hidden border-b border-nord-line">
                     {hero.kind === "image" ? (
                       <div
-                        className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                        className="absolute inset-0 bg-cover bg-center transition-transform duration-300 ease-out group-hover:scale-[1.03] motion-reduce:transform-none motion-reduce:transition-none"
                         style={{ backgroundImage: `url(${hero.src})` }}
                       />
                     ) : (
                       <div
-                        className="absolute inset-0 transition-transform duration-500 group-hover:scale-110"
+                        className="absolute inset-0 transition-transform duration-300 ease-out group-hover:scale-[1.03] motion-reduce:transform-none motion-reduce:transition-none"
                         style={{ background: hero.css }}
                       >
                         <div className="absolute right-[-20px] top-[-20px] font-display text-[140px] font-black leading-none text-white/[0.09]">

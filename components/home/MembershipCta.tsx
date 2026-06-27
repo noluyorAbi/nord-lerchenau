@@ -1,10 +1,12 @@
 import Link from "next/link";
 
+import { FadeUp } from "@/components/motion/FadeUp";
+
 export function MembershipCta() {
   return (
     <section className="border-b border-nord-line bg-nord-paper">
       <div className="mx-auto max-w-[1320px] px-6 py-14 md:px-7 md:py-20">
-        <div className="relative overflow-hidden rounded-[24px] bg-nord-ink p-10 md:p-16">
+        <FadeUp className="relative overflow-hidden rounded-[24px] bg-nord-ink p-10 md:p-16">
           <div
             aria-hidden
             className="pointer-events-none absolute -right-20 -top-20 size-72 rounded-full opacity-50 blur-3xl"
@@ -35,7 +37,7 @@ export function MembershipCta() {
                 Werde <span className="text-nord-gold">Nordler</span>.
               </h2>
               <p className="mt-5 max-w-xl text-[16px] leading-relaxed text-white/75">
-                Ob als Spieler, Eltern, Fan oder Förderer — beim SV Nord ist
+                Ob als Spieler, Eltern, Fan oder Förderer, beim SV Nord ist
                 Platz für jede und jeden. Über 600 Mitglieder, sechs Sportarten,
                 ein Vereinsheim mit Biergarten.
               </p>
@@ -44,31 +46,31 @@ export function MembershipCta() {
             <div className="flex flex-col items-start gap-3 md:items-end">
               <Link
                 href="/mitgliedschaft"
-                className="group inline-flex items-center gap-2.5 rounded-full bg-nord-gold px-6 py-3.5 font-display text-sm font-semibold uppercase tracking-[0.04em] text-nord-navy transition duration-200 hover:-translate-y-0.5 hover:brightness-105"
+                className="group inline-flex items-center gap-2.5 rounded-full bg-nord-gold px-6 py-3.5 font-display text-sm font-semibold uppercase tracking-[0.04em] text-nord-navy transition duration-200 ease-out hover:-translate-y-0.5 hover:brightness-105 active:scale-[0.98] motion-reduce:transform-none motion-reduce:transition-none"
               >
                 Mitglied werden
                 <span
                   aria-hidden
-                  className="transition-transform duration-200 group-hover:translate-x-1"
+                  className="transition-transform duration-200 ease-out group-hover:translate-x-1 motion-reduce:transform-none motion-reduce:transition-none"
                 >
                   →
                 </span>
               </Link>
               <Link
                 href="/sponsoren"
-                className="group inline-flex items-center gap-2.5 rounded-full border border-white/25 px-6 py-3.5 font-display text-sm font-semibold uppercase tracking-[0.04em] text-white transition duration-200 hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-nord-navy"
+                className="group inline-flex items-center gap-2.5 rounded-full border border-white/25 px-6 py-3.5 font-display text-sm font-semibold uppercase tracking-[0.04em] text-white transition duration-200 ease-out hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-nord-navy active:scale-[0.98] motion-reduce:transform-none"
               >
                 Sponsor werden
                 <span
                   aria-hidden
-                  className="transition-transform duration-200 group-hover:translate-x-1"
+                  className="transition-transform duration-200 ease-out group-hover:translate-x-1 motion-reduce:transform-none motion-reduce:transition-none"
                 >
                   →
                 </span>
               </Link>
             </div>
           </div>
-        </div>
+        </FadeUp>
       </div>
     </section>
   );

@@ -1,3 +1,4 @@
+import { FadeUp } from "@/components/motion/FadeUp";
 import { StatCounter } from "@/components/motion/StatCounter";
 
 const STATS = [
@@ -9,7 +10,7 @@ const STATS = [
 export function StatStrip() {
   return (
     <section className="bg-nord-navy text-white">
-      <div className="mx-auto max-w-[1320px] px-6 py-10 md:px-7 md:py-12">
+      <FadeUp className="mx-auto max-w-[1320px] px-6 py-10 md:px-7 md:py-12">
         <div className="mb-7 flex items-center gap-3 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold md:mb-9">
           <span className="size-1.5 rounded-full bg-nord-gold" />
           Unser Verein in Zahlen
@@ -35,7 +36,7 @@ export function StatStrip() {
             </li>
           ))}
         </ul>
-      </div>
+      </FadeUp>
     </section>
   );
 }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { FadeUp } from "@/components/motion/FadeUp";
 import { SectionEyebrow } from "@/components/SectionEyebrow";
 import { isOurBfvTeam, type BfvMatch } from "@/lib/bfv";
 import {
@@ -213,7 +214,7 @@ export async function MatchdayBlock() {
   return (
     <section className="border-b border-nord-line bg-nord-paper">
       <div className="mx-auto max-w-[1320px] px-6 py-16 md:px-7 md:py-20">
-        <div className="mb-7 flex items-end justify-between gap-4">
+        <FadeUp className="mb-7 flex items-end justify-between gap-4">
           <div>
             <SectionEyebrow number="01" label="Matchday" />
             <h2
@@ -229,7 +230,7 @@ export async function MatchdayBlock() {
           >
             Alle Spiele →
           </Link>
-        </div>
+        </FadeUp>
 
         <div>
           {rows.length > 0 ? (
@@ -248,54 +249,57 @@ export async function MatchdayBlock() {
                 </span>
               </div>
               {rows.map((f, i) => (
-                <div
-                  key={`${f.comp}-${i}`}
-                  className={`grid grid-cols-[56px_1fr] items-start gap-3 px-4 py-4 sm:grid-cols-[70px_1fr_auto] sm:items-center sm:gap-4 sm:px-5 ${
-                    i < rows.length - 1 ? "border-b border-nord-line" : ""
-                  }`}
-                >
-                  <div className="text-center">
-                    <div className="font-display text-[22px] font-black leading-none text-nord-navy sm:text-[26px]">
-                      {f.time}
-                    </div>
-                    <div className="mt-1 font-mono text-[10px] tracking-[0.12em] text-nord-muted">
-                      {showRowDate ? f.date.split(" ·")[0] : "Uhr"}
-                    </div>
-                  </div>
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      {f.teamLabel ? (
-                        <span className="inline-flex items-center rounded-full bg-nord-navy/10 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-nord-navy">
-                          {f.teamLabel}
-                        </span>
-                      ) : null}
-                      <span className="truncate font-mono text-[10px] uppercase tracking-[0.18em] text-nord-muted">
-                        {f.comp}
-                        {f.md ? ` · ${f.md}` : ""}
-                      </span>
-                    </div>
-                    <div className="mt-1 font-display text-[16px] font-extrabold leading-snug sm:text-[20px]">
-                      {f.home} <span className="text-nord-gold">vs</span>{" "}
-                      {f.away}
-                    </div>
-                    <div className="mt-1.5 flex flex-wrap items-center gap-2 text-[11px] text-nord-muted sm:hidden">
-                      <span>{f.venue}</span>
-                      {f.featured ? (
-                        <span className="inline-flex items-center rounded-full bg-nord-gold px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-nord-navy">
-                          Top-Spiel
-                        </span>
-                      ) : null}
-                    </div>
-                  </div>
-                  <div className="hidden text-right sm:block">
-                    <div className="text-[11px] text-nord-muted">{f.venue}</div>
-                    {f.featured ? (
-                      <div className="mt-1.5 inline-flex items-center rounded-full border border-nord-gold bg-nord-gold px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-navy">
-                        Top-Spiel
+                <FadeUp key={`${f.comp}-${i}`} delay={i * 0.05} y={12}>
+                  <div
+                    className={`grid grid-cols-[56px_1fr] items-start gap-3 px-4 py-4 sm:grid-cols-[70px_1fr_auto] sm:items-center sm:gap-4 sm:px-5 ${
+                      i < rows.length - 1 ? "border-b border-nord-line" : ""
+                    }`}
+                  >
+                    <div className="text-center">
+                      <div className="font-display text-[22px] font-black leading-none text-nord-navy sm:text-[26px]">
+                        {f.time}
                       </div>
-                    ) : null}
+                      <div className="mt-1 font-mono text-[10px] tracking-[0.12em] text-nord-muted">
+                        {showRowDate ? f.date.split(" ·")[0] : "Uhr"}
+                      </div>
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        {f.teamLabel ? (
+                          <span className="inline-flex items-center rounded-full bg-nord-navy/10 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-nord-navy">
+                            {f.teamLabel}
+                          </span>
+                        ) : null}
+                        <span className="truncate font-mono text-[10px] uppercase tracking-[0.18em] text-nord-muted">
+                          {f.comp}
+                          {f.md ? ` · ${f.md}` : ""}
+                        </span>
+                      </div>
+                      <div className="mt-1 font-display text-[16px] font-extrabold leading-snug sm:text-[20px]">
+                        {f.home} <span className="text-nord-gold">vs</span>{" "}
+                        {f.away}
+                      </div>
+                      <div className="mt-1.5 flex flex-wrap items-center gap-2 text-[11px] text-nord-muted sm:hidden">
+                        <span>{f.venue}</span>
+                        {f.featured ? (
+                          <span className="inline-flex items-center rounded-full bg-nord-gold px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-nord-navy">
+                            Top-Spiel
+                          </span>
+                        ) : null}
+                      </div>
+                    </div>
+                    <div className="hidden text-right sm:block">
+                      <div className="text-[11px] text-nord-muted">
+                        {f.venue}
+                      </div>
+                      {f.featured ? (
+                        <div className="mt-1.5 inline-flex items-center rounded-full border border-nord-gold bg-nord-gold px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-navy">
+                          Top-Spiel
+                        </div>
+                      ) : null}
+                    </div>
                   </div>
-                </div>
+                </FadeUp>
               ))}
             </div>
           ) : (

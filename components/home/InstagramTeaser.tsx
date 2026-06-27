@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { FadeUp } from "@/components/motion/FadeUp";
 import { SectionEyebrow } from "@/components/SectionEyebrow";
 
 const IG_HANDLE = "svnord_lerchenau";
@@ -485,7 +486,7 @@ export function InstagramTeaser() {
             <div className="absolute -inset-2 -z-10 rounded-[60px] bg-gradient-to-tr from-[#fdc468]/30 via-[#e1306c]/25 to-[#5851db]/25 blur-3xl" />
 
             {/* Titanium chassis */}
-            <div className="relative w-full max-w-[384px]">
+            <FadeUp y={20} className="relative w-full max-w-[384px]">
               <div className="relative rounded-[3.4rem] bg-[linear-gradient(145deg,#43444a_0%,#202024_28%,#34353b_52%,#161618_78%,#3a3b41_100%)] p-[3px] shadow-[0_30px_70px_-25px_rgba(11,27,63,0.7),0_8px_24px_-12px_rgba(0,0,0,0.55)]">
                 {/* Side buttons — left: action + volume up/down */}
                 <span
@@ -570,7 +571,7 @@ export function InstagramTeaser() {
                   </div>
                 </div>
               </div>
-            </div>
+            </FadeUp>
           </div>
 
           {/* Right column: stats + tags + related socials */}
@@ -719,67 +720,72 @@ export function InstagramTeaser() {
           {/* Masonry: jedes Bild behält sein natürliches Seitenverhältnis */}
           <div className="columns-1 gap-3 [column-fill:_balance] sm:columns-2 md:columns-3 lg:columns-4">
             {GALLERY.map((shot, idx) => (
-              <button
+              <FadeUp
                 key={shot.src}
-                type="button"
-                onClick={() => setLightboxIdx(idx)}
-                className="group relative mb-3 block w-full break-inside-avoid overflow-hidden rounded-[20px] bg-nord-navy text-left shadow-sm ring-1 ring-nord-line transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_-18px_rgba(11,27,63,0.55)] hover:ring-2 hover:ring-nord-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-nord-gold"
+                delay={(idx % 4) * 0.05}
+                className="mb-3 break-inside-avoid"
               >
-                <Image
-                  src={shot.src}
-                  alt={shot.caption}
-                  width={shot.w}
-                  height={shot.h}
-                  loading="lazy"
-                  sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
-                  style={{ width: "100%", height: "auto" }}
-                  className="block object-cover transition duration-[600ms] ease-[cubic-bezier(0.2,0.7,0.1,1)] group-hover:scale-[1.04]"
-                />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 top-1/2 bg-[linear-gradient(180deg,rgba(11,27,63,0)_0%,rgba(8,18,46,0.85)_100%)]" />
+                <button
+                  type="button"
+                  onClick={() => setLightboxIdx(idx)}
+                  className="group relative block w-full overflow-hidden rounded-[20px] bg-nord-navy text-left shadow-sm ring-1 ring-nord-line transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_-18px_rgba(11,27,63,0.55)] hover:ring-2 hover:ring-nord-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-nord-gold motion-reduce:transform-none motion-reduce:transition-none"
+                >
+                  <Image
+                    src={shot.src}
+                    alt={shot.caption}
+                    width={shot.w}
+                    height={shot.h}
+                    loading="lazy"
+                    sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    style={{ width: "100%", height: "auto" }}
+                    className="block object-cover transition duration-300 ease-[cubic-bezier(0.2,0.7,0.1,1)] group-hover:scale-[1.04] motion-reduce:transform-none motion-reduce:transition-none"
+                  />
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 top-1/2 bg-[linear-gradient(180deg,rgba(11,27,63,0)_0%,rgba(8,18,46,0.85)_100%)]" />
 
-                {/* index chip */}
-                <span className="absolute left-3 top-3 inline-flex items-center rounded-full border border-white/25 bg-black/35 px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-white/85 backdrop-blur-sm">
-                  {String(idx + 1).padStart(2, "0")}
-                </span>
+                  {/* index chip */}
+                  <span className="absolute left-3 top-3 inline-flex items-center rounded-full border border-white/25 bg-black/35 px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-white/85 backdrop-blur-sm">
+                    {String(idx + 1).padStart(2, "0")}
+                  </span>
 
-                {/* hover IG pill */}
-                <span className="absolute right-3 top-3 flex translate-y-1 items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.12em] text-nord-navy opacity-0 backdrop-blur transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    className="size-3"
-                    aria-hidden
-                  >
-                    <rect
-                      x="3"
-                      y="3"
-                      width="18"
-                      height="18"
-                      rx="5"
-                      stroke="currentColor"
-                      strokeWidth="2.4"
-                    />
-                    <circle
-                      cx="12"
-                      cy="12"
-                      r="4"
-                      stroke="currentColor"
-                      strokeWidth="2.4"
-                    />
-                    <circle cx="17.5" cy="6.5" r="1.4" fill="currentColor" />
-                  </svg>
-                  Ansehen
-                </span>
+                  {/* hover IG pill */}
+                  <span className="absolute right-3 top-3 flex translate-y-1 items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.12em] text-nord-navy opacity-0 backdrop-blur transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      className="size-3"
+                      aria-hidden
+                    >
+                      <rect
+                        x="3"
+                        y="3"
+                        width="18"
+                        height="18"
+                        rx="5"
+                        stroke="currentColor"
+                        strokeWidth="2.4"
+                      />
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="4"
+                        stroke="currentColor"
+                        strokeWidth="2.4"
+                      />
+                      <circle cx="17.5" cy="6.5" r="1.4" fill="currentColor" />
+                    </svg>
+                    Ansehen
+                  </span>
 
-                <div className="absolute inset-x-3.5 bottom-3.5 text-white">
-                  <div className="font-mono text-[9.5px] font-bold uppercase tracking-[0.16em] text-nord-gold drop-shadow">
-                    {shot.sub}
+                  <div className="absolute inset-x-3.5 bottom-3.5 text-white">
+                    <div className="font-mono text-[9.5px] font-bold uppercase tracking-[0.16em] text-nord-gold drop-shadow">
+                      {shot.sub}
+                    </div>
+                    <div className="mt-0.5 font-display text-[16px] font-black leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+                      {shot.caption}
+                    </div>
                   </div>
-                  <div className="mt-0.5 font-display text-[16px] font-black leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
-                    {shot.caption}
-                  </div>
-                </div>
-              </button>
+                </button>
+              </FadeUp>
             ))}
           </div>
         </div>

@@ -4,7 +4,7 @@ const ITEMS = [
     score: "—",
     opp: "PALZ",
     status: "Heute 14:30",
-    note: "Bezirksliga",
+    note: "Landesliga",
   },
   {
     k: "NORD II",

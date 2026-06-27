@@ -63,7 +63,7 @@ export default async function SponsorenPage() {
               Im Fußballbereich stellen wir zwei Herren- und elf
               Jugendmannschaften. Im Durchschnitt begrüßen wir 100–150 Zuschauer
               bei unseren Heimspielen der ersten Herrenmannschaft, die aktuell
-              in der Bezirksliga Oberbayern Nord spielt.
+              in der Landesliga spielt.
             </p>
             <p className="mt-3 text-base leading-relaxed text-nord-muted">
               Der SV Nord wird in der Lerchenau als sympathischer, familiärer

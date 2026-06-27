@@ -7,7 +7,7 @@ const VEREINSHEIM_BG =
 
 const FACTS = [
   { l: "Adresse", v: "Ebereschenstraße 90", h: "80935 München" },
-  { l: "Heimspiel", v: "Sa · 14:30", h: "Bezirksliga" },
+  { l: "Heimspiel", v: "Sa · 14:30", h: "Landesliga" },
   { l: "Kiosk", v: "Ab 12:00", h: "Bis zum Abpfiff" },
 ];
 

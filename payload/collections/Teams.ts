@@ -104,7 +104,7 @@ export const Teams: CollectionConfig = {
       name: "league",
       type: "text",
       label: "Liga / Spielklasse",
-      admin: { description: "z.B. 'Bezirksliga Oberbayern'." },
+      admin: { description: "z.B. 'Landesliga'." },
     },
     {
       name: "bfv",
@@ -135,7 +135,7 @@ export const Teams: CollectionConfig = {
           type: "text",
           label: "BFV Spielklasse",
           admin: {
-            description: "BFV-Wortlaut, z.B. 'Herren / Bezirksliga'.",
+            description: "BFV-Wortlaut, z.B. 'Herren / Landesliga'.",
           },
         },
         {

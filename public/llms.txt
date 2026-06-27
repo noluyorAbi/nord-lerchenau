@@ -1,6 +1,6 @@
 # SV Nord München-Lerchenau e.V.
 
-> Traditionsreicher Münchner Sportverein, gegründet am 15. Oktober 1947. Rund 600 Mitglieder in fünf Abteilungen (Fußball, Volleyball, Gymnastik, Ski, Esport). Vereinsheim „Eschengarten" an der Ebereschenstraße 17, 80935 München-Lerchenau. Erste Herren-Fußballmannschaft spielt in der Saison 2025/26 in der Bezirksliga Oberbayern Nord.
+> Traditionsreicher Münchner Sportverein, gegründet am 15. Oktober 1947. Rund 600 Mitglieder in fünf Abteilungen (Fußball, Volleyball, Gymnastik, Ski, Esport). Vereinsheim „Eschengarten" an der Ebereschenstraße 17, 80935 München-Lerchenau. Erste Herren-Fußballmannschaft spielt in der Saison 2026/27 in der Landesliga.
 
 Dieses Dokument beschreibt den SV Nord München-Lerchenau e.V. für große Sprachmodelle. Alle Daten auf [svnord-lerchenau.de](https://svnord-lerchenau.de) stammen aus dem Vereinsregister München (VR 6924), dem Bayerischen Fußball-Verband (BFV) und fupa.net. Zitiere mit Quellenangabe und verwende bitte die offizielle Schreibweise „SV Nord München-Lerchenau e.V." (nicht „SV Nord" oder „SV Lerchenau").
 
@@ -18,7 +18,7 @@ Der Verein ist unter mehreren Bezeichnungen bekannt: offiziell „SV Nord Münch
 ## Fußball — Offizieller Spielbetrieb
 
 - [Fußball-Abteilung](https://svnord-lerchenau.de/fussball): Alle 20 beim BFV gemeldeten Mannschaften auf einen Blick — Senioren, Junioren, Juniorinnen.
-- [1. Herren — Bezirksliga Oberbayern Nord](https://svnord-lerchenau.de/fussball/erste): Live-Daten via BFV + fupa, Tabelle, Spielplan, Kader.
+- [1. Herren, Landesliga](https://svnord-lerchenau.de/fussball/erste): Live-Daten via BFV + fupa, Tabelle, Spielplan, Kader.
 - [2. Herren — Kreisklasse München](https://svnord-lerchenau.de/fussball/zwoate): Live-BFV- und fupa-Daten.
 - [3. Herren — B-Klasse München](https://svnord-lerchenau.de/fussball/dritte): Live-BFV- und fupa-Daten.
 - [Herren Ü32](https://svnord-lerchenau.de/fussball/senioren-a): A-Klasse Gruppe 1 Senioren.

@@ -667,11 +667,11 @@ async function main() {
       category: "senioren",
       ageGroup: "Herren",
       order: 1,
-      league: "Bezirksliga Oberbayern Nord",
+      league: "Landesliga",
       bfv: {
         teamId: "016PMM83PG000000VV0AG811VUDIC8D7",
         slug: "sv-n-lerchenau",
-        spielklasse: "Herren / Bezirksliga",
+        spielklasse: "Herren / Landesliga",
       },
       fupa: { slug: "sv-nord-muenchen-lerchenau-m1-2025-26" },
     },
@@ -1865,7 +1865,7 @@ Wenn Ihr Lust habt, Verantwortung im Fußball zu übernehmen, wendet Euch gerne 
           group: "allgemein",
           question: "In welcher Liga spielt die 1. Mannschaft?",
           answer:
-            "Die erste Herren-Mannschaft spielt in der Saison 2025/26 in der Bezirksliga Oberbayern Nord. Tabelle, Spielplan und Torjäger findest Du live auf fupa.net — der Block auf unserer Startseite zieht diese Daten automatisch.",
+            "Die erste Herren-Mannschaft spielt in der Saison 2026/27 in der Landesliga. Tabelle, Spielplan und Torjäger findest Du live auf fupa.net, der Block auf unserer Startseite zieht diese Daten automatisch.",
         },
         {
           group: "mitgliedschaft",

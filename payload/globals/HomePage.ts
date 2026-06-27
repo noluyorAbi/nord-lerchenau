@@ -97,7 +97,7 @@ export const HomePage: GlobalConfig = {
         { label: "Gegründet", value: "1947" },
         { label: "Mitglieder", value: "500+" },
         { label: "Mannschaften", value: "13" },
-        { label: "Bezirksliga", value: "3. Platz" },
+        { label: "Landesliga", value: "Aufsteiger" },
       ],
     },
     {

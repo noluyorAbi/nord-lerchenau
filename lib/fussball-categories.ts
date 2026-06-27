@@ -22,7 +22,7 @@ export const FUSSBALL_CATEGORIES: Record<
     label: "Herren",
     category: "senioren",
     eyebrow: "Fußball · Herren",
-    lede: "Erste, zweite, dritte Mannschaft sowie die Ehrenliga. Vom Bezirksligateam bis zur Altherrenrunde.",
+    lede: "Erste, zweite, dritte Mannschaft sowie die Ehrenliga. Vom Landesligateam bis zur Altherrenrunde.",
     description:
       "Alle Herrenmannschaften des SV Nord. Spielbetrieb im BFV, gemeldet in Liga und Pokal.",
   },

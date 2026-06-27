@@ -136,7 +136,7 @@ export default async function FussballPage() {
             <FussballPillar
               eyebrow="Erwachsen"
               title="Fußball — Erwachsene"
-              body="Bezirksliga, Reserve, Dritte, Ehrenliga und Senioren. Vom ambitionierten Spieltag bis zur Altherrenrunde — alle Erwachsenenmannschaften des SV Nord."
+              body="Landesliga, Reserve, Dritte, Ehrenliga und Senioren. Vom ambitionierten Spieltag bis zur Altherrenrunde, alle Erwachsenenmannschaften des SV Nord."
               href="/fussball/herren"
               meta="5 Herrenmannschaften · Ehrenliga"
               tone="navy"
@@ -181,7 +181,7 @@ export default async function FussballPage() {
             <div>
               <SectionEyebrow number="03" label="Tabelle" />
               <h2 className="mt-2 font-display text-2xl font-black tracking-tight text-nord-ink md:text-3xl">
-                Bezirksliga Oberbayern Nord
+                Landesliga
               </h2>
             </div>
             <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.15em] text-nord-muted">

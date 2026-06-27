@@ -61,8 +61,7 @@ export async function FupaBlock() {
     .filter((p) => p.goals > 0 || p.assists > 0 || p.topEleven > 0)
     .slice(0, 5);
 
-  const compLabel =
-    team?.competition.middleName ?? "Bezirksliga Oberbayern Nord";
+  const compLabel = team?.competition.middleName ?? "Landesliga";
   const seasonLabel = team?.competition.season.name ?? "25/26";
 
   return (

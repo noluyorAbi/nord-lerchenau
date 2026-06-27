@@ -54,12 +54,12 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SERVER_URL ?? "https://svnord-lerchenau.de";
 const SITE_NAME = "SV Nord München-Lerchenau e. V.";
 const DESCRIPTION =
-  "Traditionsverein im Münchner Norden seit 1947. Fußball in der Bezirksliga Oberbayern Nord, dazu Volleyball, Gymnastik, Ski und eSport — über 600 Mitglieder, eine Familie.";
+  "Traditionsverein im Münchner Norden seit 1947. Fußball in der Landesliga, dazu Volleyball, Gymnastik, Ski und eSport, über 600 Mitglieder, eine Familie.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} — Heimat im Münchner Norden seit 1947`,
+    default: `${SITE_NAME}, Heimat im Münchner Norden seit 1947`,
     template: `%s · ${SITE_NAME}`,
   },
   description: DESCRIPTION,
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
     "SV Nord Lerchenau",
     "Fußball München Nord",
     "Lerchenau",
-    "Bezirksliga Oberbayern Nord",
+    "Landesliga",
     "Verein München",
     "Amateurfußball München",
     "Volleyball München",
@@ -98,12 +98,12 @@ export const metadata: Metadata = {
     locale: "de_DE",
     url: SITE_URL,
     siteName: SITE_NAME,
-    title: `${SITE_NAME} — Heimat im Münchner Norden seit 1947`,
+    title: `${SITE_NAME}, Heimat im Münchner Norden seit 1947`,
     description: DESCRIPTION,
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} — Heimat im Münchner Norden seit 1947`,
+    title: `${SITE_NAME}, Heimat im Münchner Norden seit 1947`,
     description: DESCRIPTION,
   },
   formatDetection: { telephone: false, email: false, address: false },

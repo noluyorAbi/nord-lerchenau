@@ -144,7 +144,7 @@ export default async function OpengraphImage() {
                 textTransform: "uppercase",
               }}
             >
-              Bezirksliga Oberbayern
+              Landesliga
             </div>
           </div>
 

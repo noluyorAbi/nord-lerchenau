@@ -213,7 +213,7 @@ const HIGHLIGHT_TAGS = [
   "#svnord",
   "#muenchnernorden",
   "#lerchenau",
-  "#bezirksliga",
+  "#landesliga",
   "#jugendfussball",
 ];
 

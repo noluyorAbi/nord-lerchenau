@@ -116,7 +116,7 @@ export async function Hero({ hero }: Props) {
   const compLabel =
     nextMatch?.competition?.shortName ??
     nextMatch?.competition?.middleName ??
-    (usingFallback ? "Jugend-Liga" : "Bezirksliga");
+    (usingFallback ? "Jugend-Liga" : "Landesliga");
   const matchDayBadge = kickoffDate ? formatKickoff(kickoffDate) : "";
   const matchDateLine = kickoffDate
     ? usingFallback && teamLabel

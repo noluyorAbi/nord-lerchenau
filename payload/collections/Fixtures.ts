@@ -50,7 +50,7 @@ export const Fixtures: CollectionConfig = {
       name: "competition",
       type: "text",
       label: "Wettbewerb",
-      admin: { description: "z.B. 'Bezirksliga · Spieltag 20', 'Pokal'." },
+      admin: { description: "z.B. 'Landesliga · Spieltag 20', 'Pokal'." },
     },
     {
       name: "venue",

@@ -160,8 +160,7 @@ export default function SportPage() {
           <p className="mt-2 max-w-3xl text-sm leading-relaxed text-nord-ink md:text-base">
             Unsere Trainer und Übungsleiter besitzen{" "}
             <strong>Trainerlizenzen der C-Lizenz und höher</strong> und bilden
-            sich kontinuierlich weiter, vom Bambini-Training bis zur
-            Bezirksliga.
+            sich kontinuierlich weiter, vom Bambini-Training bis zur Landesliga.
           </p>
           <p className="mt-2">
             <a

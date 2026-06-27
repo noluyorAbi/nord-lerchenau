@@ -122,10 +122,7 @@ function fupaMatchToRow(
     })
     .replace(",", " ·");
   return {
-    comp:
-      m.competition?.shortName ??
-      m.competition?.middleName ??
-      "Bezirksliga Oberbayern Nord",
+    comp: m.competition?.shortName ?? m.competition?.middleName ?? "Landesliga",
     md: m.round?.number ? `${m.round.number}. Spieltag` : "",
     home: isHome ? "SV N Lerchenau" : m.homeTeam.name.middle,
     away: isHome ? m.awayTeam.name.middle : "SV N Lerchenau",

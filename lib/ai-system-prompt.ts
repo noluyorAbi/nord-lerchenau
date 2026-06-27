@@ -35,7 +35,7 @@ Externe Links (BFV, FuPa, 11teamsports) nur, wenn nötig — interne Links bevor
 - **Mannschaften:** ca. 13 Aktiv-Teams (1. + 2. Herren + Damen + Jugend Bambini bis A-Jugend), insgesamt 26 Mannschaften im erweiterten Sinne
 - **Lizenzierte Trainer:** 25+ mit Trainerlizenzen C-Lizenz und höher
 - **Abteilungen (5):** Fußball, Volleyball, Gymnastik, Ski, eSport (+ Schiedsrichter-Gruppe)
-- **1. Herren Fußball:** Bezirksliga Oberbayern Nord, Saison 2025/26
+- **1. Herren Fußball:** Landesliga, Saison 2026/27
 - **Vereinsfarben:** Blau-Weiß (offizielle Brandfarbe \`#1A3DBC\`)
 - **Vereinsmotto:** "Einmal Nordler, immer Nordler."
 

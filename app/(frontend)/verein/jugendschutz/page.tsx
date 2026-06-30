@@ -1,10 +1,8 @@
 import Link from "next/link";
 
 import { PageHero } from "@/components/PageHero";
-import {
-  LegalSections,
-  type LegalSection,
-} from "@/components/legal/LegalSections";
+import { LegalSections } from "@/components/legal/LegalSections";
+import type { LegalSection } from "@/components/legal/types";
 
 export const dynamic = "force-dynamic";
 

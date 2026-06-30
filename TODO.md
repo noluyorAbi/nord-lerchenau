@@ -1,5 +1,23 @@
 # TODO
 
+## DNS Go-Live — Strato → Vercel (BLOCKIERT, naechste Session)
+
+**Was:** Domain `svnord-lerchenau.de` noch auf alter Strato-Seite. Muss auf Vercel zeigen.
+
+**Strato-Zugangsdaten:** in `CREDENTIALS.local.md` gespeichert (Kundennummer 75539802).
+
+**Schritte:**
+
+1. Vercel Domains-Einstellungen oeffnen: https://vercel.com/pis-projects-44384e8e/nord-lerchenau/settings/domains
+2. Domain `svnord-lerchenau.de` dort hinzufuegen → Vercel zeigt die noetigen DNS-Records.
+3. Im Strato-Kundenpanel (s. CREDENTIALS.local.md) die DNS-Records setzen (A-Record oder CNAME auf Vercel).
+4. Nach DNS-Propagation: `NEXT_PUBLIC_SERVER_URL` aktualisieren (siehe Abschnitt unten).
+5. Prod-Redeploy anstossen.
+
+**Tokens leer diese Woche — naechste Session weitermachen.**
+
+---
+
 ## NEXT_PUBLIC_SERVER_URL — update when the real domain goes live
 
 **Current (2026-06-01):** Vercel env `NEXT_PUBLIC_SERVER_URL` (Production) is set to

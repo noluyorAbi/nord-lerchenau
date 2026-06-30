@@ -6,6 +6,7 @@ import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical
 import { PageHero } from "@/components/PageHero";
 import { PersonCard } from "@/components/PersonCard";
 import { getPayloadClient } from "@/lib/payload";
+import { mediaSrc } from "@/lib/publicUploads";
 import type { Media, Person } from "@/payload-types";
 
 export type StaticContact = {
@@ -141,15 +142,9 @@ export async function SportSectionPage({
 
   const photo =
     team.photo && typeof team.photo === "object" ? (team.photo as Media) : null;
-  // Media uploads only resolve when an absolute (Blob) URL is stored. On envs
-  // without Blob storage the uploaded file lives on ephemeral disk and 404s.
-  const mediaHeroSrc =
-    photo && typeof photo.url === "string" && photo.url
-      ? /^https?:\/\//.test(photo.url) &&
-        !photo.url.includes("/api/media/file/")
-        ? photo.url
-        : null
-      : null;
+  // Resolve the uploaded team photo via mediaSrc: prefer the committed asset in
+  // public/uploads, falling back to any stored URL.
+  const mediaHeroSrc = mediaSrc(photo);
   // Prefer the curated, tracked static hero whenever we ship one for this sport;
   // only use a CMS/Blob upload where no static hero exists. This prevents a dead
   // Blob URL (e.g. the Ski team photo that was never uploaded) from rendering as

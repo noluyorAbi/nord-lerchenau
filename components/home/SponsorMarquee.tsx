@@ -1,4 +1,5 @@
 import { getPayloadClient } from "@/lib/payload";
+import { mediaSrc } from "@/lib/publicUploads";
 import { FALLBACK_SPONSORS } from "@/lib/sponsors-fallback";
 
 type Sponsor = {
@@ -27,11 +28,7 @@ export async function SponsorMarquee() {
       logo?: { url?: string | null; filename?: string | null } | number | null;
     };
     const logo = typeof d.logo === "object" && d.logo ? d.logo : null;
-    const logoUrl = logo
-      ? logo.filename
-        ? `/uploads/${logo.filename}`
-        : (logo.url ?? null)
-      : null;
+    const logoUrl = mediaSrc(logo);
     return {
       id: d.id,
       name: d.name,

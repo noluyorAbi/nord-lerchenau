@@ -7,7 +7,6 @@ import {
   HeadingFeature,
   lexicalEditor,
 } from "@payloadcms/richtext-lexical";
-import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
 import { buildConfig } from "payload";
 import sharp from "sharp";
 
@@ -96,13 +95,9 @@ export default buildConfig({
       beforeDashboard: ["@/payload/components/WelcomeDashboard#default"],
     },
   },
-  plugins: process.env.BLOB_READ_WRITE_TOKEN
-    ? [
-        vercelBlobStorage({
-          enabled: true,
-          collections: { media: true },
-          token: process.env.BLOB_READ_WRITE_TOKEN,
-        }),
-      ]
-    : [],
+  // Media is stored on local disk (Media.upload.staticDir = public/uploads) and
+  // served from there; the frontend resolves images to committed /public assets
+  // via lib/publicUploads. No external blob storage. If CMS-managed uploads are
+  // reintroduced later, add an external adapter here (e.g. S3 / Cloudflare R2).
+  plugins: [],
 });

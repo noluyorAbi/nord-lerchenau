@@ -10,7 +10,7 @@ import {
   newsHeroForPost,
   newsTagLabel,
 } from "@/lib/news-visual";
-import { publicUploadSrc } from "@/lib/publicUploads";
+import { mediaSrc } from "@/lib/publicUploads";
 import type { Media, Post } from "@/payload-types";
 import config from "@/payload.config";
 
@@ -21,9 +21,7 @@ export const dynamic = "force-dynamic";
 function heroImageSrc(heroImage: Post["heroImage"]): string | null {
   if (!heroImage || typeof heroImage !== "object") return null;
   const m = heroImage as Media;
-  const url = m.url ?? "";
-  if (/^https?:\/\//.test(url) && !url.includes("/api/media/file/")) return url;
-  return publicUploadSrc(m.filename);
+  return mediaSrc(m);
 }
 
 type Props = {

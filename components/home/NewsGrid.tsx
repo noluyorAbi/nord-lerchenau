@@ -8,19 +8,17 @@ import {
   newsTagLabel,
 } from "@/lib/news-visual";
 import { getPayloadClient } from "@/lib/payload";
-import { publicUploadSrc } from "@/lib/publicUploads";
+import { mediaSrc } from "@/lib/publicUploads";
 import type { Media, Post } from "@/payload-types";
 
-// Resolve an uploaded heroImage to a URL the same way PersonCard/SponsorMarquee
-// do: prefer an absolute blob/CDN URL, otherwise the asset shipped in
-// public/uploads. Returns null when no usable image is set, so callers fall
-// back to the deterministic newsHeroForPost() visual.
+// Resolve an uploaded heroImage to a URL via mediaSrc: prefer the committed
+// asset in public/uploads, falling back to the stored URL. Returns null when no
+// usable image is set, so callers fall back to the deterministic
+// newsHeroForPost() visual.
 function heroImageSrc(heroImage: Post["heroImage"]): string | null {
   if (!heroImage || typeof heroImage !== "object") return null;
   const m = heroImage as Media;
-  const url = m.url ?? "";
-  if (/^https?:\/\//.test(url) && !url.includes("/api/media/file/")) return url;
-  return publicUploadSrc(m.filename);
+  return mediaSrc(m);
 }
 
 export async function NewsGrid() {

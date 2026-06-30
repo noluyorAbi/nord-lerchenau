@@ -1,19 +1,12 @@
 import type { Media, Person } from "@/payload-types";
-import { publicUploadSrc } from "@/lib/publicUploads";
+import { mediaSrc } from "@/lib/publicUploads";
 
 type Props = { person: Person };
 
 function portraitUrl(photo: Person["photo"]): string | null {
   if (!photo || typeof photo !== "object") return null;
   const m = photo as Media;
-  const url = m.url ?? "";
-  // Blob / external CDN — use the stored URL directly.
-  if (/^https?:\/\//.test(url) && !url.includes("/api/media/file/")) {
-    return url;
-  }
-  // Otherwise serve the asset shipped in public/uploads (resolved by
-  // normalised filename, since Payload names drift from the static files).
-  return publicUploadSrc(m.filename);
+  return mediaSrc(m);
 }
 
 export function PersonCard({ person }: Props) {

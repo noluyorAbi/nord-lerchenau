@@ -11,6 +11,7 @@ import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
 import { buildConfig } from "payload";
 import sharp from "sharp";
 
+import { ChangeRequests } from "./payload/collections/ChangeRequests";
 import { Events } from "./payload/collections/Events";
 import { Fixtures } from "./payload/collections/Fixtures";
 import { Media } from "./payload/collections/Media";
@@ -89,6 +90,7 @@ export default buildConfig({
     Fixtures,
     Events,
     Submissions,
+    ChangeRequests,
   ],
   globals: [
     SiteSettings,

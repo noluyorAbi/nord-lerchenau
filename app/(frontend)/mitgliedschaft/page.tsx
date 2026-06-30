@@ -3,19 +3,23 @@ import { getPayloadClient } from "@/lib/payload";
 
 export const dynamic = "force-dynamic";
 
-const BENEFITS = [
-  "Training auf eigenem Platz im Eschengarten der Bezirkssportanlage Ebereschenstraße 17 und Hallentraining in der Grundschule Waldmeisterstraße 38",
-  "Teilnahme an allen Vereinsveranstaltungen (Sommerfest, Weihnachtsfeier u. a.)",
-  "Freier Eintritt zu allen Heimspielen",
-  "Mitbestimmung in der Jahreshauptversammlung",
-];
+const HERO_EYEBROW = "Mitglied werden";
+const HERO_TITLE = "Einmal Nordler, immer Nordler.";
+const HERO_LEDE = "Mitglied beim SV Nord zu werden ist unkompliziert.";
 
-const ONLINE_FORMS: {
+const ONLINE_HEADING = "Online-Aufnahmeantrag";
+const ONLINE_BADGE = "Direkt im Browser";
+const ONLINE_INTRO =
+  "Antrag inkl. SEPA-Lastschriftmandat online ausfüllen. Wähle die passende Variante. Einmalige Aufnahmegebühr 49 €.";
+
+type OnlineForm = {
   tag: string;
   title: string;
   body: string;
   href: string;
-}[] = [
+};
+
+const ONLINE_FORMS: OnlineForm[] = [
   {
     tag: "Jugendliche",
     title: "Aufnahmeantrag Jugend",
@@ -42,10 +46,25 @@ const ONLINE_FORMS: {
   },
 ];
 
-const SPORTS_TREE: {
+const STEPS_HEADING = "So wirst du Mitglied";
+const STEPS_BADGE = "In 3 Schritten";
+const STEP1_TITLE = "Melde dich vorab zum Training";
+const STEP1_BODY =
+  "Wir möchten dich gerne kennenlernen und freuen uns, wenn du dich zu einem ersten Probetraining bei uns anmeldest.";
+const STEP2_TITLE = "Antrag stellen";
+const STEP2_BODY =
+  "Online-Antrag in vier Varianten: Jugend, Erwachsene, Familienbeitrag oder beitragsfrei. Komplett im Browser ausfüllen und absenden.";
+const STEP2_LINK_LABEL = "Zu den Online-Anträgen";
+const STEP3_TITLE = "Bestätigung Mitgliedschaft";
+const STEP3_BODY =
+  "Sobald dein Mitgliedsantrag von unserer Mitgliederverwaltung geprüft und bearbeitet wurde, erhältst du eine Bestätigung per E-Mail.";
+
+type SportNode = {
   name: string;
   children?: { name: string; children?: string[] }[];
-}[] = [
+};
+
+const SPORTS_TREE: SportNode[] = [
   {
     name: "Fußball",
     children: [
@@ -64,40 +83,120 @@ const SPORTS_TREE: {
   { name: "eSport" },
 ];
 
+const BENEFITS_HEADING = "Was du davon hast";
+const BENEFITS = [
+  "Training auf eigenem Platz im Eschengarten der Bezirkssportanlage Ebereschenstraße 17 und Hallentraining in der Grundschule Waldmeisterstraße 38",
+  "Teilnahme an allen Vereinsveranstaltungen (Sommerfest, Weihnachtsfeier u. a.)",
+  "Freier Eintritt zu allen Heimspielen",
+  "Mitbestimmung in der Jahreshauptversammlung",
+];
+
+const DOCUMENTS_HEADING = "Vereinsdokumente";
+const DOCUMENTS_BADGE = "PDF · Direkt-Download";
 const SATZUNG = {
   label: "Satzung (PDF)",
   href: "/downloads/satzung-2026-05.pdf",
   hint: "Stand Mai 2026 · VR 6924",
 };
 
+const KUENDIGUNG_EYEBROW = "Kündigung";
+const KUENDIGUNG_HEADING = "Mitgliedschaft beenden";
+const KUENDIGUNG_BODY =
+  "Bitte kündige deine Mitgliedschaft schriftlich zum 31.12. des Jahres. Du kannst die Kündigung per E-Mail oder Post einreichen.";
+const KUENDIGUNG_EMAIL = "info@svnord.de";
+const KUENDIGUNG_POST_NAME = "SV Nord München-Lerchenau e.V.";
+const KUENDIGUNG_POST_STREET = "Ebereschenstraße 17";
+const KUENDIGUNG_POST_CITY = "80935 München";
+
 export default async function MitgliedschaftPage() {
   const payload = await getPayloadClient();
   const contact = await payload.findGlobal({ slug: "contact-info" });
+  const cms = await payload.findGlobal({ slug: "mitgliedschaft-page" });
+
+  const heroEyebrow = cms.hero?.eyebrow ?? HERO_EYEBROW;
+  const heroTitle = cms.hero?.title ?? HERO_TITLE;
+  const heroLede = cms.hero?.lede ?? HERO_LEDE;
+
+  const onlineHeading = cms.online?.heading ?? ONLINE_HEADING;
+  const onlineBadge = cms.online?.badge ?? ONLINE_BADGE;
+  const onlineIntro = cms.online?.intro ?? ONLINE_INTRO;
+  const onlineForms: OnlineForm[] =
+    cms.online?.forms && cms.online.forms.length > 0
+      ? cms.online.forms.map((f) => ({
+          tag: f.tag,
+          title: f.title,
+          body: f.body,
+          href: f.href,
+        }))
+      : ONLINE_FORMS;
+
+  const stepsHeading = cms.steps?.heading ?? STEPS_HEADING;
+  const stepsBadge = cms.steps?.badge ?? STEPS_BADGE;
+  const step1Title = cms.steps?.step1Title ?? STEP1_TITLE;
+  const step1Body = cms.steps?.step1Body ?? STEP1_BODY;
+  const step2Title = cms.steps?.step2Title ?? STEP2_TITLE;
+  const step2Body = cms.steps?.step2Body ?? STEP2_BODY;
+  const step2LinkLabel = cms.steps?.step2LinkLabel ?? STEP2_LINK_LABEL;
+  const step3Title = cms.steps?.step3Title ?? STEP3_TITLE;
+  const step3Body = cms.steps?.step3Body ?? STEP3_BODY;
+
+  const sportsTree: SportNode[] =
+    cms.sportsTree && cms.sportsTree.length > 0
+      ? cms.sportsTree.map((sport) => ({
+          name: sport.name,
+          children:
+            sport.children && sport.children.length > 0
+              ? sport.children.map((child) => ({
+                  name: child.name,
+                  children:
+                    child.leaves && child.leaves.length > 0
+                      ? child.leaves.map((leaf) => leaf.name)
+                      : undefined,
+                }))
+              : undefined,
+        }))
+      : SPORTS_TREE;
+
+  const benefitsHeading = cms.benefits?.heading ?? BENEFITS_HEADING;
+  const benefits: string[] =
+    cms.benefits?.items && cms.benefits.items.length > 0
+      ? cms.benefits.items.map((b) => b.text)
+      : BENEFITS;
+
+  const documentsHeading = cms.documents?.heading ?? DOCUMENTS_HEADING;
+  const documentsBadge = cms.documents?.badge ?? DOCUMENTS_BADGE;
+  const satzungLabel = cms.documents?.satzungLabel ?? SATZUNG.label;
+  const satzungHref = cms.documents?.satzungHref ?? SATZUNG.href;
+  const satzungHint = cms.documents?.satzungHint ?? SATZUNG.hint;
+
+  const kuendigungEyebrow = cms.kuendigung?.eyebrow ?? KUENDIGUNG_EYEBROW;
+  const kuendigungHeading = cms.kuendigung?.heading ?? KUENDIGUNG_HEADING;
+  const kuendigungBody = cms.kuendigung?.body ?? KUENDIGUNG_BODY;
+  const kuendigungEmail = cms.kuendigung?.email ?? KUENDIGUNG_EMAIL;
+  const kuendigungPostName = cms.kuendigung?.postName ?? KUENDIGUNG_POST_NAME;
+  const kuendigungPostStreet =
+    cms.kuendigung?.postStreet ?? KUENDIGUNG_POST_STREET;
+  const kuendigungPostCity = cms.kuendigung?.postCity ?? KUENDIGUNG_POST_CITY;
 
   return (
     <>
-      <PageHero
-        eyebrow="Mitglied werden"
-        title="Einmal Nordler, immer Nordler."
-        lede="Mitglied beim SV Nord zu werden ist unkompliziert."
-      />
+      <PageHero eyebrow={heroEyebrow} title={heroTitle} lede={heroLede} />
 
       <div className="mx-auto max-w-7xl px-6 py-14 md:px-10 md:py-20">
         <section id="online-formulare" className="mb-16 scroll-mt-24">
           <div className="mb-5 flex items-end justify-between gap-4">
             <h2 className="text-sm font-bold uppercase tracking-[0.15em] text-nord-muted">
-              Online-Aufnahmeantrag
+              {onlineHeading}
             </h2>
             <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-nord-muted">
-              Direkt im Browser
+              {onlineBadge}
             </span>
           </div>
           <p className="mb-5 max-w-2xl text-sm text-nord-muted">
-            Antrag inkl. SEPA-Lastschriftmandat online ausfüllen. Wähle die
-            passende Variante. Einmalige Aufnahmegebühr 49 €.
+            {onlineIntro}
           </p>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {ONLINE_FORMS.map((form) => (
+            {onlineForms.map((form) => (
               <a
                 key={form.href}
                 href={form.href}
@@ -129,24 +228,21 @@ export default async function MitgliedschaftPage() {
         <section className="mb-16">
           <div className="mb-5 flex items-end justify-between gap-4">
             <h2 className="text-sm font-bold uppercase tracking-[0.15em] text-nord-muted">
-              So wirst du Mitglied
+              {stepsHeading}
             </h2>
             <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-nord-muted">
-              In 3 Schritten
+              {stepsBadge}
             </span>
           </div>
           <div className="grid gap-4 md:grid-cols-3">
             <div className="rounded-xl border border-nord-line bg-white p-6">
               <div className="text-2xl font-bold text-nord-sky">01</div>
               <h3 className="mt-3 text-lg font-bold tracking-tight text-nord-ink">
-                Melde dich vorab zum Training
+                {step1Title}
               </h3>
-              <p className="mt-2 text-sm text-nord-muted">
-                Wir möchten dich gerne kennenlernen und freuen uns, wenn du dich
-                zu einem ersten Probetraining bei uns anmeldest.
-              </p>
+              <p className="mt-2 text-sm text-nord-muted">{step1Body}</p>
               <ul className="mt-4 space-y-1.5 text-sm text-nord-ink">
-                {SPORTS_TREE.map((sport) => (
+                {sportsTree.map((sport) => (
                   <li key={sport.name}>
                     <span className="font-semibold">{sport.name}</span>
                     {sport.children ? (
@@ -173,41 +269,33 @@ export default async function MitgliedschaftPage() {
             <div className="rounded-xl border border-nord-line bg-white p-6">
               <div className="text-2xl font-bold text-nord-sky">02</div>
               <h3 className="mt-3 text-lg font-bold tracking-tight text-nord-ink">
-                Antrag stellen
+                {step2Title}
               </h3>
-              <p className="mt-2 text-sm text-nord-muted">
-                Online-Antrag in vier Varianten: Jugend, Erwachsene,
-                Familienbeitrag oder beitragsfrei. Komplett im Browser ausfüllen
-                und absenden.
-              </p>
+              <p className="mt-2 text-sm text-nord-muted">{step2Body}</p>
               <a
                 href="#online-formulare"
                 className="mt-4 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-nord-navy hover:text-nord-navy-2"
               >
-                Zu den Online-Anträgen <span aria-hidden>↑</span>
+                {step2LinkLabel} <span aria-hidden>↑</span>
               </a>
             </div>
 
             <div className="rounded-xl border border-nord-line bg-white p-6">
               <div className="text-2xl font-bold text-nord-sky">03</div>
               <h3 className="mt-3 text-lg font-bold tracking-tight text-nord-ink">
-                Bestätigung Mitgliedschaft
+                {step3Title}
               </h3>
-              <p className="mt-2 text-sm text-nord-muted">
-                Sobald dein Mitgliedsantrag von unserer Mitgliederverwaltung
-                geprüft und bearbeitet wurde, erhältst du eine Bestätigung per
-                E-Mail.
-              </p>
+              <p className="mt-2 text-sm text-nord-muted">{step3Body}</p>
             </div>
           </div>
         </section>
 
         <section className="mb-16 rounded-2xl border border-nord-line bg-white p-8 md:p-10">
           <h2 className="text-lg font-bold tracking-tight text-nord-ink">
-            Was du davon hast
+            {benefitsHeading}
           </h2>
           <ul className="mt-4 grid gap-2 md:grid-cols-2">
-            {BENEFITS.map((b) => (
+            {benefits.map((b) => (
               <li
                 key={b}
                 className="flex items-start gap-2.5 text-sm text-nord-muted"
@@ -227,22 +315,22 @@ export default async function MitgliedschaftPage() {
         <section className="mb-16">
           <div className="mb-5 flex items-end justify-between gap-4">
             <h2 className="text-sm font-bold uppercase tracking-[0.15em] text-nord-muted">
-              Vereinsdokumente
+              {documentsHeading}
             </h2>
             <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-nord-muted">
-              PDF · Direkt-Download
+              {documentsBadge}
             </span>
           </div>
           <a
-            href={SATZUNG.href}
+            href={satzungHref}
             target="_blank"
             rel="noopener noreferrer"
             className="group flex max-w-md items-start justify-between gap-3 rounded-xl border border-nord-line bg-white px-5 py-4 transition hover:border-nord-gold hover:shadow-sm"
           >
             <span className="flex-1 text-sm font-semibold text-nord-ink">
-              {SATZUNG.label}
+              {satzungLabel}
               <span className="block text-[11px] font-normal text-nord-muted">
-                {SATZUNG.hint}
+                {satzungHint}
               </span>
             </span>
             <span
@@ -256,25 +344,22 @@ export default async function MitgliedschaftPage() {
 
         <section className="mb-16 rounded-2xl border border-nord-line bg-nord-paper-2 p-8 md:p-10">
           <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-nord-gold">
-            Kündigung
+            {kuendigungEyebrow}
           </div>
           <h2 className="mt-2 text-lg font-bold tracking-tight text-nord-ink">
-            Mitgliedschaft beenden
+            {kuendigungHeading}
           </h2>
-          <p className="mt-2 text-sm text-nord-muted">
-            Bitte kündige deine Mitgliedschaft schriftlich zum 31.12. des
-            Jahres. Du kannst die Kündigung per E-Mail oder Post einreichen.
-          </p>
+          <p className="mt-2 text-sm text-nord-muted">{kuendigungBody}</p>
           <div className="mt-4 grid gap-3 text-sm text-nord-ink md:grid-cols-2">
             <div>
               <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-nord-muted">
                 E-Mail
               </div>
               <a
-                href="mailto:info@svnord.de"
+                href={`mailto:${kuendigungEmail}`}
                 className="mt-1 inline-block font-semibold text-nord-navy hover:text-nord-navy-2"
               >
-                info@svnord.de
+                {kuendigungEmail}
               </a>
             </div>
             <div>
@@ -282,11 +367,11 @@ export default async function MitgliedschaftPage() {
                 Post
               </div>
               <div className="mt-1 text-sm leading-snug">
-                SV Nord München-Lerchenau e.V.
+                {kuendigungPostName}
                 <br />
-                Ebereschenstraße 17
+                {kuendigungPostStreet}
                 <br />
-                80935 München
+                {kuendigungPostCity}
               </div>
             </div>
           </div>

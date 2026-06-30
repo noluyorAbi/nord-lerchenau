@@ -1,13 +1,18 @@
 import { FadeUp } from "@/components/motion/FadeUp";
 import { StatCounter } from "@/components/motion/StatCounter";
 
-const STATS = [
+type Stat = { label: string; value: string; sub?: string | null };
+
+// Shown when the CMS field (HomePage.stats) is empty, so the strip never renders
+// blank even before the global is seeded.
+const FALLBACK_STATS: Stat[] = [
   { label: "Mitglieder", value: "630+", sub: "aktive Nordler" },
   { label: "lizenzierte Trainer", value: "25+", sub: "ehrenamtlich" },
   { label: "Mannschaften", value: "26", sub: "alle Abteilungen" },
 ];
 
-export function StatStrip() {
+export function StatStrip({ stats }: { stats?: Stat[] | null }) {
+  const STATS = stats && stats.length > 0 ? stats.slice(0, 3) : FALLBACK_STATS;
   return (
     <section className="bg-nord-navy text-white">
       <FadeUp className="mx-auto max-w-[1320px] px-6 py-10 md:px-7 md:py-12">

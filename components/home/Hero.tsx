@@ -21,7 +21,7 @@ import {
 } from "@/lib/weekend";
 import type { HomePage, Team } from "@/payload-types";
 
-type Props = { hero: HomePage["hero"] };
+type Props = { hero: HomePage["hero"]; slides?: string[] };
 
 // Hero-Bilderlauf: starke Querformat-Fotos aus /public. Zum Tauschen
 // einfach die Pfade ändern oder Einträge ergänzen/entfernen; die Animation
@@ -40,7 +40,10 @@ const HERO_SLIDES = [
 const HERO_PER_SLIDE_S = 5.5;
 const HERO_FADE_MS = 800;
 
-export async function Hero({ hero }: Props) {
+export async function Hero({ hero, slides }: Props) {
+  // CMS-uploaded slides win; otherwise the committed default photos. Either way
+  // the slideshow always has images, so there is no empty/regressed state.
+  const heroSlides = slides && slides.length > 0 ? slides : HERO_SLIDES;
   const [upcoming, standings] = await Promise.all([
     getFupaUpcoming(),
     getFupaStanding(),
@@ -138,7 +141,7 @@ export async function Hero({ hero }: Props) {
     href: hero?.secondaryCtaHref ?? "/verein",
   };
 
-  const slideCount = HERO_SLIDES.length;
+  const slideCount = heroSlides.length;
   const totalS = slideCount * HERO_PER_SLIDE_S;
   // Anteil eines Bildes am Gesamtzyklus und Anteil der Überblendung.
   const visiblePct = 100 / slideCount;
@@ -182,7 +185,7 @@ export async function Hero({ hero }: Props) {
       {/* Full-bleed Bilderlauf: gestapelte Layer mit CSS-Crossfade */}
       <style dangerouslySetInnerHTML={{ __html: heroSlideshowCss }} />
       <div className="absolute inset-0" aria-hidden="true">
-        {HERO_SLIDES.map((src, i) => (
+        {heroSlides.map((src, i) => (
           <div
             key={src}
             className="hero-slide absolute inset-0 bg-cover bg-center"

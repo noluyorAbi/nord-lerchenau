@@ -117,6 +117,15 @@ export interface Config {
     "jugendfoerder-page": JugendfoerderPage;
     "legal-pages": LegalPage;
     "faq-page": FaqPage;
+    "mitgliedschaft-page": MitgliedschaftPage;
+    "verein-page": VereinPage;
+    "sponsoren-page": SponsorenPage;
+    "jugendschutz-page": JugendschutzPage;
+    "shop-page": ShopPage;
+    "sport-overview-page": SportOverviewPage;
+    "fussball-page": FussballPage;
+    "fussball-categories": FussballCategoriesPage;
+    "vorstand-page": VorstandPage;
   };
   globalsSelect: {
     "site-settings": SiteSettingsSelect<false> | SiteSettingsSelect<true>;
@@ -132,6 +141,23 @@ export interface Config {
       | JugendfoerderPageSelect<true>;
     "legal-pages": LegalPagesSelect<false> | LegalPagesSelect<true>;
     "faq-page": FaqPageSelect<false> | FaqPageSelect<true>;
+    "mitgliedschaft-page":
+      | MitgliedschaftPageSelect<false>
+      | MitgliedschaftPageSelect<true>;
+    "verein-page": VereinPageSelect<false> | VereinPageSelect<true>;
+    "sponsoren-page": SponsorenPageSelect<false> | SponsorenPageSelect<true>;
+    "jugendschutz-page":
+      | JugendschutzPageSelect<false>
+      | JugendschutzPageSelect<true>;
+    "shop-page": ShopPageSelect<false> | ShopPageSelect<true>;
+    "sport-overview-page":
+      | SportOverviewPageSelect<false>
+      | SportOverviewPageSelect<true>;
+    "fussball-page": FussballPageSelect<false> | FussballPageSelect<true>;
+    "fussball-categories":
+      | FussballCategoriesPageSelect<false>
+      | FussballCategoriesPageSelect<true>;
+    "vorstand-page": VorstandPageSelect<false> | VorstandPageSelect<true>;
   };
   locale: null;
   widgets: {
@@ -168,6 +194,7 @@ export interface UserAuthOperations {
 export interface User {
   id: number;
   name?: string | null;
+  role?: ("admin" | "editor") | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -369,6 +396,48 @@ export interface Team {
       }[]
     | null;
   order?: number | null;
+  sportPage?: {
+    lede?: string | null;
+    intro?: string | null;
+    pills?:
+      | {
+          value: string;
+          id?: string | null;
+        }[]
+      | null;
+    stats?:
+      | {
+          label: string;
+          value: string;
+          id?: string | null;
+        }[]
+      | null;
+    highlights?:
+      | {
+          eyebrow: string;
+          title: string;
+          body: string;
+          accent?: ("navy" | "gold" | "sky") | null;
+          id?: string | null;
+        }[]
+      | null;
+    cta?: {
+      title?: string | null;
+      body?: string | null;
+      mailSubject?: string | null;
+      primaryLabel?: string | null;
+    };
+    hideTrainers?: boolean | null;
+    contacts?:
+      | {
+          name: string;
+          role?: string | null;
+          email?: string | null;
+          phone?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -945,13 +1014,48 @@ export interface HomePage {
     secondaryCtaLabel?: string | null;
     secondaryCtaHref?: string | null;
   };
+  heroSlides?:
+    | {
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
   stats?:
     | {
         label: string;
         value: string;
+        sub?: string | null;
         id?: string | null;
       }[]
     | null;
+  sportsSection?: {
+    headlineLine1?: string | null;
+    headlineLine2?: string | null;
+    cards?:
+      | {
+          theme:
+            | "football"
+            | "volleyball"
+            | "gymnastik"
+            | "esport"
+            | "schiri"
+            | "ski";
+          name: string;
+          href: string;
+          kicker?: string | null;
+          body?: string | null;
+          pills?:
+            | {
+                value: string;
+                id?: string | null;
+              }[]
+            | null;
+          count?: string | null;
+          sub?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
   /**
    * Welche Sektionen werden auf der Startseite angezeigt?
    */
@@ -1256,6 +1360,7 @@ export interface HomePageSelect<T extends boolean = true> {
     | {
         label?: T;
         value?: T;
+        sub?: T;
         id?: T;
       };
   sections?:
@@ -1380,4 +1485,985 @@ export interface Auth {
 
 declare module "payload" {
   export interface GeneratedTypes extends Config {}
+}
+
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mitgliedschaft-page".
+ */
+export interface MitgliedschaftPage {
+  id: number;
+  hero?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    lede?: string | null;
+  };
+  online?: {
+    heading?: string | null;
+    badge?: string | null;
+    intro?: string | null;
+    forms?:
+      | {
+          tag: string;
+          title: string;
+          body: string;
+          href: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  steps?: {
+    heading?: string | null;
+    badge?: string | null;
+    step1Title?: string | null;
+    step1Body?: string | null;
+    step2Title?: string | null;
+    step2Body?: string | null;
+    step2LinkLabel?: string | null;
+    step3Title?: string | null;
+    step3Body?: string | null;
+  };
+  sportsTree?:
+    | {
+        name: string;
+        children?:
+          | {
+              name: string;
+              leaves?:
+                | {
+                    name: string;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  benefits?: {
+    heading?: string | null;
+    items?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  documents?: {
+    heading?: string | null;
+    badge?: string | null;
+    satzungLabel?: string | null;
+    satzungHref?: string | null;
+    satzungHint?: string | null;
+  };
+  kuendigung?: {
+    eyebrow?: string | null;
+    heading?: string | null;
+    body?: string | null;
+    email?: string | null;
+    postName?: string | null;
+    postStreet?: string | null;
+    postCity?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mitgliedschaft-page_select".
+ */
+export interface MitgliedschaftPageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        lede?: T;
+      };
+  online?:
+    | T
+    | {
+        heading?: T;
+        badge?: T;
+        intro?: T;
+        forms?:
+          | T
+          | {
+              tag?: T;
+              title?: T;
+              body?: T;
+              href?: T;
+              id?: T;
+            };
+      };
+  steps?:
+    | T
+    | {
+        heading?: T;
+        badge?: T;
+        step1Title?: T;
+        step1Body?: T;
+        step2Title?: T;
+        step2Body?: T;
+        step2LinkLabel?: T;
+        step3Title?: T;
+        step3Body?: T;
+      };
+  sportsTree?:
+    | T
+    | {
+        name?: T;
+        children?:
+          | T
+          | {
+              name?: T;
+              leaves?:
+                | T
+                | {
+                    name?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+        id?: T;
+      };
+  benefits?:
+    | T
+    | {
+        heading?: T;
+        items?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+      };
+  documents?:
+    | T
+    | {
+        heading?: T;
+        badge?: T;
+        satzungLabel?: T;
+        satzungHref?: T;
+        satzungHint?: T;
+      };
+  kuendigung?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        body?: T;
+        email?: T;
+        postName?: T;
+        postStreet?: T;
+        postCity?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "verein-page".
+ */
+export interface VereinPage {
+  id: number;
+  hero?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    lede?: string | null;
+  };
+  stats?:
+    | {
+        value: string;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  cards?:
+    | {
+        href: string;
+        eyebrow: string;
+        title: string;
+        desc: string;
+        meta: string;
+        tone: "navy" | "paper" | "sky" | "gold";
+        id?: string | null;
+      }[]
+    | null;
+  socialMediaLabel?: string | null;
+  socialMediaTeam?:
+    | {
+        name: string;
+        id?: string | null;
+      }[]
+    | null;
+  cta?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    text?: string | null;
+    buttonLabel?: string | null;
+    buttonHref?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+export interface VereinPageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        lede?: T;
+      };
+  stats?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        id?: T;
+      };
+  cards?:
+    | T
+    | {
+        href?: T;
+        eyebrow?: T;
+        title?: T;
+        desc?: T;
+        meta?: T;
+        tone?: T;
+        id?: T;
+      };
+  socialMediaLabel?: T;
+  socialMediaTeam?:
+    | T
+    | {
+        name?: T;
+        id?: T;
+      };
+  cta?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        text?: T;
+        buttonLabel?: T;
+        buttonHref?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sponsoren-page".
+ */
+export interface SponsorenPage {
+  id: number;
+  hero?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    lede?: string | null;
+  };
+  story?: {
+    eyebrow?: string | null;
+    paragraph1?: string | null;
+    paragraph2?: string | null;
+    paragraph3?: string | null;
+  };
+  offer?: {
+    title?: string | null;
+    items?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  sponsorHeadings?: {
+    premium?: string | null;
+    standard?: string | null;
+  };
+  becomeSponsor?: {
+    title?: string | null;
+    text?: string | null;
+    ctaLabel?: string | null;
+    ctaHref?: string | null;
+  };
+  donation?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    paragraph1?: string | null;
+    paragraph2?: string | null;
+    benefitsTitle?: string | null;
+    benefits?:
+      | {
+          label: string;
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+    closingLabel?: string | null;
+    closingText?: string | null;
+    signatureLine1?: string | null;
+    signatureLine2?: string | null;
+    poweredBy?: string | null;
+    qrImage?: string | null;
+    qrAlt?: string | null;
+    qrCaption?: string | null;
+  };
+  jugend?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    text?: string | null;
+    ctaLabel?: string | null;
+    ctaHref?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+export interface SponsorenPageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        lede?: T;
+      };
+  story?:
+    | T
+    | {
+        eyebrow?: T;
+        paragraph1?: T;
+        paragraph2?: T;
+        paragraph3?: T;
+      };
+  offer?:
+    | T
+    | {
+        title?: T;
+        items?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+      };
+  sponsorHeadings?:
+    | T
+    | {
+        premium?: T;
+        standard?: T;
+      };
+  becomeSponsor?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        ctaLabel?: T;
+        ctaHref?: T;
+      };
+  donation?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        paragraph1?: T;
+        paragraph2?: T;
+        benefitsTitle?: T;
+        benefits?:
+          | T
+          | {
+              label?: T;
+              text?: T;
+              id?: T;
+            };
+        closingLabel?: T;
+        closingText?: T;
+        signatureLine1?: T;
+        signatureLine2?: T;
+        poweredBy?: T;
+        qrImage?: T;
+        qrAlt?: T;
+        qrCaption?: T;
+      };
+  jugend?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        text?: T;
+        ctaLabel?: T;
+        ctaHref?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "jugendschutz-page".
+ */
+export interface JugendschutzPage {
+  id: number;
+  hero: {
+    eyebrow?: string | null;
+    title?: string | null;
+    lede?: string | null;
+  };
+  meta: {
+    lastUpdated?: string | null;
+    badgeSchutzkonzept?: string | null;
+    badgeFuehrungszeugnis?: string | null;
+  };
+  section1: {
+    title?: string | null;
+    intro?: string | null;
+    lead?: string | null;
+    body?: string | null;
+    bfvLinkLabel?: string | null;
+    bfvLinkHref?: string | null;
+  };
+  section2: {
+    title?: string | null;
+    intro?: string | null;
+    body?: string | null;
+  };
+  section3: {
+    title?: string | null;
+    intro?: string | null;
+    body1?: string | null;
+    items?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+    body2?: string | null;
+  };
+  section4: {
+    title?: string | null;
+    intro?: string | null;
+    body?: string | null;
+    items?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+    calloutTitle?: string | null;
+    calloutText?: string | null;
+  };
+  section5: {
+    title?: string | null;
+    intro?: string | null;
+    link1Label?: string | null;
+    link1Href?: string | null;
+    link1Sub?: string | null;
+    link2Label?: string | null;
+    link2Href?: string | null;
+    link2Sub?: string | null;
+  };
+  asideVerdacht: {
+    eyebrow?: string | null;
+    text?: string | null;
+    link1Label?: string | null;
+    link1Href?: string | null;
+    link2Label?: string | null;
+    link2Href?: string | null;
+  };
+  asideUseful: {
+    eyebrow?: string | null;
+    links?:
+      | {
+          label: string;
+          href: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "jugendschutz-page_select".
+ */
+export interface JugendschutzPageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        lede?: T;
+      };
+  meta?:
+    | T
+    | {
+        lastUpdated?: T;
+        badgeSchutzkonzept?: T;
+        badgeFuehrungszeugnis?: T;
+      };
+  section1?:
+    | T
+    | {
+        title?: T;
+        intro?: T;
+        lead?: T;
+        body?: T;
+        bfvLinkLabel?: T;
+        bfvLinkHref?: T;
+      };
+  section2?:
+    | T
+    | {
+        title?: T;
+        intro?: T;
+        body?: T;
+      };
+  section3?:
+    | T
+    | {
+        title?: T;
+        intro?: T;
+        body1?: T;
+        items?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        body2?: T;
+      };
+  section4?:
+    | T
+    | {
+        title?: T;
+        intro?: T;
+        body?: T;
+        items?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        calloutTitle?: T;
+        calloutText?: T;
+      };
+  section5?:
+    | T
+    | {
+        title?: T;
+        intro?: T;
+        link1Label?: T;
+        link1Href?: T;
+        link1Sub?: T;
+        link2Label?: T;
+        link2Href?: T;
+        link2Sub?: T;
+      };
+  asideVerdacht?:
+    | T
+    | {
+        eyebrow?: T;
+        text?: T;
+        link1Label?: T;
+        link1Href?: T;
+        link2Label?: T;
+        link2Href?: T;
+      };
+  asideUseful?:
+    | T
+    | {
+        eyebrow?: T;
+        links?:
+          | T
+          | {
+              label?: T;
+              href?: T;
+              id?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "shop-page".
+ */
+export interface ShopPage {
+  id: number;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  heroEyebrow?: string | null;
+  heroTitle?: string | null;
+  heroLede?: string | null;
+  starterBadge?: string | null;
+  partnerBadge?: string | null;
+  starterHeading?: string | null;
+  starterIntro?: string | null;
+  starterCtaLabel?: string | null;
+  starterInShopLabel?: string | null;
+  starterSuggestionLabel?: string | null;
+  starterSlots?:
+    | {
+        title: string;
+        blurb: string;
+        id?: string | null;
+      }[]
+    | null;
+  ctaEyebrow?: string | null;
+  ctaHeading?: string | null;
+  ctaLeadPrefix?: string | null;
+  ctaPartnerName?: string | null;
+  ctaLeadSuffix?: string | null;
+  ctaButtonLabel?: string | null;
+  productsHeading?: string | null;
+  productsCountSuffix?: string | null;
+  emptyStatePrefix?: string | null;
+  emptyStateLinkLabel?: string | null;
+  emptyStateSuffix?: string | null;
+  noticeLabel?: string | null;
+  noticeBody?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "shop-page_select".
+ */
+export interface ShopPageSelect<T extends boolean = true> {
+  metaTitle?: T;
+  metaDescription?: T;
+  heroEyebrow?: T;
+  heroTitle?: T;
+  heroLede?: T;
+  starterBadge?: T;
+  partnerBadge?: T;
+  starterHeading?: T;
+  starterIntro?: T;
+  starterCtaLabel?: T;
+  starterInShopLabel?: T;
+  starterSuggestionLabel?: T;
+  starterSlots?:
+    | T
+    | {
+        title?: T;
+        blurb?: T;
+        id?: T;
+      };
+  ctaEyebrow?: T;
+  ctaHeading?: T;
+  ctaLeadPrefix?: T;
+  ctaPartnerName?: T;
+  ctaLeadSuffix?: T;
+  ctaButtonLabel?: T;
+  productsHeading?: T;
+  productsCountSuffix?: T;
+  emptyStatePrefix?: T;
+  emptyStateLinkLabel?: T;
+  emptyStateSuffix?: T;
+  noticeLabel?: T;
+  noticeBody?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sport-overview-page".
+ */
+export interface SportOverviewPage {
+  id: number;
+  heroEyebrow?: string | null;
+  heroTitle?: string | null;
+  heroLede?: string | null;
+  qualificationEyebrow?: string | null;
+  qualificationTextBefore?: string | null;
+  qualificationTextBold?: string | null;
+  qualificationTextAfter?: string | null;
+  qualificationLinkLabel?: string | null;
+  cards?:
+    | {
+        title: string;
+        href: string;
+        desc: string;
+        id?: string | null;
+      }[]
+    | null;
+  licensesEyebrow?: string | null;
+  licensesTitle?: string | null;
+  trainers?:
+    | {
+        nachname: string;
+        vorname: string;
+        sportart: "Fußball" | "Ski Alpin";
+        lizenz: "B" | "C";
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+export interface SportOverviewPageSelect<T extends boolean = true> {
+  heroEyebrow?: T;
+  heroTitle?: T;
+  heroLede?: T;
+  qualificationEyebrow?: T;
+  qualificationTextBefore?: T;
+  qualificationTextBold?: T;
+  qualificationTextAfter?: T;
+  qualificationLinkLabel?: T;
+  cards?:
+    | T
+    | {
+        title?: T;
+        href?: T;
+        desc?: T;
+        id?: T;
+      };
+  licensesEyebrow?: T;
+  licensesTitle?: T;
+  trainers?:
+    | T
+    | {
+        nachname?: T;
+        vorname?: T;
+        sportart?: T;
+        lizenz?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "fussball-page".
+ */
+export interface FussballPage {
+  id: number;
+  hero?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    lede?: string | null;
+  };
+  intro?: {
+    eyebrow?: string | null;
+    body?: string | null;
+    signature?: string | null;
+  };
+  leitung?: {
+    heading?: string | null;
+    members?:
+      | {
+          name: string;
+          role: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  saeulen?: {
+    heading?: string | null;
+    meta?: string | null;
+    cards?:
+      | {
+          eyebrow: string;
+          title: string;
+          body: string;
+          href: string;
+          meta: string;
+          tone: "navy" | "paper" | "sky" | "gold";
+          id?: string | null;
+        }[]
+      | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+export interface FussballPageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        lede?: T;
+      };
+  intro?:
+    | T
+    | {
+        eyebrow?: T;
+        body?: T;
+        signature?: T;
+      };
+  leitung?:
+    | T
+    | {
+        heading?: T;
+        members?:
+          | T
+          | {
+              name?: T;
+              role?: T;
+              id?: T;
+            };
+      };
+  saeulen?:
+    | T
+    | {
+        heading?: T;
+        meta?: T;
+        cards?:
+          | T
+          | {
+              eyebrow?: T;
+              title?: T;
+              body?: T;
+              href?: T;
+              meta?: T;
+              tone?: T;
+              id?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "fussball-categories".
+ */
+export interface FussballCategoriesPage {
+  id: number;
+  weitereKategorienLabel?: string | null;
+  bfvButtonLabel?: string | null;
+  bfvMeldungSuffix?: string | null;
+  sportlicheLeitungHeading?: string | null;
+  mannschaftenHeading?: string | null;
+  schiedsrichterLabel?: string | null;
+  backLabel?: string | null;
+  categories?:
+    | {
+        slug: "herren" | "junioren" | "juniorinnen" | "bambini";
+        eyebrow?: string | null;
+        label?: string | null;
+        lede?: string | null;
+        description?: string | null;
+        leadership?:
+          | {
+              role: string;
+              names?:
+                | {
+                    name: string;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+export interface FussballCategoriesPageSelect<T extends boolean = true> {
+  weitereKategorienLabel?: T;
+  bfvButtonLabel?: T;
+  bfvMeldungSuffix?: T;
+  sportlicheLeitungHeading?: T;
+  mannschaftenHeading?: T;
+  schiedsrichterLabel?: T;
+  backLabel?: T;
+  categories?:
+    | T
+    | {
+        slug?: T;
+        eyebrow?: T;
+        label?: T;
+        lede?: T;
+        description?: T;
+        leadership?:
+          | T
+          | {
+              role?: T;
+              names?:
+                | T
+                | {
+                    name?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+  _status?: T;
+}
+
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vorstand-page".
+ */
+export interface VorstandPage {
+  id: number;
+  heroEyebrow?: string | null;
+  heroTitle?: string | null;
+  heroLede?: string | null;
+  statVorstandLabel?: string | null;
+  statAbteilungenLabel?: string | null;
+  statJugendleitungLabel?: string | null;
+  statAnsprechpartnerLabel?: string | null;
+  vorstandEyebrow?: string | null;
+  vorstandTitle?: string | null;
+  vorstandSub?: string | null;
+  jugendschutzEyebrow?: string | null;
+  jugendschutzTitle?: string | null;
+  jugendschutzText?: string | null;
+  jugendschutzCta?: string | null;
+  sportleitungEyebrow?: string | null;
+  sportleitungTitle?: string | null;
+  sportleitungSub?: string | null;
+  jugendleitungEyebrow?: string | null;
+  jugendleitungTitle?: string | null;
+  jugendleitungSub?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+export interface VorstandPageSelect<T extends boolean = true> {
+  heroEyebrow?: T;
+  heroTitle?: T;
+  heroLede?: T;
+  statVorstandLabel?: T;
+  statAbteilungenLabel?: T;
+  statJugendleitungLabel?: T;
+  statAnsprechpartnerLabel?: T;
+  vorstandEyebrow?: T;
+  vorstandTitle?: T;
+  vorstandSub?: T;
+  jugendschutzEyebrow?: T;
+  jugendschutzTitle?: T;
+  jugendschutzText?: T;
+  jugendschutzCta?: T;
+  sportleitungEyebrow?: T;
+  sportleitungTitle?: T;
+  sportleitungSub?: T;
+  jugendleitungEyebrow?: T;
+  jugendleitungTitle?: T;
+  jugendleitungSub?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+  _status?: T;
 }

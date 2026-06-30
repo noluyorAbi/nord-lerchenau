@@ -11,6 +11,7 @@ import {
 
 import { FadeUp } from "@/components/motion/FadeUp";
 import { SectionEyebrow } from "@/components/SectionEyebrow";
+import type { HomePage } from "@/payload-types";
 
 type ThemeId =
   | "football"
@@ -324,7 +325,35 @@ const THEMES: Record<ThemeId, ThemeDef> = {
   },
 };
 
-export function SportsGrid() {
+// A card shape shared by the hardcoded fallback (SPORTS) and the CMS data. The
+// theme drives the icon/colour set below and is never free-text.
+type Card = {
+  theme: ThemeId;
+  name: string;
+  href: string;
+  kicker: string;
+  body: string;
+  pills: string[];
+  count: string;
+  sub: string;
+};
+
+export function SportsGrid({ data }: { data?: HomePage["sportsSection"] }) {
+  const headlineLine1 = data?.headlineLine1 || "Sechs Sportarten.";
+  const headlineLine2 = data?.headlineLine2 || "Eine Familie.";
+  const cards: Card[] =
+    data?.cards && data.cards.length > 0
+      ? data.cards.map((c) => ({
+          theme: (c.theme ?? "football") as ThemeId,
+          name: c.name,
+          href: c.href,
+          kicker: c.kicker ?? "",
+          body: c.body ?? "",
+          pills: (c.pills ?? []).map((p) => p.value),
+          count: c.count ?? "",
+          sub: c.sub ?? "",
+        }))
+      : SPORTS;
   return (
     <section className="border-b border-nord-line bg-nord-paper">
       <div className="mx-auto max-w-[1320px] px-6 py-16 md:px-7 md:py-20">
@@ -335,9 +364,9 @@ export function SportsGrid() {
               className="mt-3 font-display font-black leading-[0.95] text-nord-ink"
               style={{ fontSize: "clamp(40px, 5vw, 72px)" }}
             >
-              Sechs Sportarten.
+              {headlineLine1}
               <br />
-              <span className="text-nord-gold">Eine Familie.</span>
+              <span className="text-nord-gold">{headlineLine2}</span>
             </h2>
           </div>
           <Link
@@ -349,11 +378,11 @@ export function SportsGrid() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-          {SPORTS.map((sport, idx) => {
+          {cards.map((sport, idx) => {
             const theme = THEMES[sport.theme];
             const { Icon, Decor } = theme;
             return (
-              <FadeUp key={sport.slug} delay={(idx % 3) * 0.06}>
+              <FadeUp key={`${sport.theme}-${idx}`} delay={(idx % 3) * 0.06}>
                 <Link
                   href={sport.href}
                   className={`group relative block aspect-[4/5] overflow-hidden rounded-2xl text-white shadow-sm ring-1 ring-black/5 transition duration-300 ease-out hover:-translate-y-1 hover:ring-white/15 active:scale-[0.99] motion-reduce:transform-none hover:shadow-[0_24px_50px_-20px_rgba(11,27,63,0.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nord-gold focus-visible:ring-offset-2 ${theme.bg}`}

@@ -231,5 +231,106 @@ export const Teams: CollectionConfig = {
       label: "Sortierung",
       admin: { description: "Kleinere Zahl = weiter oben in Listen." },
     },
+    {
+      name: "sportPage",
+      type: "group",
+      label: "Sportarten-Seite (Inhalt)",
+      admin: {
+        description:
+          "Inhalt der öffentlichen Sportart-Seite (/gymnastik, /volleyball, /ski, /esport, /schiedsrichter). Leeres Feld = der aktuelle Standardtext wird angezeigt. Für Fußball-Teams nicht relevant.",
+      },
+      fields: [
+        {
+          name: "lede",
+          type: "textarea",
+          label: "Kurzbeschreibung (unter dem Titel)",
+        },
+        { name: "intro", type: "textarea", label: "Einleitungstext" },
+        {
+          name: "pills",
+          type: "array",
+          label: "Schlagwörter (Badges)",
+          labels: { singular: "Schlagwort", plural: "Schlagwörter" },
+          fields: [
+            { name: "value", type: "text", required: true, label: "Text" },
+          ],
+        },
+        {
+          name: "stats",
+          type: "array",
+          label: 'Infobox ("Auf einen Blick")',
+          fields: [
+            {
+              name: "label",
+              type: "text",
+              required: true,
+              label: "Bezeichnung",
+            },
+            { name: "value", type: "text", required: true, label: "Wert" },
+          ],
+        },
+        {
+          name: "highlights",
+          type: "array",
+          label: "Highlight-Karten",
+          fields: [
+            {
+              name: "eyebrow",
+              type: "text",
+              required: true,
+              label: "Kleine Überschrift",
+            },
+            { name: "title", type: "text", required: true, label: "Titel" },
+            { name: "body", type: "textarea", required: true, label: "Text" },
+            {
+              name: "accent",
+              type: "select",
+              defaultValue: "navy",
+              label: "Farbe",
+              options: [
+                { label: "Navy", value: "navy" },
+                { label: "Gold", value: "gold" },
+                { label: "Himmelblau", value: "sky" },
+              ],
+            },
+          ],
+        },
+        {
+          name: "cta",
+          type: "group",
+          label: 'Aufruf ("Mitmachen"-Box)',
+          fields: [
+            { name: "title", type: "text", label: "Überschrift" },
+            { name: "body", type: "textarea", label: "Text" },
+            { name: "mailSubject", type: "text", label: "Mail-Betreff" },
+            { name: "primaryLabel", type: "text", label: "Button-Text" },
+          ],
+        },
+        {
+          name: "hideTrainers",
+          type: "checkbox",
+          label: "Verknüpfte Trainer ausblenden",
+          admin: {
+            description:
+              "Wenn aktiv, werden statt der Trainer-Verknüpfung die Ansprechpartner unten gezeigt.",
+          },
+        },
+        {
+          name: "contacts",
+          type: "array",
+          label: "Ansprechpartner",
+          admin: {
+            description:
+              "Wird gezeigt, wenn 'Verknüpfte Trainer ausblenden' aktiv ist (oder keine Trainer verknüpft sind).",
+          },
+          fields: [
+            { name: "name", type: "text", required: true, label: "Name" },
+            { name: "role", type: "text", label: "Funktion" },
+            { name: "email", type: "email", label: "E-Mail" },
+            { name: "phone", type: "text", label: "Telefon" },
+          ],
+        },
+      ],
+    },
   ],
 };

@@ -1,8 +1,14 @@
 import Link from "next/link";
 
 import { PageHero } from "@/components/PageHero";
+import { getPayloadClient } from "@/lib/payload";
 
 export const dynamic = "force-dynamic";
+
+const HERO_EYEBROW = "Der Verein";
+const HERO_TITLE = "SV Nord München-Lerchenau e.V.";
+const HERO_LEDE =
+  "Traditionsverein im Münchner Norden seit 1947: über 600 Mitglieder, fünf Abteilungen.";
 
 const STATS = [
   { value: "1947", label: "Gegründet" },
@@ -65,6 +71,8 @@ const CARDS: FeatureCard[] = [
   },
 ];
 
+const SOCIAL_MEDIA_LABEL = "Social Media";
+
 const SOCIAL_MEDIA_TEAM = [
   "Tobias Tins",
   "Tobias Treffer",
@@ -73,6 +81,13 @@ const SOCIAL_MEDIA_TEAM = [
   "Marko Rakita",
   "Tamay Piker",
 ];
+
+const CTA_EYEBROW = "Mitglied werden";
+const CTA_TITLE = "Einmal Nordler, immer Nordler.";
+const CTA_TEXT =
+  "Mitgliedsantrag, SEPA-Mandat, Spielerpass. Drei Schritte und du bist dabei.";
+const CTA_BUTTON_LABEL = "Antrag öffnen →";
+const CTA_BUTTON_HREF = "/mitgliedschaft";
 
 const TONE_CLASSES: Record<
   CardTone,
@@ -104,18 +119,50 @@ const TONE_CLASSES: Record<
   },
 };
 
-export default function VereinPage() {
+export default async function VereinPage() {
+  const payload = await getPayloadClient();
+  const cms = await payload.findGlobal({ slug: "verein-page" });
+
+  const heroEyebrow = cms.hero?.eyebrow ?? HERO_EYEBROW;
+  const heroTitle = cms.hero?.title ?? HERO_TITLE;
+  const heroLede = cms.hero?.lede ?? HERO_LEDE;
+
+  const stats =
+    cms.stats && cms.stats.length > 0
+      ? cms.stats.map((s) => ({ value: s.value, label: s.label }))
+      : STATS;
+
+  const cards: FeatureCard[] =
+    cms.cards && cms.cards.length > 0
+      ? cms.cards.map((c) => ({
+          href: c.href,
+          eyebrow: c.eyebrow,
+          title: c.title,
+          desc: c.desc,
+          meta: c.meta,
+          tone: c.tone,
+        }))
+      : CARDS;
+
+  const socialMediaLabel = cms.socialMediaLabel ?? SOCIAL_MEDIA_LABEL;
+  const socialMediaTeam =
+    cms.socialMediaTeam && cms.socialMediaTeam.length > 0
+      ? cms.socialMediaTeam.map((m) => m.name)
+      : SOCIAL_MEDIA_TEAM;
+
+  const ctaEyebrow = cms.cta?.eyebrow ?? CTA_EYEBROW;
+  const ctaTitle = cms.cta?.title ?? CTA_TITLE;
+  const ctaText = cms.cta?.text ?? CTA_TEXT;
+  const ctaButtonLabel = cms.cta?.buttonLabel ?? CTA_BUTTON_LABEL;
+  const ctaButtonHref = cms.cta?.buttonHref ?? CTA_BUTTON_HREF;
+
   return (
     <>
-      <PageHero
-        eyebrow="Der Verein"
-        title="SV Nord München-Lerchenau e.V."
-        lede="Traditionsverein im Münchner Norden seit 1947: über 600 Mitglieder, fünf Abteilungen."
-      />
+      <PageHero eyebrow={heroEyebrow} title={heroTitle} lede={heroLede} />
 
       <section className="mx-auto max-w-7xl px-6 pt-8 pb-14 md:px-10 md:pt-12 md:pb-20">
         <div className="mb-12 grid grid-cols-2 gap-3 md:grid-cols-4">
-          {STATS.map((stat) => (
+          {stats.map((stat) => (
             <div
               key={stat.label}
               className="group rounded-2xl border border-nord-line bg-white p-5 text-nord-ink transition duration-300 ease-out hover:-translate-y-0.5 hover:border-nord-gold/60 hover:shadow-[0_18px_36px_-22px_rgba(212,160,23,0.45)] md:p-6"
@@ -131,7 +178,7 @@ export default function VereinPage() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-6 md:auto-rows-[minmax(220px,auto)] lg:gap-5">
-          {CARDS.map((card, idx) => {
+          {cards.map((card, idx) => {
             const tones = TONE_CLASSES[card.tone];
             const span =
               idx === 0
@@ -193,14 +240,14 @@ export default function VereinPage() {
         <section className="mt-12 border-t border-nord-line pt-6">
           <div className="flex items-baseline gap-3">
             <span className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-nord-muted">
-              Social Media
+              {socialMediaLabel}
             </span>
             <span className="font-mono text-[11px] tracking-[0.15em] text-nord-muted/60">
-              {SOCIAL_MEDIA_TEAM.length}
+              {socialMediaTeam.length}
             </span>
           </div>
           <ul className="mt-5 grid gap-x-10 gap-y-px sm:grid-cols-2 lg:grid-cols-3">
-            {SOCIAL_MEDIA_TEAM.map((name, i) => (
+            {socialMediaTeam.map((name, i) => (
               <li
                 key={name}
                 className="group flex items-baseline gap-3 border-b border-nord-line/70 py-3"
@@ -220,22 +267,21 @@ export default function VereinPage() {
           <div className="grid gap-6 md:grid-cols-[2fr_1fr] md:items-center">
             <div>
               <div className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-nord-gold">
-                Mitglied werden
+                {ctaEyebrow}
               </div>
               <h3 className="mt-3 font-display text-2xl font-black tracking-tight text-nord-ink md:text-3xl">
-                Einmal Nordler, immer Nordler.
+                {ctaTitle}
               </h3>
               <p className="mt-2 max-w-xl text-sm leading-relaxed text-nord-muted md:text-base">
-                Mitgliedsantrag, SEPA-Mandat, Spielerpass. Drei Schritte und du
-                bist dabei.
+                {ctaText}
               </p>
             </div>
             <div className="flex md:justify-end">
               <Link
-                href="/mitgliedschaft"
+                href={ctaButtonHref}
                 className="inline-flex items-center gap-2 rounded-full bg-nord-ink px-5 py-3 font-mono text-[11px] font-bold uppercase tracking-[0.15em] text-white transition hover:-translate-y-px hover:bg-nord-navy-2"
               >
-                Antrag öffnen →
+                {ctaButtonLabel}
               </Link>
             </div>
           </div>

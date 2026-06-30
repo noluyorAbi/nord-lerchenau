@@ -114,10 +114,51 @@ export async function SportSectionPage({
   const team = result.docs[0];
   if (!team) notFound();
 
+  // Editable content comes from Teams → "Sportarten-Seite (Inhalt)". Each field
+  // falls back to the prop passed by the page, so the page renders identically
+  // until the club fills the CMS fields (zero regression).
+  const sp = team.sportPage;
+  const effLede = sp?.lede || fallbackLede;
+  const effIntro = sp?.intro || intro;
+  const effPills =
+    sp?.pills && sp.pills.length > 0 ? sp.pills.map((p) => p.value) : pills;
+  const effStats: SportStat[] | undefined =
+    sp?.stats && sp.stats.length > 0
+      ? sp.stats.map((s) => ({ label: s.label, value: s.value }))
+      : stats;
+  const effHighlights: SportHighlight[] | undefined =
+    sp?.highlights && sp.highlights.length > 0
+      ? sp.highlights.map((h) => ({
+          eyebrow: h.eyebrow,
+          title: h.title,
+          body: h.body,
+          accent: h.accent ?? undefined,
+        }))
+      : highlights;
+  const effCta: SportCta | undefined =
+    sp?.cta && sp.cta.title
+      ? {
+          title: sp.cta.title,
+          body: sp.cta.body ?? "",
+          mailSubject: sp.cta.mailSubject ?? undefined,
+          primaryLabel: sp.cta.primaryLabel ?? undefined,
+        }
+      : cta;
+  const effHideTrainers = sp?.hideTrainers ?? hideTrainers;
+  const effContacts: StaticContact[] | undefined =
+    sp?.contacts && sp.contacts.length > 0
+      ? sp.contacts.map((c) => ({
+          name: c.name,
+          role: c.role ?? undefined,
+          email: c.email ?? undefined,
+          phone: c.phone ?? undefined,
+        }))
+      : staticContacts;
+
   const excludeSet = new Set(
     (excludeTrainerNames ?? []).map((n) => n.toLowerCase().trim()),
   );
-  const trainers = hideTrainers
+  const trainers = effHideTrainers
     ? []
     : (team.trainers ?? [])
         .filter((t): t is Person => typeof t === "object" && t !== null)
@@ -153,7 +194,7 @@ export async function SportSectionPage({
 
   return (
     <>
-      <PageHero eyebrow={eyebrow} title={title} lede={fallbackLede} />
+      <PageHero eyebrow={eyebrow} title={title} lede={effLede} />
       {heroSrc ? (
         <div className="mx-auto max-w-7xl px-6 pt-8 md:px-10 md:pt-12">
           <div className="relative overflow-hidden rounded-2xl border border-nord-line bg-nord-paper-2">
@@ -176,9 +217,9 @@ export async function SportSectionPage({
               Herzlich willkommen in der {title}-Abteilung
             </div>
 
-            {pills && pills.length > 0 ? (
+            {effPills && effPills.length > 0 ? (
               <div className="mb-6 flex flex-wrap gap-2">
-                {pills.map((p) => (
+                {effPills.map((p) => (
                   <span
                     key={p}
                     className="inline-flex items-center rounded-full border border-nord-line bg-white px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-ink"
@@ -189,27 +230,27 @@ export async function SportSectionPage({
               </div>
             ) : null}
 
-            {intro ? (
+            {effIntro ? (
               <p className="mb-6 max-w-prose text-lg font-medium leading-relaxed text-nord-ink">
-                {intro}
+                {effIntro}
               </p>
             ) : null}
 
             {hasDescription &&
-            !(intro && highlights && highlights.length > 0) ? (
+            !(effIntro && effHighlights && effHighlights.length > 0) ? (
               <div className={RICH_TEXT_CLS}>
                 <RichText data={team.description as SerializedEditorState} />
               </div>
-            ) : !hasDescription && !intro ? (
+            ) : !hasDescription && !effIntro ? (
               <div className="rounded-xl border border-dashed border-nord-line bg-white p-8 text-sm text-nord-muted">
                 Noch keine Beschreibung. Pflege die Seite im Admin unter{" "}
                 <em>Teams → {team.name}</em>.
               </div>
             ) : null}
 
-            {highlights && highlights.length > 0 ? (
+            {effHighlights && effHighlights.length > 0 ? (
               <div className="mt-10 grid gap-4 sm:grid-cols-2">
-                {highlights.map((h) => {
+                {effHighlights.map((h) => {
                   const s = highlightStyles(h.accent);
                   return (
                     <article
@@ -233,7 +274,7 @@ export async function SportSectionPage({
               </div>
             ) : null}
 
-            {cta ? (
+            {effCta ? (
               <section className="mt-10 overflow-hidden rounded-2xl bg-nord-ink p-7 text-white md:p-9">
                 <div className="grid gap-5 md:grid-cols-[2fr_1fr] md:items-center">
                   <div>
@@ -241,18 +282,18 @@ export async function SportSectionPage({
                       Mitmachen
                     </div>
                     <h3 className="mt-2 font-display text-xl font-black tracking-tight md:text-2xl">
-                      {cta.title}
+                      {effCta.title}
                     </h3>
                     <p className="mt-2 max-w-prose text-sm leading-relaxed text-white/80 md:text-base">
-                      {cta.body}
+                      {effCta.body}
                     </p>
                   </div>
                   <div className="flex flex-col gap-2 md:items-end">
                     <a
-                      href={`mailto:info@svnord.de${cta.mailSubject ? `?subject=${encodeURIComponent(cta.mailSubject)}` : ""}`}
+                      href={`mailto:info@svnord.de${effCta.mailSubject ? `?subject=${encodeURIComponent(effCta.mailSubject)}` : ""}`}
                       className="inline-flex items-center justify-center gap-2 rounded-full bg-nord-gold px-5 py-3 font-display text-[12px] font-bold uppercase tracking-[0.08em] text-nord-navy transition hover:-translate-y-px hover:brightness-105"
                     >
-                      {cta.primaryLabel ?? "Mail an info@svnord.de"} →
+                      {effCta.primaryLabel ?? "Mail an info@svnord.de"} →
                     </a>
                     <Link
                       href={`/kontakt?subject=${encodeURIComponent(title)}`}
@@ -282,7 +323,7 @@ export async function SportSectionPage({
                   ))}
                 </div>
               </div>
-            ) : staticContacts && staticContacts.length > 0 ? (
+            ) : effContacts && effContacts.length > 0 ? (
               <div className="mt-12">
                 <div className="mb-4 flex items-baseline justify-between border-b border-nord-line pb-2">
                   <h2 className="font-display text-xl font-black tracking-tight text-nord-ink md:text-2xl">
@@ -290,7 +331,7 @@ export async function SportSectionPage({
                   </h2>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  {staticContacts.map((c) => (
+                  {effContacts.map((c) => (
                     <article
                       key={c.name}
                       className="overflow-hidden rounded-2xl border border-nord-line bg-white p-5"
@@ -339,13 +380,13 @@ export async function SportSectionPage({
 
           {/* SIDEBAR */}
           <aside className="space-y-5 md:sticky md:top-24 md:h-fit md:self-start">
-            {stats && stats.length > 0 ? (
+            {effStats && effStats.length > 0 ? (
               <div className="rounded-2xl bg-nord-ink p-6 text-white">
                 <div className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-nord-gold">
                   Auf einen Blick
                 </div>
                 <dl className="mt-3 divide-y divide-white/10 text-sm">
-                  {stats.map((s) => (
+                  {effStats.map((s) => (
                     <div
                       key={s.label}
                       className="flex items-baseline justify-between gap-3 py-2.5 first:pt-0 last:pb-0"

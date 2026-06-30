@@ -89,7 +89,20 @@ async function ensureAdminUser(
     limit: 1,
   });
   if (existing.docs.length > 0) {
-    console.log("✓ Admin user already exists");
+    const admin = existing.docs[0];
+    // When the `role` field is first introduced, the schema push backfills
+    // existing rows with the default ("editor"), which would silently demote
+    // the seed admin and risk an admin lock-out. Re-assert role=admin here.
+    if (admin.role !== "admin") {
+      await payload.update({
+        collection: "users",
+        id: admin.id,
+        data: { role: "admin" } as never,
+      });
+      console.log("✓ Ensured admin@svnord.de has role=admin");
+    } else {
+      console.log("✓ Admin user already exists");
+    }
     return;
   }
   // Password must come from the environment; no hardcoded default so a known
@@ -107,10 +120,11 @@ async function ensureAdminUser(
       email: "admin@svnord.de",
       password,
       name: "SV Nord Admin",
+      role: "admin",
     } as never,
   });
   console.log(
-    "✓ Created admin user: admin@svnord.de (password from PAYLOAD_ADMIN_PASSWORD)",
+    "✓ Created admin user: admin@svnord.de (role=admin, password from PAYLOAD_ADMIN_PASSWORD)",
   );
 }
 
@@ -408,7 +422,297 @@ async function ensureTeam(
   return created.id;
 }
 
+/**
+ * Guard against accidentally running the seed (which dev-pushes schema AND
+ * overwrites content) against the shared production Neon database. `.env.local`
+ * is known to get clobbered to the Neon URI by `vercel env pull`, so this is a
+ * real footgun. Seeding prod is sometimes intentional (the documented reseed
+ * step), so it is allowed only with an explicit ALLOW_PROD_SEED=true.
+ */
+function assertSeedTargetIsAllowed() {
+  const uri = process.env.DATABASE_URI || "";
+  const looksLikeProd = /neon\.tech/i.test(uri);
+  if (looksLikeProd && process.env.ALLOW_PROD_SEED !== "true") {
+    throw new Error(
+      "Refusing to seed: DATABASE_URI points at a Neon (production) database.\n" +
+        "This would push schema changes and overwrite content on production.\n" +
+        "If that is intended, re-run with ALLOW_PROD_SEED=true. For normal dev,\n" +
+        "point DATABASE_URI at your local Postgres instead.",
+    );
+  }
+}
+
+/**
+ * Seed the editable "Sportarten-Seite" content for the five non-football sports
+ * with the values that were previously hardcoded as page props, so the club sees
+ * (and can edit) the current text in the admin. Only fills a team whose sportPage
+ * is still empty — never clobbers later club edits on a reseed.
+ */
+async function seedSportPages(payload: Awaited<ReturnType<typeof getPayload>>) {
+  const pills = (...items: string[]) => items.map((value) => ({ value }));
+  const data: Record<string, Record<string, unknown>> = {
+    gymnastik: {
+      lede: "Seit 1967 in Bewegung. Montag und Mittwoch, Frauen wie Männer, jedes Alter willkommen.",
+      intro:
+        "Über 50 Jahre Gymnastik beim SV Nord. Zweimal pro Woche treffen wir uns in der Waldmeisterschule für Mobilität, Kraft und Ausgleich. Ein 35-köpfiger Stamm, lockerer Ton, fundiertes Training. Einsteiger:innen sind ausdrücklich willkommen.",
+      pills: pills(
+        "Seit 1967",
+        "35 Aktive",
+        "Mo & Mi 19:00",
+        "Waldmeisterschule",
+      ),
+      stats: [
+        { label: "Gegründet", value: "1967" },
+        { label: "Mitglieder", value: "35" },
+        { label: "Training", value: "Mo + Mi · 19-20 Uhr" },
+        { label: "Halle", value: "Waldmeisterschule" },
+        { label: "Offen für", value: "alle Erwachsenen" },
+      ],
+      highlights: [
+        {
+          eyebrow: "Training",
+          title: "Zweimal pro Woche",
+          body: "Montag und Mittwoch je 19:00 bis 20:00 Uhr in der Waldmeisterschule. In den Schulferien pausieren wir; sonst läuft die Stunde verlässlich, das ganze Jahr.",
+          accent: "navy",
+        },
+        {
+          eyebrow: "Trainerteam",
+          title: "Kompetent & verlässlich",
+          body: "Unser Stamm von 35 Aktiven lebt von einer verlässlichen, fachlich starken Trainerin. Frauen und Männer trainieren gemeinsam, Spaß und Gemeinschaft inklusive.",
+          accent: "sky",
+        },
+      ],
+      cta: {
+        title: "Komm vorbei, die erste Stunde ist gratis.",
+        body: "Schreib uns kurz, dann sagen wir dir, wann der nächste Termin ist. Sportschuhe und Lust auf Bewegung reichen.",
+        mailSubject: "Gymnastik: Probetraining",
+        primaryLabel: "Probetraining anfragen",
+      },
+      hideTrainers: true,
+      contacts: [
+        {
+          name: "Elisabeth Schillinger",
+          role: "1. Abteilungsleiterin",
+          phone: "0176 646 61 724",
+          email: "info@svnord.de",
+        },
+        {
+          name: "Tenja Hirlinger",
+          role: "Vertretung",
+          phone: "0171 856 60 64",
+        },
+      ],
+    },
+    volleyball: {
+      lede: "Smash auf Holz: Familien-Volleyball mit Spaß-Faktor, seit 1984.",
+      intro:
+        "Wir sind die Volleyballer:innen des SV Nord, ursprünglich 1984 als Familien-Volleyballer gestartet, seit Jahren eigene Abteilung. Mixed, Hobby, alle Spielstärken. Hauptsache, der Ball geht übers Netz.",
+      pills: pills(
+        "Hobby & Mixed",
+        "Seit 1984",
+        "alle Stärken",
+        "Waldmeisterhalle",
+      ),
+      stats: [
+        { label: "Aktiv seit", value: "1984" },
+        { label: "Form", value: "Hobby & Mixed" },
+        { label: "Training", value: "2× Woche" },
+        { label: "Halle", value: "Waldmeisterhalle" },
+        { label: "Altersspanne", value: "30-75 J." },
+      ],
+      highlights: [
+        {
+          eyebrow: "Generationen",
+          title: "30 bis 75 Jahre",
+          body: "Bei uns spielen Eltern mit ihren erwachsenen Kindern, Gemeinschaft und Spaß stehen über Leistung. Wer Lust auf Volleyball hat, ist willkommen.",
+          accent: "sky",
+        },
+        {
+          eyebrow: "Training",
+          title: "Zwei Abende pro Woche",
+          body: "Wir treffen uns regelmäßig in der Waldmeisterhalle: feste Trainingszeiten, ohne Punktspielbetrieb, mit Smash-Sessions und Volleys.",
+          accent: "navy",
+        },
+      ],
+      cta: {
+        title: "Probetraining? Komm einfach vorbei.",
+        body: "Schreib uns kurz, wir nennen dir Halle und Uhrzeit. Schuhe mit heller Sohle reichen, wir leihen dir alles andere.",
+        mailSubject: "Volleyball: Probetraining",
+        primaryLabel: "Probetraining anfragen",
+      },
+      hideTrainers: true,
+      contacts: [
+        {
+          name: "Elisabeth Schillinger",
+          role: "Ansprechpartnerin Volleyball",
+          email: "info@svnord.de",
+        },
+      ],
+    },
+    ski: {
+      lede: "Vom motivierten Neueinsteiger bis zur routinierten Könnerin: Pisten, Touren und das Ski-Camp.",
+      intro:
+        "Seit über zwanzig Jahren fester Bestandteil des SV Nord. Mit ausgebildeten, jungen Skilehrer:innen bringen wir Anfänger:innen sicher auf die Piste und routinierten Skifahrer:innen neue Linien bei. Wer aufs Brett oder die Ski steigen will, ist bei uns richtig.",
+      pills: pills(
+        "Seit 20+ Jahren",
+        "Anfänger:in bis Profi",
+        "Skikurse",
+        "Ski-Camp",
+      ),
+      stats: [
+        { label: "Aktiv seit", value: "über 20 J." },
+        { label: "Skilehrer:innen", value: "2 aktive" },
+        { label: "Form", value: "Kurse + Camp" },
+        { label: "Niveau", value: "alle Stufen" },
+        { label: "Wann", value: "Winter-Saison" },
+      ],
+      highlights: [
+        {
+          eyebrow: "Schule",
+          title: "Skikurse für alle Stufen",
+          body: "Vom ersten Pflug bis zum sauberen Carving: kleine Gruppen, persönliches Coaching durch geprüfte Skilehrer:innen. Leihski und Schutzausrüstung können gestellt werden.",
+          accent: "sky",
+        },
+        {
+          eyebrow: "Camp",
+          title: "Ski-Camp im Winter",
+          body: "Mehrtägiges Ski-Camp mit Training, Skitour und Hüttenabend. Der Höhepunkt der Saison, Plätze begrenzt, frühzeitig anmelden.",
+          accent: "gold",
+        },
+      ],
+      cta: {
+        title: "Lust auf Schnee? Schreib uns kurz.",
+        body: "Mail an info@svnord.de oder direkt übers Kontaktformular, wir melden uns mit Terminen für Kurse und Camp.",
+        mailSubject: "Ski: Interesse",
+        primaryLabel: "Kontakt aufnehmen",
+      },
+      hideTrainers: true,
+      contacts: [
+        {
+          name: "Korbinian Hafner",
+          role: "1. Vorsitzender / Skilehrer",
+          email: "info@svnord.de",
+        },
+        {
+          name: "Tobias Tins",
+          role: "2. Vorsitzender / Skilehrer",
+          email: "info@svnord.de",
+        },
+      ],
+    },
+    esport: {
+      lede: "Virtuell für Nord am Ball — zwei Mannschaften, ein Controller, FC26 auf der Konsole.",
+      intro:
+        "Seit über zwei Jahren messen wir uns auch virtuell mit anderen Vereinen. Im Debütjahr direkt zur Meisterschaft, seither in der höchsten BFV-eLeague. SV-Nord-Blau im Trikot, FC26 auf dem Bildschirm.",
+      pills: pills("BFV-eLeague", "eRegionalliga", "eLandesliga", "FC26"),
+      stats: [
+        { label: "Aktiv seit", value: "2 Jahre" },
+        { label: "Mannschaften", value: "2" },
+        { label: "Spielklassen", value: "eRegional + eLandes" },
+        { label: "Konsole", value: "FC26" },
+        { label: "Einstieg", value: "ab 16 Jahren" },
+      ],
+      highlights: [
+        {
+          eyebrow: "Saison 25/26",
+          title: "1. Mannschaft · Platz 4",
+          body: "Qualifikation für die Playoffs der eRegionalliga, dort knapp gegen Gilching ausgeschieden. Stärkstes Aufgebot unter Erich Popp.",
+          accent: "gold",
+        },
+        {
+          eyebrow: "Reserve",
+          title: "2. Platz · eLandesliga",
+          body: "Souveräne Saison, knapp am Aufstieg in die eBayernliga vorbei. Bühne für Spieler:innen mit Ambition.",
+          accent: "sky",
+        },
+      ],
+      cta: {
+        title: "Du willst FC26 im Trikot des SV Nord zocken?",
+        body: "Wir suchen weiterhin talentierte Spieler:innen ab 16 Jahren — meld dich, dann reden wir über ein Probe-Match.",
+        mailSubject: "eSport — Probe-Match",
+        primaryLabel: "Probe-Match anfragen",
+      },
+      hideTrainers: true,
+      contacts: [
+        {
+          name: "Erich Popp",
+          role: "Trainer E-Sport",
+          email: "info@svnord.de",
+        },
+        {
+          name: "Kevin Schwarz",
+          role: "Kapitän · eRegionalliga",
+          email: "info@svnord.de",
+        },
+      ],
+    },
+    schiedsrichter: {
+      lede: "Ohne Schiri kein Spiel — mehrere Nordler pfeifen aktiv im BFV-Spielbetrieb.",
+      intro:
+        "Schiedsrichter:in beim SV Nord ist mehr als Wochenende pfeifen. Ihr seid Botschafter:innen des Vereins, sorgt für faire Spiele und gebt dem Spielbetrieb Struktur. Wir stellen aktive Unparteiische von der Kreisklasse bis zur Bezirksliga.",
+      pills: pills(
+        "BFV-Lizenz",
+        "Ehrenamt",
+        "Kreis → Bezirk",
+        "Nachwuchs willkommen",
+      ),
+      stats: [
+        { label: "Aktive Schiris", value: "4" },
+        { label: "Verband", value: "BFV" },
+        { label: "Spielklassen", value: "Kreis bis Bezirk" },
+        { label: "Lizenz", value: "C/B möglich" },
+        { label: "Vergütung", value: "Spesen + Spielgeld" },
+      ],
+      highlights: [
+        {
+          eyebrow: "Was uns ausmacht",
+          title: "Vorbereitung & Coaching",
+          body: "Regelmäßige Regelabende, gegenseitige Spielanalysen und Mentoring durch erfahrene Bezirksliga-Schiris. Ihr fangt nicht alleine an.",
+          accent: "navy",
+        },
+        {
+          eyebrow: "Nachwuchs",
+          title: "Lizenz mit 14 möglich",
+          body: "BFV bietet Anwärter:innen-Kurse für Schiris ab 14. Wir bezahlen den Kurs, stellen Ausrüstung und begleiten euch durchs erste Pflichtspiel.",
+          accent: "gold",
+        },
+      ],
+      cta: {
+        title: "Schiedsrichter:in werden — der erste Schritt.",
+        body: "Lust auf den Pfiff statt der Tribüne? Schreibt unserem Schiedsrichter-Obmann, er erzählt euch alles über Lizenz, Spielbetrieb und Vergütung.",
+        mailSubject: "Schiedsrichter — Interesse",
+        primaryLabel: "Schiri-Obmann kontaktieren",
+      },
+    },
+  };
+
+  for (const [sport, sportPage] of Object.entries(data)) {
+    const res = await payload.find({
+      collection: "teams",
+      where: { sport: { equals: sport } },
+      limit: 1,
+    });
+    const team = res.docs[0];
+    if (!team) {
+      console.warn(`⚠ No team for sport '${sport}', skipping sportPage seed`);
+      continue;
+    }
+    if (team.sportPage?.intro) {
+      console.log(`✓ sportPage already set: ${sport} (left untouched)`);
+      continue;
+    }
+    await payload.update({
+      collection: "teams",
+      id: team.id,
+      data: { sportPage } as never,
+    });
+    console.log(`✓ sportPage seeded: ${sport}`);
+  }
+}
+
 async function main() {
+  assertSeedTargetIsAllowed();
+
   const payload = await getPayload({ config });
 
   await ensureAdminUser(payload);
@@ -1150,6 +1454,12 @@ Ab 18:30 Uhr gemeinsam im Eschengarten. Grillen, Kuchen und mehr.
 
 Sichtung der Spieler:innen für die A- und B-Jugend zur Saison 2026/27. Pünktlich erscheinen — Schuhe und Schienbeinschoner mitbringen.`,
     },
+    {
+      title: "Betreuer-Essen (Sommerfest)",
+      startsAt: "2026-07-25T17:00:00+02:00",
+      location: "BSA Ebereschenstraße · Eschengarten",
+      descriptionMd: `Samstag, 25. Juli 2026, ab 17:00 Uhr im Eschengarten. Gemeinsames Betreuer-Essen zum Ausklang des SV Nord-Sommerfests.`,
+    },
   ];
 
   for (const ev of events) {
@@ -1185,6 +1495,111 @@ Sichtung der Spieler:innen für die A- und B-Jugend zur Saison 2026/27. Pünktli
           url: "https://www.instagram.com/svnord_lerchenau/",
         },
       ],
+    } as never,
+  });
+
+  // Home page: seed the stats strip + the sportsSection cards with the current
+  // live values, so the newly-wired StatStrip and SportsGrid show the right
+  // content and become editable. Partial update — hero text and section toggles
+  // keep their stored values.
+  await payload.updateGlobal({
+    slug: "home-page",
+    data: {
+      stats: [
+        { value: "630+", label: "Mitglieder", sub: "aktive Nordler" },
+        { value: "25+", label: "lizenzierte Trainer", sub: "ehrenamtlich" },
+        { value: "26", label: "Mannschaften", sub: "alle Abteilungen" },
+      ],
+      sportsSection: {
+        headlineLine1: "Sechs Sportarten.",
+        headlineLine2: "Eine Familie.",
+        cards: [
+          {
+            theme: "football",
+            name: "Fußball",
+            href: "/fussball",
+            kicker: "Vom Bambino zur Landesliga.",
+            body: "Seit 1947 zuhause am Eschengarten. 13 Mannschaften von den Allerjüngsten bis zur 1. Herren — jedes Wochenende unter Flutlicht.",
+            pills: [
+              { value: "Landesliga" },
+              { value: "13 Teams" },
+              { value: "Eschengarten" },
+            ],
+            count: "13",
+            sub: "Teams",
+          },
+          {
+            theme: "gymnastik",
+            name: "Gymnastik",
+            href: "/gymnastik",
+            kicker: "Seit 1967 in Bewegung.",
+            body: "Montag und Mittwoch, je 19–20 Uhr in der Waldmeisterschule. Kraft, Mobilität und Gemeinschaft — über drei Generationen weitergegeben.",
+            pills: [
+              { value: "Mo + Mi" },
+              { value: "Frauen & Männer" },
+              { value: "19–20 Uhr" },
+            ],
+            count: "1967",
+            sub: "seit",
+          },
+          {
+            theme: "volleyball",
+            name: "Volleyball",
+            href: "/volleyball",
+            kicker: "Smash auf Holz. Seit 1984.",
+            body: "Familien-Volleyball mit Spaß-Faktor — zwei Abende pro Woche, Hobby und Mixed. 30 bis 75 Jahre, alle Spielstärken willkommen.",
+            pills: [
+              { value: "Hobby & Mixed" },
+              { value: "2× Woche" },
+              { value: "Waldmeisterhalle" },
+            ],
+            count: "2×",
+            sub: "Woche",
+          },
+          {
+            theme: "esport",
+            name: "eSport",
+            href: "/esport",
+            kicker: "Meister im Debütjahr.",
+            body: "Zwei Mannschaften, ein Controller. eRegionalliga und eLandesliga — FC26 auf der Konsole, SV-Nord-Blau im Trikot. Nachwuchs ab 16 Jahren willkommen.",
+            pills: [
+              { value: "eRegionalliga" },
+              { value: "FC26" },
+              { value: "ab 16 Jahren" },
+            ],
+            count: "2",
+            sub: "Teams",
+          },
+          {
+            theme: "schiri",
+            name: "Schiedsrichter",
+            href: "/schiedsrichter",
+            kicker: "Ohne uns kein Spiel.",
+            body: "Aktive Unparteiische im BFV-Spielbetrieb — von der Kreisklasse bis zur Bezirksliga. Mehrere Nordler in Schwarz, und wir suchen Verstärkung.",
+            pills: [
+              { value: "BFV-Lizenz" },
+              { value: "Ehrenamt" },
+              { value: "Nachwuchs" },
+            ],
+            count: "Aktiv",
+            sub: "im BFV",
+          },
+          {
+            theme: "ski",
+            name: "Ski & Snowboard",
+            href: "/ski",
+            kicker: "Vom Sudelfeld bis Südtirol.",
+            body: "Über 20 Jahre auf der Piste. Skikurse für Einsteiger, Tagesfahrten am Wochenende, Ski-Camp in den Ferien — ausgebildete Lehrer für alle Levels.",
+            pills: [
+              { value: "Tagesfahrten" },
+              { value: "Skikurse" },
+              { value: "Ski-Camp" },
+            ],
+            count: "20+",
+            sub: "Jahre",
+          },
+        ],
+      },
     } as never,
   });
 
@@ -1919,6 +2334,846 @@ Wenn Ihr Lust habt, Verantwortung im Fußball zu übernehmen, wendet Euch gerne 
       // skip silently
     }
   }
+
+  // --- per-page globals (migrated from hardcoded content) ---
+  // --- mitgliedschaft-page ---
+  // Mitgliedschaft — membership benefits, online forms, fees, sports tree,
+  // Satzung PDF and the join-process steps (mirrors /mitgliedschaft).
+  await payload.updateGlobal({
+    slug: "mitgliedschaft-page",
+    data: {
+      hero: {
+        eyebrow: "Mitglied werden",
+        title: "Einmal Nordler, immer Nordler.",
+        lede: "Mitglied beim SV Nord zu werden ist unkompliziert.",
+      },
+      online: {
+        heading: "Online-Aufnahmeantrag",
+        badge: "Direkt im Browser",
+        intro:
+          "Antrag inkl. SEPA-Lastschriftmandat online ausfüllen. Wähle die passende Variante. Einmalige Aufnahmegebühr 49 €.",
+        forms: [
+          {
+            tag: "Jugendliche",
+            title: "Aufnahmeantrag Jugend",
+            body: "Bis 18 Jahre. Spartenbeitrag aktive Fußballer/innen 60 €.",
+            href: "https://formular.vereinsplaner.com/082ec8ef-1fdb-4346-9849-58b6aca80b59",
+          },
+          {
+            tag: "Erwachsene",
+            title: "Aufnahmeantrag Erwachsene",
+            body: "Ab 18 Jahre. Abteilung wählbar: Fußball, Gymnastik, Volleyball.",
+            href: "https://formular.vereinsplaner.com/33962f83-ddc1-46d7-a43b-bbd3651f6950",
+          },
+          {
+            tag: "Familienbeitrag",
+            title: "Familienmitgliedschaft",
+            body: "Mehrere Familienmitglieder gemeinsam anmelden, alle Sparten möglich.",
+            href: "https://formular.vereinsplaner.com/f7f432f8-41ff-4794-b6e7-b075c71639d0",
+          },
+          {
+            tag: "Beitragsfrei",
+            title: "Aufnahmeantrag für Beitragsfreie",
+            body: "Für Erwachsene und Jugendliche, solange eine beitragsfreie Tätigkeit ausgeübt wird.",
+            href: "https://formular.vereinsplaner.com/7fba1dc8-500b-4c76-89c4-40d2acaecd0b",
+          },
+        ],
+      },
+      steps: {
+        heading: "So wirst du Mitglied",
+        badge: "In 3 Schritten",
+        step1Title: "Melde dich vorab zum Training",
+        step1Body:
+          "Wir möchten dich gerne kennenlernen und freuen uns, wenn du dich zu einem ersten Probetraining bei uns anmeldest.",
+        step2Title: "Antrag stellen",
+        step2Body:
+          "Online-Antrag in vier Varianten: Jugend, Erwachsene, Familienbeitrag oder beitragsfrei. Komplett im Browser ausfüllen und absenden.",
+        step2LinkLabel: "Zu den Online-Anträgen",
+        step3Title: "Bestätigung Mitgliedschaft",
+        step3Body:
+          "Sobald dein Mitgliedsantrag von unserer Mitgliederverwaltung geprüft und bearbeitet wurde, erhältst du eine Bestätigung per E-Mail.",
+      },
+      sportsTree: [
+        {
+          name: "Fußball",
+          children: [
+            { name: "Herren" },
+            { name: "Senioren" },
+            { name: "Juniorinnen" },
+            {
+              name: "Jugend",
+              leaves: [
+                { name: "Kleinfeld" },
+                { name: "Kompaktfeld" },
+                { name: "Großfeld" },
+              ],
+            },
+          ],
+        },
+        { name: "Gymnastik" },
+        { name: "Volleyball" },
+        { name: "Ski" },
+        { name: "eSport" },
+      ],
+      benefits: {
+        heading: "Was du davon hast",
+        items: [
+          {
+            text: "Training auf eigenem Platz im Eschengarten der Bezirkssportanlage Ebereschenstraße 17 und Hallentraining in der Grundschule Waldmeisterstraße 38",
+          },
+          {
+            text: "Teilnahme an allen Vereinsveranstaltungen (Sommerfest, Weihnachtsfeier u. a.)",
+          },
+          { text: "Freier Eintritt zu allen Heimspielen" },
+          { text: "Mitbestimmung in der Jahreshauptversammlung" },
+        ],
+      },
+      documents: {
+        heading: "Vereinsdokumente",
+        badge: "PDF · Direkt-Download",
+        satzungLabel: "Satzung (PDF)",
+        satzungHref: "/downloads/satzung-2026-05.pdf",
+        satzungHint: "Stand Mai 2026 · VR 6924",
+      },
+      kuendigung: {
+        eyebrow: "Kündigung",
+        heading: "Mitgliedschaft beenden",
+        body: "Bitte kündige deine Mitgliedschaft schriftlich zum 31.12. des Jahres. Du kannst die Kündigung per E-Mail oder Post einreichen.",
+        email: "info@svnord.de",
+        postName: "SV Nord München-Lerchenau e.V.",
+        postStreet: "Ebereschenstraße 17",
+        postCity: "80935 München",
+      },
+    } as never,
+  });
+
+  // --- verein-page ---
+  // Verein-Landing — Kennzahlen, Feature-Karten, Social-Media-Team, CTA.
+  await payload.updateGlobal({
+    slug: "verein-page",
+    data: {
+      hero: {
+        eyebrow: "Der Verein",
+        title: "SV Nord München-Lerchenau e.V.",
+        lede: "Traditionsverein im Münchner Norden seit 1947: über 600 Mitglieder, fünf Abteilungen.",
+      },
+      stats: [
+        { value: "1947", label: "Gegründet" },
+        { value: "600+", label: "Mitglieder" },
+        { value: "5", label: "Abteilungen" },
+        { value: "78", label: "Jahre" },
+      ],
+      cards: [
+        {
+          href: "/verein/chronik",
+          eyebrow: "Geschichte",
+          title: "Chronik",
+          desc: "Von 38 Gründern und einer Kuhhaut zu heute. 78 Jahre SV Nord in 7 Kapiteln, Zeittafel und Ehrentafel.",
+          meta: "1947 → heute",
+          tone: "paper",
+        },
+        {
+          href: "/verein/vorstand",
+          eyebrow: "Menschen",
+          title: "Vorstand",
+          desc: "Vorstandschaft, sportliche Leitung und Jugendleitung. Direkt erreichbar mit Telefon und Mail.",
+          meta: "Ehrenamtlich · 22 Personen",
+          tone: "sky",
+        },
+        {
+          href: "/verein/vereinsheim",
+          eyebrow: "Treffpunkt",
+          title: "Vereinsheim Eschengarten",
+          desc: "Selbst gebaut in 15.000 freiwilligen Arbeitsstunden. Heute der gesellschaftliche Mittelpunkt der Lerchenau.",
+          meta: "Eröffnet 19.07.1986",
+          tone: "paper",
+        },
+        {
+          href: "/verein/jugendfoerderverein",
+          eyebrow: "Förderung",
+          title: "Jugendförderverein",
+          desc: "Damit jedes Kind kicken kann. Mindest­beitrag 24 € im Jahr, Spendenquittung möglich.",
+          meta: "Ab 24 € jährlich",
+          tone: "gold",
+        },
+        {
+          href: "/verein/jugendschutz",
+          eyebrow: "Schutzkonzept",
+          title: "Kinder- & Jugendschutz",
+          desc: "Erweitertes Führungszeugnis für alle Trainer, klare Prävention und Ansprechstellen im Verdachtsfall.",
+          meta: "Schutz & Prävention",
+          tone: "navy",
+        },
+      ],
+      socialMediaLabel: "Social Media",
+      socialMediaTeam: [
+        { name: "Tobias Tins" },
+        { name: "Tobias Treffer" },
+        { name: "Dominik Besel" },
+        { name: "Andi Weiß" },
+        { name: "Marko Rakita" },
+        { name: "Tamay Piker" },
+      ],
+      cta: {
+        eyebrow: "Mitglied werden",
+        title: "Einmal Nordler, immer Nordler.",
+        text: "Mitgliedsantrag, SEPA-Mandat, Spielerpass. Drei Schritte und du bist dabei.",
+        buttonLabel: "Antrag öffnen →",
+        buttonHref: "/mitgliedschaft",
+      },
+    } as never,
+  });
+
+  // --- sponsoren-page ---
+  // Sponsoren — page copy around the (separately managed) sponsor logos.
+  await payload.updateGlobal({
+    slug: "sponsoren-page",
+    data: {
+      hero: {
+        eyebrow: "Partner",
+        title: "Unsere Sponsoren",
+        lede: "Ohne die Unterstützung unserer Sponsoren wäre vieles nicht möglich. Vielen Dank!",
+      },
+      story: {
+        eyebrow: "Liebe Sponsoren",
+        paragraph1:
+          "Der SV Nord München-Lerchenau e.V. ist ein traditioneller Sportverein im Münchner Norden, der im Jahr 1947 gegründet wurde. Derzeit haben wir über 600 Mitglieder in Fußball, Volleyball, Gymnastik, Ski und eSport.",
+        paragraph2:
+          "Im Fußballbereich stellen wir zwei Herren- und elf Jugendmannschaften. Im Durchschnitt begrüßen wir 100–150 Zuschauer bei unseren Heimspielen der ersten Herrenmannschaft, die aktuell in der Landesliga spielt.",
+        paragraph3:
+          "Der SV Nord wird in der Lerchenau als sympathischer, familiärer und sehr sozialer Verein wahrgenommen — wir bieten Sponsoren damit eine große Reichweite und mit Werbung auf den Trikots einen gesteigerten Bekanntheitsgrad.",
+      },
+      offer: {
+        title: "Das bieten wir Ihnen",
+        items: [
+          { text: "Höherer Bekanntheitsgrad für Ihr Unternehmen" },
+          { text: "Ausdruck sozialen Engagements (z.B. Mannschaftsfotos)" },
+          {
+            text: "Zusätzliche Werbung auf Social Media (Instagram, Facebook)",
+          },
+          { text: "Aushang auf unseren Spielankündigungsplakaten" },
+        ],
+      },
+      sponsorHeadings: {
+        premium: "Premium Partner",
+        standard: "Weitere Partner",
+      },
+      becomeSponsor: {
+        title: "Sponsor werden?",
+        text: "Ihre Unterstützung fließt direkt in Ausrüstung, Trikots und Veranstaltungen. Melden Sie sich gerne bei uns — wir freuen uns auf das Gespräch.",
+        ctaLabel: "Kontakt aufnehmen →",
+        ctaHref: "/kontakt",
+      },
+      donation: {
+        eyebrow: "Spende",
+        title: "Kurzer Pass, großer Impact: Spenden sammeln leicht gemacht!",
+        paragraph1:
+          "Damit wir bei unseren Projekten und Anschaffungen — neue Trikots, Trainingslager und mehr — den nächsten Schritt machen können, brauchen wir eure Unterstützung als „Multiplikatoren“.",
+        paragraph2:
+          "Wir haben ab sofort einen QR-Code für Spenden, den ihr ganz einfach an Eltern, Freunde oder Gönner weiterschicken könnt.",
+        benefitsTitle: "Warum das ein Gamechanger ist",
+        benefits: [
+          {
+            label: "Kein Stress:",
+            text: "Der Spender scannt den Code einfach mit seiner Banking-App.",
+          },
+          {
+            label: "Kein Tippen:",
+            text: "IBAN und Verwendungszweck sind schon teilweise fertig hinterlegt.",
+          },
+          {
+            label: "Schneller Abschluss:",
+            text: "Es dauert keine 30 Sekunden – die Hürde zu helfen war noch nie so niedrig.",
+          },
+        ],
+        closingLabel: "Eure Mithilfe:",
+        closingText:
+          "Teilt den QR-Code in euren Team-Gruppen oder zeigt ihn bei den nächsten Elternabenden und Spieltagen. Jede kleine Summe bringt uns weiter — gemeinsam bewegen wir mehr. Danke für euren Einsatz!",
+        signatureLine1: "Für Fragen stehe ich euch gerne zur Verfügung.",
+        signatureLine2: "Viele Grüße, Ralf",
+        poweredBy: "Powered by Zahlen-mit-Code.com",
+        qrImage: "/spenden-qr.png",
+        qrAlt: "QR-Code für Spende an SV Nord München-Lerchenau",
+        qrCaption: "Jetzt scannen & spenden",
+      },
+      jugend: {
+        eyebrow: "Jugendförderverein",
+        title: "Unsere Jugend braucht Sie",
+        text: "Mit dem Jugendförderverein unterstützen Sie gezielt die Nachwuchsarbeit des SV Nord München-Lerchenau. Jeder Beitrag kommt direkt unseren jungen Spielerinnen und Spielern zugute.",
+        ctaLabel: "Zum Jugendförderverein →",
+        ctaHref: "/verein/jugendfoerderverein",
+      },
+    } as never,
+  });
+
+  // --- jugendschutz-page ---
+  await payload.updateGlobal({
+    slug: "jugendschutz-page",
+    data: {
+      hero: {
+        eyebrow: "Verein · Schutzkonzept",
+        title: "Kinder- & Jugendschutz",
+        lede: "Schutzkonzept des SV Nord München-Lerchenau e.V. für den respektvollen und sicheren Umgang mit den uns anvertrauten Kindern und Jugendlichen.",
+      },
+      meta: {
+        lastUpdated: "2. Juni 2026",
+        badgeSchutzkonzept: "Schutzkonzept",
+        badgeFuehrungszeugnis: "Erweitertes Führungszeugnis",
+      },
+      section1: {
+        title: "Erweitertes Führungszeugnis",
+        intro: "Grundlage des Kinder- und Jugendschutzes",
+        lead: "Die Verpflichtung zur Vorlage eines erweiterten Führungszeugnisses ist eine der wichtigsten Maßnahmen zum Kinder- und Jugendschutz im Verein. Sie sorgt dafür, dass Personen, die wegen bestimmter Straftaten (insbesondere Sexualdelikten) verurteilt wurden, nicht im Kinder- und Jugendbereich eingesetzt werden.",
+        body: "Alle unsere Trainer und Übungsleiter haben dem Verein ein erweitertes Führungszeugnis vorgelegt.",
+        bfvLinkLabel: "Bayerischer Fußball-Verband",
+        bfvLinkHref: "https://www.bfv.de",
+      },
+      section2: {
+        title: "Schutz vor sexuellem Missbrauch",
+        intro: "Unser gemeinsamer Auftrag",
+        body: "Schutz vor sexuellem Missbrauch bedeutet, respektvoll und achtsam mit den uns anvertrauten Kindern und Jugendlichen umzugehen. Wir haben eine Mitverantwortung, dass Kinder und Jugendliche bei uns sicher sind. Wir wollen sie vor sexuellem Missbrauch in allen unseren Angebotsbereichen schützen und sind dabei alle gefordert, wachsam zu sein und auch präventiv zu arbeiten, um die Möglichkeiten für Täter und Täterinnen zu minimieren.",
+      },
+      section3: {
+        title: "Hintergrund und Zahlen",
+        intro: "Daten der Bayerischen Sportjugend",
+        body1:
+          "Die Zahlen der Bayerischen Sportjugend zur sexuellen Gewalt in Deutschland sind erschreckend:",
+        items: [
+          {
+            text: "Jedes vierte bis fünfte Mädchen und jeder achte bis zehnte Junge unter 18 ist betroffen.",
+          },
+          {
+            text: "Männer und Frauen können Täter bzw. Täterin sein (85 bis 90 % männlich).",
+          },
+          {
+            text: "Die Täterinnen und Täter kommen aus allen Altersgruppen (etwa ein Drittel ist unter 21 Jahre alt).",
+          },
+          {
+            text: "Die Täterinnen und Täter kommen meist aus dem sozialen Umfeld des Opfers (Familie ca. 20 bis 30 %, Bekannte ca. 50 %, Fremde ca. 10 bis 15 %).",
+          },
+        ],
+        body2:
+          "Sexuelle Gewalt ist eine Grenzverletzung und meint jede sexuelle Handlung, die an einer anderen Person gegen deren Willen vorgenommen wird. Gerade im Sport gibt es eine Sondersituation durch das große Vertrauensverhältnis und das bestehende Macht- und Abhängigkeitsverhältnis zwischen Trainerinnen/Trainern und Spielerinnen/Spielern. Die besonderen Situationen in der Umkleide, beim Duschen und die Trainingslager mit Übernachtungen verlangen gezielte Schutzvereinbarungen für die Sicherheit der Kinder und Jugendlichen, aber auch um den Trainerinnen/Trainern und Betreuerinnen/Betreuern Sicherheit zu geben, in welchen Situationen besondere Rücksicht zu nehmen ist.",
+      },
+      section4: {
+        title: "Prävention und Verdachtsfall",
+        intro: "Was tun im Verdachtsfall?",
+        body: "Prävention vor sexuellem Missbrauch, was tun im Verdachtsfall?",
+        items: [
+          {
+            text: "Wird ein Verdacht durch ein Kind oder einen Jugendlichen geäußert, ist diesem zunächst Glauben zu schenken und sorgfältig zuzuhören.",
+          },
+          {
+            text: "Auch Schilderungen von Eltern oder anderen Beteiligten über Verstöße gegen Schutzvereinbarungen sind ernst zu nehmen.",
+          },
+          {
+            text: "Bei leichten und erstmaligen Verstößen ist die betreffende Person seitens der Vereinsverantwortlichen auf die Einhaltung hinzuweisen.",
+          },
+          {
+            text: "Bei mehrfachen oder wiederholten Verstößen noch ohne Hinweise auf sexuelle Übergriffe ist umgehend eine Fachberatungsstelle zu Rate zu ziehen.",
+          },
+          {
+            text: "Bei dringenden und schwerwiegenden Verdachtsfällen dürfen die Hinweise nicht ignoriert werden; das weitere Vorgehen ist an Fachleute abzugeben.",
+          },
+        ],
+        calloutTitle: "Dringender Rat",
+        calloutText:
+          "Wir raten dringend, sofort fachliche Unterstützung zu suchen und sich an eine Beratungsstelle oder das zuständige Jugendamt zu wenden.",
+      },
+      section5: {
+        title: "Beratung und Hilfe",
+        intro: "Anlaufstellen und weitere Hinweise",
+        link1Label: "www.praetect.de",
+        link1Href: "https://www.praetect.de",
+        link1Sub: "Beratungsstellen und weitere Hinweise",
+        link2Label: "Kontaktdaten der örtlichen Jugendämter",
+        link2Href:
+          "http://www.stmas.bayern.de/familie/beratung/jugendamt/index.htm",
+        link2Sub:
+          "Bayerisches Staatsministerium für Familie, Arbeit und Soziales",
+      },
+      asideVerdacht: {
+        eyebrow: "Im Verdachtsfall",
+        text: "Wir raten dringend, sofort fachliche Unterstützung zu suchen und sich an eine Beratungsstelle oder das zuständige Jugendamt zu wenden.",
+        link1Label: "www.praetect.de",
+        link1Href: "https://www.praetect.de",
+        link2Label: "Örtliche Jugendämter (StMAS Bayern)",
+        link2Href:
+          "http://www.stmas.bayern.de/familie/beratung/jugendamt/index.htm",
+      },
+      asideUseful: {
+        eyebrow: "Auch nützlich",
+        links: [
+          { label: "Vorstand", href: "/verein/vorstand" },
+          { label: "Kontakt", href: "/kontakt" },
+          { label: "Impressum", href: "/impressum" },
+        ],
+      },
+    } as never,
+  });
+
+  // --- shop-page ---
+  await payload.updateGlobal({
+    slug: "shop-page",
+    data: {
+      metaTitle: "Vereinsshop",
+      metaDescription:
+        "Der offizielle SV Nord München-Lerchenau Fanshop bei 11teamsports: Trainingskollektion und Fanartikel in Vereinsfarben.",
+      heroEyebrow: "Vereinsshop",
+      heroTitle: "Unser eigener Vereinsshop.",
+      heroLede:
+        "Liebe Nordler! Der digitale Fanshop beim Partner 11teamsports ist online. Trainingskollektion, Taschen und Fan-Artikel im offiziellen SV-Nord-Design, direkt in Vereinsfarben bestellbar.",
+      starterBadge: "Starterpaket",
+      partnerBadge: "Offizieller Partner · 11teamsports",
+      starterHeading: "Du bist neu? Damit startest du komplett.",
+      starterIntro:
+        "Vier Basics, die jedes neue Mitglied im Schrank haben sollte, alle direkt im Clubshop verfügbar.",
+      starterCtaLabel: "Komplette Auswahl ↗",
+      starterInShopLabel: "Im Shop",
+      starterSuggestionLabel: "Vorschlag",
+      starterSlots: [
+        {
+          title: "T-Shirt",
+          blurb: "Atmungsaktiv fürs Training und für drunter unter dem Trikot.",
+        },
+        {
+          title: "Kurze Hose",
+          blurb:
+            "Trainings-Short in Vereinsfarben, auch perfekt fürs Hallentraining.",
+        },
+        {
+          title: "Rucksack",
+          blurb: "Tiro Rucksack für Schuhe, Trikot und Schienbeinschoner.",
+        },
+        {
+          title: "Trainingsanzug",
+          blurb: "Jacke + Hose im Set für An- und Abreise rund ums Spiel.",
+        },
+      ],
+      ctaEyebrow: "Vereinsshop",
+      ctaHeading: "Zum digitalen Fanshop",
+      ctaLeadPrefix: "Alle Artikel werden direkt über",
+      ctaPartnerName: "11teamsports",
+      ctaLeadSuffix: "versendet. Auswahl wird stündlich aktualisiert.",
+      ctaButtonLabel: "Shop öffnen ↗",
+      productsHeading: "Aktuelle Artikel",
+      productsCountSuffix: "Artikel · Live",
+      emptyStatePrefix:
+        "Aktuell kann die Artikelliste nicht geladen werden. Bitte direkt im",
+      emptyStateLinkLabel: "Clubshop bei 11teamsports",
+      emptyStateSuffix: "stöbern.",
+      noticeLabel: "Hinweis für aktive Mannschaften",
+      noticeBody:
+        "Match-Trikots und einheitliche Spielausstattung gibt es nicht im öffentlichen Clubshop. Für offizielle Trikots, Trainingsanzüge und Aufwärmshirts in den Teamfarben wendet euch bitte an die sportliche Leitung bzw. eure Trainer:innen. Die Abteilung bündelt Bestellungen und sorgt für einheitliches Auftreten auf dem Platz.",
+    } as never,
+  });
+
+  // --- sport-overview-page ---
+  // Sport-Übersicht — /sport: intro box, sport cards, trainer license table.
+  await payload.updateGlobal({
+    slug: "sport-overview-page",
+    data: {
+      heroEyebrow: "Abteilungen",
+      heroTitle: "Unsere Sportarten",
+      heroLede:
+        "Sechs Abteilungen unter einem Dach: Fußball, Gymnastik, Volleyball, eSport, Schiedsrichter und Ski.",
+      qualificationEyebrow: "Qualifizierte Übungsleiter",
+      qualificationTextBefore: "Unsere Trainer und Übungsleiter besitzen",
+      qualificationTextBold: "Trainerlizenzen der C-Lizenz und höher",
+      qualificationTextAfter:
+        "und bilden sich kontinuierlich weiter, vom Bambini-Training bis zur Landesliga.",
+      qualificationLinkLabel: "Liste ansehen →",
+      cards: [
+        {
+          title: "Fußball",
+          href: "/fussball",
+          desc: "20 Mannschaften vom Bambini bis zur 1. Herren. BFV-Tabellen und Spielpläne live.",
+        },
+        {
+          title: "Gymnastik",
+          href: "/gymnastik",
+          desc: "Seit 1967. Montag und Mittwoch abends, Frauen und Männer willkommen.",
+        },
+        {
+          title: "Volleyball",
+          href: "/volleyball",
+          desc: "Hobby & Mixed, jeden Freitag 19-20 Uhr in der Waldmeisterschule.",
+        },
+        {
+          title: "eSport",
+          href: "/esport",
+          desc: "Zwei Mannschaften in der BFV-eLeague. Ab 16 Jahren, wir suchen Nachwuchs.",
+        },
+        {
+          title: "Schiedsrichter",
+          href: "/schiedsrichter",
+          desc: "Ohne Schiri kein Spiel. Aktive Unparteiische und Nachwuchs beim SV Nord.",
+        },
+        {
+          title: "Ski",
+          href: "/ski",
+          desc: "Seit über 20 Jahren. Ausgebildete Skilehrer, vom Einsteiger bis zum Könner.",
+        },
+      ],
+      licensesEyebrow: "Übungsleiter mit Trainerlizenz",
+      licensesTitle: "Trainerlizenzen C und B",
+      trainers: [
+        {
+          nachname: "Besel",
+          vorname: "Dominik",
+          sportart: "Fußball",
+          lizenz: "B",
+        },
+        {
+          nachname: "Braun",
+          vorname: "Leopold",
+          sportart: "Fußball",
+          lizenz: "C",
+        },
+        {
+          nachname: "Eisele",
+          vorname: "Manuel",
+          sportart: "Fußball",
+          lizenz: "B",
+        },
+        {
+          nachname: "Eroglu",
+          vorname: "Taylan",
+          sportart: "Fußball",
+          lizenz: "C",
+        },
+        {
+          nachname: "Falk",
+          vorname: "Fabian",
+          sportart: "Ski Alpin",
+          lizenz: "B",
+        },
+        {
+          nachname: "Fessenmayer",
+          vorname: "Heinz",
+          sportart: "Fußball",
+          lizenz: "B",
+        },
+        {
+          nachname: "Fuchs",
+          vorname: "Andreas",
+          sportart: "Fußball",
+          lizenz: "C",
+        },
+        {
+          nachname: "Gerstner",
+          vorname: "Markus",
+          sportart: "Fußball",
+          lizenz: "C",
+        },
+        {
+          nachname: "Hafner",
+          vorname: "Christoph",
+          sportart: "Ski Alpin",
+          lizenz: "C",
+        },
+        {
+          nachname: "Hafner",
+          vorname: "Korbinian",
+          sportart: "Ski Alpin",
+          lizenz: "B",
+        },
+        {
+          nachname: "Harag",
+          vorname: "Christian",
+          sportart: "Fußball",
+          lizenz: "B",
+        },
+        {
+          nachname: "Helmreich",
+          vorname: "Steffen",
+          sportart: "Fußball",
+          lizenz: "C",
+        },
+        {
+          nachname: "Jeremic",
+          vorname: "Zeljko",
+          sportart: "Fußball",
+          lizenz: "C",
+        },
+        {
+          nachname: "Kaiser",
+          vorname: "Kevin",
+          sportart: "Fußball",
+          lizenz: "B",
+        },
+        {
+          nachname: "Kirmeyer",
+          vorname: "Felix",
+          sportart: "Ski Alpin",
+          lizenz: "B",
+        },
+        {
+          nachname: "Kirmeyer",
+          vorname: "Felix",
+          sportart: "Fußball",
+          lizenz: "C",
+        },
+        {
+          nachname: "Kirmeyer",
+          vorname: "Ralf",
+          sportart: "Ski Alpin",
+          lizenz: "B",
+        },
+        {
+          nachname: "Kocademir",
+          vorname: "Gökrem",
+          sportart: "Fußball",
+          lizenz: "C",
+        },
+        {
+          nachname: "Lappe",
+          vorname: "Karl-Heinz",
+          sportart: "Fußball",
+          lizenz: "B",
+        },
+        {
+          nachname: "Loroff",
+          vorname: "Jürgen",
+          sportart: "Ski Alpin",
+          lizenz: "B",
+        },
+        {
+          nachname: "Piker",
+          vorname: "Ergin",
+          sportart: "Fußball",
+          lizenz: "C",
+        },
+        {
+          nachname: "Sahin",
+          vorname: "Ilkay",
+          sportart: "Fußball",
+          lizenz: "C",
+        },
+        {
+          nachname: "Seidl",
+          vorname: "Luisa",
+          sportart: "Ski Alpin",
+          lizenz: "B",
+        },
+        {
+          nachname: "Tiesler",
+          vorname: "Thomas",
+          sportart: "Fußball",
+          lizenz: "C",
+        },
+        {
+          nachname: "Tins",
+          vorname: "Tobias",
+          sportart: "Ski Alpin",
+          lizenz: "C",
+        },
+        {
+          nachname: "Ucarkus",
+          vorname: "Birol",
+          sportart: "Fußball",
+          lizenz: "C",
+        },
+        {
+          nachname: "Westermair",
+          vorname: "Rudolf",
+          sportart: "Fußball",
+          lizenz: "B",
+        },
+        {
+          nachname: "Wurm",
+          vorname: "Thomas",
+          sportart: "Fußball",
+          lizenz: "C",
+        },
+      ],
+    } as never,
+  });
+
+  // --- fussball-page ---
+  await payload.updateGlobal({
+    slug: "fussball-page",
+    data: {
+      hero: {
+        eyebrow: "Fußball",
+        title: "Unsere Mannschaften",
+        lede: "Unsere Fußballabteilung existiert seit 1947. In der Saison 2026/27 stellen wir 15 Jugendmannschaften, 5 Herrenmannschaften und eine Ehrenligamannschaft.",
+      },
+      intro: {
+        eyebrow: "Herzlich Willkommen bei der Fußball-Abteilung",
+        body: "Unsere Fußballabteilung existiert seit dem Jahre 1947. Wir stellen in der Saison 2026/2027 fünfzehn Jugendmannschaften, fünf Herrenmannschaften und eine Ehrenligamannschaft. Wir freuen uns über alle Fußballbegeisterten von Jung bis Alt.",
+        signature: "Eure SV Nord Fußballer.",
+      },
+      leitung: {
+        heading: "Sportliche Leitung",
+        members: [
+          { name: "Felix Kirmeyer", role: "Sportlicher Leiter" },
+          { name: "Felix Kirmeyer", role: "Fußball-Erwachsene" },
+          { name: "Ergin Piker", role: "Fußball-Jugend" },
+        ],
+      },
+      saeulen: {
+        heading: "Säulen der Abteilung",
+        meta: "Fünf Bereiche",
+        cards: [
+          {
+            eyebrow: "Erwachsen",
+            title: "Fußball — Erwachsene",
+            body: "Landesliga, Reserve, Dritte, Ehrenliga und Senioren. Vom ambitionierten Spieltag bis zur Altherrenrunde, alle Erwachsenenmannschaften des SV Nord.",
+            href: "/fussball/herren",
+            meta: "5 Herrenmannschaften · Ehrenliga",
+            tone: "navy",
+          },
+          {
+            eyebrow: "Jugend",
+            title: "Fußball — Jugend",
+            body: "Großfeld, Kompaktfeld und Kleinfeld. Direkte Ansprechpartner für Eltern und Jugendspieler — von der A-Jugend bis zu den Bambinis.",
+            href: "/fussball/junioren",
+            meta: "15 Jugendmannschaften",
+            tone: "sky",
+          },
+          {
+            eyebrow: "Torwart",
+            title: "Fußball — Torwart",
+            body: "Spezielles Torwart-Training für alle Altersklassen. Wir suchen Talente und bilden eigene Torhüter:innen aus. Spielerbetreuung ab den Junioren.",
+            href: "/fussball",
+            meta: "Position · Training",
+            tone: "gold",
+          },
+          {
+            eyebrow: "Spielbetrieb",
+            title: "Schiedsrichter",
+            body: "Aktive Unparteiische im BFV-Spielbetrieb — von der Kreisklasse bis zur Bezirksliga. Sie sorgen für faire Bedingungen auf den Plätzen.",
+            href: "/schiedsrichter",
+            meta: "BFV · Ehrenamt",
+            tone: "sky",
+          },
+          {
+            eyebrow: "Organisation",
+            title: "PR, Events, Equipment, Organisation",
+            body: "Hinter den Kulissen: Öffentlichkeitsarbeit, Vereinsevents, Material- und Trikotverwaltung, organisatorischer Backbone der Abteilung. Namen folgen.",
+            href: "/fussball",
+            meta: "Ehrenamt · Backbone",
+            tone: "paper",
+          },
+        ],
+      },
+    } as never,
+  });
+
+  // --- fussball-categories ---
+  // Fußball-Kategorieseiten — redaktionelle Texte je Kategorie. Mannschaften,
+  // BFV-/FuPa-Livedaten und der U8-Showcase bleiben außerhalb (Sammlungen /
+  // Livequellen). Werte entsprechen exakt dem bisher hartkodierten Inhalt.
+  await payload.updateGlobal({
+    slug: "fussball-categories",
+    data: {
+      weitereKategorienLabel: "Weitere Kategorien",
+      bfvButtonLabel: "BFV-Vereinsprofil ↗",
+      bfvMeldungSuffix: "live beim BFV gemeldet",
+      sportlicheLeitungHeading: "Sportliche Leitung",
+      mannschaftenHeading: "Mannschaften",
+      schiedsrichterLabel: "Schiedsrichter →",
+      backLabel: "← Übersicht Fußball",
+      categories: [
+        {
+          slug: "herren",
+          eyebrow: "Fußball · Herren",
+          label: "Herren",
+          lede: "Erste, zweite, dritte Mannschaft sowie die Ehrenliga. Vom Landesligateam bis zur Altherrenrunde.",
+          description:
+            "Alle Herrenmannschaften des SV Nord. Spielbetrieb im BFV, gemeldet in Liga und Pokal.",
+          leadership: [
+            { role: "Sportlicher Leiter", names: [{ name: "Felix Kirmeyer" }] },
+            { role: "Fußball-Erwachsene", names: [{ name: "Felix Kirmeyer" }] },
+          ],
+        },
+        {
+          slug: "junioren",
+          eyebrow: "Fußball · Junioren",
+          label: "Junioren",
+          lede: "Großfeld- und Kleinfeldmannschaften der männlichen Jugend von A bis F.",
+          description:
+            "Alle Juniorenmannschaften — strukturiert nach Altersklassen, betreut von ehrenamtlichen Trainer:innen.",
+          leadership: [
+            { role: "Sportlicher Leiter", names: [{ name: "Felix Kirmeyer" }] },
+            { role: "Fußball-Jugend", names: [{ name: "Ergin Piker" }] },
+            {
+              role: "Großfeld",
+              names: [
+                { name: "Dominik Besel" },
+                { name: "Thomas Tiesler" },
+                { name: "Zeljko Jeremic" },
+              ],
+            },
+            {
+              role: "Kompaktfeld",
+              names: [{ name: "Steffen Helmreich" }, { name: "Tom Wurm" }],
+            },
+            {
+              role: "Kleinfeld",
+              names: [{ name: "Thomas Wimmer" }, { name: "Stephan Krusche" }],
+            },
+            {
+              role: "Mädl's",
+              names: [{ name: "Ergin Piker" }, { name: "Abraham Mike Yousaf" }],
+            },
+          ],
+        },
+        {
+          slug: "juniorinnen",
+          eyebrow: "Fußball · Juniorinnen",
+          label: "Juniorinnen",
+          lede: "Mädchen- und Juniorinnenmannschaften des SV Nord.",
+          description:
+            "Mannschaften der weiblichen Jugend, Spielbetrieb im BFV und in Spielgemeinschaften.",
+          leadership: [],
+        },
+        {
+          slug: "bambini",
+          eyebrow: "Fußball · Nachwuchs",
+          label: "Bambinis & Fußballkindergarten",
+          lede: "Die Allerjüngsten — Fußballkindergarten und Bambini-Gruppen.",
+          description:
+            "Spielerischer Einstieg ins Fußballtraining für die Kleinsten — ohne Leistungsdruck, mit viel Spaß am Ball.",
+          leadership: [],
+        },
+      ],
+    } as never,
+  });
+
+  // --- vorstand-page ---
+  // Vorstand-Seite — static editorial copy for /verein/vorstand. The member
+  // lists themselves come from the People collection, not this global.
+  await payload.updateGlobal({
+    slug: "vorstand-page",
+    data: {
+      heroEyebrow: "Vorstand",
+      heroTitle: "Das Team hinter dem Verein",
+      heroLede:
+        "Ehrenamtliche Vorstandschaft, sportliche Leitung und Jugendleitung. Erreichbar für alle Fragen rund um den SV Nord.",
+      statVorstandLabel: "Vorstand",
+      statAbteilungenLabel: "Abteilungen",
+      statJugendleitungLabel: "Jugendleitung",
+      statAnsprechpartnerLabel: "Ansprechpartner",
+      vorstandEyebrow: "Vorstandschaft",
+      vorstandTitle: "Die Vier an der Spitze",
+      vorstandSub: "Gewählte Vorstandschaft nach Vereinssatzung.",
+      jugendschutzEyebrow: "Schutzkonzept",
+      jugendschutzTitle: "Kinder- & Jugendschutz",
+      jugendschutzText:
+        "Erweitertes Führungszeugnis, Prävention und Ansprechstellen im Verdachtsfall.",
+      jugendschutzCta: "Mehr →",
+      sportleitungEyebrow: "Sportliche Leitung",
+      sportleitungTitle: "Abteilungsleitung",
+      sportleitungSub: "Pro Abteilung gruppiert.",
+      jugendleitungEyebrow: "Jugendleitung",
+      jugendleitungTitle: "Großfeld und Kleinfeld",
+      jugendleitungSub: "Direkte Ansprechpartner für Eltern und Jugendspieler.",
+    } as never,
+  });
+
+  await seedSportPages(payload);
 
   console.log("\n✓ Seed complete.");
   process.exit(0);

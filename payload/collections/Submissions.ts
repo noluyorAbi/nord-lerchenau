@@ -1,6 +1,7 @@
 import type { CollectionConfig } from "payload";
 
 import { authenticated } from "../access/authenticated";
+import { isAdmin } from "../access/isAdmin";
 
 export const Submissions: CollectionConfig = {
   slug: "submissions",
@@ -16,10 +17,12 @@ export const Submissions: CollectionConfig = {
     group: "3. Verein",
   },
   access: {
-    // Public CANNOT read submissions. Only admins.
+    // Public CANNOT read submissions — any logged-in user (admin or editor) may,
+    // so the club can answer contact messages.
     read: authenticated,
     update: authenticated,
-    delete: authenticated,
+    // Only admins may delete contact messages, so PII can't be wiped by an editor.
+    delete: isAdmin,
     // Public CAN create — but only via the /api/contact route, not directly.
     // The route handler uses Payload's local API, which bypasses access checks.
     create: () => false,

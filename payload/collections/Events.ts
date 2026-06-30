@@ -62,7 +62,8 @@ export const Events: CollectionConfig = {
       type: "richText",
       label: "Beschreibung",
       admin: {
-        description: "Hinweis: aktuell nicht auf der Termine-Seite sichtbar.",
+        description:
+          "Kurztext zum Termin. Wird auf der Termine-Seite unter dem Titel angezeigt.",
       },
     },
     {

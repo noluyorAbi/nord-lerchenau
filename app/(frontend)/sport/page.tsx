@@ -1,8 +1,24 @@
 import Link from "next/link";
 
 import { PageHero } from "@/components/PageHero";
+import { getPayloadClient } from "@/lib/payload";
 
 export const dynamic = "force-dynamic";
+
+const HERO_EYEBROW = "Abteilungen";
+const HERO_TITLE = "Unsere Sportarten";
+const HERO_LEDE =
+  "Sechs Abteilungen unter einem Dach: Fußball, Gymnastik, Volleyball, eSport, Schiedsrichter und Ski.";
+
+const QUALIFICATION_EYEBROW = "Qualifizierte Übungsleiter";
+const QUALIFICATION_TEXT_BEFORE = "Unsere Trainer und Übungsleiter besitzen";
+const QUALIFICATION_TEXT_BOLD = "Trainerlizenzen der C-Lizenz und höher";
+const QUALIFICATION_TEXT_AFTER =
+  "und bilden sich kontinuierlich weiter, vom Bambini-Training bis zur Landesliga.";
+const QUALIFICATION_LINK_LABEL = "Liste ansehen →";
+
+const LICENSES_EYEBROW = "Übungsleiter mit Trainerlizenz";
+const LICENSES_TITLE = "Trainerlizenzen C und B";
 
 const CARDS = [
   {
@@ -136,43 +152,67 @@ const TRAINER_LICENSES: Array<{
   { nachname: "Wurm", vorname: "Thomas", sportart: "Fußball", lizenz: "C" },
 ];
 
-export default function SportPage() {
+export default async function SportPage() {
+  const payload = await getPayloadClient();
+  const cms = await payload.findGlobal({ slug: "sport-overview-page" });
+
+  const heroEyebrow = cms.heroEyebrow ?? HERO_EYEBROW;
+  const heroTitle = cms.heroTitle ?? HERO_TITLE;
+  const heroLede = cms.heroLede ?? HERO_LEDE;
+
+  const qualificationEyebrow =
+    cms.qualificationEyebrow ?? QUALIFICATION_EYEBROW;
+  const qualificationTextBefore =
+    cms.qualificationTextBefore ?? QUALIFICATION_TEXT_BEFORE;
+  const qualificationTextBold =
+    cms.qualificationTextBold ?? QUALIFICATION_TEXT_BOLD;
+  const qualificationTextAfter =
+    cms.qualificationTextAfter ?? QUALIFICATION_TEXT_AFTER;
+  const qualificationLinkLabel =
+    cms.qualificationLinkLabel ?? QUALIFICATION_LINK_LABEL;
+
+  const licensesEyebrow = cms.licensesEyebrow ?? LICENSES_EYEBROW;
+  const licensesTitle = cms.licensesTitle ?? LICENSES_TITLE;
+
+  const cards =
+    Array.isArray(cms.cards) && cms.cards.length > 0 ? cms.cards : CARDS;
+
+  const trainers =
+    Array.isArray(cms.trainers) && cms.trainers.length > 0
+      ? cms.trainers
+      : TRAINER_LICENSES;
+
   const counts = {
-    total: TRAINER_LICENSES.length,
-    b: TRAINER_LICENSES.filter((t) => t.lizenz === "B").length,
-    c: TRAINER_LICENSES.filter((t) => t.lizenz === "C").length,
-    fussball: TRAINER_LICENSES.filter((t) => t.sportart === "Fußball").length,
-    ski: TRAINER_LICENSES.filter((t) => t.sportart === "Ski Alpin").length,
+    total: trainers.length,
+    b: trainers.filter((t) => t.lizenz === "B").length,
+    c: trainers.filter((t) => t.lizenz === "C").length,
+    fussball: trainers.filter((t) => t.sportart === "Fußball").length,
+    ski: trainers.filter((t) => t.sportart === "Ski Alpin").length,
   };
 
   return (
     <>
-      <PageHero
-        eyebrow="Abteilungen"
-        title="Unsere Sportarten"
-        lede="Sechs Abteilungen unter einem Dach: Fußball, Gymnastik, Volleyball, eSport, Schiedsrichter und Ski."
-      />
+      <PageHero eyebrow={heroEyebrow} title={heroTitle} lede={heroLede} />
       <section className="mx-auto max-w-7xl px-6 py-16 md:px-10 md:py-20">
         <div className="mb-10 rounded-2xl border border-nord-line bg-nord-paper-2 p-6 md:p-8">
           <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
-            Qualifizierte Übungsleiter
+            {qualificationEyebrow}
           </div>
           <p className="mt-2 max-w-3xl text-sm leading-relaxed text-nord-ink md:text-base">
-            Unsere Trainer und Übungsleiter besitzen{" "}
-            <strong>Trainerlizenzen der C-Lizenz und höher</strong> und bilden
-            sich kontinuierlich weiter, vom Bambini-Training bis zur Landesliga.
+            {qualificationTextBefore} <strong>{qualificationTextBold}</strong>{" "}
+            {qualificationTextAfter}
           </p>
           <p className="mt-2">
             <a
               href="#trainerlizenzen"
               className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-navy underline-offset-2 hover:underline"
             >
-              Liste ansehen →
+              {qualificationLinkLabel}
             </a>
           </p>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {CARDS.map((card) => (
+          {cards.map((card) => (
             <Link
               key={card.href}
               href={card.href}
@@ -195,10 +235,10 @@ export default function SportPage() {
           <div className="mb-5 flex flex-wrap items-baseline justify-between gap-3 border-b border-nord-line pb-2">
             <div>
               <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
-                Übungsleiter mit Trainerlizenz
+                {licensesEyebrow}
               </div>
               <h2 className="mt-2 font-display text-2xl font-black tracking-tight text-nord-ink md:text-3xl">
-                Trainerlizenzen C und B
+                {licensesTitle}
               </h2>
             </div>
             <div className="flex flex-wrap gap-2 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-nord-muted">
@@ -232,7 +272,7 @@ export default function SportPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-nord-line/70 text-nord-ink">
-                {TRAINER_LICENSES.map((t, i) => (
+                {trainers.map((t, i) => (
                   <tr
                     key={`${t.nachname}-${t.vorname}-${t.sportart}`}
                     className="hover:bg-nord-paper-2/60"

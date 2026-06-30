@@ -8,6 +8,7 @@ import { SportsGrid } from "@/components/home/SportsGrid";
 import { StatStrip } from "@/components/home/StatStrip";
 import { UpcomingEvents } from "@/components/home/UpcomingEvents";
 import { getPayloadClient } from "@/lib/payload";
+import { mediaSrc } from "@/lib/publicUploads";
 
 export const dynamic = "force-dynamic";
 
@@ -16,15 +17,20 @@ export default async function HomePage() {
   const home = await payload.findGlobal({ slug: "home-page" });
 
   const sections = home.sections ?? {};
+  const heroSlides = (home.heroSlides ?? [])
+    .map((s) => mediaSrc(s.image))
+    .filter((s): s is string => Boolean(s));
 
   return (
     <>
-      <Hero hero={home.hero} />
-      <StatStrip />
+      <Hero hero={home.hero} slides={heroSlides} />
+      <StatStrip stats={home.stats} />
       {sections.showNextMatch !== false ? <MatchdayBlock /> : null}
       {sections.showNews !== false ? <NewsGrid /> : null}
       {sections.showInstagram !== false ? <InstagramTeaser /> : null}
-      {sections.showSports !== false ? <SportsGrid /> : null}
+      {sections.showSports !== false ? (
+        <SportsGrid data={home.sportsSection} />
+      ) : null}
       {sections.showEvents !== false ? <UpcomingEvents /> : null}
       {sections.showSponsors !== false ? <SponsorMarquee /> : null}
       {sections.showMembershipCta !== false ? <MembershipCta /> : null}

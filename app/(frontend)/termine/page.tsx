@@ -13,10 +13,10 @@ import {
   parseBfvKickoff,
   type BfvMatch,
 } from "@/lib/bfv";
+import { lexicalToText } from "@/lib/lexical";
 import { getPayloadClient } from "@/lib/payload";
 
 export const dynamic = "force-dynamic";
-export const revalidate = 900;
 
 export default async function TerminePage() {
   const payload = await getPayloadClient();
@@ -106,39 +106,13 @@ export default async function TerminePage() {
       id: String(e.id),
       title: e.title,
       location: e.location ?? null,
-      description: typeof e.description === "string" ? e.description : null,
+      description: lexicalToText(e.description),
     };
     items.push(item);
   }
 
-  // Static fallback events: surface high-priority Vereinstermine
-  // even before they are pflegt in the Admin.
-  const STATIC_EVENTS: EventDTO[] = [
-    {
-      kind: "event",
-      at: "2026-07-24T16:30:00+02:00",
-      id: "static-sommerfest-2026",
-      title: "SV Nord-Sommerfest 2026 (Fr./Sa. 24./25.07.)",
-      location: "BSA Ebereschenstraße · Eschengarten",
-      description:
-        "Freitag ab 16:30 Kiga-Turnier, U19/U17/U15W-Turniere und Senioren A-Spiel. Samstag ab 08:30 Vormittags-, Mittags- und Nachmittagsturniere aller Jugendmannschaften, Spiele Zweite/Dritte, 17:30 Erste Mannschaft. Ab 18:30 gemeinsam im Eschengarten. Einmal Nordler, immer Nordler.",
-    },
-    {
-      kind: "event",
-      at: "2026-07-25T17:00:00+02:00",
-      id: "static-betreuer-essen-2026",
-      title: "Betreuer-Essen (Sommerfest)",
-      location: "BSA Ebereschenstraße · Eschengarten",
-      description:
-        "Samstag, 25. Juli 2026, ab 17:00 Uhr im Eschengarten. Gemeinsames Betreuer-Essen zum Ausklang des SV Nord-Sommerfests.",
-    },
-  ];
-  for (const e of STATIC_EVENTS) {
-    const d = new Date(e.at);
-    if (Number.isNaN(d.getTime()) || d.getTime() < now) continue;
-    if (items.some((it) => it.kind === "event" && it.id === e.id)) continue;
-    items.push(e);
-  }
+  // Sommerfest + Betreuer-Essen are now real Events records (seeded), so the
+  // club can edit them in the admin like any other Termin. No hardcoded fallback.
 
   items.sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime());
 

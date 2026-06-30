@@ -7,6 +7,7 @@ import {
   HeadingFeature,
   lexicalEditor,
 } from "@payloadcms/richtext-lexical";
+import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
 import { buildConfig } from "payload";
 import sharp from "sharp";
 
@@ -29,6 +30,15 @@ import { LegalPages } from "./payload/globals/LegalPages";
 import { Navigation } from "./payload/globals/Navigation";
 import { SiteSettings } from "./payload/globals/SiteSettings";
 import { VereinsheimPage } from "./payload/globals/VereinsheimPage";
+import { MitgliedschaftPage } from "./payload/globals/MitgliedschaftPage";
+import { VereinPage } from "./payload/globals/VereinPage";
+import { SponsorenPage } from "./payload/globals/SponsorenPage";
+import { JugendschutzPage } from "./payload/globals/JugendschutzPage";
+import { ShopPage } from "./payload/globals/ShopPage";
+import { SportOverviewPage } from "./payload/globals/SportOverviewPage";
+import { FussballPage } from "./payload/globals/FussballPage";
+import { FussballCategoriesPage } from "./payload/globals/FussballCategoriesPage";
+import { VorstandPage } from "./payload/globals/VorstandPage";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -43,12 +53,22 @@ if (!PAYLOAD_SECRET && process.env.VERCEL) {
   );
 }
 
+// Fail fast on Vercel if the DB connection string is missing, rather than
+// silently letting pg fall back to localhost (which produces confusing
+// ECONNREFUSED 500s on every CMS-backed page).
+const DATABASE_URI = process.env.DATABASE_URI;
+if (!DATABASE_URI && process.env.VERCEL) {
+  throw new Error(
+    "DATABASE_URI is required in production (Vercel). Refusing to start without a database connection string.",
+  );
+}
+
 export default buildConfig({
   serverURL: process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000",
   secret: PAYLOAD_SECRET || "dev-insecure-secret-change-in-prod",
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.DATABASE_URI || "",
+      connectionString: DATABASE_URI || "",
     },
   }),
   sharp,
@@ -80,6 +100,15 @@ export default buildConfig({
     JugendfoerderPage,
     LegalPages,
     FaqPage,
+    MitgliedschaftPage,
+    VereinPage,
+    SponsorenPage,
+    JugendschutzPage,
+    ShopPage,
+    SportOverviewPage,
+    FussballPage,
+    FussballCategoriesPage,
+    VorstandPage,
   ],
   typescript: {
     outputFile: path.resolve(dirname, "payload-types.ts"),
@@ -95,9 +124,22 @@ export default buildConfig({
       beforeDashboard: ["@/payload/components/WelcomeDashboard#default"],
     },
   },
-  // Media is stored on local disk (Media.upload.staticDir = public/uploads) and
-  // served from there; the frontend resolves images to committed /public assets
-  // via lib/publicUploads. No external blob storage. If CMS-managed uploads are
-  // reintroduced later, add an external adapter here (e.g. S3 / Cloudflare R2).
-  plugins: [],
+  // Media uploads: when BLOB_READ_WRITE_TOKEN is set (Vercel production), uploads
+  // are stored durably in Vercel Blob and media.url points at the public blob URL,
+  // so the club can upload images from /admin and have them persist + render. When
+  // the token is absent (local dev), the plugin disables itself and Payload falls
+  // back to local disk (Media.upload.staticDir = public/uploads). alwaysInsertFields
+  // keeps the collection schema + admin importMap identical across environments
+  // regardless of whether the token is present, avoiding env-specific schema drift.
+  // The frontend still resolves committed /public/uploads assets via lib/publicUploads
+  // as a safe fallback (see mediaSrc). Swap to @payloadcms/storage-s3 (Cloudflare R2)
+  // here if vendor-neutral storage is preferred later.
+  plugins: [
+    vercelBlobStorage({
+      enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
+      collections: { media: true },
+      token: process.env.BLOB_READ_WRITE_TOKEN,
+      alwaysInsertFields: true,
+    }),
+  ],
 });

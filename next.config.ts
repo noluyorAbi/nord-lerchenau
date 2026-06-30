@@ -8,6 +8,13 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "static.wixstatic.com",
       },
+      // Vercel Blob public URLs, so CMS-uploaded media can be used with
+      // next/image. Media currently renders via plain <img>, but this keeps the
+      // door open without another config change.
+      {
+        protocol: "https",
+        hostname: "*.public.blob.vercel-storage.com",
+      },
     ],
   },
   // lib/publicUploads resolves media to committed /public/uploads assets by

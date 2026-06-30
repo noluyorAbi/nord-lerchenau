@@ -7,6 +7,37 @@ import type { Media, Person } from "@/payload-types";
 
 export const dynamic = "force-dynamic";
 
+// Hardcoded fallbacks for the editable "Vorstand-Seite" global. These keep the
+// exact original copy so the page renders identically when the global is empty.
+const HERO_EYEBROW = "Vorstand";
+const HERO_TITLE = "Das Team hinter dem Verein";
+const HERO_LEDE =
+  "Ehrenamtliche Vorstandschaft, sportliche Leitung und Jugendleitung. Erreichbar für alle Fragen rund um den SV Nord.";
+
+const STAT_VORSTAND_LABEL = "Vorstand";
+const STAT_ABTEILUNGEN_LABEL = "Abteilungen";
+const STAT_JUGENDLEITUNG_LABEL = "Jugendleitung";
+const STAT_ANSPRECHPARTNER_LABEL = "Ansprechpartner";
+
+const VORSTAND_EYEBROW = "Vorstandschaft";
+const VORSTAND_TITLE = "Die Vier an der Spitze";
+const VORSTAND_SUB = "Gewählte Vorstandschaft nach Vereinssatzung.";
+
+const JUGENDSCHUTZ_EYEBROW = "Schutzkonzept";
+const JUGENDSCHUTZ_TITLE = "Kinder- & Jugendschutz";
+const JUGENDSCHUTZ_TEXT =
+  "Erweitertes Führungszeugnis, Prävention und Ansprechstellen im Verdachtsfall.";
+const JUGENDSCHUTZ_CTA = "Mehr →";
+
+const SPORTLEITUNG_EYEBROW = "Sportliche Leitung";
+const SPORTLEITUNG_TITLE = "Abteilungsleitung";
+const SPORTLEITUNG_SUB = "Pro Abteilung gruppiert.";
+
+const JUGENDLEITUNG_EYEBROW = "Jugendleitung";
+const JUGENDLEITUNG_TITLE = "Großfeld und Kleinfeld";
+const JUGENDLEITUNG_SUB =
+  "Direkte Ansprechpartner für Eltern und Jugendspieler.";
+
 const VORSTAND_NAMES = [
   "Ralf Kirmeyer",
   "Birgit Höfer",
@@ -99,6 +130,7 @@ function stripPhone(p: Person): Person {
 
 export default async function VorstandPage() {
   const payload = await getPayloadClient();
+  const cms = await payload.findGlobal({ slug: "vorstand-page" });
   const result = await payload.find({
     collection: "people",
     where: {
@@ -147,32 +179,40 @@ export default async function VorstandPage() {
   return (
     <>
       <PageHero
-        eyebrow="Vorstand"
-        title="Das Team hinter dem Verein"
-        lede="Ehrenamtliche Vorstandschaft, sportliche Leitung und Jugendleitung. Erreichbar für alle Fragen rund um den SV Nord."
+        eyebrow={cms.heroEyebrow ?? HERO_EYEBROW}
+        title={cms.heroTitle ?? HERO_TITLE}
+        lede={cms.heroLede ?? HERO_LEDE}
       />
 
       <div className="mx-auto max-w-7xl px-6 py-14 md:px-10 md:py-20">
         <div className="mb-12 grid grid-cols-2 gap-3 md:grid-cols-4">
-          <StatTile value={vorstand.length} label="Vorstand" tone="navy" />
+          <StatTile
+            value={vorstand.length}
+            label={cms.statVorstandLabel ?? STAT_VORSTAND_LABEL}
+            tone="navy"
+          />
           {/* 2026_06_02 Vereinswunsch: nur Abteilungsleitung anzeigen, daher Anzahl der Abteilungen statt aller Trainer. */}
           <StatTile
             value={sportSubgroups.length}
-            label="Abteilungen"
+            label={cms.statAbteilungenLabel ?? STAT_ABTEILUNGEN_LABEL}
             tone="sky"
           />
           <StatTile
             value={jugendleitung.length}
-            label="Jugendleitung"
+            label={cms.statJugendleitungLabel ?? STAT_JUGENDLEITUNG_LABEL}
             tone="gold"
           />
-          <StatTile value={totalPeople} label="Ansprechpartner" tone="ink" />
+          <StatTile
+            value={totalPeople}
+            label={cms.statAnsprechpartnerLabel ?? STAT_ANSPRECHPARTNER_LABEL}
+            tone="ink"
+          />
         </div>
 
         <SectionHeader
-          eyebrow="Vorstandschaft"
-          title="Die Vier an der Spitze"
-          sub="Gewählte Vorstandschaft nach Vereinssatzung."
+          eyebrow={cms.vorstandEyebrow ?? VORSTAND_EYEBROW}
+          title={cms.vorstandTitle ?? VORSTAND_TITLE}
+          sub={cms.vorstandSub ?? VORSTAND_SUB}
         />
         <div className="mb-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {vorstand.map((p, idx) => (
@@ -187,25 +227,24 @@ export default async function VorstandPage() {
         >
           <div className="min-w-0">
             <div className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-nord-gold">
-              Schutzkonzept
+              {cms.jugendschutzEyebrow ?? JUGENDSCHUTZ_EYEBROW}
             </div>
             <div className="mt-1 font-display text-lg font-black tracking-tight text-nord-ink md:text-xl">
-              Kinder- &amp; Jugendschutz
+              {cms.jugendschutzTitle ?? JUGENDSCHUTZ_TITLE}
             </div>
             <p className="mt-0.5 text-sm text-nord-muted">
-              Erweitertes Führungszeugnis, Prävention und Ansprechstellen im
-              Verdachtsfall.
+              {cms.jugendschutzText ?? JUGENDSCHUTZ_TEXT}
             </p>
           </div>
           <span className="shrink-0 font-mono text-[11px] font-bold uppercase tracking-[0.15em] text-nord-navy transition group-hover:translate-x-0.5">
-            Mehr →
+            {cms.jugendschutzCta ?? JUGENDSCHUTZ_CTA}
           </span>
         </Link>
 
         <SectionHeader
-          eyebrow="Sportliche Leitung"
-          title="Abteilungsleitung"
-          sub="Pro Abteilung gruppiert."
+          eyebrow={cms.sportleitungEyebrow ?? SPORTLEITUNG_EYEBROW}
+          title={cms.sportleitungTitle ?? SPORTLEITUNG_TITLE}
+          sub={cms.sportleitungSub ?? SPORTLEITUNG_SUB}
         />
         <div className="mb-20 space-y-12">
           {sportSubgroups.map((group) => (
@@ -252,9 +291,9 @@ export default async function VorstandPage() {
         {jugendleitung.length > 0 ? (
           <>
             <SectionHeader
-              eyebrow="Jugendleitung"
-              title="Großfeld und Kleinfeld"
-              sub="Direkte Ansprechpartner für Eltern und Jugendspieler."
+              eyebrow={cms.jugendleitungEyebrow ?? JUGENDLEITUNG_EYEBROW}
+              title={cms.jugendleitungTitle ?? JUGENDLEITUNG_TITLE}
+              sub={cms.jugendleitungSub ?? JUGENDLEITUNG_SUB}
             />
             <div className="grid gap-4 sm:grid-cols-2">
               {jugendleitung.map((p) => (

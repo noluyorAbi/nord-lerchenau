@@ -43,10 +43,85 @@ const TONE_CLASSES: Record<
   },
 };
 
+// Hardcoded fallbacks. These are the EXACT original values and must keep the
+// page rendering identically when the "fussball-page" global is empty.
+const HERO = {
+  eyebrow: "Fußball",
+  title: "Unsere Mannschaften",
+  lede: "Unsere Fußballabteilung existiert seit 1947. In der Saison 2026/27 stellen wir 15 Jugendmannschaften, 5 Herrenmannschaften und eine Ehrenligamannschaft.",
+};
+
+const INTRO = {
+  eyebrow: "Herzlich Willkommen bei der Fußball-Abteilung",
+  body: "Unsere Fußballabteilung existiert seit dem Jahre 1947. Wir stellen in der Saison 2026/2027 fünfzehn Jugendmannschaften, fünf Herrenmannschaften und eine Ehrenligamannschaft. Wir freuen uns über alle Fußballbegeisterten von Jung bis Alt.",
+  signature: "Eure SV Nord Fußballer.",
+};
+
+const LEITUNG_HEADING = "Sportliche Leitung";
+
+const FALLBACK_LEADERS: { name: string; role: string }[] = [
+  { name: "Felix Kirmeyer", role: "Sportlicher Leiter" },
+  { name: "Felix Kirmeyer", role: "Fußball-Erwachsene" },
+  { name: "Ergin Piker", role: "Fußball-Jugend" },
+];
+
+const SAEULEN_HEADING = "Säulen der Abteilung";
+const SAEULEN_META = "Fünf Bereiche";
+
+const FALLBACK_PILLARS: {
+  eyebrow: string;
+  title: string;
+  body: string;
+  href: string;
+  meta: string;
+  tone: PillarTone;
+}[] = [
+  {
+    eyebrow: "Erwachsen",
+    title: "Fußball — Erwachsene",
+    body: "Landesliga, Reserve, Dritte, Ehrenliga und Senioren. Vom ambitionierten Spieltag bis zur Altherrenrunde, alle Erwachsenenmannschaften des SV Nord.",
+    href: "/fussball/herren",
+    meta: "5 Herrenmannschaften · Ehrenliga",
+    tone: "navy",
+  },
+  {
+    eyebrow: "Jugend",
+    title: "Fußball — Jugend",
+    body: "Großfeld, Kompaktfeld und Kleinfeld. Direkte Ansprechpartner für Eltern und Jugendspieler — von der A-Jugend bis zu den Bambinis.",
+    href: "/fussball/junioren",
+    meta: "15 Jugendmannschaften",
+    tone: "sky",
+  },
+  {
+    eyebrow: "Torwart",
+    title: "Fußball — Torwart",
+    body: "Spezielles Torwart-Training für alle Altersklassen. Wir suchen Talente und bilden eigene Torhüter:innen aus. Spielerbetreuung ab den Junioren.",
+    href: "/fussball",
+    meta: "Position · Training",
+    tone: "gold",
+  },
+  {
+    eyebrow: "Spielbetrieb",
+    title: "Schiedsrichter",
+    body: "Aktive Unparteiische im BFV-Spielbetrieb — von der Kreisklasse bis zur Bezirksliga. Sie sorgen für faire Bedingungen auf den Plätzen.",
+    href: "/schiedsrichter",
+    meta: "BFV · Ehrenamt",
+    tone: "sky",
+  },
+  {
+    eyebrow: "Organisation",
+    title: "PR, Events, Equipment, Organisation",
+    body: "Hinter den Kulissen: Öffentlichkeitsarbeit, Vereinsevents, Material- und Trikotverwaltung, organisatorischer Backbone der Abteilung. Namen folgen.",
+    href: "/fussball",
+    meta: "Ehrenamt · Backbone",
+    tone: "paper",
+  },
+];
+
 export default async function FussballPage() {
   const payload = await getPayloadClient();
 
-  const [result, standings] = await Promise.all([
+  const [result, standings, cms] = await Promise.all([
     payload.find({
       collection: "teams",
       where: { sport: { equals: "fussball" } },
@@ -55,31 +130,46 @@ export default async function FussballPage() {
       depth: 0,
     }),
     getFupaStanding(),
+    payload.findGlobal({ slug: "fussball-page" }),
   ]);
 
   const bfvCount = result.docs.filter((t) => t.bfv?.teamId).length;
 
+  const leaders: { name: string; role: string }[] =
+    cms.leitung?.members && cms.leitung.members.length > 0
+      ? cms.leitung.members.map((m) => ({ name: m.name, role: m.role }))
+      : FALLBACK_LEADERS;
+
+  const pillars: typeof FALLBACK_PILLARS =
+    cms.saeulen?.cards && cms.saeulen.cards.length > 0
+      ? cms.saeulen.cards.map((c) => ({
+          eyebrow: c.eyebrow,
+          title: c.title,
+          body: c.body,
+          href: c.href,
+          meta: c.meta,
+          tone: c.tone,
+        }))
+      : FALLBACK_PILLARS;
+
   return (
     <>
       <PageHero
-        eyebrow="Fußball"
-        title="Unsere Mannschaften"
-        lede="Unsere Fußballabteilung existiert seit 1947. In der Saison 2026/27 stellen wir 15 Jugendmannschaften, 5 Herrenmannschaften und eine Ehrenligamannschaft."
+        eyebrow={cms.hero?.eyebrow ?? HERO.eyebrow}
+        title={cms.hero?.title ?? HERO.title}
+        lede={cms.hero?.lede ?? HERO.lede}
       />
       <div className="mx-auto max-w-7xl px-6 py-12 md:px-10 md:py-16">
         <section className="mb-12 grid gap-6 rounded-2xl bg-nord-paper-2 p-8 md:grid-cols-[1.4fr_1fr] md:p-10">
           <div>
             <div className="mb-2 font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold">
-              Herzlich Willkommen bei der Fußball-Abteilung
+              {cms.intro?.eyebrow ?? INTRO.eyebrow}
             </div>
             <p className="text-base leading-relaxed text-nord-ink">
-              Unsere Fußballabteilung existiert seit dem Jahre 1947. Wir stellen
-              in der Saison 2026/2027 fünfzehn Jugendmannschaften, fünf
-              Herrenmannschaften und eine Ehrenligamannschaft. Wir freuen uns
-              über alle Fußballbegeisterten von Jung bis Alt.
+              {cms.intro?.body ?? INTRO.body}
             </p>
             <p className="mt-3 text-sm italic text-nord-muted">
-              Eure SV Nord Fußballer.
+              {cms.intro?.signature ?? INTRO.signature}
             </p>
             <div className="mt-5 flex flex-wrap items-center gap-3">
               <a
@@ -97,29 +187,17 @@ export default async function FussballPage() {
           </div>
           <div className="rounded-xl border border-nord-line bg-white p-5">
             <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold">
-              Sportliche Leitung
+              {cms.leitung?.heading ?? LEITUNG_HEADING}
             </div>
             <ul className="mt-3 space-y-2 text-sm">
-              <li>
-                <div className="font-semibold text-nord-ink">
-                  Felix Kirmeyer
-                </div>
-                <div className="text-xs text-nord-muted">
-                  Sportlicher Leiter
-                </div>
-              </li>
-              <li>
-                <div className="font-semibold text-nord-ink">
-                  Felix Kirmeyer
-                </div>
-                <div className="text-xs text-nord-muted">
-                  Fußball-Erwachsene
-                </div>
-              </li>
-              <li>
-                <div className="font-semibold text-nord-ink">Ergin Piker</div>
-                <div className="text-xs text-nord-muted">Fußball-Jugend</div>
-              </li>
+              {leaders.map((leader, i) => (
+                <li key={i}>
+                  <div className="font-semibold text-nord-ink">
+                    {leader.name}
+                  </div>
+                  <div className="text-xs text-nord-muted">{leader.role}</div>
+                </li>
+              ))}
             </ul>
           </div>
         </section>
@@ -127,53 +205,24 @@ export default async function FussballPage() {
         <section className="mb-12">
           <div className="mb-5 flex items-baseline justify-between border-b border-nord-line pb-2">
             <h2 className="font-display text-2xl font-black tracking-tight text-nord-ink md:text-3xl">
-              Säulen der Abteilung
+              {cms.saeulen?.heading ?? SAEULEN_HEADING}
             </h2>
             <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.15em] text-nord-muted">
-              Fünf Bereiche
+              {cms.saeulen?.meta ?? SAEULEN_META}
             </span>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
-            <FussballPillar
-              eyebrow="Erwachsen"
-              title="Fußball — Erwachsene"
-              body="Landesliga, Reserve, Dritte, Ehrenliga und Senioren. Vom ambitionierten Spieltag bis zur Altherrenrunde, alle Erwachsenenmannschaften des SV Nord."
-              href="/fussball/herren"
-              meta="5 Herrenmannschaften · Ehrenliga"
-              tone="navy"
-            />
-            <FussballPillar
-              eyebrow="Jugend"
-              title="Fußball — Jugend"
-              body="Großfeld, Kompaktfeld und Kleinfeld. Direkte Ansprechpartner für Eltern und Jugendspieler — von der A-Jugend bis zu den Bambinis."
-              href="/fussball/junioren"
-              meta="15 Jugendmannschaften"
-              tone="sky"
-            />
-            <FussballPillar
-              eyebrow="Torwart"
-              title="Fußball — Torwart"
-              body="Spezielles Torwart-Training für alle Altersklassen. Wir suchen Talente und bilden eigene Torhüter:innen aus. Spielerbetreuung ab den Junioren."
-              href="/fussball"
-              meta="Position · Training"
-              tone="gold"
-            />
-            <FussballPillar
-              eyebrow="Spielbetrieb"
-              title="Schiedsrichter"
-              body="Aktive Unparteiische im BFV-Spielbetrieb — von der Kreisklasse bis zur Bezirksliga. Sie sorgen für faire Bedingungen auf den Plätzen."
-              href="/schiedsrichter"
-              meta="BFV · Ehrenamt"
-              tone="sky"
-            />
-            <FussballPillar
-              eyebrow="Organisation"
-              title="PR, Events, Equipment, Organisation"
-              body="Hinter den Kulissen: Öffentlichkeitsarbeit, Vereinsevents, Material- und Trikotverwaltung, organisatorischer Backbone der Abteilung. Namen folgen."
-              href="/fussball"
-              meta="Ehrenamt · Backbone"
-              tone="paper"
-            />
+            {pillars.map((pillar, i) => (
+              <FussballPillar
+                key={i}
+                eyebrow={pillar.eyebrow}
+                title={pillar.title}
+                body={pillar.body}
+                href={pillar.href}
+                meta={pillar.meta}
+                tone={pillar.tone}
+              />
+            ))}
           </div>
         </section>
 

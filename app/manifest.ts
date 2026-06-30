@@ -12,9 +12,25 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: "#0b1b3f",
     lang: "de",
     categories: ["sports", "lifestyle"],
+    // Stable /public assets — NOT the file-convention routes (app/icon.png,
+    // app/apple-icon.png), which Next 16 serves at hashed, per-build URLs that a
+    // static manifest cannot reference (bare /icon and /apple-icon both 404).
+    // The apple-touch-icon is delivered via the auto-generated
+    // <link rel="apple-touch-icon"> head tag, so the PWA manifest only needs the
+    // Android/installable icons (192 + 512).
     icons: [
-      { src: "/icon", sizes: "32x32", type: "image/png" },
-      { src: "/apple-icon", sizes: "180x180", type: "image/png" },
+      {
+        src: "/icon-192.png",
+        sizes: "192x192",
+        type: "image/png",
+        purpose: "any",
+      },
+      {
+        src: "/icon-512.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "any",
+      },
     ],
   };
 }

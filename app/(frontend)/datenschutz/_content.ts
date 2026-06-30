@@ -1,4 +1,4 @@
-import type { LegalSection } from "@/components/legal/LegalSections";
+import type { LegalSection } from "@/components/legal/types";
 
 export const DATENSCHUTZ_SECTIONS: LegalSection[] = [
   {

@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { PageHero } from "@/components/PageHero";
 import { getPayloadClient } from "@/lib/payload";
-import { publicUploadSrc } from "@/lib/publicUploads";
+import { mediaSrc } from "@/lib/publicUploads";
 import type { Media, Person } from "@/payload-types";
 
 export const dynamic = "force-dynamic";
@@ -80,11 +80,7 @@ const SPORT_GROUPS: Array<{
 function portraitUrl(photo: Person["photo"]): string | null {
   if (!photo || typeof photo !== "object") return null;
   const m = photo as Media;
-  const url = m.url ?? "";
-  if (/^https?:\/\//.test(url) && !url.includes("/api/media/file/")) {
-    return url;
-  }
-  return publicUploadSrc(m.filename);
+  return mediaSrc(m);
 }
 
 function initialsOf(name: string): string {

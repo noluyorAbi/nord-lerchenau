@@ -38,3 +38,16 @@ export function publicUploadSrc(filename?: string | null): string | null {
   const file = index().get(normalise(filename));
   return file ? `/uploads/${file}` : null;
 }
+
+/**
+ * Resolve a Payload media object to an image src, preferring the asset shipped
+ * in public/uploads so the site renders without any external blob storage. The
+ * stored `url` (e.g. a legacy blob URL) is only used as a fallback when no
+ * committed file matches the (normalised) filename.
+ */
+export function mediaSrc(
+  media?: { filename?: string | null; url?: string | null } | number | null,
+): string | null {
+  if (!media || typeof media !== "object") return null;
+  return publicUploadSrc(media.filename) ?? (media.url || null);
+}

@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { PageHero } from "@/components/PageHero";
 import { getPayloadClient } from "@/lib/payload";
+import { mediaSrc } from "@/lib/publicUploads";
 import { FALLBACK_SPONSORS } from "@/lib/sponsors-fallback";
 
 export const dynamic = "force-dynamic";
@@ -257,11 +258,7 @@ type SponsorProps = {
 function SponsorCard({ sponsor, size }: SponsorProps) {
   const s = sponsor;
   const logo = typeof s.logo === "object" && s.logo ? s.logo : null;
-  const logoUrl = logo
-    ? logo.filename
-      ? `/uploads/${logo.filename}`
-      : (logo.url ?? null)
-    : null;
+  const logoUrl = mediaSrc(logo);
 
   const content = (
     <div

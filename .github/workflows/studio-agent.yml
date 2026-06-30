@@ -1,0 +1,106 @@
+name: AI-Studio agent
+
+# Triggered by POST /repos/<owner>/<repo>/dispatches from /api/agent/enqueue.
+# Implements a club change request on an isolated branch, then posts the result
+# back to the site. It NEVER merges — the dev merges the branch after review.
+on:
+  repository_dispatch:
+    types: [studio-change-request]
+
+# One run per request; cancel a stale run for the same request.
+concurrency:
+  group: studio-${{ github.event.client_payload.requestId }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write # push the studio/* branch (NOT merge — branch protection on main)
+
+jobs:
+  implement:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      STUDIO_REQUEST_ID: ${{ github.event.client_payload.requestId }}
+      STUDIO_PROMPT: ${{ github.event.client_payload.prompt }}
+      STUDIO_FEEDBACK: ${{ github.event.client_payload.feedback }}
+      STUDIO_RESULT_PATH: ${{ github.workspace }}/studio-result.json
+      STUDIO_MAX_COST_USD: ${{ vars.STUDIO_MAX_COST_USD || '8' }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      # Dummy values so payload.config initialises in CI (build never hits the DB:
+      # all pages are force-dynamic, so next build does not query Postgres).
+      DATABASE_URI: postgres://ci:ci@localhost:5432/ci
+      PAYLOAD_SECRET: ci-build-only-secret
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Create per-request branch
+        id: branch
+        run: |
+          # Sanitise the request id to digits only — client_payload is untrusted.
+          SAFE_ID="$(printf '%s' "$STUDIO_REQUEST_ID" | tr -cd '0-9')"
+          [ -z "$SAFE_ID" ] && SAFE_ID="0"
+          BRANCH="studio/${SAFE_ID}-${GITHUB_RUN_ID}"
+          git checkout -b "$BRANCH"
+          git config user.name "noluyorAbi"
+          git config user.email "121226886+noluyorAbi@users.noreply.github.com"
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run agent (implement + gate + review)
+        id: agent
+        # Exits non-zero on failure/allowlist-violation -> branch is NOT pushed.
+        continue-on-error: true
+        run: bun run scripts/studio/run-agent.ts
+
+      - name: Commit + push branch (only on success)
+        id: push
+        if: steps.agent.outcome == 'success'
+        env:
+          BRANCH: ${{ steps.branch.outputs.branch }}
+        run: |
+          # Fixed commit message (no untrusted prompt text). The wish lives in the
+          # change-request record; BRANCH is the sanitised branch name.
+          git add -A
+          git commit \
+            -m "studio: ${BRANCH}" \
+            -m "Auto-generated change. Review before merge." \
+            -m "Claude-Session: AI-Studio agent" \
+            || echo "nothing to commit"
+          git push origin "$BRANCH"
+
+      - name: Post result back to the site
+        if: always()
+        env:
+          CALLBACK_URL: ${{ secrets.STUDIO_CALLBACK_URL }}
+          STUDIO_SECRET: ${{ secrets.AGENT_WEBHOOK_SECRET }}
+          BRANCH: ${{ steps.branch.outputs.branch }}
+          PUSHED: ${{ steps.push.outcome }}
+        run: |
+          if [ ! -f "$STUDIO_RESULT_PATH" ]; then
+            echo '{"ok":false,"error":"worker produced no result"}' > "$STUDIO_RESULT_PATH"
+          fi
+          # Merge in the branch + a previewUrl placeholder; a Vercel deployment
+          # webhook fills the real previewUrl once the build is READY.
+          node -e '
+            const fs=require("fs");
+            const r=JSON.parse(fs.readFileSync(process.env.STUDIO_RESULT_PATH,"utf8"));
+            r.branch=process.env.BRANCH;
+            r.requestId=process.env.STUDIO_REQUEST_ID;
+            if(process.env.PUSHED!=="success"){ r.ok=false; }
+            fs.writeFileSync(process.env.STUDIO_RESULT_PATH, JSON.stringify(r));
+          '
+          curl -sS -X POST "$CALLBACK_URL" \
+            -H "x-studio-secret: $STUDIO_SECRET" \
+            -H "Content-Type: application/json" \
+            --data @"$STUDIO_RESULT_PATH"

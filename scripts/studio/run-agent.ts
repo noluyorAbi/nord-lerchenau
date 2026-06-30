@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /**
  * AI-Studio agent worker. Runs in CI (GitHub Actions) inside a fresh checkout of
  * a per-request branch. It turns a club change request into a small, gated code

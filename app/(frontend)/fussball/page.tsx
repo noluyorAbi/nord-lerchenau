@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { BfvFormulare } from "@/components/fussball/BfvFormulare";
 import { StandingsTable } from "@/components/fussball/StandingsTable";
 import { FupaBlock } from "@/components/home/FupaBlock";
 import { PageHero } from "@/components/PageHero";
@@ -176,10 +177,25 @@ export default async function FussballPage() {
           </div>
         </section>
 
+        <section id="formulare" className="mb-12 scroll-mt-24">
+          <div className="mb-5 flex items-baseline justify-between border-b border-nord-line pb-2">
+            <div>
+              <SectionEyebrow number="03" label="Formulare" />
+              <h2 className="mt-2 font-display text-2xl font-black tracking-tight text-nord-ink md:text-3xl">
+                BFV-Formulare
+              </h2>
+            </div>
+            <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.15em] text-nord-muted">
+              Passabteilung · offiziell
+            </span>
+          </div>
+          <BfvFormulare />
+        </section>
+
         <section className="mb-4">
           <div className="mb-5 flex items-baseline justify-between border-b border-nord-line pb-2">
             <div>
-              <SectionEyebrow number="03" label="Tabelle" />
+              <SectionEyebrow number="04" label="Tabelle" />
               <h2 className="mt-2 font-display text-2xl font-black tracking-tight text-nord-ink md:text-3xl">
                 Landesliga
               </h2>

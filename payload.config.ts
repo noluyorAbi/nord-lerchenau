@@ -124,6 +124,16 @@ export default buildConfig({
     // CMS to anonymous visitors and must never run in production.
     components: {
       beforeDashboard: ["@/payload/components/WelcomeDashboard#default"],
+      // AI-Studio chat tab: a custom admin view at /admin/studio where the club
+      // submits website change wishes and approves previews. Writes go through
+      // the change-requests collection access control.
+      views: {
+        studio: {
+          Component: "@/payload/components/StudioChat#default",
+          path: "/studio",
+          meta: { title: "KI-Studio" },
+        },
+      },
     },
   },
   // Media uploads: when BLOB_READ_WRITE_TOKEN is set (Vercel production), uploads

@@ -10,26 +10,47 @@ type LexNode = Record<string, unknown>;
 
 /**
  * Build a Lexical root doc from a tiny markdown-ish syntax.
- * Supports: ## → h2, ### → h3, #### → h4, blank-line paragraphs. Plain text only.
+ * Supports: ## → h2, ### → h3, #### → h4, blank-line paragraphs, and
+ * inline [label](https://url) links. Everything else is plain text.
  */
 function md(input: string): { root: LexNode } {
+  const textNode = (text: string): LexNode => ({
+    type: "text",
+    text,
+    format: 0,
+    version: 1,
+    detail: 0,
+    mode: "normal",
+    style: "",
+  });
+  const inline = (text: string): LexNode[] => {
+    const nodes: LexNode[] = [];
+    const linkRe = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
+    let last = 0;
+    for (const m of text.matchAll(linkRe)) {
+      const idx = m.index ?? 0;
+      if (idx > last) nodes.push(textNode(text.slice(last, idx)));
+      nodes.push({
+        type: "link",
+        format: "",
+        indent: 0,
+        version: 3,
+        direction: "ltr",
+        fields: { linkType: "custom", url: m[2], newTab: true },
+        children: [textNode(m[1]!)],
+      });
+      last = idx + m[0].length;
+    }
+    if (last < text.length) nodes.push(textNode(text.slice(last)));
+    return nodes.length > 0 ? nodes : [textNode(text)];
+  };
   const paragraph = (text: string): LexNode => ({
     type: "paragraph",
     format: "",
     indent: 0,
     version: 1,
     direction: "ltr",
-    children: [
-      {
-        type: "text",
-        text,
-        format: 0,
-        version: 1,
-        detail: 0,
-        mode: "normal",
-        style: "",
-      },
-    ],
+    children: inline(text),
   });
   const heading = (tag: "h2" | "h3" | "h4", text: string): LexNode => ({
     type: "heading",
@@ -736,6 +757,17 @@ async function main() {
       },
     },
     {
+      // Doc 2026_06_02 §3: "9. Mannschaft AH hinzufügen" — mirrored from the
+      // old Strato page /abteilungen/fussball/ah/ (no league play).
+      name: "AH · Alte Herren",
+      slug: "ah",
+      sport: "fussball",
+      category: "senioren",
+      ageGroup: "AH",
+      order: 6,
+      league: "Altherrenrunde · kein Ligabetrieb",
+    },
+    {
       name: "A1-Junioren · U19-I",
       slug: "a1-junioren",
       sport: "fussball",
@@ -1002,6 +1034,368 @@ async function main() {
     await ensureTeam(payload, t);
   }
 
+  // 2b. Team-Detailinhalte — von der alten Strato-Website übernommen
+  //     (svnordmunchen-le-nasccj7rn.live-website.com, gespiegelt 2026-07-02).
+  //     ensurePerson legt Personen nur an, wenn der Name noch nicht existiert,
+  //     bestehende Vorstands-/Sportleitungs-Einträge bleiben unangetastet.
+  const teamContent: Array<{
+    slug: string;
+    birthYears?: string;
+    descriptionMd: string;
+    trainers: Array<{
+      name: string;
+      role: string;
+      phone?: string;
+      email?: string;
+    }>;
+  }> = [
+    {
+      slug: "erste",
+      descriptionMd: "Training: Dienstag und Donnerstag, 19:00 bis 20:30 Uhr.",
+      trainers: [
+        {
+          name: "Peter Zeussel",
+          role: "Trainer (DFB B-Lizenz)",
+          phone: "0176 60893208",
+        },
+        { name: "Karl-Heinz Lappe", role: "Trainer (DFB B-Lizenz)" },
+        { name: "Felix Kirmeyer", role: "Sportlicher Leiter" },
+        { name: "Tobias Lippenberger", role: "Torwart-Trainer" },
+        {
+          name: "Gökrem Kocademir",
+          role: "Trainer (DFB C-Lizenz)",
+          phone: "0172 4084137",
+          email: "gokrem.k@googlemail.com",
+        },
+      ],
+    },
+    {
+      slug: "zwoate",
+      descriptionMd:
+        "Training: Dienstag 19:15 bis 20:45 Uhr und Donnerstag 19:45 bis 20:45 Uhr.",
+      trainers: [
+        {
+          name: "Christian Harag",
+          role: "Trainer (DFB B-Lizenz)",
+          email: "christian.harag@gmx.de",
+        },
+        {
+          name: "Leopold Moritz Braun",
+          role: "Co-Trainer (DFB C-Lizenz)",
+        },
+        { name: "Tobias Lippenberger", role: "Torwart-Trainer" },
+        { name: "Marco Müller", role: "Torwart-Trainer" },
+      ],
+    },
+    {
+      slug: "dritte",
+      descriptionMd: "Training: Dienstag und Donnerstag, 19:15 bis 20:45 Uhr.",
+      trainers: [
+        { name: "Andreas Borris", role: "Trainer", phone: "0176 83093095" },
+        { name: "Bernhard Moch", role: "Co-Spielertrainer" },
+        { name: "Marco Müller", role: "Torwart-Trainer" },
+      ],
+    },
+    {
+      slug: "senioren-a",
+      descriptionMd: "Training: Montag, 19:30 bis 21:00 Uhr.",
+      trainers: [
+        { name: "Stefan Bäumler", role: "Trainer", phone: "01512 0998623" },
+        { name: "Christian Seizer", role: "Co-Trainer", phone: "0174 9239680" },
+      ],
+    },
+    {
+      slug: "senioren-b",
+      descriptionMd: "Training: Montag, 19:30 bis 21:00 Uhr.",
+      trainers: [
+        { name: "Stefan Bäumler", role: "Trainer", phone: "01512 0998623" },
+        { name: "Felix Kirmeyer", role: "Sportlicher Leiter" },
+      ],
+    },
+    {
+      slug: "ah",
+      descriptionMd:
+        "Unsere Altherrenrunde trifft sich zum lockeren Kick ohne Ligabetrieb.\n\nTraining: Montag, 18:00 bis 19:30 Uhr.",
+      trainers: [{ name: "Heinz Fessenmeyer", role: "Spielertrainer" }],
+    },
+    {
+      slug: "a1-junioren",
+      birthYears: "2006/2007/2008",
+      descriptionMd: "Training: Dienstag und Donnerstag, 19:30 bis 21:00 Uhr.",
+      trainers: [
+        {
+          name: "Gökrem Kocademir",
+          role: "Trainer (DFB C-Lizenz)",
+          phone: "0172 4084137",
+          email: "gokrem.k@googlemail.com",
+        },
+        {
+          name: "Tom Kopatschek",
+          role: "Teammanager / Physiotherapie",
+          phone: "0176 64622188",
+          email: "lausejungs@web.de",
+        },
+        { name: "Marco Müller", role: "Torwart-Trainer" },
+      ],
+    },
+    {
+      slug: "b1-junioren",
+      birthYears: "2009/2010",
+      descriptionMd:
+        "Spielgemeinschaft mit dem FC Fasanerie Nord.\n\nTraining: Dienstag und Donnerstag, 18:00 bis 19:30 Uhr.",
+      trainers: [
+        {
+          name: "Zeljko Jeremic",
+          role: "Trainer (DFB C-Lizenz)",
+          phone: "0151 40173420",
+          email: "zjeremic@gmx.de",
+        },
+        { name: "Jürgen Hönle", role: "Co-Trainer", phone: "0171 7885446" },
+      ],
+    },
+    {
+      slug: "b2-junioren",
+      birthYears: "2009/2010",
+      descriptionMd:
+        "Spielgemeinschaft mit dem FC Fasanerie Nord.\n\nTraining: Dienstag und Donnerstag, 18:00 bis 19:30 Uhr.",
+      trainers: [
+        {
+          name: "Zeljko Jeremic",
+          role: "Trainer (DFB C-Lizenz)",
+          phone: "0151 40173420",
+          email: "zjeremic@gmx.de",
+        },
+        { name: "Jürgen Hönle", role: "Co-Trainer", phone: "0171 7885446" },
+      ],
+    },
+    {
+      slug: "c1-junioren",
+      birthYears: "2012",
+      descriptionMd: "Training: Dienstag und Donnerstag, 18:00 bis 19:30 Uhr.",
+      trainers: [
+        {
+          name: "Thomas Tiesler",
+          role: "Trainer (DFB C-Lizenz)",
+          phone: "0172 2787147",
+          email: "thomas.tiesler@gmx.de",
+        },
+        {
+          name: "Zoran Momcilovic",
+          role: "Co-Trainer",
+          phone: "0177 7427733",
+          email: "zoran.momcilovic@gmx.de",
+        },
+        { name: "Horst Mauler", role: "Co-Trainer" },
+      ],
+    },
+    {
+      slug: "d1-junioren",
+      birthYears: "2013",
+      descriptionMd: "Training: Dienstag und Donnerstag, 17:00 bis 18:15 Uhr.",
+      trainers: [
+        {
+          name: "Birol Ucarkus",
+          role: "Trainer (DFB C-Lizenz)",
+          phone: "0157 51365715",
+          email: "birol1981@yahoo.de",
+        },
+        {
+          name: "Thomas Wurm",
+          role: "Co-Trainer (DFB C-Lizenz)",
+          phone: "0151 23520222",
+          email: "wurm.th@gmail.com",
+        },
+      ],
+    },
+    {
+      slug: "d2-junioren",
+      birthYears: "2014",
+      descriptionMd: "Training: Dienstag und Donnerstag, 16:45 bis 18:00 Uhr.",
+      trainers: [
+        {
+          name: "Steffen Helmreich",
+          role: "Trainer (DFB C-Lizenz)",
+          phone: "0174 9332212",
+          email: "helmreichsteffen@gmail.com",
+        },
+        { name: "Sandra Schinke", role: "Co-Trainerin (DFB Basiscoach)" },
+        { name: "Claudia Helmreich", role: "Co-Trainerin" },
+      ],
+    },
+    {
+      slug: "e1-junioren",
+      birthYears: "2016",
+      descriptionMd:
+        "Training: Dienstag und Donnerstag, 16:45 bis 18:00 Uhr (donnerstags in der Halle).",
+      trainers: [
+        {
+          name: "Karl-Heinz Lappe",
+          role: "Trainer (DFB B-Lizenz)",
+          email: "klakamc@gmail.com",
+        },
+        {
+          name: "Christian Harag",
+          role: "Trainer (DFB B-Lizenz)",
+          email: "christian.harag@gmx.de",
+        },
+      ],
+    },
+    {
+      slug: "e2-junioren",
+      birthYears: "2016",
+      descriptionMd: "Training: Dienstag und Donnerstag, 16:45 bis 18:00 Uhr.",
+      trainers: [
+        {
+          name: "Mike Königsmark",
+          role: "Trainer",
+          phone: "0151 23508537",
+          email: "m.koenigsmark@k1-gaming.de",
+        },
+        {
+          name: "Maik Hertwig",
+          role: "Co-Trainer",
+          phone: "0162 8305452",
+          email: "m.Maiklinda@web.de",
+        },
+        { name: "Kisha Beinhauer", role: "Betreuerin", phone: "0173 3055772" },
+      ],
+    },
+    {
+      slug: "f2-junioren",
+      birthYears: "2018",
+      descriptionMd:
+        "An den Spieltagen werden die Kinder in U8-I und U8-II aufgeteilt, trainiert wird immer gemeinsam.\n\nTraining: Dienstag und Donnerstag, 16:45 bis 18:00 Uhr.",
+      trainers: [
+        { name: "Tommy Wimmer", role: "Trainer", phone: "0176 61053304" },
+        { name: "Daniel Bilic", role: "Co-Trainer", phone: "0174 9770179" },
+        { name: "Till Stein", role: "Co-Trainer", phone: "0176 21197937" },
+        { name: "Thomas Aumann", role: "Co-Trainer", phone: "0170 3593962" },
+      ],
+    },
+    {
+      slug: "f3-junioren",
+      birthYears: "2018",
+      descriptionMd:
+        "An den Spieltagen werden die Kinder in U8-I und U8-II aufgeteilt, trainiert wird immer gemeinsam.\n\nTraining: Dienstag und Donnerstag, 16:45 bis 18:00 Uhr.",
+      trainers: [
+        { name: "Tommy Wimmer", role: "Trainer", phone: "0176 61053304" },
+        { name: "Daniel Bilic", role: "Co-Trainer", phone: "0174 9770179" },
+        { name: "Till Stein", role: "Co-Trainer", phone: "0176 21197937" },
+        { name: "Thomas Aumann", role: "Co-Trainer", phone: "0170 3593962" },
+      ],
+    },
+    {
+      slug: "b-juniorinnen",
+      birthYears: "2009/2010",
+      descriptionMd: "Training: Dienstag und Donnerstag, 18:00 bis 19:30 Uhr.",
+      trainers: [
+        {
+          name: "Abraham Mike Yousaf",
+          role: "Trainer",
+          phone: "0152 09451696",
+          email: "myousaf_2000@yahoo.de",
+        },
+        {
+          name: "Kalmaz Zerrin",
+          role: "Co-Trainerin",
+          phone: "0172 8800441",
+          email: "zerrin.kalmaz@web.de",
+        },
+      ],
+    },
+    {
+      slug: "c-juniorinnen",
+      birthYears: "2011/2012",
+      descriptionMd: "Training: Dienstag und Donnerstag, 18:00 bis 19:30 Uhr.",
+      trainers: [
+        { name: "Ergin Piker", role: "Trainer (DFB C-Lizenz)" },
+        {
+          name: "Vanessa Lincke",
+          role: "Co-Trainerin",
+          phone: "0176 24218957",
+        },
+      ],
+    },
+    {
+      slug: "d-juniorinnen",
+      birthYears: "2013/2014",
+      descriptionMd: "Training: Dienstag und Donnerstag, 17:00 bis 18:15 Uhr.",
+      trainers: [
+        { name: "Andreas Seizer", role: "Trainer", phone: "0172 8248708" },
+        { name: "Tomislav Jerkovic", role: "Co-Trainer" },
+      ],
+    },
+    {
+      slug: "bambini",
+      descriptionMd:
+        "Bambinifußball ist der Anfang im Vereinsfußball und die ideale Möglichkeit zum Reinschnuppern. Bei uns steht in dieser Altersklasse der Spaß im Vordergrund.\n\nTraining: jeden Dienstag um 16:15 Uhr, Dauer 60 Minuten.",
+      trainers: [],
+    },
+  ];
+
+  for (let i = 0; i < teamContent.length; i++) {
+    const tc = teamContent[i]!;
+    const teamRes = await payload.find({
+      collection: "teams",
+      where: { slug: { equals: tc.slug } },
+      limit: 1,
+    });
+    if (teamRes.docs.length === 0) continue;
+    const trainerIds: Array<string | number> = [];
+    for (let j = 0; j < tc.trainers.length; j++) {
+      const tr = tc.trainers[j]!;
+      trainerIds.push(
+        await ensurePerson(payload, {
+          name: tr.name,
+          role: tr.role,
+          function: "trainer",
+          phone: tr.phone,
+          email: tr.email,
+          order: 200 + i * 10 + j,
+        }),
+      );
+    }
+    await payload.update({
+      collection: "teams",
+      id: teamRes.docs[0]!.id,
+      data: {
+        description: md(tc.descriptionMd),
+        trainers: trainerIds,
+        ...(tc.birthYears ? { birthYears: tc.birthYears } : {}),
+      } as never,
+    });
+    console.log(`✓ Team content migrated: ${tc.slug}`);
+  }
+
+  // 2c. Mannschaftsfotos — von der alten Website gespiegelt in tmp/live-teams/
+  //     (statisch identisch in public/uploads/ ausgeliefert via mediaSrc).
+  const teamPhotoSlugs = [
+    "erste",
+    "dritte",
+    "senioren-a",
+    "senioren-b",
+    "a1-junioren",
+    "b1-junioren",
+    "b2-junioren",
+    "c1-junioren",
+    "d1-junioren",
+    "d2-junioren",
+    "b-juniorinnen",
+    "bambini",
+  ];
+  for (const teamSlug of teamPhotoSlugs) {
+    await ensureTeamPhoto(payload, {
+      teamSlug,
+      filename: `team-${teamSlug}.jpg`,
+      alt: `Mannschaftsfoto ${teamSlug}`,
+      filePath: path.resolve(
+        process.cwd(),
+        "tmp/live-teams",
+        `team-${teamSlug}.jpg`,
+      ),
+    });
+  }
+
   // 3. Optional manifest for image references
   let manifest: Manifest = {};
   try {
@@ -1042,7 +1436,7 @@ async function main() {
       publishedAt: new Date("2026-02-06T18:00:00+01:00").toISOString(),
       tags: ["verein"],
       bodyText:
-        "Am 5. Mai 1983 entschlossen sich die Vereinsvorstände des SV Nord München-Lerchenau, des HuVTV Edelweiß-Stamm München und des FC Eintracht München, das von der Stadt München angebotene Fördermodell „Vereinsförderung von selbst errichteten Vereinsheimen\” in Anspruch zu nehmen. Ein Jahr später, am 2. Juli 1984, wurde der Eschengarten in Eigenregie gebaut.",
+        "Am 5. Mai 1983 entschlossen sich die Vereinsvorstände des SV Nord München-Lerchenau, des HuVTV Edelweiß-Stamm München und des FC Eintracht München, das von der Stadt München angebotene Fördermodell „Vereinsförderung von selbst errichteten Vereinsheimen\” in Anspruch zu nehmen. Ein Jahr später, am 2. Juli 1984, wurde der Eschengarten in Eigenregie gebaut. Am 20. Juni 2026 feiern wir gemeinsam 40 Jahre Eschengarten.",
     },
   ];
 
@@ -1140,7 +1534,8 @@ async function main() {
 Ab 18:30 Uhr gemeinsam im Eschengarten. Grillen, Kuchen und mehr.
 
 **Einmal Nordler — immer Nordler.** Freunde, Verwandte, Bekannte — alle willkommen.`,
-      ctaUrl: "https://mytman.io/turnier/?turnier_id=8699",
+      ctaUrl:
+        "https://mytman.io/turniere-suchen/?share_id=dcfcc1a6130a575108aece8f23e25f32",
     },
     {
       title: "Sichtung A/B-Jugend 09.05.2026",
@@ -1461,7 +1856,7 @@ Unsere modernen Trainings- und Spielbedingungen bieten beste Voraussetzungen fü
 
 ## Gastronomie
 
-Die Gaststätte Eschengarten wird von einer eigenen Wirtsfamilie betrieben und ist an sechs Tagen die Woche geöffnet. Reservierungen direkt unter +49 (0)89 351 1899 oder auf www.eschengarten.com.
+Die Gaststätte Eschengarten wird von einer eigenen Wirtsfamilie betrieben und ist an sechs Tagen die Woche geöffnet. Reservierungen direkt unter +49 (0)89 351 1899 oder auf [www.eschengarten.com](https://www.eschengarten.com).
 
 Auf Google Maps: [Eschengarten · Saisonale Speisekarte · Ebereschenstraße 17, Munich-Feldmoching-Hasenbergl](https://www.google.com/maps/search/?api=1&query=Eschengarten+Ebereschenstra%C3%9Fe+17+M%C3%BCnchen).`,
       ),

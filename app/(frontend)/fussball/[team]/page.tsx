@@ -15,6 +15,7 @@ import { bfvClubLogoUrl, bfvTeamImageUrl, bfvTeamUrl } from "@/lib/bfv";
 import { resolveFupaSlug } from "@/lib/fupa";
 import { formatKickoff } from "@/lib/format-date";
 import { getPayloadClient } from "@/lib/payload";
+import { mediaSrc } from "@/lib/publicUploads";
 import type { Person } from "@/payload-types";
 
 type Props = { params: Promise<{ team: string }> };
@@ -66,6 +67,9 @@ export default async function TeamPage({ params }: Props) {
   const bfvUrl = bfvTeamUrl(bfv);
   const bfvTeamImage = bfvTeamImageUrl(bfv?.teamId);
   const bfvClubCrest = bfvClubLogoUrl("00ES8GNHD400000DVV0AG08LVUPGND5I");
+  // Club's own Mannschaftsfoto (CMS/mirrored upload) beats the BFV image.
+  const ownPhoto = mediaSrc(team.photo);
+  const teamPhoto = ownPhoto ?? bfvTeamImage;
 
   return (
     <>
@@ -85,16 +89,16 @@ export default async function TeamPage({ params }: Props) {
       />
 
       <div className="mx-auto max-w-5xl px-6 py-10 md:px-8 md:py-14">
-        {bfv?.teamId ? (
+        {bfv?.teamId || teamPhoto ? (
           <div className="mb-10 overflow-hidden rounded-2xl border border-nord-line bg-nord-ink">
             <div className="relative aspect-[16/9] w-full overflow-hidden">
-              {bfvTeamImage ? (
+              {teamPhoto ? (
                 <>
                   {/* Blurred fill backdrop keeps the frame saturated while the
                       foreground image is shown uncropped via object-contain. */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={bfvTeamImage}
+                    src={teamPhoto}
                     alt=""
                     aria-hidden
                     className="absolute inset-0 size-full scale-110 object-cover opacity-40 blur-xl"
@@ -102,7 +106,7 @@ export default async function TeamPage({ params }: Props) {
                   />
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={bfvTeamImage}
+                    src={teamPhoto}
                     alt={`Mannschaftsfoto ${team.name}`}
                     className="relative size-full object-contain"
                     loading="lazy"
@@ -140,9 +144,11 @@ export default async function TeamPage({ params }: Props) {
                     </div>
                   </div>
                 </div>
-                <span className="hidden shrink-0 rounded-full border border-nord-gold bg-nord-gold/10 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-gold backdrop-blur md:inline-block">
-                  Foto · BFV
-                </span>
+                {!ownPhoto && bfvTeamImage ? (
+                  <span className="hidden shrink-0 rounded-full border border-nord-gold bg-nord-gold/10 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-gold backdrop-blur md:inline-block">
+                    Foto · BFV
+                  </span>
+                ) : null}
               </div>
             </div>
           </div>
@@ -150,7 +156,7 @@ export default async function TeamPage({ params }: Props) {
 
         <div className="space-y-10 md:space-y-12">
           {hasDescription ? (
-            <div className="prose prose-neutral prose-lg max-w-none">
+            <div className="rich-text max-w-none text-lg">
               <RichText data={team.description as SerializedEditorState} />
             </div>
           ) : (

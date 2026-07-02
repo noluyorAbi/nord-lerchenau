@@ -1,12 +1,16 @@
 import { getPayloadClient } from "@/lib/payload";
 import { mediaSrc } from "@/lib/publicUploads";
-import { FALLBACK_SPONSORS } from "@/lib/sponsors-fallback";
+import {
+  FALLBACK_SPONSORS,
+  sponsorLogoFallback,
+} from "@/lib/sponsors-fallback";
 
 type Sponsor = {
   id: number | string;
   name: string;
   url?: string | null;
   logoUrl: string | null;
+  logoBg: "light" | "dark";
   tier?: string | null;
 };
 
@@ -28,13 +32,14 @@ export async function SponsorMarquee() {
       logo?: { url?: string | null; filename?: string | null } | number | null;
     };
     const logo = typeof d.logo === "object" && d.logo ? d.logo : null;
-    const logoUrl = mediaSrc(logo);
+    const fallback = sponsorLogoFallback(d.name);
     return {
       id: d.id,
       name: d.name,
       url: d.url ?? null,
       tier: d.tier ?? null,
-      logoUrl,
+      logoUrl: mediaSrc(logo) ?? fallback.logoSrc,
+      logoBg: fallback.logoBg,
     };
   });
 
@@ -46,7 +51,8 @@ export async function SponsorMarquee() {
           name: s.name,
           url: s.url,
           tier: s.tier,
-          logoUrl: null,
+          logoUrl: s.logoSrc,
+          logoBg: s.logoBg,
         }));
 
   if (sponsors.length === 0) return null;
@@ -71,7 +77,13 @@ export async function SponsorMarquee() {
           <div className="flex w-max animate-[marquee_50s_linear_infinite] items-center gap-6 pr-6 group-hover:[animation-play-state:paused] motion-reduce:animate-none md:gap-8 md:pr-8">
             {doubled.map((s, idx) => {
               const card = (
-                <div className="flex h-24 w-52 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-nord-navy-2/40 bg-nord-navy p-4 shadow-[0_8px_22px_-10px_rgba(11,27,63,0.55)] transition hover:-translate-y-0.5 hover:border-nord-gold hover:shadow-[0_14px_28px_-10px_rgba(11,27,63,0.65)] md:h-28 md:w-60 md:p-5">
+                <div
+                  className={`flex h-24 w-52 shrink-0 items-center justify-center overflow-hidden rounded-2xl border p-4 shadow-[0_8px_22px_-10px_rgba(11,27,63,0.55)] transition hover:-translate-y-0.5 hover:border-nord-gold hover:shadow-[0_14px_28px_-10px_rgba(11,27,63,0.65)] md:h-28 md:w-60 md:p-5 ${
+                    s.logoUrl && s.logoBg === "light"
+                      ? "border-nord-line bg-white"
+                      : "border-nord-navy-2/40 bg-nord-navy"
+                  }`}
+                >
                   {s.logoUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img

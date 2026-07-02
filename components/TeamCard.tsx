@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { bfvTeamImageUrl } from "@/lib/bfv";
+import { mediaSrc } from "@/lib/publicUploads";
 import type { Person, Team } from "@/payload-types";
 
 type Props = { team: Team };
@@ -21,7 +22,9 @@ export function TeamCard({ team }: Props) {
     .map((t) => t.name)
     .filter((n): n is string => typeof n === "string" && n.length > 0);
 
-  const teamImage = bfvTeamImageUrl(team.bfv?.teamId);
+  // Prefer the club's own Mannschaftsfoto (CMS/mirrored upload) over the BFV
+  // media image; BFV stays as fallback for teams without an own photo.
+  const teamImage = mediaSrc(team.photo) ?? bfvTeamImageUrl(team.bfv?.teamId);
 
   return (
     <Link

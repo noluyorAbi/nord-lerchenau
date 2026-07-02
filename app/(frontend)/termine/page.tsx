@@ -107,6 +107,10 @@ export default async function TerminePage() {
       title: e.title,
       location: e.location ?? null,
       description: typeof e.description === "string" ? e.description : null,
+      ctaUrl:
+        typeof e.ctaUrl === "string" && e.ctaUrl.trim() !== ""
+          ? e.ctaUrl
+          : null,
     };
     items.push(item);
   }
@@ -122,6 +126,8 @@ export default async function TerminePage() {
       location: "BSA Ebereschenstraße · Eschengarten",
       description:
         "Freitag ab 16:30 Kiga-Turnier, U19/U17/U15W-Turniere und Senioren A-Spiel. Samstag ab 08:30 Vormittags-, Mittags- und Nachmittagsturniere aller Jugendmannschaften, Spiele Zweite/Dritte, 17:30 Erste Mannschaft. Ab 18:30 gemeinsam im Eschengarten. Einmal Nordler, immer Nordler.",
+      ctaUrl:
+        "https://mytman.io/turniere-suchen/?share_id=dcfcc1a6130a575108aece8f23e25f32",
     },
     {
       kind: "event",
@@ -131,6 +137,7 @@ export default async function TerminePage() {
       location: "BSA Ebereschenstraße · Eschengarten",
       description:
         "Samstag, 25. Juli 2026, ab 17:00 Uhr im Eschengarten. Gemeinsames Betreuer-Essen zum Ausklang des SV Nord-Sommerfests.",
+      ctaUrl: null,
     },
   ];
   for (const e of STATIC_EVENTS) {

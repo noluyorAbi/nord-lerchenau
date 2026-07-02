@@ -362,6 +362,24 @@ const ENTRIES: Entry[] = [
     body: "Systematischer Auf- und Ausbau des Mädchen-/Juniorinnenbereichs.",
     tag: "section",
   },
+  {
+    year: 2026,
+    title: "Neue Website geht an den Start",
+    body: "Der Verein bekommt einen modernen Webauftritt. Design und Umsetzung: Alperen Adatepe · verantwortlich und unterstützend: Tom Wurm und Ralf Kirmeyer.",
+    tag: "milestone",
+  },
+  {
+    year: 2026,
+    title: "Vereinsplaner startet",
+    body: "Das Vereinsprogramm Vereinsplaner (app.vereinsplaner.at) wird eingeführt. Verantwortlich und unterstützend: Fabian Falk und Ralf Kirmeyer.",
+    tag: "leadership",
+  },
+  {
+    year: 2026,
+    title: "Zentrale Datenablage mit HiDrive",
+    body: "Der Verein führt HiDrive als zentrale Datenbank und Dateiablage ein. Verantwortlich: Ralf Kirmeyer.",
+    tag: "leadership",
+  },
 ];
 
 const FILTERS: Array<{ id: Entry["tag"] | "all"; label: string }> = [

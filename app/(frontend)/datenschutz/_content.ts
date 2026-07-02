@@ -94,7 +94,7 @@ export const DATENSCHUTZ_SECTIONS: LegalSection[] = [
       { kind: "h3", text: "Vercel (Hosting)" },
       {
         kind: "p",
-        text: "Diese Website wird bei **Vercel Inc.** (340 S Lemon Ave #4133, Walnut, CA 91789, USA) gehostet. Vercel verarbeitet Zugriffsdaten zur Bereitstellung der Website. Datenübermittlung in die USA durch Standardvertragsklauseln und DPF-Zertifizierung abgesichert.",
+        text: "Diese Website wird bei **Vercel Inc.** (650 California St, San Francisco, CA 94108, USA) gehostet. Vercel verarbeitet Zugriffsdaten zur Bereitstellung der Website. Datenübermittlung in die USA durch Standardvertragsklauseln und DPF-Zertifizierung abgesichert. Mit Vercel wurde ein Vertrag zur Auftragsverarbeitung gemäß Art. 28 DSGVO abgeschlossen; dieser ist Bestandteil der Vertragsbedingungen von Vercel (Data Processing Agreement).",
       },
       {
         kind: "linkRow",
@@ -105,7 +105,7 @@ export const DATENSCHUTZ_SECTIONS: LegalSection[] = [
       { kind: "h3", text: "Neon (Datenbank)" },
       {
         kind: "p",
-        text: "Inhalte und Mitgliedsdaten werden in einer Postgres-Datenbank bei **Neon Inc.** in der EU-Region Frankfurt am Main gespeichert. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.",
+        text: "Inhalte und Mitgliedsdaten werden in einer Postgres-Datenbank bei **Neon Inc.** in der EU-Region Frankfurt am Main gespeichert. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO. Auch mit Neon wurde ein Vertrag zur Auftragsverarbeitung gemäß Art. 28 DSGVO abgeschlossen; dieser ist Bestandteil der Vertragsbedingungen von Neon (Data Processing Agreement).",
       },
       {
         kind: "linkRow",
@@ -127,6 +127,14 @@ export const DATENSCHUTZ_SECTIONS: LegalSection[] = [
         tone: "key",
         title: "Wir setzen kein Tracking ein",
         text: "**Keine Tracking-, Analyse- oder Marketing-Cookies.** Nur funktional notwendige Cookies, zulässig nach § 25 Abs. 2 Nr. 2 TTDSG ohne Einwilligung.",
+      },
+      {
+        kind: "p",
+        text: "Technisch notwendige Cookies speichern wir auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO sowie § 25 Abs. 2 TTDSG. Unser berechtigtes Interesse liegt in der technisch fehlerfreien und sicheren Bereitstellung der Website.",
+      },
+      {
+        kind: "p",
+        text: "Optionale Cookies oder automatisch geladene externe Inhalte, die eine Einwilligung erfordern (Art. 6 Abs. 1 lit. a DSGVO, § 25 Abs. 1 TTDSG), setzen wir derzeit nicht ein. Ein Consent-Tool (Cookie-Banner) ist daher nicht erforderlich. Sollte sich dies künftig ändern, führen wir ein entsprechendes Consent-Management ein.",
       },
       {
         kind: "p",

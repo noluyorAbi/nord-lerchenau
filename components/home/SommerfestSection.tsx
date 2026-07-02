@@ -38,7 +38,15 @@ const PROGRAM: ProgramItem[] = [
   },
 ];
 
+// Auto-Ablauf: Das Event endet in der Nacht des 25.07.2026 (Bar/DJ-Ausklang).
+// Fünf Tage nach Event-Ende blendet sich die Section vollautomatisch aus.
+// Ein geplanter Cloud-Agent entfernt diese Datei danach komplett aus dem Code
+// (siehe docs/SOMMERFEST-CLEANUP.md).
+const SOMMERFEST_EXPIRES_AT = new Date("2026-07-31T00:00:00+02:00");
+
 export function SommerfestSection() {
+  if (new Date() >= SOMMERFEST_EXPIRES_AT) return null;
+
   return (
     <section className="border-b border-nord-line bg-nord-navy text-nord-paper">
       <div className="mx-auto max-w-[1320px] px-6 py-16 md:px-7 md:py-24">

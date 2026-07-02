@@ -10,26 +10,47 @@ type LexNode = Record<string, unknown>;
 
 /**
  * Build a Lexical root doc from a tiny markdown-ish syntax.
- * Supports: ## → h2, ### → h3, #### → h4, blank-line paragraphs. Plain text only.
+ * Supports: ## → h2, ### → h3, #### → h4, blank-line paragraphs, and
+ * inline [label](https://url) links. Everything else is plain text.
  */
 function md(input: string): { root: LexNode } {
+  const textNode = (text: string): LexNode => ({
+    type: "text",
+    text,
+    format: 0,
+    version: 1,
+    detail: 0,
+    mode: "normal",
+    style: "",
+  });
+  const inline = (text: string): LexNode[] => {
+    const nodes: LexNode[] = [];
+    const linkRe = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
+    let last = 0;
+    for (const m of text.matchAll(linkRe)) {
+      const idx = m.index ?? 0;
+      if (idx > last) nodes.push(textNode(text.slice(last, idx)));
+      nodes.push({
+        type: "link",
+        format: "",
+        indent: 0,
+        version: 3,
+        direction: "ltr",
+        fields: { linkType: "custom", url: m[2], newTab: true },
+        children: [textNode(m[1]!)],
+      });
+      last = idx + m[0].length;
+    }
+    if (last < text.length) nodes.push(textNode(text.slice(last)));
+    return nodes.length > 0 ? nodes : [textNode(text)];
+  };
   const paragraph = (text: string): LexNode => ({
     type: "paragraph",
     format: "",
     indent: 0,
     version: 1,
     direction: "ltr",
-    children: [
-      {
-        type: "text",
-        text,
-        format: 0,
-        version: 1,
-        detail: 0,
-        mode: "normal",
-        style: "",
-      },
-    ],
+    children: inline(text),
   });
   const heading = (tag: "h2" | "h3" | "h4", text: string): LexNode => ({
     type: "heading",

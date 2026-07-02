@@ -156,7 +156,7 @@ export default async function TeamPage({ params }: Props) {
 
         <div className="space-y-10 md:space-y-12">
           {hasDescription ? (
-            <div className="prose prose-neutral prose-lg max-w-none">
+            <div className="rich-text max-w-none text-lg">
               <RichText data={team.description as SerializedEditorState} />
             </div>
           ) : (

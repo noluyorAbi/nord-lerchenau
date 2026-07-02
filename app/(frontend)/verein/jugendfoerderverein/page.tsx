@@ -56,7 +56,7 @@ export default async function JugendfoerderPage() {
       />
       <article className="mx-auto max-w-3xl px-6 py-12 md:py-16">
         {hasBody ? (
-          <div className="prose prose-neutral prose-lg max-w-none">
+          <div className="rich-text max-w-none text-lg">
             <RichText data={page.body as SerializedEditorState} />
           </div>
         ) : (

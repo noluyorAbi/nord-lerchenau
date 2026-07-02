@@ -137,7 +137,7 @@ export default async function NewsPost({ params, searchParams }: Props) {
       </section>
 
       <article className="mx-auto max-w-3xl px-6 py-14 md:py-20">
-        <div className="prose prose-neutral prose-lg max-w-none prose-headings:font-display prose-headings:font-black prose-headings:tracking-tight prose-h2:mt-12 prose-h2:border-b prose-h2:border-nord-line prose-h2:pb-2 prose-h3:mt-10 prose-a:text-nord-navy hover:prose-a:text-nord-gold prose-strong:text-nord-ink prose-p:leading-relaxed">
+        <div className="rich-text max-w-none text-lg">
           <RichText data={post.body as SerializedEditorState} />
         </div>
 

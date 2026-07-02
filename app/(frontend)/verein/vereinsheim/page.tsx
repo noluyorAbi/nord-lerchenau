@@ -6,6 +6,7 @@ import { getPayloadClient } from "@/lib/payload";
 
 export const dynamic = "force-dynamic";
 
+const ESCHENGARTEN_URL = "https://www.eschengarten.com";
 const ESCHENGARTEN_MAPS_URL =
   "https://www.google.com/maps/search/?api=1&query=Eschengarten+Ebereschenstra%C3%9Fe+17+M%C3%BCnchen";
 
@@ -31,14 +32,24 @@ export default async function VereinsheimPage() {
           <p className="mt-2 text-sm leading-relaxed text-nord-ink md:text-base">
             Heimat im Münchner Norden seit 1947.
           </p>
-          <a
-            href={ESCHENGARTEN_MAPS_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-3 inline-flex items-center gap-2 rounded-full bg-nord-ink px-4 py-2 font-mono text-[11px] font-bold uppercase tracking-[0.15em] text-white transition hover:-translate-y-px hover:bg-nord-navy-2"
-          >
-            Eschengarten · Saisonale Speisekarte · Ebereschenstraße 17 ↗
-          </a>
+          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+            <a
+              href={ESCHENGARTEN_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-nord-ink px-4 py-2 font-mono text-[11px] font-bold uppercase tracking-[0.15em] text-white transition hover:-translate-y-px hover:bg-nord-navy-2"
+            >
+              Eschengarten · Saisonale Speisekarte ↗
+            </a>
+            <a
+              href={ESCHENGARTEN_MAPS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-[11px] font-bold uppercase tracking-[0.15em] text-nord-muted underline decoration-nord-line underline-offset-4 transition hover:text-nord-ink"
+            >
+              Ebereschenstraße 17 · Google Maps ↗
+            </a>
+          </div>
         </div>
         {hasBody ? (
           <div className="prose prose-neutral max-w-none">

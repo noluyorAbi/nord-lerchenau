@@ -142,8 +142,6 @@ export default async function VorstandPage() {
       !isBlockedName(p.name),
   );
 
-  const totalPeople = result.docs.length;
-
   return (
     <>
       <PageHero
@@ -166,7 +164,8 @@ export default async function VorstandPage() {
             label="Jugendleitung"
             tone="gold"
           />
-          <StatTile value={totalPeople} label="Ansprechpartner" tone="ink" />
+          {/* 2026_06_02 Vereinswunsch: "Mitglieder über 600" als Kennzahl. */}
+          <StatTile value="600+" label="Mitglieder" tone="ink" />
         </div>
 
         <SectionHeader
@@ -297,7 +296,7 @@ function StatTile({
   label,
   tone,
 }: {
-  value: number;
+  value: number | string;
   label: string;
   tone: "navy" | "sky" | "gold" | "ink";
 }) {

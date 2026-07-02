@@ -10,18 +10,13 @@ export default function Page() {
         eyebrow="Sport"
         title="Volleyball"
         fallbackLede="Smash auf Holz: Familien-Volleyball mit Spaß-Faktor, seit 1984."
-        intro="Wir sind die Volleyballer:innen des SV Nord, ursprünglich 1984 als Familien-Volleyballer gestartet, seit Jahren eigene Abteilung. Mixed, Hobby, alle Spielstärken. Hauptsache, der Ball geht übers Netz."
-        pills={[
-          "Hobby & Mixed",
-          "Seit 1984",
-          "alle Stärken",
-          "Waldmeisterhalle",
-        ]}
+        intro="Wir sind die Volleyballer:innen des SV Nord, ursprünglich 1984 als Familien-Volleyballer gestartet, seit Jahren eigene Abteilung. Einmal pro Woche treffen wir uns freitags in der Waldmeisterschule. Mixed, Hobby, alle Spielstärken. Hauptsache, der Ball geht übers Netz."
+        pills={["Hobby & Mixed", "Seit 1984", "Fr 19:00", "Waldmeisterschule"]}
         stats={[
           { label: "Aktiv seit", value: "1984" },
           { label: "Form", value: "Hobby & Mixed" },
-          { label: "Training", value: "2× Woche" },
-          { label: "Halle", value: "Waldmeisterhalle" },
+          { label: "Training", value: "Fr · 19-20 Uhr" },
+          { label: "Halle", value: "Waldmeisterschule" },
           { label: "Altersspanne", value: "30-75 J." },
         ]}
         highlights={[
@@ -33,14 +28,14 @@ export default function Page() {
           },
           {
             eyebrow: "Training",
-            title: "Zwei Abende pro Woche",
-            body: "Wir treffen uns regelmäßig in der Waldmeisterhalle: feste Trainingszeiten, ohne Punktspielbetrieb, mit Smash-Sessions und Volleys.",
+            title: "Einmal pro Woche",
+            body: "Freitag 19:00 bis 20:00 Uhr in der Waldmeisterschule. In den Schulferien pausieren wir; sonst läuft der Termin verlässlich, ohne Punktspielbetrieb, mit Smash-Sessions und Volleys.",
             accent: "navy",
           },
         ]}
         cta={{
           title: "Probetraining? Komm einfach vorbei.",
-          body: "Schreib uns kurz, wir nennen dir Halle und Uhrzeit. Schuhe mit heller Sohle reichen, wir leihen dir alles andere.",
+          body: "Komm freitags um 19:00 Uhr in die Waldmeisterschule oder schreib uns kurz vorher. Schuhe mit heller Sohle reichen, wir leihen dir alles andere.",
           mailSubject: "Volleyball: Probetraining",
           primaryLabel: "Probetraining anfragen",
         }}

@@ -169,7 +169,7 @@ export default async function FussballPage() {
             <FussballPillar
               eyebrow="Organisation"
               title="PR, Events, Equipment, Organisation"
-              body="Hinter den Kulissen: Öffentlichkeitsarbeit, Vereinsevents, Material- und Trikotverwaltung, organisatorischer Backbone der Abteilung. Namen folgen."
+              body="Wir suchen tatkräftige Unterstützung! Um unsere Projekte und Ziele erfolgreich zu meistern, wie das nächste Vereinsfest oder die Unterstützung in unseren Teams, brauchen wir noch helfende Hände. Egal ob Organisationstalent, handwerkliches Geschick oder einfach gute Laune und etwas Zeit: Bei uns ist jede helfende Kraft ein Gewinn! Hast du Lust, gemeinsam mit uns anzupacken? Dann schreib uns einfach eine Nachricht an info@svnord.de."
               href="/fussball"
               meta="Ehrenamt · Backbone"
               tone="paper"

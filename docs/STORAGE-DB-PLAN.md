@@ -5,12 +5,12 @@ pflegt aktuell ausschliesslich der Entwickler (kein Admin-Upload durch den Verei
 
 ## 1. Was gerade laeuft (Ist-Zustand)
 
-| Baustein     | Was es ist                                   | Provider / Paket                       | Kosten heute       |
-| ------------ | -------------------------------------------- | -------------------------------------- | ------------------ |
-| Datenbank    | Serverless **PostgreSQL**                    | **Neon** (AWS Frankfurt), `@payloadcms/db-postgres` | Free-Tier, 0 EUR   |
-| Bild-Storage | **Vercel Blob**                              | `@payloadcms/storage-vercel-blob`      | Free-Tier, 0 EUR   |
-| CMS          | **Payload CMS 3** (Admin unter `/admin`)     | im Next.js-Projekt integriert          | inklusive          |
-| Hosting      | Vercel (Projekt `nord-lerchenau`)            | Vercel                                 | Free/Hobby         |
+| Baustein     | Was es ist                               | Provider / Paket                                    | Kosten heute     |
+| ------------ | ---------------------------------------- | --------------------------------------------------- | ---------------- |
+| Datenbank    | Serverless **PostgreSQL**                | **Neon** (AWS Frankfurt), `@payloadcms/db-postgres` | Free-Tier, 0 EUR |
+| Bild-Storage | **Vercel Blob**                          | `@payloadcms/storage-vercel-blob`                   | Free-Tier, 0 EUR |
+| CMS          | **Payload CMS 3** (Admin unter `/admin`) | im Next.js-Projekt integriert                       | inklusive        |
+| Hosting      | Vercel (Projekt `nord-lerchenau`)        | Vercel                                              | Free/Hobby       |
 
 - Die Datenbank (Neon) ist die Quelle fuer Mannschaften, Personen, Sponsoren, News.
   Payload schreibt/liest dort. **Ohne DB laeuft die Seite aktuell nicht** (jede Seite

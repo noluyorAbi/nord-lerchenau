@@ -4,7 +4,10 @@ import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
 import { getPayloadClient } from "@/lib/payload";
 import { mediaSrc } from "@/lib/publicUploads";
-import { FALLBACK_SPONSORS } from "@/lib/sponsors-fallback";
+import {
+  FALLBACK_SPONSORS,
+  sponsorLogoFallback,
+} from "@/lib/sponsors-fallback";
 
 export const dynamic = "force-dynamic";
 
@@ -258,11 +261,14 @@ type SponsorProps = {
 function SponsorCard({ sponsor, size }: SponsorProps) {
   const s = sponsor;
   const logo = typeof s.logo === "object" && s.logo ? s.logo : null;
-  const logoUrl = mediaSrc(logo);
+  const fallback = sponsorLogoFallback(s.name);
+  const logoUrl = mediaSrc(logo) ?? fallback.logoSrc;
+  const chipBg =
+    logoUrl && fallback.logoBg === "light" ? "bg-white" : "bg-nord-navy";
 
   const content = (
     <div
-      className={`group flex items-center justify-center overflow-hidden rounded-xl border border-nord-line bg-nord-navy ${
+      className={`group flex items-center justify-center overflow-hidden rounded-xl border border-nord-line ${chipBg} ${
         size === "large" ? "aspect-[16/9] p-8" : "aspect-[3/2] p-5"
       } transition hover:-translate-y-0.5 hover:shadow-lg`}
     >

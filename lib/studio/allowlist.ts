@@ -99,3 +99,28 @@ export function flagSensitiveContent(content: string): string[] {
     (re) => re.source,
   );
 }
+
+/**
+ * Detect an actual leaked credential VALUE in changed content (as opposed to a
+ * code reference to `process.env.X`, which flagSensitiveContent handles). This
+ * catches a token that was written verbatim into an allowed file (e.g.
+ * public/leak.txt) — the exfiltration path that would survive the path allowlist.
+ * Match on known provider prefixes; deliberately conservative to avoid false
+ * positives on ordinary frontend code.
+ */
+const LEAKED_SECRET_PATTERNS: { label: string; re: RegExp }[] = [
+  { label: "anthropic-key", re: /sk-ant-[A-Za-z0-9_-]{16,}/ },
+  { label: "github-token", re: /gh[posu]_[A-Za-z0-9]{20,}/ },
+  { label: "github-pat", re: /github_pat_[A-Za-z0-9_]{20,}/ },
+  { label: "webhook-secret", re: /whsec_[A-Za-z0-9]{16,}/ },
+  { label: "vercel-blob-token", re: /vercel_blob_rw_[A-Za-z0-9_]{16,}/ },
+  { label: "resend-key", re: /\bre_[A-Za-z0-9]{20,}/ },
+  { label: "aws-access-key", re: /\bAKIA[0-9A-Z]{16}\b/ },
+  { label: "openai-key", re: /\bsk-[A-Za-z0-9]{40,}/ },
+];
+
+export function scanForLeakedSecrets(content: string): string[] {
+  return LEAKED_SECRET_PATTERNS.filter((p) => p.re.test(content)).map(
+    (p) => p.label,
+  );
+}

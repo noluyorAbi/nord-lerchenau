@@ -4,6 +4,7 @@ import {
   checkChangedPaths,
   flagSensitiveContent,
   isPathAllowed,
+  scanForLeakedSecrets,
 } from "@/lib/studio/allowlist";
 
 describe("studio allowlist — allowed paths", () => {
@@ -89,5 +90,29 @@ describe("flagSensitiveContent", () => {
     expect(
       flagSensitiveContent(`export function Hero() { return <div>Hi</div>; }`),
     ).toEqual([]);
+  });
+});
+
+describe("scanForLeakedSecrets", () => {
+  it.each([
+    ["anthropic-key", "const k = 'sk-ant-api03-abcdef0123456789ABCDEF';"],
+    ["github-token", "token: ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"],
+    ["github-pat", "github_pat_11ABCDEFGHIJKLMNOPQRSTUV_wxyz0123456789"],
+    ["webhook-secret", "whsec_ABCDEFGHIJKLMNOPQRSTUVWX"],
+    ["vercel-blob-token", "vercel_blob_rw_ABCDEFGHIJKLMNOPQRST_xyz"],
+    ["aws-access-key", "AKIAIOSFODNN7EXAMPLE"],
+  ])("detects a leaked %s written into content", (label, content) => {
+    expect(scanForLeakedSecrets(content)).toContain(label);
+  });
+
+  it("does not flag ordinary frontend content", () => {
+    expect(
+      scanForLeakedSecrets(
+        `export function Hero() { return <div className="hero">SV Nord</div>; }`,
+      ),
+    ).toEqual([]);
+    // A code reference to an env var is NOT a leaked value (that's handled by
+    // flagSensitiveContent).
+    expect(scanForLeakedSecrets(`process.env.ANTHROPIC_API_KEY`)).toEqual([]);
   });
 });

@@ -25,7 +25,25 @@ import {
   checkChangedPaths,
   flagSensitiveContent,
   isPathAllowed,
+  scanForLeakedSecrets,
 } from "@/lib/studio/allowlist";
+
+// Strip every secret the agent must never see from THIS process's env, before
+// the agent (which shares process.env) can run. ANTHROPIC_API_KEY is kept — the
+// SDK needs it — but the agent has no Bash tool (see runAgent), so it has no
+// channel to read process.env anyway; this is defence in depth. Deleting here
+// does not affect later workflow steps (they run in separate shells with their
+// own Actions-provided env).
+for (const k of [
+  "GITHUB_TOKEN",
+  "GITHUB_DISPATCH_TOKEN",
+  "AGENT_WEBHOOK_SECRET",
+  "STUDIO_CALLBACK_URL",
+  "BLOB_READ_WRITE_TOKEN",
+  "RESEND_API_KEY",
+]) {
+  delete process.env[k];
+}
 
 const MODEL = process.env.STUDIO_MODEL ?? "claude-opus-4-8";
 const REVIEW_MODEL = process.env.STUDIO_REVIEW_MODEL ?? "claude-sonnet-4-6";
@@ -47,8 +65,10 @@ HARTE REGELN:
 - Am Ende muss \`bunx tsc --noEmit\` und \`bun run build\` grün sein.
 `;
 
-// Hard allowlist hook: deny any Edit/Write/MultiEdit outside the allowed paths,
-// and deny shell commands that would escape scope or touch git/secrets.
+// Hard allowlist hook: deny any Edit/Write/MultiEdit outside the allowed paths.
+// The agent is not given a Bash tool at all (see runAgent), so there is no
+// arbitrary-command surface to police — a regex denylist on shell commands is
+// trivially bypassable and is deliberately NOT relied on here.
 const guard: HookCallback = async (input) => {
   const pre = input as PreToolUseHookInput;
   const ti = (pre.tool_input ?? {}) as Record<string, unknown>;
@@ -64,22 +84,6 @@ const guard: HookCallback = async (input) => {
       },
     };
   }
-  if (pre.tool_name === "Bash") {
-    const cmd = String(ti.command ?? "");
-    if (
-      /\bgit\s+(push|commit|remote|config)\b|\brm\s+-rf\s+\/|\b(curl|wget|nc)\b|\benv\b|\.env|\bbun\s+add\b|\bnpm\s+i(nstall)?\b/.test(
-        cmd,
-      )
-    ) {
-      return {
-        hookSpecificOutput: {
-          hookEventName: "PreToolUse",
-          permissionDecision: "deny",
-          permissionDecisionReason: `Befehl gesperrt: ${cmd.slice(0, 80)}`,
-        },
-      };
-    }
-  }
   return {};
 };
 
@@ -93,16 +97,17 @@ async function runAgent(
     model: opts.model,
     cwd: process.cwd(),
     permissionMode: opts.writes ? "acceptEdits" : "default",
+    // No Bash: the implement agent only edits files; the review agent is handed
+    // the diff as text. Removing Bash eliminates arbitrary command execution and
+    // the only channel by which the agent could read process.env / exfiltrate.
     allowedTools: opts.writes
-      ? ["Read", "Grep", "Glob", "Edit", "Write", "MultiEdit", "Bash"]
-      : ["Read", "Grep", "Glob", "Bash"],
-    disallowedTools: ["WebFetch", "WebSearch", "Task"],
+      ? ["Read", "Grep", "Glob", "Edit", "Write", "MultiEdit"]
+      : ["Read", "Grep", "Glob"],
+    disallowedTools: ["Bash", "WebFetch", "WebSearch", "Task"],
     maxTurns: opts.maxTurns ?? 60,
     hooks: opts.writes
       ? {
-          PreToolUse: [
-            { matcher: "Write|Edit|MultiEdit|Bash", hooks: [guard] },
-          ],
+          PreToolUse: [{ matcher: "Write|Edit|MultiEdit", hooks: [guard] }],
         }
       : undefined,
     systemPrompt: {
@@ -202,8 +207,11 @@ async function main() {
   const changedFiles = collectChangedFiles();
   const diffCheck = checkChangedPaths(changedFiles);
 
-  // 4) Flag any data-layer/secret access in changed (allowed) files
+  // 4) Flag data-layer/secret access, and hard-block any leaked credential VALUE
+  // written into a changed (allowed) file — the only exfil path left once the
+  // agent has no Bash and no network tools.
   const sensitiveFlags: string[] = [];
+  const leakedSecrets: string[] = [];
   for (const f of changedFiles) {
     if (!isPathAllowed(f)) continue;
     try {
@@ -211,16 +219,28 @@ async function main() {
       const content = readFileSync(f, "utf8");
       for (const p of flagSensitiveContent(content))
         sensitiveFlags.push(`${f}: ${p}`);
+      for (const label of scanForLeakedSecrets(content))
+        leakedSecrets.push(`${f}: ${label}`);
     } catch {
       /* file deleted — ignore */
     }
   }
+  // Surface leaked secrets in the same channel the callback already renders.
+  for (const l of leakedSecrets) sensitiveFlags.push(`LEAKED SECRET → ${l}`);
 
-  // 5) Adversarial read-only review (cheaper model)
+  // 5) Adversarial read-only review (cheaper model). The diff is computed here
+  // and passed as text — the review agent has no Bash tool. `add -N` makes
+  // untracked files appear in the diff without staging their content.
   let review = "";
   if (MAX_COST - totalCost > 0.3) {
+    try {
+      git("add -A -N");
+    } catch {
+      /* nothing to intent-add */
+    }
+    const diff = git("diff HEAD").slice(0, 15000);
     review = await runAgent(
-      `Prüfe kritisch den aktuellen git-Diff (\`git diff HEAD\`). Erfüllt er den Wunsch "${PROMPT}"? Nenne knapp konkrete Probleme (Funktion, Design-Konsistenz, A11y, Scope). Wenn alles passt, antworte "OK".`,
+      `Erfüllt der folgende git-Diff den Wunsch "${PROMPT}"? Nenne knapp konkrete Probleme (Funktion, Design-Konsistenz, A11y, Scope). Wenn alles passt, antworte "OK".\n\n\`\`\`diff\n${diff}\n\`\`\``,
       {
         writes: false,
         model: REVIEW_MODEL,
@@ -229,7 +249,12 @@ async function main() {
     );
   }
 
-  const ok = gates.ok && diffCheck.ok && changedFiles.length > 0;
+  // A leaked secret is a hard fail — never push a branch that carries one.
+  const ok =
+    gates.ok &&
+    diffCheck.ok &&
+    changedFiles.length > 0 &&
+    leakedSecrets.length === 0;
   const result = {
     requestId: REQUEST_ID,
     ok,
@@ -237,7 +262,9 @@ async function main() {
     allowlistOk: diffCheck.ok,
     violations: diffCheck.violations,
     sensitiveFlags,
-    needsHumanReview: sensitiveFlags.length > 0 || !diffCheck.ok,
+    leakedSecrets,
+    needsHumanReview:
+      sensitiveFlags.length > 0 || leakedSecrets.length > 0 || !diffCheck.ok,
     iterations,
     costUsd: Number(totalCost.toFixed(4)),
     changedFiles,

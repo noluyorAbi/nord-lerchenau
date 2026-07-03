@@ -92,6 +92,31 @@ jobs:
           # from main. Only this workflow ever writes studio/* branches.
           git push --force origin "$BRANCH"
 
+      - name: Capture preview screenshots
+        id: shots
+        # Best-effort: waits for the Vercel preview of the pushed commit, then
+        # screenshots desktop + mobile and uploads them to Vercel Blob. Runs
+        # AFTER the agent, in its own shell the agent never enters (secrets are
+        # never exposed to agent-written code). Never fails the run.
+        if: steps.push.outcome == 'success' && env.STUDIO_PREVIEW_URL_TEMPLATE != ''
+        continue-on-error: true
+        env:
+          BRANCH: ${{ steps.branch.outputs.branch }}
+          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+          STUDIO_PREVIEW_BYPASS: ${{ secrets.STUDIO_PREVIEW_BYPASS }}
+        run: |
+          SHA="$(git rev-parse HEAD)"
+          PREVIEW_URL="$(node scripts/studio/wait-for-preview.mjs "$SHA")" || exit 0
+          [ -z "$PREVIEW_URL" ] && exit 0
+          # playwright-core (the API) is a committed devDep; only the chromium
+          # binary is installed here, matched to the installed core version.
+          bunx playwright@1.61.1 install --with-deps chromium
+          PREVIEW_URL="$PREVIEW_URL" \
+            bun run scripts/studio/screenshot.ts > "$RUNNER_TEMP/shots.json" || echo '[]' > "$RUNNER_TEMP/shots.json"
+
       - name: Post result back to the site
         if: always()
         env:
@@ -119,6 +144,14 @@ jobs:
             if(pushed && tpl && process.env.BRANCH){
               r.previewUrl=tpl.split("{branch}").join(process.env.BRANCH);
             }
+            // Attach preview screenshots captured by the previous step (if any).
+            try {
+              const sp = (process.env.RUNNER_TEMP||"") + "/shots.json";
+              if (sp && fs.existsSync(sp)) {
+                const shots = JSON.parse(fs.readFileSync(sp, "utf8"));
+                if (Array.isArray(shots) && shots.length) r.previewShots = shots;
+              }
+            } catch(e) { /* no shots — fine */ }
             fs.writeFileSync(process.env.STUDIO_RESULT_PATH, JSON.stringify(r));
           '
           curl -sS -X POST "$CALLBACK_URL" \

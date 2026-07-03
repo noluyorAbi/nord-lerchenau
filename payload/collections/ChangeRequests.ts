@@ -193,6 +193,22 @@ export const ChangeRequests: CollectionConfig = {
       },
     },
     {
+      // Auto-generated preview screenshots [{ label, url }]. Stored as JSON (one
+      // column, no child table); the club only READS them (devFieldAccess = read
+      // open, write dev-only via overrideAccess), never hand-edits. Validation
+      // lives in /api/agent/callback, not a field validator, so a malformed shot
+      // degrades gracefully instead of failing the whole status update.
+      name: "previewShots",
+      type: "json",
+      label: "Vorschau-Screenshots",
+      access: devFieldAccess,
+      admin: {
+        readOnly: true,
+        description:
+          "Automatisch erzeugte Screenshots der Vorschau (Desktop/Handy), vom Studio gesetzt. Nicht manuell bearbeiten.",
+      },
+    },
+    {
       name: "category",
       type: "select",
       defaultValue: "unbestimmt",

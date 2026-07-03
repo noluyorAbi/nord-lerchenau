@@ -3,10 +3,54 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+// --- Web Speech API: not in the TS DOM libs. Declare only the surface we use,
+// so voice input type-checks in strict mode without a dependency or `any`. ---
+interface SpeechRecognitionAlternative {
+  readonly transcript: string;
+}
+interface SpeechRecognitionResultLike {
+  readonly isFinal: boolean;
+  readonly length: number;
+  readonly [index: number]: SpeechRecognitionAlternative;
+}
+interface SpeechRecognitionResultListLike {
+  readonly length: number;
+  readonly [index: number]: SpeechRecognitionResultLike;
+}
+interface SpeechRecognitionEventLike extends Event {
+  readonly resultIndex: number;
+  readonly results: SpeechRecognitionResultListLike;
+}
+interface SpeechRecognitionErrorEventLike extends Event {
+  readonly error: string; // "not-allowed" | "no-speech" | "aborted" | ...
+}
+interface SpeechRecognitionLike extends EventTarget {
+  lang: string;
+  continuous: boolean;
+  interimResults: boolean;
+  maxAlternatives: number;
+  start(): void;
+  stop(): void;
+  abort(): void;
+  onresult: ((e: SpeechRecognitionEventLike) => void) | null;
+  onerror: ((e: SpeechRecognitionErrorEventLike) => void) | null;
+  onend: (() => void) | null;
+}
+type SpeechRecognitionCtor = new () => SpeechRecognitionLike;
+
+declare global {
+  interface Window {
+    SpeechRecognition?: SpeechRecognitionCtor;
+    webkitSpeechRecognition?: SpeechRecognitionCtor;
+  }
+}
+
 // A Lovable-style chat tab inside the Payload admin. The club types website
 // change wishes; each becomes a `change-requests` record (via the access-
 // controlled REST API). Status, preview link, and approve/reject live here.
 // All writes go through Payload access control — the dev fields stay locked.
+
+type PreviewShot = { label: string; url: string };
 
 type ChangeRequest = {
   id: number | string;
@@ -15,6 +59,7 @@ type ChangeRequest = {
   status?: string | null;
   clientDecision?: string | null;
   previewUrl?: string | null;
+  previewShots?: PreviewShot[] | null;
   createdAt?: string;
 };
 
@@ -76,6 +121,28 @@ const chipStyle: React.CSSProperties = {
   textAlign: "left",
 };
 
+const shotThumb: React.CSSProperties = {
+  display: "block",
+  width: 170,
+  height: 108,
+  objectFit: "cover",
+  objectPosition: "top",
+  borderRadius: 8,
+  border: "1px solid var(--theme-elevation-150, #e5e7eb)",
+  background: "var(--theme-elevation-100, #eee)",
+};
+
+// German UX copy for the voice input.
+const MIC_START_LABEL = "Spracheingabe starten";
+const MIC_STOP_LABEL = "Spracheingabe stoppen";
+const MIC_DENIED =
+  "Mikrofon-Zugriff wurde blockiert. Bitte im Browser erlauben und erneut versuchen.";
+const MIC_NO_SPEECH = "Nichts gehört — bitte noch einmal sprechen.";
+const MIC_GENERIC =
+  "Spracheingabe gerade nicht möglich. Bitte tippe stattdessen.";
+const MIC_PRIVACY_NOTE =
+  "Spracheingabe nutzt die Spracherkennung deines Browsers (in Chrome/Edge über Google). Sprich in ganzen Sätzen, so genau wie möglich.";
+
 async function api(path: string, init?: RequestInit) {
   const res = await fetch(`/api${path}`, {
     credentials: "include",
@@ -95,9 +162,24 @@ export default function StudioChat() {
   const [sending, setSending] = useState(false);
   const [enqueuing, setEnqueuing] = useState<string | number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [listening, setListening] = useState(false);
+  const [interim, setInterim] = useState("");
+  const [micError, setMicError] = useState<string | null>(null);
+  const [embedFor, setEmbedFor] = useState<string | number | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
+  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
+
+  const [speechSupported, setSpeechSupported] = useState(false);
 
   const isAdmin = me?.role === "admin";
+
+  // Detect Web Speech support AFTER mount only. Doing it during render would make
+  // the server (no window → false) and client (true) disagree → hydration error.
+  useEffect(() => {
+    setSpeechSupported(
+      !!(window.SpeechRecognition || window.webkitSpeechRecognition),
+    );
+  }, []);
 
   const load = useCallback(async () => {
     try {
@@ -201,6 +283,74 @@ export default function StudioChat() {
     }
   }
 
+  const stopListening = useCallback(() => {
+    recognitionRef.current?.stop();
+  }, []);
+
+  const startListening = useCallback(() => {
+    setMicError(null);
+    const Ctor = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!Ctor) return;
+
+    const rec = new Ctor();
+    rec.lang = "de-DE";
+    rec.continuous = true;
+    rec.interimResults = true;
+    rec.maxAlternatives = 1;
+
+    rec.onresult = (e) => {
+      let finalChunk = "";
+      let interimChunk = "";
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const r = e.results[i];
+        const t = r[0]?.transcript ?? "";
+        if (r.isFinal) finalChunk += t;
+        else interimChunk += t;
+      }
+      if (finalChunk) {
+        const add = finalChunk.trim();
+        // Append onto the LIVE field value (functional update) so text the user
+        // typed during recording is preserved, not overwritten.
+        setPrompt((prev) =>
+          prev ? prev.replace(/\s*$/, "") + " " + add + " " : add + " ",
+        );
+      }
+      setInterim(interimChunk);
+    };
+
+    rec.onerror = (e) => {
+      if (e.error === "not-allowed" || e.error === "service-not-allowed") {
+        setMicError(MIC_DENIED);
+      } else if (e.error === "no-speech") {
+        setMicError(MIC_NO_SPEECH);
+      } else if (e.error !== "aborted") {
+        setMicError(MIC_GENERIC);
+      }
+    };
+
+    rec.onend = () => {
+      setListening(false);
+      setInterim("");
+      recognitionRef.current = null;
+    };
+
+    recognitionRef.current = rec;
+    try {
+      rec.start();
+      setListening(true);
+    } catch {
+      // start() throws if already started — ignore.
+    }
+  }, []);
+
+  // Discard any in-flight recognition when the tab unmounts.
+  useEffect(() => {
+    return () => {
+      recognitionRef.current?.abort();
+      recognitionRef.current = null;
+    };
+  }, []);
+
   if (authChecked && !me) {
     return (
       <div style={{ maxWidth: 760, margin: "0 auto", padding: "1.5rem 1rem" }}>
@@ -242,16 +392,33 @@ export default function StudioChat() {
           So funktioniert’s
         </div>
         <ol style={{ margin: "0 0 14px", paddingLeft: 18 }}>
-          <li>Wunsch unten beschreiben und auf „Senden“ klicken.</li>
           <li>
-            Der Website-Betreuer startet die Umsetzung — die KI baut eine
-            Vorschau.
+            Wunsch unten beschreiben (tippen oder <strong>🎤 sprechen</strong>)
+            und auf „Senden“ klicken. <strong>Je genauer, desto besser</strong>:
+            sag was, wo und wie es aussehen soll (z. B. Farbe, Reihenfolge,
+            welche Seite).
           </li>
           <li>
-            Du öffnest die Vorschau und klickst „Passt ✓“ oder „Passt nicht ✗“
-            (mit Rückmeldung, was noch anders soll).
+            Der Website-Betreuer startet die Umsetzung — die KI baut eine echte
+            Vorschau (Preview-Deployment).
+          </li>
+          <li>
+            Du siehst hier <strong>Screenshots</strong> und kannst die Vorschau{" "}
+            <strong>interaktiv</strong> ansehen; dann klickst du „Passt ✓“ oder
+            „Passt nicht ✗“ (mit Rückmeldung, was noch anders soll).
+          </li>
+          <li>
+            Live geschaltet wird erst, wenn <strong>du zustimmst</strong> — den
+            finalen Schritt macht der Website-Betreuer.
           </li>
         </ol>
+        <div style={{ fontWeight: 700, marginBottom: 6 }}>🎤 Spracheingabe</div>
+        <p style={{ margin: "0 0 14px", opacity: 0.85 }}>
+          Klick auf <strong>„🎤 Sprechen“</strong> und beschreibe deinen Wunsch
+          laut — der Text erscheint automatisch im Feld. Nochmal klicken (oder
+          „● Stopp“) beendet die Aufnahme. Du kannst gesprochenen und getippten
+          Text mischen. (Funktioniert in Chrome, Edge und Safari.)
+        </p>
 
         <div style={{ fontWeight: 700, marginBottom: 6 }}>
           Inhalt oder Struktur?
@@ -339,10 +506,109 @@ export default function StudioChat() {
                   </span>
                   {it.previewUrl ? (
                     <a href={it.previewUrl} target="_blank" rel="noreferrer">
-                      Vorschau ansehen ↗
+                      Vorschau in neuem Tab öffnen ↗
                     </a>
                   ) : null}
                 </div>
+
+                {status === "vorschau_bereit" &&
+                (it.previewShots?.length || it.previewUrl) ? (
+                  <div style={{ marginTop: 12 }}>
+                    {it.previewShots?.length ? (
+                      <div
+                        style={{
+                          fontSize: 13,
+                          fontWeight: 600,
+                          marginBottom: 6,
+                        }}
+                      >
+                        So sieht deine Änderung aus:
+                      </div>
+                    ) : null}
+                    {it.previewShots?.length ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: 8,
+                          overflowX: "auto",
+                          paddingBottom: 4,
+                        }}
+                      >
+                        {it.previewShots.map((shot) => (
+                          <a
+                            key={shot.url}
+                            href={shot.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            title={`${shot.label} — größer öffnen`}
+                            style={{ flex: "0 0 auto", textAlign: "center" }}
+                          >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={shot.url}
+                              alt={`Vorschau (${shot.label})`}
+                              style={shotThumb}
+                            />
+                            <span
+                              style={{
+                                fontSize: 11,
+                                opacity: 0.7,
+                                display: "block",
+                                marginTop: 2,
+                              }}
+                            >
+                              {shot.label}
+                            </span>
+                          </a>
+                        ))}
+                      </div>
+                    ) : null}
+
+                    {it.previewUrl ? (
+                      embedFor === it.id ? (
+                        <figure style={{ margin: "10px 0 0" }}>
+                          <iframe
+                            src={it.previewUrl}
+                            title="Interaktive Vorschau"
+                            loading="lazy"
+                            sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+                            style={{
+                              width: "100%",
+                              height: 460,
+                              border:
+                                "1px solid var(--theme-elevation-150, #e5e7eb)",
+                              borderRadius: 8,
+                              background: "#fff",
+                            }}
+                          />
+                          <figcaption
+                            style={{ fontSize: 12, opacity: 0.7, marginTop: 6 }}
+                          >
+                            Interaktive Vorschau — hier klickbar. Falls nichts
+                            erscheint (Vorschau ist passwortgeschützt), nutze
+                            die Screenshots oben oder{" "}
+                            <a
+                              href={it.previewUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              in neuem Tab öffnen ↗
+                            </a>
+                            .
+                          </figcaption>
+                        </figure>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => setEmbedFor(it.id)}
+                          style={{ ...chipStyle, marginTop: 10 }}
+                        >
+                          ▶ Interaktive Vorschau hier laden
+                        </button>
+                      )
+                    ) : null}
+                  </div>
+                ) : null}
 
                 {isAdmin && ENQUEUEABLE.has(status) ? (
                   <div
@@ -432,7 +698,7 @@ export default function StudioChat() {
               if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) void submit();
             }}
             rows={2}
-            placeholder="Was möchtest du an der Website ändern? (Strg/Cmd+Enter zum Senden)"
+            placeholder="Was möchtest du an der Website ändern? Beschreibe es ruhig ausführlich — je genauer, desto besser. (Strg/Cmd+Enter zum Senden)"
             style={{
               flex: 1,
               resize: "vertical",
@@ -443,6 +709,18 @@ export default function StudioChat() {
               fontSize: 14,
             }}
           />
+          {speechSupported ? (
+            <button
+              type="button"
+              onClick={() => (listening ? stopListening() : startListening())}
+              aria-label={listening ? MIC_STOP_LABEL : MIC_START_LABEL}
+              aria-pressed={listening}
+              title={listening ? MIC_STOP_LABEL : MIC_START_LABEL}
+              style={btn(listening ? "#9a3412" : "#3a4a6b")}
+            >
+              {listening ? "● Stopp" : "🎤 Sprechen"}
+            </button>
+          ) : null}
           <button
             type="button"
             onClick={() => void submit()}
@@ -452,6 +730,46 @@ export default function StudioChat() {
             {sending ? "Sendet…" : "Senden"}
           </button>
         </div>
+        {listening ? (
+          <div
+            role="status"
+            aria-live="polite"
+            style={{
+              maxWidth: 760,
+              margin: "6px auto 0",
+              fontSize: 13,
+              color: "#9a3412",
+            }}
+          >
+            ● Aufnahme läuft — sprich deinen Wunsch.{" "}
+            {interim ? <span style={{ opacity: 0.6 }}>{interim}…</span> : null}
+          </div>
+        ) : null}
+        {micError ? (
+          <div
+            role="alert"
+            style={{
+              maxWidth: 760,
+              margin: "6px auto 0",
+              fontSize: 12,
+              color: "#b00",
+            }}
+          >
+            {micError}
+          </div>
+        ) : null}
+        {speechSupported ? (
+          <div
+            style={{
+              maxWidth: 760,
+              margin: "4px auto 0",
+              fontSize: 11,
+              opacity: 0.5,
+            }}
+          >
+            {MIC_PRIVACY_NOTE}
+          </div>
+        ) : null}
       </div>
     </div>
   );

@@ -16,6 +16,38 @@ function secretMatches(provided: string, expected: string): boolean {
   return timingSafeEqual(a, b);
 }
 
+/** True only for a parseable absolute https URL. Blocks javascript:/data:
+ * (XSS into <img src>/<a href>/<iframe src>) and protocol-relative //host. */
+function isSafeHttpsUrl(u: string): boolean {
+  try {
+    return new URL(u).protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+/** Validate worker-supplied preview screenshots. Never trust the worker: keep
+ * only well-formed { label, url } entries with an absolute https url, cap the
+ * count and label length. */
+function parsePreviewShots(
+  v: unknown,
+): { label: string; url: string }[] | null {
+  if (!Array.isArray(v)) return null;
+  const shots = v
+    .filter((s): s is { label: string; url: string } => {
+      if (typeof s !== "object" || s === null) return false;
+      const rec = s as Record<string, unknown>;
+      return (
+        typeof rec.label === "string" &&
+        typeof rec.url === "string" &&
+        isSafeHttpsUrl(rec.url)
+      );
+    })
+    .slice(0, 4)
+    .map((s) => ({ label: s.label.slice(0, 40), url: s.url }));
+  return shots.length ? shots : null;
+}
+
 /**
  * Webhook the AI-Studio CI worker posts its result to. Auth is a shared secret
  * (AGENT_WEBHOOK_SECRET), NOT a user session. We re-check the reported changed
@@ -64,10 +96,13 @@ export async function POST(request: Request): Promise<Response> {
   const allowlistOk = body.allowlistOk === true && recheck.ok;
   const needsHuman =
     body.needsHumanReview === true || (hasVerdict && !allowlistOk);
+  // Validate the scheme (not just non-empty): previewUrl is rendered into
+  // <a href> and <iframe src> in the admin, so a javascript: value would be XSS.
   const previewUrl =
-    typeof body.previewUrl === "string" && body.previewUrl.length > 0
+    typeof body.previewUrl === "string" && isSafeHttpsUrl(body.previewUrl)
       ? body.previewUrl
       : null;
+  const previewShots = parsePreviewShots(body.previewShots);
 
   let status: string;
   if (!workerOk && !hasVerdict) {
@@ -122,6 +157,14 @@ export async function POST(request: Request): Promise<Response> {
         ...(typeof body.branch === "string" ? { branch: body.branch } : {}),
         ...(typeof body.prUrl === "string" ? { prUrl: body.prUrl } : {}),
         ...(previewUrl ? { previewUrl } : {}),
+        // On a fresh preview cycle, REPLACE (or clear) screenshots so a new
+        // preview never shows stale shots from a previous, rejected iteration
+        // whose screenshot capture failed. Other transitions leave shots as-is.
+        ...(status === "vorschau_bereit" || status === "review"
+          ? { previewShots: previewShots ?? null }
+          : previewShots
+            ? { previewShots }
+            : {}),
         ...(typeof body.costUsd === "number" ? { costUsd: body.costUsd } : {}),
         ...(typeof body.iterations === "number"
           ? { iteration: body.iterations }

@@ -613,6 +613,12 @@ export interface ChangeRequest {
   clientDecision?: ("offen" | "passt" | "passt_nicht") | null;
   clientFeedback?: string | null;
   previewUrl?: string | null;
+  previewShots?:
+    | {
+        label: string;
+        url: string;
+      }[]
+    | null;
   category?: ("unbestimmt" | "inhalt" | "struktur") | null;
   devNotes?: string | null;
   branch?: string | null;
@@ -957,6 +963,7 @@ export interface ChangeRequestsSelect<T extends boolean = true> {
   clientDecision?: T;
   clientFeedback?: T;
   previewUrl?: T;
+  previewShots?: T;
   category?: T;
   devNotes?: T;
   branch?: T;

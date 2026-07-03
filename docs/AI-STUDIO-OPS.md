@@ -81,6 +81,45 @@ der Worker `previewUrl` aus einer deterministischen Vorlage:
   gebeten, eine Vorschau ohne Link freizugeben. Du kannst die `previewUrl` dann
   von Hand im Änderungswunsch eintragen, um `vorschau_bereit` auszulösen.
 
+### 2f. Vorschau-Screenshots im KI-Studio (optional, empfohlen)
+
+Damit der Verein die Änderung **direkt im KI-Studio als Screenshots** sieht (ohne
+den passwortgeschützten Preview-Link öffnen zu müssen), macht der Worker nach dem
+Deploy automatisch Screenshots (Desktop + Handy) und lädt sie in Vercel Blob.
+
+GitHub → Settings → Secrets and variables → Actions → **Secrets**:
+
+- `BLOB_READ_WRITE_TOKEN` — Vercel-Blob-Token (derselbe Store wie die Medien),
+  zum Hosten der Screenshots.
+- `VERCEL_TOKEN` — Read-Token (vercel.com/account/tokens), damit der Worker über
+  die Deployments-API **genau** das Preview des gepushten Commits findet (nicht
+  ein veraltetes, weil der Branch `studio-<id>` über Feedback-Runden wiederverwendet
+  wird).
+- `VERCEL_PROJECT_ID` — die Projekt-ID (Vercel → Projekt → Settings → General).
+- `VERCEL_TEAM_ID` — nur falls das Projekt unter einem Team liegt.
+- `STUDIO_PREVIEW_BYPASS` — nur falls Preview Deployment Protection an ist (2c):
+  ein Vercel-„Protection Bypass for Automation"-Token, damit der Headless-Browser
+  die geschützte Vorschau rendern kann.
+
+Ohne `VERCEL_TOKEN` fällt der Worker auf ein einfaches „Alias-URL auf HTTP 200
+pollen" zurück (kann bei Feedback-Runden mal ein altes Preview erwischen). Der
+ganze Schritt ist **best-effort** (`continue-on-error`): fehlen die Secrets,
+läuft alles normal weiter — nur ohne Screenshots (dann bleibt der Vorschau-Link).
+
+Der Verein kann im KI-Studio zusätzlich die **interaktive Vorschau** einbetten
+(Button „Interaktive Vorschau hier laden"). Das funktioniert nur, wenn die
+Preview nicht passwortgeschützt ist oder ein Bypass-Token an der URL hängt; sonst
+nutzt der Verein die Screenshots + den Link. Bewusst als Klick-zum-Laden, damit
+nicht standardmäßig eine Vercel-Login-Seite im Rahmen erscheint.
+
+### Spracheingabe (Voice Input)
+
+Das Eingabefeld im KI-Studio hat einen **🎤-Sprechen-Button**. Er nutzt die
+Web-Speech-API des Browsers (Chrome/Edge/Safari; Firefox zeigt den Button nicht).
+Kein Server, keine Kosten, kein Setup — funktioniert sofort. Hinweis für den
+Verein: in Chrome/Edge läuft die Erkennung über Google-Server (steht als Hinweis
+unter dem Feld). Nichts zu aktivieren.
+
 ---
 
 ## 3. Sicherheits-Recap (die Garantien)

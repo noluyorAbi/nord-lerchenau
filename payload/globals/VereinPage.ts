@@ -8,7 +8,7 @@ export const VereinPage: GlobalConfig = {
   slug: "verein-page",
   label: "Verein (Übersicht)",
   admin: {
-    group: "4. Seiten",
+    group: "6. Seiten",
     description:
       "Inhalte der Verein-Landingpage /verein (Kennzahlen, Karten, Social-Media-Team, Aufruf).",
   },

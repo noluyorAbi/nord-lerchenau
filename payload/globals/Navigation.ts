@@ -8,7 +8,7 @@ export const Navigation: GlobalConfig = {
   slug: "navigation",
   label: "Navigation (Menüleiste)",
   admin: {
-    group: "5. Einstellungen",
+    group: "7. Einstellungen",
     description: "Menü-Einträge oben (Header) und unten (Footer).",
   },
   access: { read: anyone, update: authenticated },

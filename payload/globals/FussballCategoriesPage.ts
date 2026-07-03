@@ -8,7 +8,7 @@ export const FussballCategoriesPage: GlobalConfig = {
   slug: "fussball-categories",
   label: "Fußball-Kategorien (Seiten)",
   admin: {
-    group: "4. Seiten",
+    group: "6. Seiten",
     description:
       "Redaktionelle Texte der Fußball-Kategorieseiten (/fussball/herren, /junioren, /juniorinnen, /bambini). Mannschaftslisten, BFV-/FuPa-Livedaten und der U8-Showcase werden NICHT hier gepflegt, sondern stammen aus den Sammlungen bzw. Livequellen.",
   },

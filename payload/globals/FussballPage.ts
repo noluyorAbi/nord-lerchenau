@@ -8,7 +8,7 @@ export const FussballPage: GlobalConfig = {
   slug: "fussball-page",
   label: "Fußball (Hauptseite)",
   admin: {
-    group: "4. Seiten",
+    group: "6. Seiten",
     description:
       "Statische Inhalte der Seite /fussball: Begrüßung, sportliche Leitung und die fünf Säulen-Karten. Tabellen und Torjäger kommen live von FuPa/BFV und werden hier nicht gepflegt.",
   },

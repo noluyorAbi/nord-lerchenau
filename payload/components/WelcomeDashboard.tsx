@@ -164,13 +164,13 @@ export default function WelcomeDashboard() {
             lineHeight: 1.5,
           }}
         >
-          Alles ist in Bereiche aufgeteilt: <strong>1. Inhalte</strong> (News,
-          Termine), <strong>2. Sport</strong> (Mannschaften, Spieler),{" "}
+          Alles ist in nummerierte Bereiche aufgeteilt (siehe linke
+          Seitenleiste): <strong>1. Inhalte</strong> (News, Termine),{" "}
+          <strong>2. Sport</strong> (Mannschaften, Spieler),{" "}
           <strong>3. Verein</strong> (Sponsoren, Kontaktanfragen),{" "}
-          <strong>4. Seiten</strong> (Startseite, Chronik),{" "}
-          <strong>5. Einstellungen</strong> (Navigation, Kontaktdaten),{" "}
-          <strong>9. System</strong> (Bilder, Logins). Links in der Seitenleiste
-          findest du alles wieder.
+          <strong>4. Bilder &amp; Konten</strong>, <strong>5. KI-Studio</strong>{" "}
+          (größere Wünsche), <strong>6. Seiten</strong> (Startseite, Chronik),{" "}
+          <strong>7. Einstellungen</strong> (Navigation, Kontaktdaten).
         </p>
       </div>
 

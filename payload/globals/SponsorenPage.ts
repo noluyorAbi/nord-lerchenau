@@ -8,7 +8,7 @@ export const SponsorenPage: GlobalConfig = {
   slug: "sponsoren-page",
   label: "Sponsoren-Seite",
   admin: {
-    group: "4. Seiten",
+    group: "6. Seiten",
     description:
       "Texte der Seite /sponsoren. Die Sponsoren-Logos selbst werden unter „Verein → Sponsors“ gepflegt — hier geht es nur um die redaktionellen Texte rundherum.",
   },

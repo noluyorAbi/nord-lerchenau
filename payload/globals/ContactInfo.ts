@@ -8,7 +8,7 @@ export const ContactInfo: GlobalConfig = {
   slug: "contact-info",
   label: "Kontaktdaten",
   admin: {
-    group: "5. Einstellungen",
+    group: "7. Einstellungen",
     description: "Adressen, Kontakt und Öffnungszeiten (Footer und /kontakt).",
   },
   access: { read: anyone, update: authenticated },

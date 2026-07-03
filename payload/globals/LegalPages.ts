@@ -9,7 +9,7 @@ export const LegalPages: GlobalConfig = {
   label: "Impressum & Datenschutz",
   admin: {
     hidden: true,
-    group: "4. Seiten",
+    group: "6. Seiten",
     description: "Pflichttexte für /impressum und /datenschutz.",
   },
   access: { read: anyone, update: authenticated },

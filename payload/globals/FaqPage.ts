@@ -8,7 +8,7 @@ export const FaqPage: GlobalConfig = {
   slug: "faq-page",
   label: "FAQ (Häufige Fragen)",
   admin: {
-    group: "4. Seiten",
+    group: "6. Seiten",
     description: "Inhalte der Seite /faq.",
   },
   access: { read: anyone, update: authenticated },

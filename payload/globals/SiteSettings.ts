@@ -8,7 +8,7 @@ export const SiteSettings: GlobalConfig = {
   slug: "site-settings",
   label: "Allgemeine Einstellungen",
   admin: {
-    group: "5. Einstellungen",
+    group: "7. Einstellungen",
     description:
       "Vereinsname und SEO-Angaben (Beschreibung, Teilen-Bild), global verwendet.",
   },

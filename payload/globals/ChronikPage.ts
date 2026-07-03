@@ -8,7 +8,7 @@ export const ChronikPage: GlobalConfig = {
   slug: "chronik-page",
   label: "Chronik (Vereinsgeschichte)",
   admin: {
-    group: "4. Seiten",
+    group: "6. Seiten",
     description: "Inhalte der Seite /chronik.",
   },
   access: { read: anyone, update: authenticated },

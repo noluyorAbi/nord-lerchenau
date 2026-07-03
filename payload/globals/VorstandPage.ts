@@ -8,7 +8,7 @@ export const VorstandPage: GlobalConfig = {
   slug: "vorstand-page",
   label: "Vorstand-Seite",
   admin: {
-    group: "4. Seiten",
+    group: "6. Seiten",
     description:
       "Statische Texte der Seite /verein/vorstand (Überschriften, Einleitung, Hinweistexte). Die Personen-Listen selbst kommen aus der Sammlung „Personen“ und werden hier nicht gepflegt.",
   },

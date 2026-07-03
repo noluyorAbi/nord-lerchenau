@@ -8,6 +8,7 @@ import {
   lexicalEditor,
 } from "@payloadcms/richtext-lexical";
 import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
+import { de } from "@payloadcms/translations/languages/de";
 import { buildConfig } from "payload";
 import sharp from "sharp";
 
@@ -84,6 +85,14 @@ export default buildConfig({
     },
   }),
   sharp,
+  // Whole admin UI in German (Speichern, Neu erstellen, Wert auswählen, …). The
+  // field labels are already German; this translates Payload's built-in chrome so
+  // a non-technical Vereins-Mitglied never sees English fragments. German-only:
+  // no language switcher, no accidental English.
+  i18n: {
+    supportedLanguages: { de },
+    fallbackLanguage: "de",
+  },
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [
       ...defaultFeatures,
@@ -91,23 +100,26 @@ export default buildConfig({
       HeadingFeature({ enabledHeadingSizes: ["h1", "h2", "h3", "h4"] }),
     ],
   }),
+  // Registration order = admin nav order (Payload renders groups by first
+  // appearance, collections before globals). Ordered so the numbered "Bereiche"
+  // ascend for the non-technical editor: 1 Inhalte, 2 Sport, 3 Verein,
+  // 4 Bilder & Konten, 5 KI-Studio (collections), then 6 Seiten, 7 Einstellungen
+  // (globals). Changing this order changes the sidebar order — keep it in sync
+  // with the numeric group labels.
   collections: [
-    Users,
-    Media,
+    Posts,
+    Events,
     People,
     Teams,
-    Posts,
-    Sponsors,
     Fixtures,
-    Events,
+    Sponsors,
     Submissions,
+    Media,
+    Users,
     ChangeRequests,
   ],
   globals: [
-    SiteSettings,
-    Navigation,
     HomePage,
-    ContactInfo,
     ChronikPage,
     VereinsheimPage,
     JugendfoerderPage,
@@ -122,6 +134,9 @@ export default buildConfig({
     FussballPage,
     FussballCategoriesPage,
     VorstandPage,
+    SiteSettings,
+    Navigation,
+    ContactInfo,
   ],
   typescript: {
     outputFile: path.resolve(dirname, "payload-types.ts"),

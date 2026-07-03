@@ -8,7 +8,7 @@ export const HomePage: GlobalConfig = {
   slug: "home-page",
   label: "Startseite",
   admin: {
-    group: "4. Seiten",
+    group: "6. Seiten",
     description: "Inhalte der Startseite (Hero, Schnellzugriff, Highlights).",
   },
   access: { read: anyone, update: authenticated },

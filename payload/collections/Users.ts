@@ -9,7 +9,7 @@ export const Users: CollectionConfig = {
     useAsTitle: "email",
     description:
       "Login-Konten für das Admin-Panel. 'Vollzugriff' darf alles inkl. Konten verwalten. 'Redakteur' pflegt nur Inhalte und kann keine Konten anlegen oder löschen.",
-    group: "9. System",
+    group: "4. Bilder & Konten",
   },
   access: {
     // Any logged-in user may open the admin panel. (The `admin` slot must return

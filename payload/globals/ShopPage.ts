@@ -8,7 +8,7 @@ export const ShopPage: GlobalConfig = {
   slug: "shop-page",
   label: "Vereinsshop",
   admin: {
-    group: "4. Seiten",
+    group: "6. Seiten",
     description:
       "Texte der Seite /shop. Die Artikel selbst kommen live von 11teamsports und werden hier nicht gepflegt.",
   },

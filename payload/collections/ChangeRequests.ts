@@ -108,7 +108,7 @@ export const ChangeRequests: CollectionConfig = {
       "category",
       "updatedAt",
     ],
-    group: "0. KI-Studio",
+    group: "5. KI-Studio",
     description:
       "Beschreibe einen Wunsch an der Website (z. B. neue Sektion, anderes Layout). Hinweis: Texte, Bilder, Termine und Sponsoren änderst du direkt im CMS — hier nur strukturelle/Design-Wünsche.",
   },

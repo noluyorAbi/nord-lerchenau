@@ -8,7 +8,7 @@ export const SportOverviewPage: GlobalConfig = {
   slug: "sport-overview-page",
   label: "Sport-Übersicht",
   admin: {
-    group: "4. Seiten",
+    group: "6. Seiten",
     description: "Inhalte der Seite /sport (Sportarten-Übersicht).",
   },
   access: { read: anyone, update: authenticated },

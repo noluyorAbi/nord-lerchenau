@@ -56,6 +56,26 @@ const ENQUEUEABLE = new Set([
   "braucht_dev",
 ]);
 
+// Starter examples — clicking one fills the input, so a first-time user sees
+// the KIND of wish that belongs here (structure/design, not content).
+const EXAMPLES = [
+  "Mach den Hero-Bereich auf der Startseite dunkler.",
+  "Füge auf der Startseite eine neue Foto-Galerie-Sektion hinzu.",
+  "Erstelle eine neue Seite für unser Sommerturnier.",
+  "Ordne die Sportarten-Kacheln auf der Startseite neu an.",
+];
+
+const chipStyle: React.CSSProperties = {
+  border: "1px solid var(--theme-elevation-150, #ddd)",
+  background: "var(--theme-bg, #fff)",
+  color: "inherit",
+  borderRadius: 999,
+  padding: "5px 11px",
+  fontSize: 12,
+  cursor: "pointer",
+  textAlign: "left",
+};
+
 async function api(path: string, init?: RequestInit) {
   const res = await fetch(`/api${path}`, {
     credentials: "include",
@@ -205,6 +225,61 @@ export default function StudioChat() {
         Website-Betreuer geprüft; danach baut die KI eine Vorschau, die du hier
         bewertest. Live geschaltet wird erst nach Freigabe.
       </p>
+
+      <div
+        style={{
+          border: "1px solid var(--theme-elevation-150, #e5e7eb)",
+          borderLeft: "3px solid var(--theme-success-500, #d4a017)",
+          borderRadius: 8,
+          padding: 16,
+          marginTop: 16,
+          background: "var(--theme-elevation-50, #fafafa)",
+          fontSize: 13,
+          lineHeight: 1.6,
+        }}
+      >
+        <div style={{ fontWeight: 700, marginBottom: 6 }}>
+          So funktioniert’s
+        </div>
+        <ol style={{ margin: "0 0 14px", paddingLeft: 18 }}>
+          <li>Wunsch unten beschreiben und auf „Senden“ klicken.</li>
+          <li>
+            Der Website-Betreuer startet die Umsetzung — die KI baut eine
+            Vorschau.
+          </li>
+          <li>
+            Du öffnest die Vorschau und klickst „Passt ✓“ oder „Passt nicht ✗“
+            (mit Rückmeldung, was noch anders soll).
+          </li>
+        </ol>
+
+        <div style={{ fontWeight: 700, marginBottom: 6 }}>
+          Inhalt oder Struktur?
+        </div>
+        <p style={{ margin: "0 0 14px", opacity: 0.85 }}>
+          <strong>Text, Bild, Termin oder Sponsor ändern?</strong> → nutze die
+          Bereiche im Menü links (geht sofort, ohne KI).
+          <br />
+          <strong>Aussehen oder Aufbau ändern</strong> (neue Sektion, Farben,
+          Reihenfolge, neue Seite)? → hier beschreiben.
+        </p>
+
+        <div style={{ fontWeight: 700, marginBottom: 8 }}>
+          Beispiele (zum Übernehmen anklicken)
+        </div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+          {EXAMPLES.map((ex) => (
+            <button
+              key={ex}
+              type="button"
+              onClick={() => setPrompt(ex)}
+              style={chipStyle}
+            >
+              {ex}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {error ? (
         <div style={{ color: "#b00", fontSize: 13, margin: "8px 0" }}>

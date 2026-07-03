@@ -63,6 +63,24 @@ sonst an die **Prod-Neon-DB** schreiben und echte Mails senden.
 (wohin Benachrichtigungen gehen). `ANTHROPIC_API_KEY` wird im App-Server NICHT
 gebraucht (nur in der Action) — dort weglassen, außer du baust Auto-Triage ein.
 
+### 2e. Preview-Link automatisch füllen (GitHub Actions Variable)
+
+Damit der Verein die Vorschau **sehen** kann (nicht blind freigeben muss), setzt
+der Worker `previewUrl` aus einer deterministischen Vorlage:
+
+- Repo → Settings → Secrets and variables → Actions → **Variables** → neu:
+  `STUDIO_PREVIEW_URL_TEMPLATE` =
+  `https://nord-lerchenau-git-{branch}-<dein-vercel-scope>.vercel.app`
+  (`{branch}` wird durch den Branchnamen `studio-<id>` ersetzt).
+- Der Branch ist bewusst kurz und stabil (`studio-<id>`, nicht mehr mit Run-ID),
+  damit die Vercel-Git-Branch-Preview-URL deterministisch ist und über
+  Feedback-Runden gleich bleibt.
+- Voraussetzung: Vercel baut für Branch-Pushes automatisch Previews (Standard).
+- **Ohne** diese Variable bleibt der Wunsch nach dem Build im Status `review`
+  („Vorschau wird gebaut") statt `vorschau_bereit` — der Verein wird also NIE
+  gebeten, eine Vorschau ohne Link freizugeben. Du kannst die `previewUrl` dann
+  von Hand im Änderungswunsch eintragen, um `vorschau_bereit` auszulösen.
+
 ---
 
 ## 3. Sicherheits-Recap (die Garantien)
@@ -70,7 +88,15 @@ gebraucht (nur in der Action) — dort weglassen, außer du baust Auto-Triage ei
 - **Agent kann nur Frontend-Code anfassen** (`app/(frontend)`, `components`,
   `public`, `app/globals.css`). `payload/**`, Auth, Env, Schema, `scripts`, CI,
   Deps sind hart gesperrt — durchgesetzt im Agenten (PreToolUse-Hook) UND
-  server-seitig per Diff-Recheck im Callback. Beide müssen grün sein.
+  server-seitig per Diff-Recheck im Callback. Beide müssen grün sein. Der
+  Diff-Recheck erfasst auch **neu angelegte (untracked) Dateien**, nicht nur
+  geänderte — sonst könnte eine neue Datei an der Allowlist vorbei committet
+  werden.
+- **Build-Gate ohne Secrets:** die Gates (`bun run build` etc.) laufen mit
+  bereinigtem Env (ohne `ANTHROPIC_API_KEY`, `GITHUB_TOKEN`, Webhook-Secret), da
+  sie vom Agenten geschriebenen Frontend-Code ausführen.
+- **Callback-Secret:** konstante-Zeit-Vergleich (timing-safe), damit das Secret
+  nicht über die 401-Antwortzeit erraten werden kann.
 - **Prod nur per Dev-Merge** (Branch-Protection). Client-„Passt" ist nur ein
   Status, kein Merge.
 - **Kein Secret in der Action** außer `ANTHROPIC_API_KEY` + Dispatch-Token.
@@ -85,13 +111,25 @@ gebraucht (nur in der Action) — dort weglassen, außer du baust Auto-Triage ei
 
 ## 4. Test (nach Aktivierung)
 
-1. Als Redakteur in `/admin` einen Wunsch anlegen („Mach den Hero-Bereich auf der
-   Startseite dunkler."). → Mail kommt an, Status `neu`.
-2. Enqueue (POST `/api/agent/enqueue` mit `{requestId}` als Admin, oder Button).
-   → Action startet, Status `in_arbeit`.
-3. Action-Log prüfen (GitHub). Bei Erfolg: Branch `studio/<id>-<run>` + Vercel-
-   Preview; Callback setzt `vorschau_bereit` + `previewUrl`.
-4. Preview öffnen, bewerten. Bei `passt`: PR mergen → Prod.
+1. Als Redakteur in `/admin` einen Wunsch anlegen — am einfachsten über das
+   Dashboard-Banner „KI-Studio: Änderungswunsch stellen" oder direkt unter
+   `/admin/studio`. → Mail kommt an, Status `neu` („Eingereicht — wird geprüft").
+2. Als **Admin** im KI-Studio den Button **„KI-Umsetzung starten"** am Wunsch
+   klicken (er ruft `/api/agent/enqueue`). → Action startet, Status `in_arbeit`.
+   (Der Button ist nur für Admins sichtbar; Redakteure sehen nur den Status.)
+3. Action-Log prüfen (GitHub). Bei Erfolg: Branch `studio-<id>` + Vercel-Preview;
+   Callback setzt `previewUrl` (aus `STUDIO_PREVIEW_URL_TEMPLATE`) und Status
+   `vorschau_bereit`. Ohne Template bleibt es bei `review`.
+4. Der Verein bewertet im KI-Studio („Passt ✓ / Passt nicht ✗"). Der Button-Block
+   erscheint nur, wenn eine `previewUrl` vorhanden ist. Bei „Passt nicht" +
+   Feedback → erneut enqueuen (Feedback fließt in den Prompt); die neue Vorschau
+   öffnet die Bewertung wieder (`clientDecision` wird auf `offen` zurückgesetzt).
+5. Bei `passt`: **du** mergst den Branch → Prod.
+
+Statuswerte, die der Verein sieht: `neu` → `in_arbeit` → `review`
+(„Vorschau wird gebaut") → `vorschau_bereit` → (nach Merge, manuell) `live`.
+Ein abgestürzter Worker landet auf `fehlgeschlagen`, ein Allowlist-Verstoß oder
+Daten-Leak-Flag auf `braucht_dev` (nur du).
 
 Lokaler Worker-Smoke-Test (ohne CI, braucht `ANTHROPIC_API_KEY`):
 `STUDIO_PROMPT="..." ANTHROPIC_API_KEY=... bun run scripts/studio/run-agent.ts`
@@ -105,9 +143,11 @@ Lokaler Worker-Smoke-Test (ohne CI, braucht `ANTHROPIC_API_KEY`):
   der reine Inhalts-Wünsche gar nicht erst in die teure Pipeline lässt, sondern
   Status `inhalt_cms` setzt + dem Client sagt „das geht direkt im CMS". Spart
   Opus-Tokens. (Heute entscheidet der Dev über das `category`-Feld.)
-- **Preview-URL-Auflösung:** aktuell setzt der Callback `branch`; die echte
-  `previewUrl` am besten über einen Vercel-Deployment-Webhook nachreichen (oder
-  per Vercel-API in der Action pollen).
+- **Preview-URL-Auflösung:** erledigt über die deterministische Vorlage
+  `STUDIO_PREVIEW_URL_TEMPLATE` (Abschnitt 2e). Robuster wäre ein
+  Vercel-Deployment-Webhook, der die exakte Deployment-URL nachreicht (statt der
+  Git-Branch-Alias-URL) — nur nötig, falls Branch-Alias-Previews mal deaktiviert
+  sind.
 - **Playwright-Screenshot-Diff** der Kernrouten als zusätzliches Gate im Worker.
 - **Chat-Bubble-UI:** aktuell ist die native Payload-Collection der „Tab"
   (funktional). Eine Custom-Admin-View mit Chat-Optik ist reine UX-Politur.

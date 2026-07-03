@@ -23,8 +23,15 @@ jobs:
       STUDIO_REQUEST_ID: ${{ github.event.client_payload.requestId }}
       STUDIO_PROMPT: ${{ github.event.client_payload.prompt }}
       STUDIO_FEEDBACK: ${{ github.event.client_payload.feedback }}
-      STUDIO_RESULT_PATH: ${{ github.workspace }}/studio-result.json
+      # Result file lives OUTSIDE the checkout so `git add -A` never commits it
+      # into the studio/* branch.
+      STUDIO_RESULT_PATH: ${{ runner.temp }}/studio-result.json
       STUDIO_MAX_COST_USD: ${{ vars.STUDIO_MAX_COST_USD || '8' }}
+      # Vercel git-branch preview URL template. Substitute {branch} with the
+      # pushed branch name, e.g.
+      #   https://nord-lerchenau-git-{branch}-<scope>.vercel.app
+      # Leave unset to hold requests at "review" until a preview link is supplied.
+      STUDIO_PREVIEW_URL_TEMPLATE: ${{ vars.STUDIO_PREVIEW_URL_TEMPLATE }}
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       # Dummy values so payload.config initialises in CI (build never hits the DB:
       # all pages are force-dynamic, so next build does not query Postgres).
@@ -48,8 +55,12 @@ jobs:
           # Sanitise the request id to digits only — client_payload is untrusted.
           SAFE_ID="$(printf '%s' "$STUDIO_REQUEST_ID" | tr -cd '0-9')"
           [ -z "$SAFE_ID" ] && SAFE_ID="0"
-          BRANCH="studio/${SAFE_ID}-${GITHUB_RUN_ID}"
-          git checkout -b "$BRANCH"
+          # Stable, slug-safe branch per request (no slash): the Vercel git-branch
+          # preview alias stays deterministic across feedback iterations, and each
+          # iteration force-resets it from main. Short enough to avoid Vercel's
+          # 63-char subdomain truncation.
+          BRANCH="studio-${SAFE_ID}"
+          git checkout -B "$BRANCH"
           git config user.name "noluyorAbi"
           git config user.email "121226886+noluyorAbi@users.noreply.github.com"
           echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
@@ -77,7 +88,9 @@ jobs:
             -m "Auto-generated change. Review before merge." \
             -m "Claude-Session: AI-Studio agent" \
             || echo "nothing to commit"
-          git push origin "$BRANCH"
+          # Force: the branch is reused across feedback iterations, each reset
+          # from main. Only this workflow ever writes studio/* branches.
+          git push --force origin "$BRANCH"
 
       - name: Post result back to the site
         if: always()
@@ -86,18 +99,26 @@ jobs:
           STUDIO_SECRET: ${{ secrets.AGENT_WEBHOOK_SECRET }}
           BRANCH: ${{ steps.branch.outputs.branch }}
           PUSHED: ${{ steps.push.outcome }}
+          PREVIEW_TEMPLATE: ${{ env.STUDIO_PREVIEW_URL_TEMPLATE }}
         run: |
           if [ ! -f "$STUDIO_RESULT_PATH" ]; then
             echo '{"ok":false,"error":"worker produced no result"}' > "$STUDIO_RESULT_PATH"
           fi
-          # Merge in the branch + a previewUrl placeholder; a Vercel deployment
-          # webhook fills the real previewUrl once the build is READY.
+          # Fill branch + a deterministic Vercel git-branch preview URL (from the
+          # STUDIO_PREVIEW_URL_TEMPLATE var). If the template is unset or the push
+          # failed, previewUrl stays empty and the callback holds the request at
+          # "review" rather than asking the club to approve a missing preview.
           node -e '
             const fs=require("fs");
             const r=JSON.parse(fs.readFileSync(process.env.STUDIO_RESULT_PATH,"utf8"));
             r.branch=process.env.BRANCH;
             r.requestId=process.env.STUDIO_REQUEST_ID;
-            if(process.env.PUSHED!=="success"){ r.ok=false; }
+            const pushed = process.env.PUSHED==="success";
+            if(!pushed){ r.ok=false; }
+            const tpl=process.env.PREVIEW_TEMPLATE||"";
+            if(pushed && tpl && process.env.BRANCH){
+              r.previewUrl=tpl.split("{branch}").join(process.env.BRANCH);
+            }
             fs.writeFileSync(process.env.STUDIO_RESULT_PATH, JSON.stringify(r));
           '
           curl -sS -X POST "$CALLBACK_URL" \

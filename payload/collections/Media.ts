@@ -14,7 +14,9 @@ export const Media: CollectionConfig = {
   admin: {
     useAsTitle: "filename",
     description:
-      "Alle hochgeladenen Bilder. 'Alt-Text' ist Pflicht (Beschreibung für Screenreader & SEO).",
+      "Alle hochgeladenen Bilder. 'Alt-Text' ist Pflicht (Beschreibung für Screenreader & SEO). " +
+      "Hinweis: Ein bereits im Design verbautes Bild ersetzt du am besten mit einem NEUEN Dateinamen — " +
+      "lädst du eine Datei mit gleichem Namen hoch, kann noch die alte Version angezeigt werden.",
     group: "9. System",
   },
   access: {

@@ -36,6 +36,14 @@ const devFieldAccess = {
   update: isAdminFieldLevel,
 };
 
+// Fully internal fields: only admins may read them too (dev notes, KI cost,
+// branch/PR plumbing). Editors have no reason to see these.
+const devFieldAccessInternal = {
+  create: isAdminFieldLevel,
+  read: isAdminFieldLevel,
+  update: isAdminFieldLevel,
+};
+
 const setOwnerAndTitle: CollectionBeforeChangeHook = ({
   data,
   req,
@@ -201,20 +209,20 @@ export const ChangeRequests: CollectionConfig = {
       name: "devNotes",
       type: "textarea",
       label: "Interne Notizen (Entwickler)",
-      access: devFieldAccess,
+      access: devFieldAccessInternal,
     },
     {
       name: "branch",
       type: "text",
       label: "Git-Branch",
-      access: devFieldAccess,
+      access: devFieldAccessInternal,
       admin: { readOnly: true, position: "sidebar" },
     },
     {
       name: "prUrl",
       type: "text",
       label: "Pull-Request",
-      access: devFieldAccess,
+      access: devFieldAccessInternal,
       admin: { readOnly: true, position: "sidebar" },
     },
     {
@@ -222,14 +230,14 @@ export const ChangeRequests: CollectionConfig = {
       type: "number",
       defaultValue: 0,
       label: "Iteration",
-      access: devFieldAccess,
+      access: devFieldAccessInternal,
       admin: { readOnly: true, position: "sidebar" },
     },
     {
       name: "costUsd",
       type: "number",
       label: "KI-Kosten (USD)",
-      access: devFieldAccess,
+      access: devFieldAccessInternal,
       admin: { readOnly: true, position: "sidebar" },
     },
     {

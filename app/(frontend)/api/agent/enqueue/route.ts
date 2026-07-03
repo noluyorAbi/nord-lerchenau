@@ -38,9 +38,15 @@ export async function POST(request: Request): Promise<Response> {
   const cr = await payload.findByID({
     collection: "change-requests",
     id: requestId as string | number,
+    // Return null instead of throwing on an unknown id, so the 404 branch below
+    // is reachable (otherwise the thrown NotFound surfaces as a 500).
+    disableErrors: true,
   });
   if (!cr) {
-    return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
+    return NextResponse.json(
+      { ok: false, error: "not found" },
+      { status: 404 },
+    );
   }
 
   const token = process.env.GITHUB_DISPATCH_TOKEN;
@@ -75,7 +81,11 @@ export async function POST(request: Request): Promise<Response> {
 
   if (!dispatch.ok) {
     const text = await dispatch.text();
-    console.error("[/api/agent/enqueue] dispatch failed:", dispatch.status, text);
+    console.error(
+      "[/api/agent/enqueue] dispatch failed:",
+      dispatch.status,
+      text,
+    );
     return NextResponse.json(
       { ok: false, error: "dispatch failed" },
       { status: 502 },

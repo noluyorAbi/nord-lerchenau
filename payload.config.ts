@@ -64,6 +64,17 @@ if (!DATABASE_URI && process.env.VERCEL) {
   );
 }
 
+// Warn (do not fail — reads still work) when running on Vercel without a Blob
+// store: image uploads from /admin will 500 because the serverless filesystem
+// is read-only. Connect Vercel Blob so BLOB_READ_WRITE_TOKEN is set. See
+// docs/CMS-BETRIEB.md section 3a.
+if (!process.env.BLOB_READ_WRITE_TOKEN && process.env.VERCEL) {
+  console.warn(
+    "[SV-Nord] BLOB_READ_WRITE_TOKEN is unset on Vercel — CMS image uploads " +
+      "will fail (read-only filesystem). Connect a Vercel Blob store to enable uploads.",
+  );
+}
+
 export default buildConfig({
   serverURL: process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000",
   secret: PAYLOAD_SECRET || "dev-insecure-secret-change-in-prod",

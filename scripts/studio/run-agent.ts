@@ -125,15 +125,49 @@ function git(cmd: string): string {
   return execSync(`git ${cmd}`, { encoding: "utf8" }).trim();
 }
 
+/** All files the agent touched: tracked modifications + newly created (untracked)
+ * files. `git diff --name-only HEAD` misses untracked files, so an agent that
+ * only *creates* files (or hides a file under an allowed path) would evade both
+ * the allowlist recheck and the sensitive-content scan. Include both sets. */
+function collectChangedFiles(): string[] {
+  const tracked = git("diff --name-only HEAD");
+  const untracked = git("ls-files --others --exclude-standard");
+  return Array.from(
+    new Set(
+      [...tracked.split("\n"), ...untracked.split("\n")]
+        .map((s) => s.trim())
+        .filter(Boolean),
+    ),
+  );
+}
+
+/** Strip server secrets before running the gate build. `bun run build` executes
+ * agent-written frontend code; nothing that code runs should be able to read the
+ * Anthropic key, the GitHub token, or the callback secret out of the process env. */
+function gateEnv(): NodeJS.ProcessEnv {
+  const e = { ...process.env };
+  for (const k of [
+    "ANTHROPIC_API_KEY",
+    "GITHUB_TOKEN",
+    "AGENT_WEBHOOK_SECRET",
+    "STUDIO_CALLBACK_URL",
+    "GITHUB_DISPATCH_TOKEN",
+  ]) {
+    delete e[k];
+  }
+  return e;
+}
+
 function runGates(): { ok: boolean; log: string } {
+  const opts = { stdio: "pipe" as const, env: gateEnv() };
   try {
     execSync(
       "bunx prettier --write '**/*.{ts,tsx,css}' --ignore-path .gitignore",
-      { stdio: "pipe" },
+      opts,
     );
-    execSync("bun run lint", { stdio: "pipe" });
-    execSync("bunx tsc --noEmit", { stdio: "pipe" });
-    execSync("bun run build", { stdio: "pipe" });
+    execSync("bun run lint", opts);
+    execSync("bunx tsc --noEmit", opts);
+    execSync("bun run build", opts);
     return { ok: true, log: "alle Gates grün" };
   } catch (e) {
     const err = e as { stdout?: Buffer; stderr?: Buffer; message?: string };
@@ -163,11 +197,9 @@ async function main() {
     gates = runGates();
   }
 
-  // 3) Defence in depth: re-check the real diff against the allowlist
-  const changedFiles = git("diff --name-only HEAD")
-    .split("\n")
-    .map((s) => s.trim())
-    .filter(Boolean);
+  // 3) Defence in depth: re-check the real diff against the allowlist.
+  // Includes untracked (newly created) files, not just tracked modifications.
+  const changedFiles = collectChangedFiles();
   const diffCheck = checkChangedPaths(changedFiles);
 
   // 4) Flag any data-layer/secret access in changed (allowed) files
@@ -209,7 +241,9 @@ async function main() {
     iterations,
     costUsd: Number(totalCost.toFixed(4)),
     changedFiles,
-    diffStat: changedFiles.length ? git("diff --stat HEAD") : "",
+    // List every changed path (tracked + untracked) — `git diff --stat` alone
+    // omits newly created files.
+    diffStat: changedFiles.length ? changedFiles.join("\n") : "",
     review,
     gatesLog: gates.ok ? "" : gates.log,
   };

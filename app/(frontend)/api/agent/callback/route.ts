@@ -1,9 +1,20 @@
+import { timingSafeEqual } from "node:crypto";
+
 import { NextResponse } from "next/server";
 
 import { getPayloadClient } from "@/lib/payload";
 import { checkChangedPaths } from "@/lib/studio/allowlist";
 
 export const dynamic = "force-dynamic";
+
+/** Constant-time secret comparison so the shared secret can't be recovered by
+ * timing the 401 response. */
+function secretMatches(provided: string, expected: string): boolean {
+  const a = Buffer.from(provided);
+  const b = Buffer.from(expected);
+  if (a.length !== b.length) return false;
+  return timingSafeEqual(a, b);
+}
 
 /**
  * Webhook the AI-Studio CI worker posts its result to. Auth is a shared secret
@@ -14,7 +25,7 @@ export const dynamic = "force-dynamic";
 export async function POST(request: Request): Promise<Response> {
   const secret = request.headers.get("x-studio-secret");
   const expected = process.env.AGENT_WEBHOOK_SECRET;
-  if (!expected || !secret || secret !== expected) {
+  if (!expected || !secret || !secretMatches(secret, expected)) {
     return NextResponse.json({ ok: false }, { status: 401 });
   }
 
@@ -46,18 +57,40 @@ export async function POST(request: Request): Promise<Response> {
   const recheck = checkChangedPaths(changedFiles);
 
   const workerOk = body.ok === true;
+  // A crashed worker posts {ok:false, error} with no verdict fields. Distinguish
+  // that (→ fehlgeschlagen) from a real allowlist violation (→ braucht_dev).
+  const hasVerdict =
+    typeof body.allowlistOk === "boolean" || Array.isArray(body.changedFiles);
   const allowlistOk = body.allowlistOk === true && recheck.ok;
   const needsHuman =
-    body.needsHumanReview === true || !recheck.ok || !allowlistOk;
+    body.needsHumanReview === true || (hasVerdict && !allowlistOk);
+  const previewUrl =
+    typeof body.previewUrl === "string" && body.previewUrl.length > 0
+      ? body.previewUrl
+      : null;
 
   let status: string;
-  if (workerOk && allowlistOk && !needsHuman) status = "vorschau_bereit";
-  else if (needsHuman) status = "braucht_dev";
-  else status = "fehlgeschlagen";
+  if (!workerOk && !hasVerdict) {
+    // Worker died before producing a result — not a policy violation.
+    status = "fehlgeschlagen";
+  } else if (needsHuman) {
+    status = "braucht_dev";
+  } else if (!workerOk) {
+    status = "fehlgeschlagen";
+  } else if (previewUrl) {
+    status = "vorschau_bereit";
+  } else {
+    // Gates passed, but no preview link yet (Vercel deploy still building, or
+    // STUDIO_PREVIEW_URL_TEMPLATE unset). Hold at "review" so the club is never
+    // asked to approve a preview it cannot open.
+    status = "review";
+  }
 
   const notes = [
     typeof body.diffStat === "string" ? body.diffStat : "",
-    typeof body.review === "string" && body.review ? `Review:\n${body.review}` : "",
+    typeof body.review === "string" && body.review
+      ? `Review:\n${body.review}`
+      : "",
     typeof body.gatesLog === "string" && body.gatesLog
       ? `Gates:\n${body.gatesLog}`
       : "",
@@ -83,11 +116,12 @@ export async function POST(request: Request): Promise<Response> {
       overrideAccess: true,
       data: {
         status,
+        // A fresh preview invalidates any prior decision — reopen the approve/
+        // reject choice so a second round after "Passt nicht" is actionable.
+        ...(status === "vorschau_bereit" ? { clientDecision: "offen" } : {}),
         ...(typeof body.branch === "string" ? { branch: body.branch } : {}),
         ...(typeof body.prUrl === "string" ? { prUrl: body.prUrl } : {}),
-        ...(typeof body.previewUrl === "string"
-          ? { previewUrl: body.previewUrl }
-          : {}),
+        ...(previewUrl ? { previewUrl } : {}),
         ...(typeof body.costUsd === "number" ? { costUsd: body.costUsd } : {}),
         ...(typeof body.iterations === "number"
           ? { iteration: body.iterations }

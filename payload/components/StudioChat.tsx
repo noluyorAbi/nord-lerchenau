@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 // A Lovable-style chat tab inside the Payload admin. The club types website
@@ -17,13 +18,15 @@ type ChangeRequest = {
   createdAt?: string;
 };
 
+type Me = { id: number | string; role?: string | null } | null;
+
 const STATUS_LABEL: Record<string, string> = {
-  neu: "Eingereicht",
+  neu: "Eingereicht — wird geprüft",
   triage: "Wird eingeordnet",
   inhalt_cms: "Inhalt → im CMS ändern",
   geplant: "Geplant",
   in_arbeit: "Wird umgesetzt",
-  review: "Wird geprüft",
+  review: "Vorschau wird gebaut",
   vorschau_bereit: "Vorschau bereit",
   aenderung_erwuenscht: "Änderung erwünscht",
   freigegeben: "Freigegeben",
@@ -34,7 +37,24 @@ const STATUS_LABEL: Record<string, string> = {
   abgelehnt: "Abgelehnt",
 };
 
-const BUSY = new Set(["triage", "geplant", "in_arbeit", "review", "wird_live"]);
+// Statuses that show a "working" hourglass. `neu` is included so a freshly
+// submitted wish reads as received-and-pending, not ignored.
+const BUSY = new Set([
+  "neu",
+  "triage",
+  "geplant",
+  "in_arbeit",
+  "review",
+  "wird_live",
+]);
+
+// Statuses on which an admin may (re)start the KI pipeline for a wish.
+const ENQUEUEABLE = new Set([
+  "neu",
+  "aenderung_erwuenscht",
+  "fehlgeschlagen",
+  "braucht_dev",
+]);
 
 async function api(path: string, init?: RequestInit) {
   const res = await fetch(`/api${path}`, {
@@ -48,18 +68,26 @@ async function api(path: string, init?: RequestInit) {
 
 export default function StudioChat() {
   const [items, setItems] = useState<ChangeRequest[]>([]);
+  const [me, setMe] = useState<Me>(null);
+  const [authChecked, setAuthChecked] = useState(false);
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
+  const [enqueuing, setEnqueuing] = useState<string | number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
+  const isAdmin = me?.role === "admin";
+
   const load = useCallback(async () => {
     try {
+      // Fetch the newest 100 (sort desc so recent wishes are never dropped),
+      // then reverse for oldest→newest chat order.
       const data = await api(
-        "/change-requests?sort=createdAt&limit=100&depth=0",
+        "/change-requests?sort=-createdAt&limit=100&depth=0",
       );
-      setItems(Array.isArray(data?.docs) ? data.docs : []);
+      const docs: ChangeRequest[] = Array.isArray(data?.docs) ? data.docs : [];
+      setItems(docs.slice().reverse());
       setError(null);
     } catch {
       setError("Konnte die Anfragen nicht laden.");
@@ -69,11 +97,26 @@ export default function StudioChat() {
   }, []);
 
   useEffect(() => {
+    // Confirm there is a logged-in session before rendering the tool.
+    void (async () => {
+      try {
+        const data = await api("/users/me");
+        setMe(data?.user ?? null);
+      } catch {
+        setMe(null);
+      } finally {
+        setAuthChecked(true);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (!me) return;
     void load();
     // Poll so the club sees status move (queued -> preview ready) without reload.
     const t = setInterval(() => void load(), 8000);
     return () => clearInterval(t);
-  }, [load]);
+  }, [load, me]);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -97,13 +140,32 @@ export default function StudioChat() {
     }
   }
 
+  async function enqueue(id: ChangeRequest["id"]) {
+    if (enqueuing) return;
+    setEnqueuing(id);
+    try {
+      await api("/agent/enqueue", {
+        method: "POST",
+        body: JSON.stringify({ requestId: id }),
+      });
+      await load();
+    } catch {
+      setError("KI-Umsetzung konnte nicht gestartet werden.");
+    } finally {
+      setEnqueuing(null);
+    }
+  }
+
   async function decide(
     id: ChangeRequest["id"],
     decision: "passt" | "passt_nicht",
   ) {
     let feedback = "";
     if (decision === "passt_nicht") {
-      feedback = window.prompt("Was soll noch anders sein?") ?? "";
+      const answer = window.prompt("Was soll noch anders sein?");
+      // Cancel (null) aborts entirely; empty string is treated as "no detail".
+      if (answer === null) return;
+      feedback = answer.trim();
     }
     try {
       await api(`/change-requests/${id}`, {
@@ -119,6 +181,18 @@ export default function StudioChat() {
     }
   }
 
+  if (authChecked && !me) {
+    return (
+      <div style={{ maxWidth: 760, margin: "0 auto", padding: "1.5rem 1rem" }}>
+        <h1 style={{ marginBottom: 4 }}>KI-Studio</h1>
+        <p style={{ opacity: 0.7, fontSize: 14 }}>
+          Bitte zuerst <Link href="/admin/login">einloggen</Link>, um
+          Änderungswünsche zu stellen.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div
       style={{ maxWidth: 760, margin: "0 auto", padding: "1.5rem 1rem 7rem" }}
@@ -127,8 +201,9 @@ export default function StudioChat() {
       <p style={{ opacity: 0.7, marginTop: 0, fontSize: 14 }}>
         Beschreibe einen Wunsch an der Website (z. B. neue Sektion, anderes
         Layout). Texte, Bilder, Termine und Sponsoren änderst du direkt im CMS —
-        hier nur strukturelle/Design-Wünsche. Du bekommst eine Vorschau und
-        gibst Rückmeldung; live geschaltet wird erst nach Freigabe.
+        hier nur strukturelle/Design-Wünsche. Jeder Wunsch wird zuerst vom
+        Website-Betreuer geprüft; danach baut die KI eine Vorschau, die du hier
+        bewertest. Live geschaltet wird erst nach Freigabe.
       </p>
 
       {error ? (
@@ -194,8 +269,36 @@ export default function StudioChat() {
                   ) : null}
                 </div>
 
+                {isAdmin && ENQUEUEABLE.has(status) ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      marginTop: 12,
+                    }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => void enqueue(it.id)}
+                      disabled={enqueuing === it.id}
+                      style={btn("#0b1b3f", enqueuing === it.id)}
+                    >
+                      {enqueuing === it.id
+                        ? "Startet…"
+                        : status === "neu"
+                          ? "KI-Umsetzung starten"
+                          : "Erneut umsetzen"}
+                    </button>
+                    <span style={{ fontSize: 12, opacity: 0.6 }}>
+                      Nur Admin — startet die automatische Umsetzung.
+                    </span>
+                  </div>
+                ) : null}
+
                 {status === "vorschau_bereit" &&
-                it.clientDecision === "offen" ? (
+                it.clientDecision === "offen" &&
+                it.previewUrl ? (
                   <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
                     <button
                       type="button"

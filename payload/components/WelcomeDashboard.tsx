@@ -1,6 +1,8 @@
+import Link from "next/link";
 import React from "react";
 import { LuCalendarPlus, LuFileText, LuImage, LuInbox } from "react-icons/lu";
 import { LuCompass, LuHandshake, LuHouse, LuPhoneCall } from "react-icons/lu";
+import { LuSparkles } from "react-icons/lu";
 
 const cardStyle: React.CSSProperties = {
   border: "1px solid var(--theme-elevation-150)",
@@ -171,6 +173,28 @@ export default function WelcomeDashboard() {
           findest du alles wieder.
         </p>
       </div>
+
+      <Link
+        href="/admin/studio"
+        style={{
+          ...linkStyle,
+          padding: "18px 20px",
+          background:
+            "linear-gradient(135deg, var(--theme-elevation-50) 0%, var(--theme-elevation-100) 100%)",
+          borderColor: "var(--theme-success-500, #d4a017)",
+        }}
+      >
+        <LuSparkles style={{ ...linkIcon, width: 32, height: 32 }} />
+        <span style={linkTextWrap}>
+          <span style={{ ...linkTitle, fontSize: 15 }}>
+            KI-Studio: Änderungswunsch stellen
+          </span>
+          <span style={linkHint}>
+            Größere Umbau- oder Design-Wünsche beschreiben (neue Sektion,
+            anderes Layout). Für Texte und Bilder nutzt du die Bereiche oben.
+          </span>
+        </span>
+      </Link>
 
       <div
         style={{

@@ -11,6 +11,7 @@ import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
 import { buildConfig } from "payload";
 import sharp from "sharp";
 
+import { ChangeRequests } from "./payload/collections/ChangeRequests";
 import { Events } from "./payload/collections/Events";
 import { Fixtures } from "./payload/collections/Fixtures";
 import { Media } from "./payload/collections/Media";
@@ -89,6 +90,7 @@ export default buildConfig({
     Fixtures,
     Events,
     Submissions,
+    ChangeRequests,
   ],
   globals: [
     SiteSettings,
@@ -122,6 +124,16 @@ export default buildConfig({
     // CMS to anonymous visitors and must never run in production.
     components: {
       beforeDashboard: ["@/payload/components/WelcomeDashboard#default"],
+      // AI-Studio chat tab: a custom admin view at /admin/studio where the club
+      // submits website change wishes and approves previews. Writes go through
+      // the change-requests collection access control.
+      views: {
+        studio: {
+          Component: "@/payload/components/StudioChat#default",
+          path: "/studio",
+          meta: { title: "KI-Studio" },
+        },
+      },
     },
   },
   // Media uploads: when BLOB_READ_WRITE_TOKEN is set (Vercel production), uploads

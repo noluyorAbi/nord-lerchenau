@@ -76,6 +76,7 @@ export interface Config {
     fixtures: Fixture;
     events: Event;
     submissions: Submission;
+    "change-requests": ChangeRequest;
     "payload-kv": PayloadKv;
     "payload-locked-documents": PayloadLockedDocument;
     "payload-preferences": PayloadPreference;
@@ -92,6 +93,7 @@ export interface Config {
     fixtures: FixturesSelect<false> | FixturesSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
     submissions: SubmissionsSelect<false> | SubmissionsSelect<true>;
+    "change-requests": ChangeRequestsSelect<false> | ChangeRequestsSelect<true>;
     "payload-kv": PayloadKvSelect<false> | PayloadKvSelect<true>;
     "payload-locked-documents":
       | PayloadLockedDocumentsSelect<false>
@@ -584,6 +586,45 @@ export interface Submission {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "change-requests".
+ */
+export interface ChangeRequest {
+  id: number;
+  title?: string | null;
+  prompt: string;
+  status?:
+    | (
+        | "neu"
+        | "triage"
+        | "inhalt_cms"
+        | "geplant"
+        | "in_arbeit"
+        | "review"
+        | "vorschau_bereit"
+        | "aenderung_erwuenscht"
+        | "freigegeben"
+        | "wird_live"
+        | "live"
+        | "fehlgeschlagen"
+        | "braucht_dev"
+        | "abgelehnt"
+      )
+    | null;
+  clientDecision?: ("offen" | "passt" | "passt_nicht") | null;
+  clientFeedback?: string | null;
+  previewUrl?: string | null;
+  category?: ("unbestimmt" | "inhalt" | "struktur") | null;
+  devNotes?: string | null;
+  branch?: string | null;
+  prUrl?: string | null;
+  iteration?: number | null;
+  costUsd?: number | null;
+  requestedBy?: (number | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -906,6 +947,23 @@ export interface SubmissionsSelect<T extends boolean = true> {
   message?: T;
   handled?: T;
   notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+export interface ChangeRequestsSelect<T extends boolean = true> {
+  title?: T;
+  prompt?: T;
+  status?: T;
+  clientDecision?: T;
+  clientFeedback?: T;
+  previewUrl?: T;
+  category?: T;
+  devNotes?: T;
+  branch?: T;
+  prUrl?: T;
+  iteration?: T;
+  costUsd?: T;
+  requestedBy?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -3,6 +3,7 @@ import { InstagramTeaser } from "@/components/home/InstagramTeaser";
 import { MatchdayBlock } from "@/components/home/MatchdayBlock";
 import { MembershipCta } from "@/components/home/MembershipCta";
 import { NewsGrid } from "@/components/home/NewsGrid";
+import { SommerfestSection } from "@/components/home/SommerfestSection";
 import { SponsorMarquee } from "@/components/home/SponsorMarquee";
 import { SportsGrid } from "@/components/home/SportsGrid";
 import { StatStrip } from "@/components/home/StatStrip";
@@ -25,6 +26,7 @@ export default async function HomePage() {
     <>
       <Hero hero={home.hero} slides={heroSlides} />
       <StatStrip stats={home.stats} />
+      <SommerfestSection />
       {sections.showNextMatch !== false ? <MatchdayBlock /> : null}
       {sections.showNews !== false ? <NewsGrid /> : null}
       {sections.showInstagram !== false ? <InstagramTeaser /> : null}

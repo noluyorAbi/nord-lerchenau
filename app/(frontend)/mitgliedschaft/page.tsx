@@ -1,4 +1,5 @@
 import { PageHero } from "@/components/PageHero";
+import { BFV_FORMULARE_URL } from "@/lib/bfv-formulare";
 import { getPayloadClient } from "@/lib/payload";
 
 export const dynamic = "force-dynamic";
@@ -233,25 +234,46 @@ export default async function MitgliedschaftPage() {
               PDF · Direkt-Download
             </span>
           </div>
-          <a
-            href={SATZUNG.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex max-w-md items-start justify-between gap-3 rounded-xl border border-nord-line bg-white px-5 py-4 transition hover:border-nord-gold hover:shadow-sm"
-          >
-            <span className="flex-1 text-sm font-semibold text-nord-ink">
-              {SATZUNG.label}
-              <span className="block text-[11px] font-normal text-nord-muted">
-                {SATZUNG.hint}
-              </span>
-            </span>
-            <span
-              className="shrink-0 text-nord-gold transition-transform group-hover:translate-x-0.5"
-              aria-hidden
+          <div className="grid gap-3 sm:grid-cols-2">
+            <a
+              href={SATZUNG.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-start justify-between gap-3 rounded-xl border border-nord-line bg-white px-5 py-4 transition hover:border-nord-gold hover:shadow-sm"
             >
-              ↓
-            </span>
-          </a>
+              <span className="flex-1 text-sm font-semibold text-nord-ink">
+                {SATZUNG.label}
+                <span className="block text-[11px] font-normal text-nord-muted">
+                  {SATZUNG.hint}
+                </span>
+              </span>
+              <span
+                className="shrink-0 text-nord-gold transition-transform group-hover:translate-x-0.5"
+                aria-hidden
+              >
+                ↓
+              </span>
+            </a>
+            <a
+              href={BFV_FORMULARE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-start justify-between gap-3 rounded-xl border border-nord-line bg-white px-5 py-4 transition hover:border-nord-gold hover:shadow-sm"
+            >
+              <span className="flex-1 text-sm font-semibold text-nord-ink">
+                Formulare der BFV-Passabteilung
+                <span className="block text-[11px] font-normal text-nord-muted">
+                  Spielerpass, Vereinswechsel & Verträge · bfv.de
+                </span>
+              </span>
+              <span
+                className="shrink-0 text-nord-gold transition-transform group-hover:translate-x-0.5"
+                aria-hidden
+              >
+                ↗
+              </span>
+            </a>
+          </div>
         </section>
 
         <section className="mb-16 rounded-2xl border border-nord-line bg-nord-paper-2 p-8 md:p-10">

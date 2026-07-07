@@ -49,6 +49,10 @@ export async function POST(request: Request) {
     );
   }
 
+  // INTERIM (2026-07-06): RESEND_FROM_EMAIL sendet aktuell von der verifizierten
+  // Domain adatepe.dev, weil svnord.de noch nicht in Resend verifiziert ist.
+  // TODO: Vereins-Resend-Konto anlegen, svnord.de per DNS (SPF/DKIM/DMARC)
+  // verifizieren und RESEND_FROM_EMAIL auf eine kontakt@svnord.de-Adresse umstellen.
   const resendKey = process.env.RESEND_API_KEY;
   const fromEmail = process.env.RESEND_FROM_EMAIL;
   const toEmail = process.env.RESEND_TO_EMAIL ?? "info@svnord.de";

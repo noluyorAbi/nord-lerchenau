@@ -13,6 +13,7 @@ import {
   parseBfvKickoff,
   type BfvMatch,
 } from "@/lib/bfv";
+import { lexicalToPlainText } from "@/lib/lexical-text";
 import { getPayloadClient } from "@/lib/payload";
 
 export const dynamic = "force-dynamic";
@@ -106,7 +107,9 @@ export default async function TerminePage() {
       id: String(e.id),
       title: e.title,
       location: e.location ?? null,
-      description: typeof e.description === "string" ? e.description : null,
+      // Lexical richtext aus dem CMS als Klartext (Programm etc. sichtbar).
+      description: lexicalToPlainText(e.description),
+      ctaUrl: typeof e.ctaUrl === "string" && e.ctaUrl ? e.ctaUrl : null,
     };
     items.push(item);
   }
@@ -121,7 +124,9 @@ export default async function TerminePage() {
       title: "SV Nord-Sommerfest 2026 (Fr./Sa. 24./25.07.)",
       location: "BSA Ebereschenstraße · Eschengarten",
       description:
-        "Freitag ab 16:30 Kiga-Turnier, U19/U17/U15W-Turniere und Senioren A-Spiel. Samstag ab 08:30 Vormittags-, Mittags- und Nachmittagsturniere aller Jugendmannschaften, Spiele Zweite/Dritte, 17:30 Erste Mannschaft. Ab 18:30 gemeinsam im Eschengarten. Einmal Nordler, immer Nordler.",
+        "Freitag ab 16:30 Kiga-Turnier, U19/U17/U15W-Turniere und Senioren A-Spiel. Samstag ab 08:30 Vormittags-, Mittags- und Nachmittagsturniere aller Jugendmannschaften (SV Nord Sommercup), Spiele Zweite/Dritte, 17:30 Erste Mannschaft. Ab 18:30 gemeinsam im Eschengarten. Für das leibliche Wohl ist mit Grillen und Kuchen gesorgt. Einmal Nordler, immer Nordler.",
+      ctaUrl:
+        "https://mytman.io/turniere-suchen/?share_id=dcfcc1a6130a575108aece8f23e25f32",
     },
     {
       kind: "event",
@@ -131,12 +136,29 @@ export default async function TerminePage() {
       location: "BSA Ebereschenstraße · Eschengarten",
       description:
         "Samstag, 25. Juli 2026, ab 17:00 Uhr im Eschengarten. Gemeinsames Betreuer-Essen zum Ausklang des SV Nord-Sommerfests.",
+      ctaUrl: null,
     },
   ];
+  const normalizeTitle = (t: string) =>
+    t
+      .toLowerCase()
+      .replace(/\(.*?\)/g, "")
+      .replace(/[^a-zäöüß0-9]+/g, " ")
+      .trim();
   for (const e of STATIC_EVENTS) {
     const d = new Date(e.at);
     if (Number.isNaN(d.getTime()) || d.getTime() < now) continue;
-    if (items.some((it) => it.kind === "event" && it.id === e.id)) continue;
+    // Skip the fallback when the same Termin is already pflegt im CMS
+    // (same day + overlapping title), sonst erscheint er doppelt.
+    const eDay = d.toDateString();
+    const eNorm = normalizeTitle(e.title);
+    const duplicate = items.some((it) => {
+      if (it.kind !== "event") return false;
+      if (new Date(it.at).toDateString() !== eDay) return false;
+      const itNorm = normalizeTitle(it.title);
+      return itNorm.includes(eNorm) || eNorm.includes(itNorm);
+    });
+    if (duplicate) continue;
     items.push(e);
   }
 

@@ -94,7 +94,11 @@ export const DATENSCHUTZ_SECTIONS: LegalSection[] = [
       { kind: "h3", text: "Vercel (Hosting)" },
       {
         kind: "p",
-        text: "Diese Website wird bei **Vercel Inc.** (340 S Lemon Ave #4133, Walnut, CA 91789, USA) gehostet. Vercel verarbeitet Zugriffsdaten zur Bereitstellung der Website. Datenübermittlung in die USA durch Standardvertragsklauseln und DPF-Zertifizierung abgesichert.",
+        text: "Diese Website wird bei einem externen Hosting-Dienstleister betrieben: **Vercel Inc.** (340 S Lemon Ave #4133, Walnut, CA 91789, USA). Vercel verarbeitet Zugriffsdaten zur Bereitstellung der Website. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einer sicheren und effizienten Bereitstellung). Datenübermittlung in die USA durch Standardvertragsklauseln und DPF-Zertifizierung abgesichert.",
+      },
+      {
+        kind: "p",
+        text: "Mit Vercel wurde ein Vertrag zur Auftragsverarbeitung gemäß **Art. 28 DSGVO** (Data Processing Agreement) abgeschlossen. Vercel verarbeitet die Daten der Besucher:innen ausschließlich nach unseren Weisungen.",
       },
       {
         kind: "linkRow",
@@ -105,7 +109,7 @@ export const DATENSCHUTZ_SECTIONS: LegalSection[] = [
       { kind: "h3", text: "Neon (Datenbank)" },
       {
         kind: "p",
-        text: "Inhalte und Mitgliedsdaten werden in einer Postgres-Datenbank bei **Neon Inc.** in der EU-Region Frankfurt am Main gespeichert. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.",
+        text: "Inhalte und Mitgliedsdaten werden in einer Postgres-Datenbank bei **Neon Inc.** in der EU-Region Frankfurt am Main gespeichert. Auch mit Neon besteht ein Vertrag zur Auftragsverarbeitung gemäß Art. 28 DSGVO. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.",
       },
       {
         kind: "linkRow",
@@ -126,11 +130,11 @@ export const DATENSCHUTZ_SECTIONS: LegalSection[] = [
         kind: "callout",
         tone: "key",
         title: "Wir setzen kein Tracking ein",
-        text: "**Keine Tracking-, Analyse- oder Marketing-Cookies.** Nur funktional notwendige Cookies, zulässig nach § 25 Abs. 2 Nr. 2 TTDSG ohne Einwilligung.",
+        text: "**Keine Tracking-, Analyse- oder Marketing-Cookies.** Nur funktional notwendige Cookies, zulässig nach § 25 Abs. 2 Nr. 2 TTDSG ohne Einwilligung. Rechtsgrundlage für deren Speicherung ist im Übrigen unser berechtigtes Interesse an einer funktionsfähigen Website (Art. 6 Abs. 1 lit. f DSGVO).",
       },
       {
         kind: "p",
-        text: "Drittanbieter-Cookies werden ausschließlich geladen, wenn Sie eingebettete Inhalte (z. B. BFV-Spielplan, FuPa-Block, Instagram-Feed) **aktiv** durch Klick laden.",
+        text: "Optionale Cookies sowie externe Inhalte werden ausschließlich nach Ihrer ausdrücklichen Einwilligung geladen (Art. 6 Abs. 1 lit. a DSGVO, § 25 Abs. 1 TTDSG). Statt eines Cookie-Banners nutzen wir dafür eine Zwei-Klick-Lösung: Drittanbieter-Inhalte und deren Cookies (z. B. BFV-Spielplan, FuPa-Block, Instagram-Feed) werden erst geladen, wenn Sie sie **aktiv** durch Klick starten. Ein gesondertes Consent-Management-Tool ist deshalb nicht im Einsatz; es werden ohne Ihre Einwilligung keine optionalen Cookies gesetzt.",
       },
     ],
   },

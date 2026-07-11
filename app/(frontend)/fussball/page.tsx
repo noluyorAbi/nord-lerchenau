@@ -169,11 +169,77 @@ export default async function FussballPage() {
             <FussballPillar
               eyebrow="Organisation"
               title="PR, Events, Equipment, Organisation"
-              body="Hinter den Kulissen: Öffentlichkeitsarbeit, Vereinsevents, Material- und Trikotverwaltung, organisatorischer Backbone der Abteilung. Namen folgen."
-              href="/fussball"
+              body="Hinter den Kulissen: Öffentlichkeitsarbeit, Vereinsevents, Material- und Trikotverwaltung, organisatorischer Backbone der Abteilung."
+              href="#mitmachen"
               meta="Ehrenamt · Backbone"
               tone="paper"
             />
+          </div>
+        </section>
+
+        {/* 2026_06_02 Vereinswunsch: Mithelfer-Aufruf + Social-Media-Team auf /fussball. */}
+        <section id="mitmachen" className="mb-12 scroll-mt-24">
+          <div className="grid gap-4 md:grid-cols-[1.4fr_1fr]">
+            <div className="relative overflow-hidden rounded-2xl bg-nord-navy p-7 text-white md:p-9">
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(110,199,234,0.3)_0%,transparent_60%)]"
+              />
+              <div className="relative">
+                <div className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-nord-gold">
+                  PR · Events · Equipment · Organisation
+                </div>
+                <h2 className="mt-3 font-display text-2xl font-black tracking-tight md:text-3xl">
+                  Wir suchen tatkräftige Unterstützung!
+                </h2>
+                <p className="mt-3 max-w-prose text-sm leading-relaxed text-white/85">
+                  Um unsere Projekte und Ziele erfolgreich zu meistern, wie das
+                  nächste Vereinsfest oder die Unterstützung in unseren Teams,
+                  brauchen wir noch helfende Hände. Egal ob Organisationstalent,
+                  handwerkliches Geschick oder einfach gute Laune und etwas
+                  Zeit: Bei uns ist jede helfende Kraft ein Gewinn!
+                </p>
+                <p className="mt-2 max-w-prose text-sm leading-relaxed text-white/85">
+                  Hast du Lust, gemeinsam mit uns anzupacken? Dann schreib uns
+                  einfach eine Nachricht. Wir freuen uns auf dich!
+                </p>
+                <a
+                  href="mailto:info@svnord.de?subject=Ich%20packe%20mit%20an"
+                  className="mt-5 inline-flex items-center gap-2 rounded-full bg-nord-gold px-4 py-2.5 font-display text-[12px] font-semibold uppercase tracking-[0.04em] text-nord-ink transition hover:-translate-y-px hover:brightness-105"
+                >
+                  info@svnord.de →
+                </a>
+              </div>
+            </div>
+            <div className="rounded-2xl border border-nord-line bg-white p-6 md:p-7">
+              <div className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-nord-gold">
+                Social Media Abteilung
+              </div>
+              <p className="mt-2 text-xs text-nord-muted">
+                Das Team hinter Kanälen, Fotos und Spieltags-Posts.
+              </p>
+              <ul className="mt-4 space-y-2">
+                {[
+                  "Tobias Tins",
+                  "Tobias Treffer",
+                  "Dominik Besel",
+                  "Andi Weiß",
+                  "Marko Rakita",
+                  "Tamay Piker",
+                ].map((name) => (
+                  <li
+                    key={name}
+                    className="flex items-center gap-2 font-display text-base font-semibold text-nord-ink"
+                  >
+                    <span
+                      className="size-1.5 shrink-0 rounded-full bg-nord-gold"
+                      aria-hidden
+                    />
+                    {name}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </section>
 

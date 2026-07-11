@@ -2,6 +2,8 @@ import Link from "next/link";
 
 import { ClubLogo } from "@/components/ClubLogo";
 import { getPayloadClient } from "@/lib/payload";
+import { mediaSrc } from "@/lib/publicUploads";
+import { FALLBACK_SPONSORS } from "@/lib/sponsors-fallback";
 
 const FALLBACK_COLUMNS = [
   {
@@ -62,19 +64,62 @@ type ContactGlobal = {
   }> | null;
 };
 
+type FooterSponsor = {
+  id: number | string;
+  name: string;
+  url: string | null;
+  logoUrl: string | null;
+};
+
 export async function Footer() {
   let site: SiteGlobal = {};
   let nav: NavGlobal = {};
   let contact: ContactGlobal = {};
+  let sponsors: FooterSponsor[] = [];
   try {
     const payload = await getPayloadClient();
-    [site, nav, contact] = (await Promise.all([
+    const [siteRes, navRes, contactRes, sponsorRes] = await Promise.all([
       payload.findGlobal({ slug: "site-settings" }),
       payload.findGlobal({ slug: "navigation" }),
       payload.findGlobal({ slug: "contact-info" }),
-    ])) as [SiteGlobal, NavGlobal, ContactGlobal];
+      payload.find({
+        collection: "sponsors",
+        sort: "order",
+        limit: 40,
+        depth: 1,
+      }),
+    ]);
+    site = siteRes as SiteGlobal;
+    nav = navRes as NavGlobal;
+    contact = contactRes as ContactGlobal;
+    sponsors = sponsorRes.docs.map((doc) => {
+      const d = doc as unknown as {
+        id: number | string;
+        name: string;
+        url?: string | null;
+        logo?:
+          | { url?: string | null; filename?: string | null }
+          | number
+          | null;
+      };
+      const logo = typeof d.logo === "object" && d.logo ? d.logo : null;
+      return {
+        id: d.id,
+        name: d.name,
+        url: d.url ?? null,
+        logoUrl: mediaSrc(logo),
+      };
+    });
   } catch {
     // DB unavailable (CI build with empty schema). Fall through to defaults.
+  }
+  if (sponsors.length === 0) {
+    sponsors = FALLBACK_SPONSORS.map((s) => ({
+      id: s.id,
+      name: s.name,
+      url: s.url ?? null,
+      logoUrl: null,
+    }));
   }
 
   const columns =
@@ -108,6 +153,62 @@ export async function Footer() {
             "repeating-linear-gradient(90deg, var(--color-nord-gold) 0 3px, transparent 3px 10px)",
         }}
       />
+      {/* 2026_06_02 Vereinswunsch: Sponsoren auf jeder Seite sichtbar (vgl. fcgap.de). */}
+      {sponsors.length > 0 ? (
+        <div className="border-b border-white/10">
+          <div className="mx-auto w-full max-w-[1320px] px-6 py-8 md:px-7">
+            <div className="mb-4 flex items-baseline justify-between gap-4">
+              <div className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-nord-gold">
+                Unsere Partner
+              </div>
+              <Link
+                href="/sponsoren"
+                className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/50 transition hover:text-nord-gold"
+              >
+                Alle Partner →
+              </Link>
+            </div>
+            <ul className="flex flex-wrap items-center gap-x-2 gap-y-2">
+              {sponsors.map((s) => {
+                const inner = s.logoUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={s.logoUrl}
+                    alt={`Logo ${s.name}`}
+                    loading="lazy"
+                    className="max-h-7 w-auto max-w-[8.5rem] object-contain"
+                  />
+                ) : (
+                  <span className="font-display text-[12px] font-semibold uppercase tracking-[0.05em]">
+                    {s.name}
+                  </span>
+                );
+                const chip =
+                  "flex h-11 items-center rounded-lg border border-white/10 bg-white/5 px-3.5 text-white/75 transition hover:border-nord-gold/60 hover:bg-white/10 hover:text-white";
+                return (
+                  <li key={s.id}>
+                    {s.url ? (
+                      <a
+                        href={s.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title={s.name}
+                        className={chip}
+                      >
+                        {inner}
+                      </a>
+                    ) : (
+                      <div title={s.name} className={chip}>
+                        {inner}
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </div>
+      ) : null}
       <div className="mx-auto grid w-full max-w-[1320px] gap-10 px-6 py-16 md:grid-cols-[1.6fr_repeat(4,1fr)] md:px-7">
         <div>
           <ClubLogo

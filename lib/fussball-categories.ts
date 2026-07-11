@@ -31,7 +31,7 @@ export const FUSSBALL_CATEGORIES: Record<
     label: "Junioren",
     category: "junioren",
     eyebrow: "Fußball · Junioren",
-    lede: "Großfeld- und Kleinfeldmannschaften der männlichen Jugend von A bis F.",
+    lede: "Großfeld-, Kompakt- und Kleinfeldmannschaften der männlichen Jugend von A bis F.",
     description:
       "Alle Juniorenmannschaften — strukturiert nach Altersklassen, betreut von ehrenamtlichen Trainer:innen.",
   },

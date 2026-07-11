@@ -371,6 +371,7 @@ async function ensureTeam(
     league?: string;
     bfv?: BfvMeta;
     fupa?: FupaMeta;
+    descriptionMd?: string;
   },
 ) {
   const teamSlug = t.slug ?? slug(t.name);
@@ -385,6 +386,7 @@ async function ensureTeam(
     league: t.league,
     bfv: t.bfv,
     fupa: t.fupa,
+    ...(t.descriptionMd ? { description: md(t.descriptionMd) } : {}),
   };
   const existing = await payload.find({
     collection: "teams",
@@ -475,6 +477,34 @@ async function main() {
 
   for (const p of vorstand) {
     await ensurePerson(payload, p);
+  }
+
+  // 2026_06_02 Vereinswunsch: Volleyball auf der Vorstand-Seite nach
+  // Gymnastik, Ansprechpartnerin Elisabeth Schillinger. ensurePerson()
+  // legt nur neu an, deshalb hier explizit die Doppel-Rolle setzen, damit
+  // sie in beiden Abteilungs-Gruppen (Gymnastik + Volleyball) erscheint.
+  {
+    const schillingerRole =
+      "1. Abteilungsleiterin Gymnastik · Ansprechpartnerin Volleyball";
+    const existing = await payload.find({
+      collection: "people",
+      where: { name: { equals: "Elisabeth Schillinger" } },
+      limit: 1,
+    });
+    if (existing.docs.length > 0) {
+      await payload.update({
+        collection: "people",
+        id: existing.docs[0]!.id,
+        data: { role: schillingerRole, function: "sportleitung" } as never,
+      });
+    } else {
+      await ensurePerson(payload, {
+        name: "Elisabeth Schillinger",
+        role: schillingerRole,
+        function: "sportleitung",
+        order: 20,
+      });
+    }
   }
 
   // 1b. Portraits from the live site (mirrored into tmp/live-portraits/)
@@ -734,6 +764,28 @@ async function main() {
         spielklasse: "Senioren Ü40 / Kreisklasse",
         partner: "Spielgemeinschaft mit SV WB Allianz München",
       },
+    },
+    // 2026_06_02 Vereinswunsch: AH als eigene Mannschaft (Inhalte von der
+    // alten Website, tmp/strato-teams/page-ah.json). Kein BFV-Spielbetrieb.
+    {
+      name: "AH · Alte Herren",
+      slug: "ah",
+      sport: "fussball",
+      category: "senioren",
+      ageGroup: "AH",
+      order: 6,
+      league: "Altherrenrunde · Ehrenliga",
+      descriptionMd: `## Unsere AH
+
+Die Alten Herren des SV Nord: Ehrenliga und Altherrenrunde, Fußball aus Freude am Spiel und an der Gemeinschaft.
+
+## Ansprechpartner
+
+**Heinz Fessenmeyer**, Spielertrainer.
+
+## Trainingszeiten
+
+Montag, 18:00 bis 19:30 Uhr.`,
     },
     {
       name: "A1-Junioren · U19-I",
@@ -1140,7 +1192,9 @@ async function main() {
 Ab 18:30 Uhr gemeinsam im Eschengarten. Grillen, Kuchen und mehr.
 
 **Einmal Nordler — immer Nordler.** Freunde, Verwandte, Bekannte — alle willkommen.`,
-      ctaUrl: "https://mytman.io/turnier/?turnier_id=8699",
+      // 2026_06_02: offizieller Anmelde-Link (mytman-Share-Link aus dem Doc).
+      ctaUrl:
+        "https://mytman.io/turniere-suchen/?share_id=dcfcc1a6130a575108aece8f23e25f32",
     },
     {
       title: "Sichtung A/B-Jugend 09.05.2026",
@@ -1158,7 +1212,22 @@ Sichtung der Spieler:innen für die A- und B-Jugend zur Saison 2026/27. Pünktli
       where: { title: { equals: ev.title } },
       limit: 1,
     });
-    if (existing.docs.length > 0) continue;
+    if (existing.docs.length > 0) {
+      // Anmelde-Link aktuell halten; Titel/Programm bleiben unangetastet,
+      // damit Admin-Änderungen einen Reseed überleben.
+      const doc = existing.docs[0]! as {
+        id: string | number;
+        ctaUrl?: string | null;
+      };
+      if (ev.ctaUrl && doc.ctaUrl !== ev.ctaUrl) {
+        await payload.update({
+          collection: "events",
+          id: doc.id,
+          data: { ctaUrl: ev.ctaUrl } as never,
+        });
+      }
+      continue;
+    }
     await payload.create({
       collection: "events",
       data: {

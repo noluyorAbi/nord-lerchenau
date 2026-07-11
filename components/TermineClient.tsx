@@ -66,6 +66,7 @@ export type EventDTO = {
   title: string;
   location: string | null;
   description: string | null;
+  ctaUrl: string | null;
 };
 
 export type AgendaDTO = MatchDTO | EventDTO;
@@ -616,9 +617,19 @@ function FeaturedCard({ item }: { item: AgendaDTO & { atMs: number } }) {
         {item.location ? ` · ${item.location}` : null}
       </div>
       {item.description ? (
-        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-nord-ink/80">
+        <p className="mt-4 max-w-2xl whitespace-pre-line text-sm leading-relaxed text-nord-ink/80">
           {item.description}
         </p>
+      ) : null}
+      {item.ctaUrl ? (
+        <a
+          href={item.ctaUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-5 inline-flex items-center gap-2 rounded-full bg-nord-navy px-4 py-2.5 font-display text-[12px] font-semibold uppercase tracking-[0.04em] text-white transition hover:-translate-y-px hover:bg-nord-navy-2"
+        >
+          Zur Anmeldung ↗
+        </a>
       ) : null}
     </div>
   );
@@ -755,6 +766,21 @@ function AgendaRow({ item }: { item: AgendaDTO & { atMs: number } }) {
             {time} Uhr
             {item.location ? ` · ${item.location}` : null}
           </div>
+          {item.description ? (
+            <p className="mt-1.5 line-clamp-2 max-w-prose text-[12px] leading-snug text-nord-ink/70">
+              {item.description}
+            </p>
+          ) : null}
+          {item.ctaUrl ? (
+            <a
+              href={item.ctaUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 inline-flex items-center gap-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-navy transition hover:text-nord-gold"
+            >
+              Zur Anmeldung ↗
+            </a>
+          ) : null}
         </div>
       </div>
     </li>

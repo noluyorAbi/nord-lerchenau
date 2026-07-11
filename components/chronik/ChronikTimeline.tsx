@@ -362,6 +362,24 @@ const ENTRIES: Entry[] = [
     body: "Systematischer Auf- und Ausbau des Mädchen-/Juniorinnenbereichs.",
     tag: "section",
   },
+  {
+    year: 2026,
+    title: "Neue Website geht online",
+    body: "Kompletter Neuauftritt des SV Nord im Netz. Design: Alperen Adatepe. Verantwortlich und Unterstützer: Tom Wurm, Ralf Kirmeyer.",
+    tag: "milestone",
+  },
+  {
+    year: 2026,
+    title: "Vereinsprogramm Vereinsplaner startet",
+    body: "Digitale Vereinsorganisation über den Vereinsplaner (app.vereinsplaner.at). Verantwortlich und Unterstützer: Fabian Falk, Ralf Kirmeyer.",
+    tag: "leadership",
+  },
+  {
+    year: 2026,
+    title: "Zentrale Datenablage mit HiDrive",
+    body: "Datenbank für die zentrale Ablage der Vereinsunterlagen. Verantwortlich und Unterstützer: Ralf Kirmeyer.",
+    tag: "leadership",
+  },
 ];
 
 const FILTERS: Array<{ id: Entry["tag"] | "all"; label: string }> = [

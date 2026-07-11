@@ -62,7 +62,8 @@ export const Events: CollectionConfig = {
       type: "richText",
       label: "Beschreibung",
       admin: {
-        description: "Hinweis: aktuell nicht auf der Termine-Seite sichtbar.",
+        description:
+          "Erscheint auf der Termine-Seite (Programm, Details). Listen und Absätze werden als Text angezeigt.",
       },
     },
     {
@@ -80,9 +81,8 @@ export const Events: CollectionConfig = {
       type: "text",
       label: "Anmelde-Link",
       admin: {
-        hidden: true,
         description:
-          "Optional. Externer Link, z.B. zur Online-Anmeldung oder Eventseite.",
+          "Optional. Externer Link, z.B. zur Online-Anmeldung oder Eventseite. Erscheint als 'Zur Anmeldung'-Button.",
       },
     },
   ],

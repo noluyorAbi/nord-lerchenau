@@ -32,17 +32,18 @@ Aktuell: lädst du im Admin (`/admin`) ein Bild hoch, landet es im Nichts (404).
 
 Hinweis: alte, bereits hochgeladene Bilder zeigen weiter über die im Code mitgelieferten Dateien (`/public/uploads`). Nur NEU im Admin hochgeladene Bilder brauchen den Blob-Speicher.
 
-### 2. Kontaktformular-Mails reparieren (Resend)
+### 2. Kontaktformular-Mails (Resend) — ✅ INTERIM LIVE seit 2026-07-06
 
-Aktuell: Nachrichten aus `/kontakt` werden **gespeichert** (im Admin unter "Submissions" sichtbar), aber es kommt **keine E-Mail** an. Grund: `RESEND_API_KEY` ist leer.
+Aktuell: Mails aus `/kontakt` **kommen an** (bei `info@svnord.de`), Absender ist aber interim `kontakt@adatepe.dev` (Entwickler-Domain), weil `svnord.de` noch nicht bei Resend verifiziert ist. Nachrichten werden zusätzlich im Admin unter "Submissions" gespeichert.
 
-1. https://resend.com → Account → **API Keys** → Key erstellen → kopieren.
-2. Vercel → Projekt → **Settings → Environment Variables** → hinzufügen (Production):
-   - `RESEND_API_KEY` = der neue Key
-   - prüfen, dass `RESEND_FROM_EMAIL` = `info@svnord.de` und `RESEND_TO_EMAIL` = `info@svnord.de` auch in Vercel gesetzt sind (liegen lokal schon vor, Vercel-Env ist aber getrennt).
-3. Resend → **Domains** → `svnord.de` hinzufügen → die angezeigten DNS-Einträge (SPF, DKIM, DMARC) beim Domain-Anbieter eintragen → auf "verified" warten.
-   - Solange `svnord.de` nicht verifiziert ist, kann Resend nur von `onboarding@resend.dev` senden. Zum Testen vorher `RESEND_FROM_EMAIL` auf eine verifizierte Adresse setzen.
-4. **Redeploy**. Testen: `/kontakt` absenden → Mail muss bei `info@svnord.de` ankommen.
+Dauerhafte Lösung (offen):
+
+1. Vereins-eigenes Resend-Konto anlegen (statt Entwickler-Konto).
+2. Resend → **Domains** → `svnord.de` hinzufügen → DNS-Einträge (SPF, DKIM, DMARC) beim Domain-Anbieter eintragen → auf "verified" warten. **MX-Einträge nicht anfassen.**
+3. Vercel → Env (Production): `RESEND_API_KEY` = neuer Vereins-Key, `RESEND_FROM_EMAIL` = `kontakt@svnord.de`.
+4. **Redeploy**. Testen: `/kontakt` absenden → Mail kommt mit Vereins-Absender an.
+
+Hinweis: schlägt der Mailversand fehl, sieht der Nutzer trotzdem "gesendet" (best effort); die Nachricht liegt dann nur im Admin. Nach jeder Env-Änderung eine Testnachricht schicken.
 
 ### 3. Domain live schalten (DNS auf Vercel)
 

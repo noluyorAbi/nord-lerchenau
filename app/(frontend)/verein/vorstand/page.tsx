@@ -142,8 +142,6 @@ export default async function VorstandPage() {
       !isBlockedName(p.name),
   );
 
-  const totalPeople = result.docs.length;
-
   return (
     <>
       <PageHero
@@ -161,12 +159,10 @@ export default async function VorstandPage() {
             label="Abteilungen"
             tone="sky"
           />
-          <StatTile
-            value={jugendleitung.length}
-            label="Jugendleitung"
-            tone="gold"
-          />
-          <StatTile value={totalPeople} label="Ansprechpartner" tone="ink" />
+          {/* 2026_06_02 Vereinswunsch: eine Jugendleitung (statt Anzahl der Personen). */}
+          <StatTile value={1} label="Jugendleitung" tone="gold" />
+          {/* 2026_06_02 Vereinswunsch: Mitgliederzahl statt Ansprechpartner-Anzahl. */}
+          <StatTile value="600+" label="Mitglieder" tone="ink" />
         </div>
 
         <SectionHeader
@@ -297,7 +293,7 @@ function StatTile({
   label,
   tone,
 }: {
-  value: number;
+  value: number | string;
   label: string;
   tone: "navy" | "sky" | "gold" | "ink";
 }) {

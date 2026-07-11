@@ -15,13 +15,13 @@ export default function Page() {
           "Hobby & Mixed",
           "Seit 1984",
           "alle Stärken",
-          "Waldmeisterhalle",
+          "Waldmeisterschule",
         ]}
         stats={[
           { label: "Aktiv seit", value: "1984" },
           { label: "Form", value: "Hobby & Mixed" },
-          { label: "Training", value: "2× Woche" },
-          { label: "Halle", value: "Waldmeisterhalle" },
+          { label: "Training", value: "1× Woche" },
+          { label: "Halle", value: "Waldmeisterschule" },
           { label: "Altersspanne", value: "30-75 J." },
         ]}
         highlights={[
@@ -33,8 +33,8 @@ export default function Page() {
           },
           {
             eyebrow: "Training",
-            title: "Zwei Abende pro Woche",
-            body: "Wir treffen uns regelmäßig in der Waldmeisterhalle: feste Trainingszeiten, ohne Punktspielbetrieb, mit Smash-Sessions und Volleys.",
+            title: "Freitag, 19:00 bis 20:00 Uhr",
+            body: "Einmal pro Woche in der Waldmeisterschule. In den Schulferien pausieren wir, sonst läuft die Stunde verlässlich, das ganze Jahr.",
             accent: "navy",
           },
         ]}

@@ -1,3 +1,4 @@
+import { MapEmbed } from "@/components/MapEmbed";
 import { SportSectionPage } from "@/components/SportSectionPage";
 
 export const dynamic = "force-dynamic";
@@ -65,13 +66,13 @@ export default function Page() {
             Waldmeisterschule, Waldmeisterstraße 38, 80935 München
           </p>
         </div>
+        {/* Cookielose Karte (OpenFreeMap) statt Google-iframe, konsistent mit
+            /kontakt und der Zwei-Klick-Aussage in der Datenschutzerklärung. */}
         <div className="aspect-video overflow-hidden rounded-2xl border border-nord-line bg-nord-paper-2">
-          <iframe
-            title="Karte: Waldmeisterschule, Waldmeisterstraße 38, 80935 München"
-            src="https://maps.google.com/maps?q=Waldmeisterstra%C3%9Fe%2038%2C%2080935%20M%C3%BCnchen&z=15&output=embed"
-            className="h-full w-full border-0"
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
+          <MapEmbed
+            lat={48.19648}
+            lon={11.54988}
+            label="Waldmeisterschule · Waldmeisterstraße 38"
           />
         </div>
       </section>

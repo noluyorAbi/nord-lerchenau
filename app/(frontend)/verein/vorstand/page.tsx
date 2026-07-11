@@ -133,8 +133,21 @@ export default async function VorstandPage() {
     if (group.id === "esport") {
       people = people.filter((p) => ESPORT_ALLOWED.has(p.name));
     }
+    // Personen mit Doppel-Rolle (z. B. Schillinger: Gymnastik + Volleyball)
+    // zeigen in jeder Gruppe nur den dort passenden Rollen-Teil.
+    people = people.map((p) => {
+      const parts = (p.role ?? "").split("·").map((s) => s.trim());
+      const match = parts.length > 1 ? parts.find((s) => group.match(s)) : null;
+      return match ? { ...p, role: match } : p;
+    });
     return { ...group, people };
   }).filter((g) => g.people.length > 0);
+
+  // Kachel "Abteilungen": Schiedsrichter sind keine eigene Abteilung,
+  // gezählt werden die 5 Sport-Abteilungen (2026_06_02 Vereinswunsch: 5).
+  const abteilungenCount = sportSubgroups.filter(
+    (g) => g.id !== "schiedsrichter",
+  ).length;
 
   const ungrouped = sportleitung.filter(
     (p) =>
@@ -154,11 +167,7 @@ export default async function VorstandPage() {
         <div className="mb-12 grid grid-cols-2 gap-3 md:grid-cols-4">
           <StatTile value={vorstand.length} label="Vorstand" tone="navy" />
           {/* 2026_06_02 Vereinswunsch: nur Abteilungsleitung anzeigen, daher Anzahl der Abteilungen statt aller Trainer. */}
-          <StatTile
-            value={sportSubgroups.length}
-            label="Abteilungen"
-            tone="sky"
-          />
+          <StatTile value={abteilungenCount} label="Abteilungen" tone="sky" />
           {/* 2026_06_02 Vereinswunsch: eine Jugendleitung (statt Anzahl der Personen). */}
           <StatTile value={1} label="Jugendleitung" tone="gold" />
           {/* 2026_06_02 Vereinswunsch: Mitgliederzahl statt Ansprechpartner-Anzahl. */}

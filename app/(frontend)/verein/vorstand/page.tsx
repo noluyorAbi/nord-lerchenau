@@ -249,8 +249,8 @@ export default async function VorstandPage() {
           <>
             <SectionHeader
               eyebrow="Jugendleitung"
-              title="Großfeld und Kleinfeld"
-              sub="Direkte Ansprechpartner für Eltern und Jugendspieler."
+              title="Ansprechpartner für die Jugend"
+              sub="Direkter Ansprechpartner für Eltern und Jugendspieler."
             />
             <div className="grid gap-4 sm:grid-cols-2">
               {jugendleitung.map((p) => (

@@ -457,21 +457,15 @@ async function main() {
       email: "felix.kirmeyer@svnord.de",
       order: 5,
     },
-    {
-      name: "Tobias Treffer",
-      role: "Jugendleitung Großfeld",
-      function: "jugendleitung",
-      phone: "0176 55126535",
-      email: "tobias.treffer@svnord.de",
-      order: 6,
-    },
+    // Tobias Treffer auf eigenen Wunsch (2026-07-12) nicht mehr als
+    // Jugendleitung gelistet; Ansprechpartner ist allein Ergin Piker.
     {
       name: "Ergin Piker",
-      role: "Jugendleitung Kleinfeld",
+      role: "Jugendleitung",
       function: "jugendleitung",
       phone: "0160 5892697",
       email: "ergin.piker@svnord.de",
-      order: 7,
+      order: 6,
     },
   ];
 
@@ -507,6 +501,45 @@ async function main() {
     }
   }
 
+  // 2026-07-12, Wunsch von Tobias Treffer: seine Kontaktdaten nicht mehr als
+  // Jugendleitung führen. Personen-Doc + Porträt-Uploads entfernen und Ergin
+  // Piker als alleinige Jugendleitung führen. Läuft bei jedem Reseed, damit
+  // der Eintrag nicht wieder auftaucht.
+  {
+    const treffer = await payload.find({
+      collection: "people",
+      where: { name: { equals: "Tobias Treffer" } },
+      limit: 10,
+    });
+    for (const doc of treffer.docs) {
+      await payload.delete({ collection: "people", id: doc.id });
+      console.log("✗ Person entfernt: Tobias Treffer");
+    }
+    const trefferMedia = await payload.find({
+      collection: "media",
+      where: { filename: { like: "Tobias_Treffer" } },
+      limit: 100,
+    });
+    for (const doc of trefferMedia.docs) {
+      await payload.delete({ collection: "media", id: doc.id });
+      console.log(
+        `✗ Medium entfernt: ${(doc as { filename?: string }).filename}`,
+      );
+    }
+    const piker = await payload.find({
+      collection: "people",
+      where: { name: { equals: "Ergin Piker" } },
+      limit: 1,
+    });
+    if (piker.docs.length > 0) {
+      await payload.update({
+        collection: "people",
+        id: piker.docs[0]!.id,
+        data: { role: "Jugendleitung", order: 6 } as never,
+      });
+    }
+  }
+
   // 1b. Portraits from the live site (mirrored into tmp/live-portraits/)
   // Idempotent: ensurePortrait() skips if the Person doc doesn't yet exist
   // (so it also works for people we'll only add later via populateSportSection).
@@ -535,11 +568,6 @@ async function main() {
       personName: "Felix Kirmeyer",
       filename: "Felix_Kirmeyer.jpg",
       alt: "Porträt Felix Kirmeyer",
-    },
-    {
-      personName: "Tobias Treffer",
-      filename: "Tobias_Treffer.jpg",
-      alt: "Porträt Tobias Treffer",
     },
     {
       personName: "Elisabeth Schillinger",

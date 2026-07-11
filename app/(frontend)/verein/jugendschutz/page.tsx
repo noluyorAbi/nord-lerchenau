@@ -66,6 +66,10 @@ const SECTIONS: LegalSection[] = [
       },
       {
         kind: "p",
+        text: "Eine aktuelle Fallstudie des Bundesministeriums für Bildung, Familie, Senioren, Frauen und Jugend (BMFSFJ) verdeutlicht die Situation und den Handlungsbedarf.",
+      },
+      {
+        kind: "p",
         text: "Sexuelle Gewalt ist eine Grenzverletzung und meint jede sexuelle Handlung, die an einer anderen Person gegen deren Willen vorgenommen wird. Gerade im Sport gibt es eine Sondersituation durch das große Vertrauensverhältnis und das bestehende Macht- und Abhängigkeitsverhältnis zwischen Trainerinnen/Trainern und Spielerinnen/Spielern. Die besonderen Situationen in der Umkleide, beim Duschen und die Trainingslager mit Übernachtungen verlangen gezielte Schutzvereinbarungen für die Sicherheit der Kinder und Jugendlichen, aber auch um den Trainerinnen/Trainern und Betreuerinnen/Betreuern Sicherheit zu geben, in welchen Situationen besondere Rücksicht zu nehmen ist.",
       },
     ],

@@ -151,10 +151,14 @@ async function ensureSponsor(
   },
 ) {
   const { name, filename, filePath, url, tier = "standard", order } = opts;
-  // 1. Upload / find media
+  // 1. Upload / find media. Payload converts uploads (e.g. .avif -> .webp)
+  // and suffixes re-uploads with "-N", so an equals-match on the original
+  // filename never hits and every reseed would upload a duplicate. Match on
+  // the extension-less basename instead.
+  const baseName = filename.replace(/\.[^.]+$/, "");
   const existingMedia = await payload.find({
     collection: "media",
-    where: { filename: { equals: filename } },
+    where: { filename: { like: baseName } },
     limit: 1,
   });
   let mediaId: string | number;

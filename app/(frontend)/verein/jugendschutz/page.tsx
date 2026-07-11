@@ -66,7 +66,7 @@ const SECTIONS: LegalSection[] = [
       },
       {
         kind: "p",
-        text: "Eine aktuelle Fallstudie des Bundesministeriums für Bildung, Familie, Senioren, Frauen und Jugend (BMFSFJ) verdeutlicht die Situation und den Handlungsbedarf.",
+        text: "Eine aktuelle Fallstudie des Bundesministeriums für Bildung, Familie, Senioren, Frauen und Jugend (BMBFSFJ) verdeutlicht die Situation und den Handlungsbedarf.",
       },
       {
         kind: "p",

@@ -10,26 +10,44 @@ type LexNode = Record<string, unknown>;
 
 /**
  * Build a Lexical root doc from a tiny markdown-ish syntax.
- * Supports: ## → h2, ### → h3, #### → h4, blank-line paragraphs. Plain text only.
+ * Supports: ## → h2, ### → h3, #### → h4, blank-line paragraphs,
+ * "- " bullet lists, **fett** inline bold, and line breaks within a block.
  */
 function md(input: string): { root: LexNode } {
-  const paragraph = (text: string): LexNode => ({
+  const textNode = (text: string, format = 0): LexNode => ({
+    type: "text",
+    text,
+    format,
+    version: 1,
+    detail: 0,
+    mode: "normal",
+    style: "",
+  });
+  // Inline-Markdown: **fett** wird zu bold text nodes (format 1).
+  const inline = (text: string): LexNode[] => {
+    const nodes: LexNode[] = [];
+    text.split(/\*\*(.+?)\*\*/g).forEach((part, i) => {
+      if (!part) return;
+      nodes.push(textNode(part, i % 2 === 1 ? 1 : 0));
+    });
+    return nodes.length > 0 ? nodes : [textNode("")];
+  };
+  // Mehrzeilige Blöcke behalten ihre Zeilen als Lexical-Linebreaks.
+  const inlineLines = (lines: string[]): LexNode[] => {
+    const nodes: LexNode[] = [];
+    lines.forEach((line, i) => {
+      if (i > 0) nodes.push({ type: "linebreak", version: 1 });
+      nodes.push(...inline(line));
+    });
+    return nodes;
+  };
+  const paragraph = (lines: string[]): LexNode => ({
     type: "paragraph",
     format: "",
     indent: 0,
     version: 1,
     direction: "ltr",
-    children: [
-      {
-        type: "text",
-        text,
-        format: 0,
-        version: 1,
-        detail: 0,
-        mode: "normal",
-        style: "",
-      },
-    ],
+    children: inlineLines(lines),
   });
   const heading = (tag: "h2" | "h3" | "h4", text: string): LexNode => ({
     type: "heading",
@@ -38,17 +56,26 @@ function md(input: string): { root: LexNode } {
     indent: 0,
     version: 1,
     direction: "ltr",
-    children: [
-      {
-        type: "text",
-        text,
-        format: 0,
-        version: 1,
-        detail: 0,
-        mode: "normal",
-        style: "",
-      },
-    ],
+    children: inline(text),
+  });
+  const list = (items: string[]): LexNode => ({
+    type: "list",
+    listType: "bullet",
+    tag: "ul",
+    start: 1,
+    format: "",
+    indent: 0,
+    version: 1,
+    direction: "ltr",
+    children: items.map((item, i) => ({
+      type: "listitem",
+      value: i + 1,
+      format: "",
+      indent: 0,
+      version: 1,
+      direction: "ltr",
+      children: inline(item),
+    })),
   });
   const blocks = input
     .split(/\n\s*\n/)
@@ -58,7 +85,14 @@ function md(input: string): { root: LexNode } {
     if (b.startsWith("#### ")) return heading("h4", b.slice(5).trim());
     if (b.startsWith("### ")) return heading("h3", b.slice(4).trim());
     if (b.startsWith("## ")) return heading("h2", b.slice(3).trim());
-    return paragraph(b.replace(/\n/g, " "));
+    const lines = b
+      .split("\n")
+      .map((l) => l.trim())
+      .filter(Boolean);
+    if (lines.every((l) => l.startsWith("- "))) {
+      return list(lines.map((l) => l.slice(2).trim()));
+    }
+    return paragraph(lines);
   });
   return {
     root: {

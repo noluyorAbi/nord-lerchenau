@@ -17,9 +17,15 @@ const BLOCK_TYPES = new Set([
 ]);
 
 function inlineText(node: LexicalNode): string {
+  if (node.type === "linebreak") return "\n";
   if (typeof node.text === "string") return node.text;
   if (!Array.isArray(node.children)) return "";
-  return node.children.map(inlineText).join("");
+  // Nested lists are emitted as their own lines by collectBlocks; including
+  // them here would duplicate their text inside the parent bullet.
+  return node.children
+    .filter((child) => child.type !== "list")
+    .map(inlineText)
+    .join("");
 }
 
 function collectBlocks(node: LexicalNode, out: string[]): void {

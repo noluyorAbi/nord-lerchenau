@@ -22,7 +22,7 @@ Replace the existing Wix-hosted website of **SV Nord München-Lerchenau e.V.** w
 - Slogan: "Einmal Nordler, immer Nordler."
 - Brand colors (extracted from crest): deep navy `#0e1e4a`, sky blue `#60c0e8`, gold `#c8a96a`, white.
 - Contact: `info@svnord.de` · `0172 2392919` · Instagram `@svnord_ski`.
-- Vorstand: Ralf Kirmeyer (1.), Birgit Höfer (2.), Britta Feierabend (Kassier), Fabian Falk (Schriftführer), Felix Kirmeyer (Sportlicher Leiter), Tobias Treffer (Jugendleitung Großfeld), Ergin Piker (Jugendleitung Kleinfeld).
+- Vorstand: Ralf Kirmeyer (1.), Birgit Höfer (2.), Britta Feierabend (Kassier), Fabian Falk (Schriftführer), Felix Kirmeyer (Sportlicher Leiter), Ergin Piker (Jugendleitung).
 
 **Repo state at start**
 

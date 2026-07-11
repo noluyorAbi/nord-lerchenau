@@ -109,7 +109,11 @@ export default async function TerminePage() {
       location: e.location ?? null,
       // Lexical richtext aus dem CMS als Klartext (Programm etc. sichtbar).
       description: lexicalToPlainText(e.description),
-      ctaUrl: typeof e.ctaUrl === "string" && e.ctaUrl ? e.ctaUrl : null,
+      // Nur http(s)-Links als Anmelde-Button rendern.
+      ctaUrl:
+        typeof e.ctaUrl === "string" && /^https?:\/\//i.test(e.ctaUrl)
+          ? e.ctaUrl
+          : null,
     };
     items.push(item);
   }
@@ -145,18 +149,28 @@ export default async function TerminePage() {
       .replace(/\(.*?\)/g, "")
       .replace(/[^a-zäöüß0-9]+/g, " ")
       .trim();
+  // Kalendertag in Europe/Berlin (Server läuft in UTC): sonst landen Termine
+  // zwischen 00:00 und 01:59 Berliner Zeit im falschen Tages-Bucket.
+  const berlinDay = (iso: string) =>
+    new Date(iso).toLocaleDateString("de-DE", { timeZone: "Europe/Berlin" });
   for (const e of STATIC_EVENTS) {
     const d = new Date(e.at);
     if (Number.isNaN(d.getTime()) || d.getTime() < now) continue;
     // Skip the fallback when the same Termin is already pflegt im CMS
     // (same day + overlapping title), sonst erscheint er doppelt.
-    const eDay = d.toDateString();
+    const eDay = berlinDay(e.at);
     const eNorm = normalizeTitle(e.title);
     const duplicate = items.some((it) => {
       if (it.kind !== "event") return false;
-      if (new Date(it.at).toDateString() !== eDay) return false;
+      if (berlinDay(it.at) !== eDay) return false;
       const itNorm = normalizeTitle(it.title);
-      return itNorm.includes(eNorm) || eNorm.includes(itNorm);
+      // Leere/degenerierte Titel nie matchen; Teilstring erst ab 5 Zeichen,
+      // sonst unterdrückt z. B. ein Event "2026" den Fallback.
+      if (!itNorm || !eNorm) return false;
+      if (itNorm === eNorm) return true;
+      const [shorter, longer] =
+        itNorm.length <= eNorm.length ? [itNorm, eNorm] : [eNorm, itNorm];
+      return shorter.length >= 5 && longer.includes(shorter);
     });
     if (duplicate) continue;
     items.push(e);

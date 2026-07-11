@@ -130,11 +130,11 @@ export const DATENSCHUTZ_SECTIONS: LegalSection[] = [
         kind: "callout",
         tone: "key",
         title: "Wir setzen kein Tracking ein",
-        text: "**Keine Tracking-, Analyse- oder Marketing-Cookies.** Nur funktional notwendige Cookies, zulässig nach § 25 Abs. 2 Nr. 2 TTDSG ohne Einwilligung. Rechtsgrundlage für deren Speicherung ist im Übrigen unser berechtigtes Interesse an einer funktionsfähigen Website (Art. 6 Abs. 1 lit. f DSGVO).",
+        text: "**Keine Tracking-, Analyse- oder Marketing-Cookies.** Nur funktional notwendige Cookies, zulässig nach § 25 Abs. 2 Nr. 2 TDDDG (ehemals TTDSG) ohne Einwilligung. Rechtsgrundlage für deren Speicherung ist im Übrigen unser berechtigtes Interesse an einer funktionsfähigen Website (Art. 6 Abs. 1 lit. f DSGVO).",
       },
       {
         kind: "p",
-        text: "Optionale Cookies sowie externe Inhalte werden ausschließlich nach Ihrer ausdrücklichen Einwilligung geladen (Art. 6 Abs. 1 lit. a DSGVO, § 25 Abs. 1 TTDSG). Statt eines Cookie-Banners nutzen wir dafür eine Zwei-Klick-Lösung: Drittanbieter-Inhalte und deren Cookies (z. B. BFV-Spielplan, FuPa-Block, Instagram-Feed) werden erst geladen, wenn Sie sie **aktiv** durch Klick starten. Ein gesondertes Consent-Management-Tool ist deshalb nicht im Einsatz; es werden ohne Ihre Einwilligung keine optionalen Cookies gesetzt.",
+        text: "Optionale Cookies sowie externe Inhalte werden ausschließlich nach Ihrer ausdrücklichen Einwilligung geladen (Art. 6 Abs. 1 lit. a DSGVO, § 25 Abs. 1 TDDDG). Statt eines Cookie-Banners nutzen wir dafür eine Zwei-Klick-Lösung: Drittanbieter-Inhalte und deren Cookies (z. B. BFV-Spielplan, FuPa-Block, Instagram-Feed) werden erst geladen, wenn Sie sie **aktiv** durch Klick starten. Ein gesondertes Consent-Management-Tool ist deshalb nicht im Einsatz; es werden ohne Ihre Einwilligung keine optionalen Cookies gesetzt.",
       },
     ],
   },

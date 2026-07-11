@@ -79,7 +79,7 @@ Als Quellen verwendet; keine Umsetzung auf der Website nötig.
 ## 13. Datenschutzerklärung: erledigt (angepasst an die tatsächliche Technik)
 
 - **Hosting:** Anbieter ist mit Namen und Sitz genannt (Vercel Inc., USA), inklusive Vertrag zur Auftragsverarbeitung nach Art. 28 DSGVO und Rechtsgrundlage. Auch für die Datenbank (Neon, Frankfurt) ist die Auftragsverarbeitung ergänzt.
-- **Cookies:** Rechtsgrundlagen (Art. 6 Abs. 1 lit. a und f DSGVO, § 25 TTDSG) sind ergänzt. Wichtig zum Verständnis: Die Website setzt **bewusst keine optionalen Cookies und kein Tracking** ein. Externe Inhalte laden erst nach aktivem Klick (Zwei-Klick-Lösung); das ist die Einwilligung. Ein separates Consent-Management-Tool (Cookie-Banner) ist deshalb nicht erforderlich und wurde bewusst nicht eingebaut.
+- **Cookies:** Rechtsgrundlagen (Art. 6 Abs. 1 lit. a und f DSGVO, § 25 TDDDG, dem Nachfolger des TTDSG) sind ergänzt. Wichtig zum Verständnis: Die Website setzt **bewusst keine optionalen Cookies und kein Tracking** ein. Externe Inhalte laden erst nach aktivem Klick (Zwei-Klick-Lösung); das ist die Einwilligung. Ein separates Consent-Management-Tool (Cookie-Banner) ist deshalb nicht erforderlich und wurde bewusst nicht eingebaut.
 
 ---
 

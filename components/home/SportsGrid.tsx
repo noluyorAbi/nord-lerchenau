@@ -61,7 +61,7 @@ const SPORTS: Sport[] = [
     href: "/volleyball",
     kicker: "Smash auf Holz. Seit 1984.",
     body: "Familien-Volleyball mit Spaß-Faktor — zwei Abende pro Woche, Hobby und Mixed. 30 bis 75 Jahre, alle Spielstärken willkommen.",
-    pills: ["Hobby & Mixed", "2× Woche", "Waldmeisterhalle"],
+    pills: ["Hobby & Mixed", "1× Woche", "Waldmeisterschule"],
     count: "2×",
     sub: "Woche",
     theme: "volleyball",

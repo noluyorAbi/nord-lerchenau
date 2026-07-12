@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ClubLogo } from "@/components/ClubLogo";
 import { getPayloadClient } from "@/lib/payload";
 import { mediaSrc } from "@/lib/publicUploads";
+import { sponsorTone } from "@/lib/sponsor-visual";
 import { FALLBACK_SPONSORS } from "@/lib/sponsors-fallback";
 
 const FALLBACK_COLUMNS = [
@@ -175,6 +176,9 @@ export async function Footer() {
             <div className="group relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
               <ul className="flex w-max animate-[footer-marquee_45s_linear_infinite] items-center gap-2 pl-2 group-hover:[animation-play-state:paused] motion-reduce:animate-none">
                 {[...sponsors, ...sponsors].map((s, idx) => {
+                  // Fläche pro Logo: dunkle Logos auf hellem Chip, weiße
+                  // Logos auf dem dunklen Glas-Chip.
+                  const tone = sponsorTone(s.name);
                   const inner = s.logoUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -188,8 +192,11 @@ export async function Footer() {
                       {s.name}
                     </span>
                   );
-                  const chip =
-                    "flex h-11 items-center rounded-lg border border-white/10 bg-white/5 px-3.5 text-white/75 transition hover:border-nord-gold/60 hover:bg-white/10 hover:text-white";
+                  const chip = `flex h-11 items-center rounded-lg border px-3.5 transition hover:border-nord-gold/60 ${
+                    tone === "dark"
+                      ? "border-white/10 bg-white/5 text-white/75 hover:bg-white/10 hover:text-white"
+                      : "border-white/15 bg-white/95 text-nord-ink hover:bg-white"
+                  }`;
                   return (
                     <li
                       key={`${s.id}-${idx}`}

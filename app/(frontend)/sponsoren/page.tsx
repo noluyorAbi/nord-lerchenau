@@ -4,6 +4,7 @@ import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
 import { getPayloadClient } from "@/lib/payload";
 import { mediaSrc } from "@/lib/publicUploads";
+import { sponsorTone } from "@/lib/sponsor-visual";
 import { FALLBACK_SPONSORS } from "@/lib/sponsors-fallback";
 
 export const dynamic = "force-dynamic";
@@ -259,10 +260,16 @@ function SponsorCard({ sponsor, size }: SponsorProps) {
   const s = sponsor;
   const logo = typeof s.logo === "object" && s.logo ? s.logo : null;
   const logoUrl = mediaSrc(logo);
+  // Fläche pro Logo: dunkle Logos auf Weiß, weiße Logos auf Navy.
+  const tone = sponsorTone(s.name);
 
   const content = (
     <div
-      className={`group flex items-center justify-center overflow-hidden rounded-xl border border-nord-line bg-nord-navy ${
+      className={`group flex items-center justify-center overflow-hidden rounded-xl border ${
+        tone === "dark"
+          ? "border-nord-line bg-nord-navy"
+          : "border-nord-line bg-white"
+      } ${
         size === "large" ? "aspect-[16/9] p-8" : "aspect-[3/2] p-5"
       } transition hover:-translate-y-0.5 hover:shadow-lg`}
     >
@@ -276,9 +283,9 @@ function SponsorCard({ sponsor, size }: SponsorProps) {
         />
       ) : (
         <span
-          className={`text-center font-serif italic text-white/80 ${
-            size === "large" ? "text-2xl" : "text-base"
-          }`}
+          className={`text-center font-serif italic ${
+            tone === "dark" ? "text-white/80" : "text-nord-ink/70"
+          } ${size === "large" ? "text-2xl" : "text-base"}`}
         >
           {s.name}
         </span>

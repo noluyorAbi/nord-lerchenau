@@ -1,5 +1,6 @@
 import { getPayloadClient } from "@/lib/payload";
 import { mediaSrc } from "@/lib/publicUploads";
+import { sponsorTone } from "@/lib/sponsor-visual";
 import { FALLBACK_SPONSORS } from "@/lib/sponsors-fallback";
 
 type Sponsor = {
@@ -70,8 +71,16 @@ export async function SponsorMarquee() {
         <div className="group relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_4%,black_96%,transparent)]">
           <div className="flex w-max animate-[marquee_50s_linear_infinite] items-center gap-6 pr-6 group-hover:[animation-play-state:paused] motion-reduce:animate-none md:gap-8 md:pr-8">
             {doubled.map((s, idx) => {
+              // Fläche pro Logo: dunkle Logos auf Weiß, weiße auf Navy.
+              const tone = sponsorTone(s.name);
               const card = (
-                <div className="flex h-24 w-52 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-nord-navy-2/40 bg-nord-navy p-4 shadow-[0_8px_22px_-10px_rgba(11,27,63,0.55)] transition hover:-translate-y-0.5 hover:border-nord-gold hover:shadow-[0_14px_28px_-10px_rgba(11,27,63,0.65)] md:h-28 md:w-60 md:p-5">
+                <div
+                  className={`flex h-24 w-52 shrink-0 items-center justify-center overflow-hidden rounded-2xl border p-4 transition hover:-translate-y-0.5 hover:border-nord-gold md:h-28 md:w-60 md:p-5 ${
+                    tone === "dark"
+                      ? "border-nord-navy-2/40 bg-nord-navy shadow-[0_8px_22px_-10px_rgba(11,27,63,0.55)] hover:shadow-[0_14px_28px_-10px_rgba(11,27,63,0.65)]"
+                      : "border-nord-line bg-white shadow-[0_8px_22px_-14px_rgba(11,27,63,0.35)] hover:shadow-[0_14px_28px_-14px_rgba(11,27,63,0.45)]"
+                  }`}
+                >
                   {s.logoUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -81,7 +90,11 @@ export async function SponsorMarquee() {
                       className="max-h-full max-w-full object-contain"
                     />
                   ) : (
-                    <span className="text-center font-display text-sm font-bold uppercase tracking-[0.06em] text-white">
+                    <span
+                      className={`text-center font-display text-sm font-bold uppercase tracking-[0.06em] ${
+                        tone === "dark" ? "text-white" : "text-nord-ink"
+                      }`}
+                    >
                       {s.name}
                     </span>
                   )}

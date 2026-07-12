@@ -168,45 +168,62 @@ export async function Footer() {
                 Alle Partner →
               </Link>
             </div>
-            <ul className="flex flex-wrap items-center gap-x-2 gap-y-2">
-              {sponsors.map((s) => {
-                const inner = s.logoUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={s.logoUrl}
-                    alt={`Logo ${s.name}`}
-                    loading="lazy"
-                    className="max-h-7 w-auto max-w-[8.5rem] object-contain"
-                  />
-                ) : (
-                  <span className="font-display text-[12px] font-semibold uppercase tracking-[0.05em]">
-                    {s.name}
-                  </span>
-                );
-                const chip =
-                  "flex h-11 items-center rounded-lg border border-white/10 bg-white/5 px-3.5 text-white/75 transition hover:border-nord-gold/60 hover:bg-white/10 hover:text-white";
-                return (
-                  <li key={s.id}>
-                    {s.url ? (
-                      <a
-                        href={s.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title={s.name}
-                        className={chip}
-                      >
-                        {inner}
-                      </a>
-                    ) : (
-                      <div title={s.name} className={chip}>
-                        {inner}
-                      </div>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
+            {/* Endloses, nahtloses Partner-Karussell (läuft von links nach
+                rechts). Liste ist verdoppelt; die Animation verschiebt um
+                genau 50 %, dadurch kein sichtbarer Sprung. Pausiert bei
+                Hover, steht bei reduzierter Bewegung. */}
+            <div className="group relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
+              <ul className="flex w-max animate-[footer-marquee_45s_linear_infinite] items-center gap-2 pl-2 group-hover:[animation-play-state:paused] motion-reduce:animate-none">
+                {[...sponsors, ...sponsors].map((s, idx) => {
+                  const inner = s.logoUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={s.logoUrl}
+                      alt={`Logo ${s.name}`}
+                      loading="lazy"
+                      className="max-h-7 w-auto max-w-[8.5rem] object-contain"
+                    />
+                  ) : (
+                    <span className="font-display text-[12px] font-semibold uppercase tracking-[0.05em]">
+                      {s.name}
+                    </span>
+                  );
+                  const chip =
+                    "flex h-11 items-center rounded-lg border border-white/10 bg-white/5 px-3.5 text-white/75 transition hover:border-nord-gold/60 hover:bg-white/10 hover:text-white";
+                  return (
+                    <li
+                      key={`${s.id}-${idx}`}
+                      aria-hidden={idx >= sponsors.length || undefined}
+                      className="shrink-0"
+                    >
+                      {s.url ? (
+                        <a
+                          href={s.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title={s.name}
+                          tabIndex={idx >= sponsors.length ? -1 : undefined}
+                          className={chip}
+                        >
+                          {inner}
+                        </a>
+                      ) : (
+                        <div title={s.name} className={chip}>
+                          {inner}
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           </div>
+          <style>{`
+            @keyframes footer-marquee {
+              from { transform: translateX(-50%); }
+              to { transform: translateX(0); }
+            }
+          `}</style>
         </div>
       ) : null}
       <div className="mx-auto grid w-full max-w-[1320px] gap-10 px-6 py-16 md:grid-cols-[1.6fr_repeat(4,1fr)] md:px-7">

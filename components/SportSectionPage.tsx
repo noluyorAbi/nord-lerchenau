@@ -14,6 +14,9 @@ export type StaticContact = {
   role?: string;
   email?: string;
   phone?: string;
+  /** Name des People-Eintrags, falls er vom Anzeigenamen abweicht
+   *  (z. B. "Bini Hafner" für Korbinian Hafner). */
+  photoName?: string;
 };
 
 export type SportStat = { label: string; value: string };
@@ -113,6 +116,26 @@ export async function SportSectionPage({
 
   const team = result.docs[0];
   if (!team) notFound();
+
+  // Porträts für statische Ansprechpartner aus der People-Collection ziehen,
+  // damit vorhandene CMS-Fotos nicht als Initialen-Kreis enden.
+  const portraitByName = new Map<string, string>();
+  const lookupNames = (staticContacts ?? []).map((c) => c.photoName ?? c.name);
+  if (lookupNames.length > 0) {
+    const people = await payload.find({
+      collection: "people",
+      where: { name: { in: lookupNames } },
+      limit: lookupNames.length,
+      depth: 1,
+    });
+    for (const p of people.docs) {
+      const src =
+        p.photo && typeof p.photo === "object"
+          ? mediaSrc(p.photo as Media)
+          : null;
+      if (src) portraitByName.set(p.name, src);
+    }
+  }
 
   const excludeSet = new Set(
     (excludeTrainerNames ?? []).map((n) => n.toLowerCase().trim()),
@@ -295,15 +318,25 @@ export async function SportSectionPage({
                       key={c.name}
                       className="overflow-hidden rounded-2xl border border-nord-line bg-white p-5"
                     >
-                      <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-nord-navy to-nord-navy-2 text-base font-bold text-white">
-                        {c.name
-                          .split(/\s+/)
-                          .map((p) => p[0])
-                          .filter(Boolean)
-                          .slice(0, 2)
-                          .join("")
-                          .toUpperCase()}
-                      </div>
+                      {portraitByName.get(c.photoName ?? c.name) ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={portraitByName.get(c.photoName ?? c.name)!}
+                          alt={`Porträt ${c.name}`}
+                          className="size-14 rounded-full object-cover ring-2 ring-nord-line"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-nord-navy to-nord-navy-2 text-base font-bold text-white">
+                          {c.name
+                            .split(/\s+/)
+                            .map((p) => p[0])
+                            .filter(Boolean)
+                            .slice(0, 2)
+                            .join("")
+                            .toUpperCase()}
+                        </div>
+                      )}
                       <h3 className="mt-4 font-display text-base font-extrabold tracking-tight text-nord-ink">
                         {c.name}
                       </h3>

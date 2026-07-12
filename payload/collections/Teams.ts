@@ -211,7 +211,7 @@ export const Teams: CollectionConfig = {
       label: "Mannschaftsfoto",
       admin: {
         description:
-          "Hinweis: Sport-Hero-Bilder kommen derzeit aus statischen Dateien. Dieses Feld wird aktuell nicht verwendet.",
+          "Wird auf den Mannschafts-Karten angezeigt, wenn kein BFV-Foto verknüpft ist (z. B. AH). Sport-Hero-Bilder (Gymnastik/Volleyball/Ski) kommen weiterhin aus statischen Dateien.",
       },
     },
     {

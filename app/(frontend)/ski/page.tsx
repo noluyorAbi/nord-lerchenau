@@ -49,6 +49,7 @@ export default function Page() {
           name: "Korbinian Hafner",
           role: "1. Vorsitzender / Skilehrer",
           email: "info@svnord.de",
+          photoName: "Bini Hafner",
         },
         {
           name: "Tobias Tins",

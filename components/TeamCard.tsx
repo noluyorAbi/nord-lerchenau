@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { bfvTeamImageUrl } from "@/lib/bfv";
+import { mediaSrc } from "@/lib/publicUploads";
 import type { Person, Team } from "@/payload-types";
 
 type Props = { team: Team };
@@ -21,7 +22,11 @@ export function TeamCard({ team }: Props) {
     .map((t) => t.name)
     .filter((n): n is string => typeof n === "string" && n.length > 0);
 
-  const teamImage = bfvTeamImageUrl(team.bfv?.teamId);
+  // BFV-Foto zuerst; sonst das im Admin hochgeladene Mannschaftsfoto
+  // (z. B. AH ohne BFV-Spielbetrieb).
+  const cmsPhoto =
+    team.photo && typeof team.photo === "object" ? mediaSrc(team.photo) : null;
+  const teamImage = bfvTeamImageUrl(team.bfv?.teamId) ?? cmsPhoto;
 
   return (
     <Link

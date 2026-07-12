@@ -253,10 +253,13 @@ async function ensurePortrait(
   });
   if (person.docs.length === 0) return;
 
-  // Check if media already exists for this filename
+  // Check if media already exists for this file. Payload converts uploads
+  // (jpg -> webp) and suffixes re-uploads with "-N", so an equals-match on
+  // the original filename never hits and every reseed would upload a new
+  // generation. Match on the extension-less basename instead.
   const existingMedia = await payload.find({
     collection: "media",
-    where: { filename: { equals: filename } },
+    where: { filename: { like: filename.replace(/\.[^.]+$/, "") } },
     limit: 1,
   });
 
@@ -305,9 +308,10 @@ async function ensureTeamPhoto(
   });
   if (team.docs.length === 0) return;
 
+  // Basename-like match for the same reason as in ensurePortrait().
   const existingMedia = await payload.find({
     collection: "media",
-    where: { filename: { equals: filename } },
+    where: { filename: { like: filename.replace(/\.[^.]+$/, "") } },
     limit: 1,
   });
 

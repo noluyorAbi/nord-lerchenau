@@ -1,14 +1,16 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPayload } from "payload";
-import { RichText } from "@payloadcms/richtext-lexical/react";
 import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical";
 
 import { RefreshOnPreview } from "./RefreshOnPreview";
+import { NewsRichText } from "@/components/news/NewsRichText";
 import {
   formatNewsDate,
   newsHeroForPost,
   newsTagLabel,
+  NEWS_FIGURE_BY_SLUG,
 } from "@/lib/news-visual";
 import { mediaSrc } from "@/lib/publicUploads";
 import type { Media, Post } from "@/payload-types";
@@ -72,6 +74,7 @@ export default async function NewsPost({ params, searchParams }: Props) {
   const hero = heroImg
     ? ({ kind: "image", src: heroImg } as const)
     : newsHeroForPost(post.slug, tag);
+  const figure = NEWS_FIGURE_BY_SLUG[post.slug] ?? null;
 
   return (
     <>
@@ -81,7 +84,9 @@ export default async function NewsPost({ params, searchParams }: Props) {
         <div className="absolute inset-0">
           {hero.kind === "image" ? (
             <div
-              className="absolute inset-0 bg-cover bg-center"
+              className={`absolute inset-0 bg-cover ${
+                figure?.portrait ? "bg-top" : "bg-center"
+              }`}
               style={{ backgroundImage: `url(${hero.src})` }}
             />
           ) : (
@@ -137,9 +142,26 @@ export default async function NewsPost({ params, searchParams }: Props) {
       </section>
 
       <article className="mx-auto max-w-3xl px-6 py-14 md:py-20">
-        <div className="prose prose-neutral prose-lg max-w-none prose-headings:font-display prose-headings:font-black prose-headings:tracking-tight prose-h2:mt-12 prose-h2:border-b prose-h2:border-nord-line prose-h2:pb-2 prose-h3:mt-10 prose-a:text-nord-navy hover:prose-a:text-nord-gold prose-strong:text-nord-ink prose-p:leading-relaxed">
-          <RichText data={post.body as SerializedEditorState} />
-        </div>
+        {figure ? (
+          <figure className="mb-12">
+            <div className="overflow-hidden rounded-2xl border border-nord-line bg-nord-paper-2">
+              <Image
+                src={figure.src}
+                alt={figure.alt}
+                width={1080}
+                height={1350}
+                sizes="(min-width: 768px) 768px, 100vw"
+                className="h-auto w-full"
+                priority
+              />
+            </div>
+            <figcaption className="mt-3 border-l-2 border-nord-gold pl-3 text-[13px] leading-relaxed text-nord-muted">
+              {figure.caption}
+            </figcaption>
+          </figure>
+        ) : null}
+
+        <NewsRichText data={post.body as SerializedEditorState} />
 
         <div className="mt-14 flex flex-wrap items-center justify-between gap-4 border-t border-nord-line pt-8">
           <Link

@@ -48,14 +48,59 @@ function md(input: string): { root: LexNode } {
       },
     ],
   });
+  const text = (value: string): LexNode => ({
+    type: "text",
+    text: value,
+    format: 0,
+    version: 1,
+    detail: 0,
+    mode: "normal",
+    style: "",
+  });
+  const bulletList = (items: string[]): LexNode => ({
+    type: "list",
+    listType: "bullet",
+    tag: "ul",
+    start: 1,
+    format: "",
+    indent: 0,
+    version: 1,
+    direction: "ltr",
+    children: items.map((item, i) => ({
+      type: "listitem",
+      value: i + 1,
+      format: "",
+      indent: 0,
+      version: 1,
+      direction: "ltr",
+      children: [text(item)],
+    })),
+  });
+  const quote = (value: string): LexNode => ({
+    type: "quote",
+    format: "",
+    indent: 0,
+    version: 1,
+    direction: "ltr",
+    children: [text(value)],
+  });
   const blocks = input
     .split(/\n\s*\n/)
     .map((b) => b.trim())
     .filter(Boolean);
   const children: LexNode[] = blocks.map((b) => {
+    if (b.startsWith("> ")) return quote(b.slice(2).replace(/\n/g, " ").trim());
     if (b.startsWith("#### ")) return heading("h4", b.slice(5).trim());
     if (b.startsWith("### ")) return heading("h3", b.slice(4).trim());
     if (b.startsWith("## ")) return heading("h2", b.slice(3).trim());
+    if (b.startsWith("- ")) {
+      return bulletList(
+        b
+          .split("\n")
+          .map((line) => line.replace(/^-\s+/, "").trim())
+          .filter(Boolean),
+      );
+    }
     return paragraph(b.replace(/\n/g, " "));
   });
   return {
@@ -91,13 +136,17 @@ const POSTS: ImportPost[] = [
 
 ## Die Bilanz
 
-3 Siege, 1 Unentschieden, 1 Niederlage. Eine Vorbereitung, die zeigt: Die Mannschaft ist angekommen. Der komplette Fahrplan mit allen Trainingseinheiten, dem Trainingslager und sämtlichen Testspiel-Ergebnissen steht im Übersichtsplan oben.
+- 3 Siege
+- 1 Unentschieden
+- 1 Niederlage
+
+Woche für Woche Training, dazu fünf Prüfungen gegen Gegner aus unterschiedlichen Ligen und ein Trainingslager, das die Mannschaft enger zusammengeschweißt hat. Alle Einheiten, das Trainingslager und sämtliche Testspiel-Ergebnisse stehen im Plan oben.
 
 ## Jetzt zählt es
 
-Jetzt heißt es: noch eine Woche Vollgas. Am Samstag wird beim FC Moosinning endlich wieder um Punkte gekämpft, unser Auftakt in der Landesliga.
+Jetzt heißt es: noch eine Woche Vollgas. Am Samstag geht es beim FC Moosinning endlich wieder um Punkte, unser Auftakt in der Landesliga.
 
-Landesliga, wir sind bereit. Seid ihr es auch?`,
+> Landesliga, wir sind bereit. Seid ihr es auch?`,
   },
   {
     title: "Historischer Aufstieg in die Landesliga!",
@@ -154,27 +203,46 @@ Auf eine geile und unvergessliche Zeit.`,
 async function main() {
   const payload = await getPayload({ config });
 
+  // Set UPDATE_SLUGS to a comma-separated list to overwrite posts that already
+  // exist, e.g. after rewording an article. Everything else stays skip-only so
+  // edits made in the CMS are never silently reverted.
+  const updateSlugs = new Set(
+    (process.env.UPDATE_SLUGS ?? "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean),
+  );
+
   for (const p of POSTS) {
     const existing = await payload.find({
       collection: "posts",
       where: { slug: { equals: p.slug } },
       limit: 1,
     });
+    const data = {
+      title: p.title,
+      slug: p.slug,
+      excerpt: p.excerpt,
+      publishedAt: p.publishedAt,
+      tags: p.tags,
+      body: md(p.body),
+    };
+
     if (existing.docs.length > 0) {
-      console.log(`↷ Skipping (exists): ${p.slug}`);
+      if (!updateSlugs.has(p.slug)) {
+        console.log(`↷ Skipping (exists): ${p.slug}`);
+        continue;
+      }
+      await payload.update({
+        collection: "posts",
+        id: existing.docs[0].id,
+        data: data as never,
+      });
+      console.log(`↻ Updated post: ${p.slug}`);
       continue;
     }
-    await payload.create({
-      collection: "posts",
-      data: {
-        title: p.title,
-        slug: p.slug,
-        excerpt: p.excerpt,
-        publishedAt: p.publishedAt,
-        tags: p.tags,
-        body: md(p.body),
-      } as never,
-    });
+
+    await payload.create({ collection: "posts", data: data as never });
     console.log(`✓ Created post: ${p.slug}`);
   }
 

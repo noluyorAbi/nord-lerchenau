@@ -28,7 +28,30 @@ export const NEWS_HERO_BY_SLUG: Record<string, string> = {
   "historischer-aufstieg-in-die-landesliga":
     "/news/historischer-aufstieg-in-die-landesliga.jpg",
   "karger-kommt": "/news/karger-kommt.jpg",
-  "vorbereitung-landesliga-2026": "/news/vorbereitung-landesliga-2026.jpg",
+  "vorbereitung-landesliga-2026": "/news/vorbereitungsplan-landesliga-2026.jpg",
+};
+
+export type NewsFigure = {
+  src: string;
+  alt: string;
+  caption: string;
+  /** Tall graphics (plans, matchday posters) need to be shown uncropped. */
+  portrait?: boolean;
+};
+
+/**
+ * Full-width figures rendered inside the article body. Used for posts whose
+ * key visual is an infographic that must stay readable, which a cropped hero
+ * background cannot deliver.
+ */
+export const NEWS_FIGURE_BY_SLUG: Record<string, NewsFigure> = {
+  "vorbereitung-landesliga-2026": {
+    src: "/news/vorbereitungsplan-landesliga-2026.jpg",
+    alt: "Wochenplan der Landesliga-Vorbereitung des SV Nord München-Lerchenau mit Trainingseinheiten, Trainingslager und den Ergebnissen der fünf Testspiele.",
+    caption:
+      "Unsere Vorbereitung auf die Landesliga: alle Trainingseinheiten, das Trainingslager und die Ergebnisse der fünf Testspiele auf einen Blick.",
+    portrait: true,
+  },
 };
 
 export function newsTagLabel(tag: string | null | undefined): string {

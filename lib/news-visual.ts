@@ -28,6 +28,7 @@ export const NEWS_HERO_BY_SLUG: Record<string, string> = {
   "historischer-aufstieg-in-die-landesliga":
     "/news/historischer-aufstieg-in-die-landesliga.jpg",
   "karger-kommt": "/news/karger-kommt.jpg",
+  "vorbereitung-landesliga-2026": "/news/vorbereitung-landesliga-2026.jpg",
 };
 
 export function newsTagLabel(tag: string | null | undefined): string {

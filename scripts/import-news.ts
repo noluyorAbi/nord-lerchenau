@@ -81,6 +81,25 @@ type ImportPost = {
 
 const POSTS: ImportPost[] = [
   {
+    title: "Vorbereitung? Abgehakt.",
+    slug: "vorbereitung-landesliga-2026",
+    excerpt:
+      "Fünf Testspiele, ein Trainingslager und jede Menge harte Arbeit: Die Bilanz der Landesliga-Vorbereitung steht bei 3 Siegen, 1 Unentschieden und 1 Niederlage. Am Samstag geht es beim FC Moosinning endlich wieder um Punkte.",
+    publishedAt: new Date("2026-07-13T18:00:00+02:00").toISOString(),
+    tags: ["verein", "spielbericht"],
+    body: `Fünf Testspiele. Ein Trainingslager. Jede Menge harte Arbeit. Die Vorbereitung auf unsere erste Landesliga-Saison ist abgehakt.
+
+## Die Bilanz
+
+3 Siege, 1 Unentschieden, 1 Niederlage. Eine Vorbereitung, die zeigt: Die Mannschaft ist angekommen. Der komplette Fahrplan mit allen Trainingseinheiten, dem Trainingslager und sämtlichen Testspiel-Ergebnissen steht im Übersichtsplan oben.
+
+## Jetzt zählt es
+
+Jetzt heißt es: noch eine Woche Vollgas. Am Samstag wird beim FC Moosinning endlich wieder um Punkte gekämpft, unser Auftakt in der Landesliga.
+
+Landesliga, wir sind bereit. Seid ihr es auch?`,
+  },
+  {
     title: "Historischer Aufstieg in die Landesliga!",
     slug: "historischer-aufstieg-in-die-landesliga",
     excerpt:

@@ -83,11 +83,14 @@ export default async function NewsPost({ params, searchParams }: Props) {
       <section className="relative isolate overflow-hidden border-b border-nord-line bg-nord-ink">
         <div className="absolute inset-0">
           {hero.kind === "image" ? (
+            // Tall graphics carry their own headline, so the hero crops to the
+            // photo band below it instead of repeating the title behind the h1.
             <div
-              className={`absolute inset-0 bg-cover ${
-                figure?.portrait ? "bg-top" : "bg-center"
-              }`}
-              style={{ backgroundImage: `url(${hero.src})` }}
+              className="absolute inset-0 bg-cover"
+              style={{
+                backgroundImage: `url(${hero.src})`,
+                backgroundPosition: figure?.portrait ? "50% 19%" : "center",
+              }}
             />
           ) : (
             <div className="absolute inset-0" style={{ background: hero.css }}>

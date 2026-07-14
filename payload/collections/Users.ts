@@ -9,9 +9,9 @@ export const Users: CollectionConfig = {
   slug: "users",
   labels: { singular: "Admin-Konto", plural: "Admin-Konten" },
   admin: {
-    useAsTitle: "email",
+    useAsTitle: "username",
     description:
-      "Login-Konten für das Admin-Panel. Hier weitere Admins anlegen oder Passwörter ändern.",
+      "Login-Konten für das Admin-Panel. Login per Benutzername (E-Mail funktioniert weiterhin). Hier weitere Admins anlegen oder Passwörter ändern.",
     group: "9. System",
   },
   access: {
@@ -21,7 +21,12 @@ export const Users: CollectionConfig = {
     read: authenticated,
     update: authenticated,
   },
-  auth: true,
+  auth: {
+    loginWithUsername: {
+      allowEmailLogin: true,
+      requireEmail: true,
+    },
+  },
   fields: [
     {
       name: "name",

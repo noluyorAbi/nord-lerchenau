@@ -250,7 +250,7 @@ export default async function OpengraphImage() {
                   marginTop: 10,
                 }}
               >
-                svnord-lerchenau.de
+                www.svnord.de
               </div>
             </div>
           </div>

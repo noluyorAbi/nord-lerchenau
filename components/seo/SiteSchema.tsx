@@ -1,7 +1,6 @@
 import { JsonLd } from "@/components/seo/JsonLd";
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SERVER_URL ?? "https://svnord-lerchenau.de";
+const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL ?? "https://www.svnord.de";
 const SITE_NAME = "SV Nord München-Lerchenau e.V.";
 
 /**

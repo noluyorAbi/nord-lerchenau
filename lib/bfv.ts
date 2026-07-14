@@ -387,7 +387,7 @@ export async function fetchBfvTable(teamId: string): Promise<BfvTable | null> {
     const res = await fetch(`${TEAM_TABLE_BASE}${teamId}`, {
       headers: {
         "User-Agent":
-          "Mozilla/5.0 (SV Nord München-Lerchenau website; https://svnord-lerchenau.de)",
+          "Mozilla/5.0 (SV Nord München-Lerchenau website; https://www.svnord.de)",
         Accept: "text/html,application/xhtml+xml",
       },
       next: { revalidate: 1800, tags: [`bfv:table:${teamId}`] },

@@ -127,7 +127,7 @@ async function fupaFetch<T>(url: string, tag: string): Promise<T | null> {
     const res = await fetch(url, {
       headers: {
         Accept: "application/json",
-        "User-Agent": "svnord-lerchenau.de (+https://svnord-lerchenau.de)",
+        "User-Agent": "svnord.de (+https://www.svnord.de)",
       },
       next: { revalidate: REVALIDATE, tags: [tag] },
     });

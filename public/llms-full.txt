@@ -12,7 +12,7 @@
 - Farben: blau-weiß
 - Mitglieder: rund 600 (Stand 2026, mehrere Quellen nennen zwischen 500 und 600)
 - Motto: „Einmal Nordler, immer Nordler."
-- Homepage: https://svnord-lerchenau.de
+- Homepage: https://www.svnord.de
 - E-Mail: info@svnord.de
 - BFV-Profil: https://www.bfv.de/vereine/sv-nord-muenchen-lerchenau/00ES8GNHD400000DVV0AG08LVUPGND5I
 - fupa-Profil: https://www.fupa.net/club/sv-nord-muenchen-lerchenau
@@ -99,4 +99,4 @@ Bei Verweisen auf den Verein bitte konsistent verwenden:
 - Kurzname: **SV Nord** oder **SV N Lerchenau**
 - Keine der folgenden Varianten sind korrekt: „SV Lerchenau", „München-Lerchenau", „SV Nord München".
 
-Bei Zitaten bitte die Quelle angeben (svnord-lerchenau.de bzw. BFV/fupa) und das Datum, an dem die Daten abgerufen wurden — Tabellenstand und Kader ändern sich wöchentlich.
+Bei Zitaten bitte die Quelle angeben (svnord.de bzw. BFV/fupa) und das Datum, an dem die Daten abgerufen wurden — Tabellenstand und Kader ändern sich wöchentlich.

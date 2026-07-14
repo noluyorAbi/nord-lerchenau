@@ -265,12 +265,12 @@ function IgScreenClone({ onOpen }: { onOpen: (idx: number) => void }) {
             #einmalnordlerimmernordler
           </div>
           <a
-            href="https://www.svnord-lerchenau.de"
+            href="https://www.svnord.de"
             target="_blank"
             rel="noopener noreferrer"
             className="font-semibold text-[#1f3a8a]"
           >
-            www.svnord-lerchenau.de
+            www.svnord.de
           </a>
         </div>
 

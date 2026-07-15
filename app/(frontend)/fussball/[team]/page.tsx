@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { RichText } from "@payloadcms/richtext-lexical/react";
 import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical";
 
 import { BfvMatchesPanel } from "@/components/BfvMatchesPanel";
@@ -10,6 +9,7 @@ import { FupaSquadPanel } from "@/components/FupaSquadPanel";
 import { PageHero } from "@/components/PageHero";
 import { PersonCard } from "@/components/PersonCard";
 import { ProbetrainingBanner } from "@/components/ProbetrainingBanner";
+import { TeamRichText } from "@/components/TeamRichText";
 import { TeamSourceButtons } from "@/components/TeamSourceButtons";
 import { bfvClubLogoUrl, bfvTeamImageUrl, bfvTeamUrl } from "@/lib/bfv";
 import { resolveFupaSlug } from "@/lib/fupa";
@@ -162,8 +162,8 @@ export default async function TeamPage({ params }: Props) {
 
         <div className="space-y-10 md:space-y-12">
           {hasDescription ? (
-            <div className="prose prose-neutral prose-lg max-w-none">
-              <RichText data={team.description as SerializedEditorState} />
+            <div className="max-w-3xl">
+              <TeamRichText data={team.description as SerializedEditorState} />
             </div>
           ) : (
             <div className="rounded-xl border border-dashed border-nord-line bg-white p-8 text-base text-nord-muted">

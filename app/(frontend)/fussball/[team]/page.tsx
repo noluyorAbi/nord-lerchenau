@@ -15,6 +15,7 @@ import { bfvClubLogoUrl, bfvTeamImageUrl, bfvTeamUrl } from "@/lib/bfv";
 import { resolveFupaSlug } from "@/lib/fupa";
 import { formatKickoff } from "@/lib/format-date";
 import { getPayloadClient } from "@/lib/payload";
+import { mediaSrc } from "@/lib/publicUploads";
 import type { Person } from "@/payload-types";
 
 type Props = { params: Promise<{ team: string }> };
@@ -65,6 +66,11 @@ export default async function TeamPage({ params }: Props) {
   const bfv = team.bfv ?? null;
   const bfvUrl = bfvTeamUrl(bfv);
   const bfvTeamImage = bfvTeamImageUrl(bfv?.teamId);
+  const cmsPhoto =
+    team.photo && typeof team.photo === "object" ? mediaSrc(team.photo) : null;
+  // BFV-Foto zuerst; sonst das im Admin hochgeladene Mannschaftsfoto
+  // (z. B. G-Junioren ohne BFV-Spielbetrieb).
+  const heroImage = bfvTeamImage ?? cmsPhoto;
   const bfvClubCrest = bfvClubLogoUrl("00ES8GNHD400000DVV0AG08LVUPGND5I");
 
   return (
@@ -85,7 +91,7 @@ export default async function TeamPage({ params }: Props) {
       />
 
       <div className="mx-auto max-w-5xl px-6 py-10 md:px-8 md:py-14">
-        {bfv?.teamId ? (
+        {heroImage ? (
           <div className="mb-10 overflow-hidden rounded-2xl border border-nord-line bg-nord-ink">
             <div className="relative aspect-[16/9] w-full overflow-hidden">
               {bfvTeamImage ? (
@@ -109,9 +115,13 @@ export default async function TeamPage({ params }: Props) {
                   />
                 </>
               ) : (
-                <div
-                  className="size-full bg-[linear-gradient(135deg,#0b1b3f_0%,#14306e_60%,#6ec7ea_120%)]"
-                  aria-hidden
+                /* Uploaded team photo (no BFV): fill the frame edge to edge. */
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                  src={heroImage}
+                  alt={`Mannschaftsfoto ${team.name}`}
+                  className="size-full object-cover"
+                  loading="lazy"
                 />
               )}
               <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(5,14,36,0.1)_0%,rgba(5,14,36,0.85)_100%)]" />
@@ -140,9 +150,11 @@ export default async function TeamPage({ params }: Props) {
                     </div>
                   </div>
                 </div>
-                <span className="hidden shrink-0 rounded-full border border-nord-gold bg-nord-gold/10 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-gold backdrop-blur md:inline-block">
-                  Foto · BFV
-                </span>
+                {bfvTeamImage ? (
+                  <span className="hidden shrink-0 rounded-full border border-nord-gold bg-nord-gold/10 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-gold backdrop-blur md:inline-block">
+                    Foto · BFV
+                  </span>
+                ) : null}
               </div>
             </div>
           </div>

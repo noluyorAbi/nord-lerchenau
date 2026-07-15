@@ -1046,6 +1046,22 @@ Montag, 18:00 bis 19:30 Uhr.`,
       },
     },
     {
+      name: "G-Junioren",
+      slug: "g-junioren",
+      sport: "fussball",
+      category: "junioren",
+      ageGroup: "G-Junioren",
+      order: 21,
+      league: "Trainingsgruppe · Nachwuchs",
+      descriptionMd: `## G-Junioren
+
+Unsere Jüngsten mit ganz viel Spaß am Ball. Spielerischer Einstieg, Teamgeist und jede Menge Freude am Fußball stehen bei uns im Vordergrund.
+
+## Mitmachen
+
+Bei Interesse könnt ihr uns gerne per WhatsApp erreichen.`,
+    },
+    {
       name: "Bambini",
       slug: "bambini",
       sport: "fussball",
@@ -1122,6 +1138,53 @@ Montag, 18:00 bis 19:30 Uhr.`,
 
   for (const t of teams) {
     await ensureTeam(payload, t);
+  }
+
+  // 2b. G-Junioren: Trainer verknüpfen und Mannschaftsfoto hinterlegen.
+  {
+    const gTrainers = [
+      {
+        name: "Stephan Krusche",
+        role: "Trainer G-Junioren",
+        phone: "0171 1437521",
+      },
+      {
+        name: "Sebastian Freund",
+        role: "Trainer G-Junioren",
+        phone: "0151 14996625",
+      },
+    ];
+    const gTrainerIds: Array<string | number> = [];
+    for (let i = 0; i < gTrainers.length; i++) {
+      const t = gTrainers[i]!;
+      gTrainerIds.push(
+        await ensurePerson(payload, {
+          name: t.name,
+          role: t.role,
+          function: "trainer",
+          phone: t.phone,
+          order: 200 + i,
+        }),
+      );
+    }
+    const gTeam = await payload.find({
+      collection: "teams",
+      where: { slug: { equals: "g-junioren" } },
+      limit: 1,
+    });
+    if (gTeam.docs.length > 0) {
+      await payload.update({
+        collection: "teams",
+        id: gTeam.docs[0]!.id,
+        data: { trainers: gTrainerIds } as never,
+      });
+    }
+    await ensureTeamPhoto(payload, {
+      teamSlug: "g-junioren",
+      filename: "g-junioren.jpg",
+      alt: "G-Junioren des SV Nord München-Lerchenau",
+      filePath: path.resolve(process.cwd(), "public/teams/g-junioren.jpg"),
+    });
   }
 
   // 3. Optional manifest for image references

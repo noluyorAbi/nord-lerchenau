@@ -773,7 +773,7 @@ async function main() {
         slug: "sv-n-lerchenau",
         spielklasse: "Herren / Landesliga",
       },
-      fupa: { slug: "sv-nord-muenchen-lerchenau-m1-2025-26" },
+      fupa: { slug: "sv-nord-muenchen-lerchenau-m1-2026-27" },
     },
     {
       name: "2. Herren",
@@ -788,7 +788,7 @@ async function main() {
         slug: "sv-n-lerchenau-ii",
         spielklasse: "Herren / Kreisklasse",
       },
-      fupa: { slug: "sv-nord-muenchen-lerchenau-m2-2025-26" },
+      fupa: { slug: "sv-nord-muenchen-lerchenau-m2-2026-27" },
     },
     {
       name: "3. Herren",
@@ -803,7 +803,7 @@ async function main() {
         slug: "sv-n-lerchenau-iii",
         spielklasse: "Herren / B-Klasse",
       },
-      fupa: { slug: "sv-nord-muenchen-lerchenau-m3-2025-26" },
+      fupa: { slug: "sv-nord-muenchen-lerchenau-m3-2026-27" },
     },
     {
       name: "Herren Ü32",
@@ -871,6 +871,10 @@ Montag, 18:00 bis 19:30 Uhr.`,
         spielklasse: "A-Junioren / Kreisliga",
         partner: "Spielgemeinschaft mit Fasanarie-Nord",
       },
+      // fupa legt Jugend-Halbsaisons (autumn/spring) erst nach und nach an;
+      // autumn2026 existiert noch nicht (404). Die Slugs hier duerfen alt
+      // bleiben: resolveLiveFupaSlug() upgraded zur Laufzeit automatisch auf
+      // die neueste auf fupa existierende Saison.
       fupa: {
         autumnSlug: "sg-n-lerchenau-fasanerie-n-u19-1-autumn2025",
         springSlug: "sg-n-lerchenau-fasanerie-n-u19-1-spring2026",
@@ -1083,7 +1087,7 @@ Bei Interesse könnt ihr uns gerne per WhatsApp erreichen.`,
         slug: "sv-nord-muenchen-lerchenau-u17",
         spielklasse: "B-Juniorinnen / Kreisklasse",
       },
-      fupa: { slug: "sv-nord-muenchen-lerchenau-wu17-1-2025-26" },
+      fupa: { slug: "sv-nord-muenchen-lerchenau-wu17-1-2026-27" },
     },
     {
       name: "C-Juniorinnen · U15",
@@ -1098,7 +1102,7 @@ Bei Interesse könnt ihr uns gerne per WhatsApp erreichen.`,
         slug: "sv-nord-muenchen-lerchenau-u15",
         spielklasse: "C-Juniorinnen / Kreisklasse",
       },
-      fupa: { slug: "sv-nord-muenchen-lerchenau-wu15-1-2025-26" },
+      fupa: { slug: "sv-nord-muenchen-lerchenau-wu15-1-2026-27" },
     },
     {
       name: "D-Juniorinnen · U13",

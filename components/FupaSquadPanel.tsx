@@ -2,7 +2,7 @@ import { FupaSquadClient } from "@/components/fupa/FupaSquadClient";
 import {
   fupaTeamUrl,
   getFupaTeamRoster,
-  resolveFupaSlug,
+  resolveLiveFupaSlug,
   type FupaMeta,
 } from "@/lib/fupa";
 
@@ -12,7 +12,8 @@ type Props = {
 };
 
 export async function FupaSquadPanel({ fupa, teamName }: Props) {
-  const slug = resolveFupaSlug(fupa);
+  // Neuester auf fupa existierender Saison-Slug (Auto-Upgrade alter Slugs).
+  const slug = await resolveLiveFupaSlug(fupa);
   if (!slug) return null;
 
   const roster = await getFupaTeamRoster(slug);

@@ -6,7 +6,12 @@ import { FupaBlock } from "@/components/home/FupaBlock";
 import { PageHero } from "@/components/PageHero";
 import { SectionEyebrow } from "@/components/SectionEyebrow";
 import { BFV_CLUB_URL } from "@/lib/bfv";
-import { getFupaStanding } from "@/lib/fupa";
+import {
+  fupaTeamUrl,
+  getFupaStandingForTeam,
+  getFupaTeam,
+  resolveLiveHerrenSlug,
+} from "@/lib/fupa";
 import { getPayloadClient } from "@/lib/payload";
 
 export const dynamic = "force-dynamic";
@@ -46,15 +51,22 @@ const TONE_CLASSES: Record<
 export default async function FussballPage() {
   const payload = await getPayloadClient();
 
-  const [result, standings] = await Promise.all([
-    payload.find({
-      collection: "teams",
-      where: { sport: { equals: "fussball" } },
-      sort: "order",
-      limit: 200,
-      depth: 0,
-    }),
-    getFupaStanding(),
+  // Slug-unabhängige Payload-Query sofort starten, damit die
+  // fupa-Slug-Auflösung sie nicht serialisiert.
+  const teamsPromise = payload.find({
+    collection: "teams",
+    where: { sport: { equals: "fussball" } },
+    sort: "order",
+    limit: 200,
+    depth: 0,
+  });
+  // Aktuellste auf fupa existierende Saison der 1. Herren; Liga und Saison
+  // der Tabelle kommen aus dem fupa-Team-Datensatz selbst.
+  const herrenSlug = await resolveLiveHerrenSlug();
+  const [result, standings, herrenTeam] = await Promise.all([
+    teamsPromise,
+    getFupaStandingForTeam(herrenSlug),
+    getFupaTeam(herrenSlug),
   ]);
 
   const bfvCount = result.docs.filter((t) => t.bfv?.teamId).length;
@@ -270,7 +282,12 @@ export default async function FussballPage() {
               Herren 1 · live von fupa
             </span>
           </div>
-          <StandingsTable standings={standings} />
+          <StandingsTable
+            standings={standings}
+            competitionName={herrenTeam?.competition.middleName}
+            seasonName={herrenTeam?.competition.season.name}
+            fupaUrl={fupaTeamUrl(herrenSlug)}
+          />
         </section>
       </div>
       <FupaBlock />

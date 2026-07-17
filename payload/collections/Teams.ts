@@ -155,7 +155,7 @@ export const Teams: CollectionConfig = {
       label: "Fupa-Verknüpfung (Kader & Spielerbilder)",
       admin: {
         description:
-          "Verknüpft das Team mit fupa.net, damit Kader und Spielerfotos angezeigt werden. Bei Jugend-SGs zusätzlich Hin- und Rückrunde eintragen.",
+          "Verknüpft das Team mit fupa.net, damit Kader und Spielerfotos angezeigt werden. Bei Jugend-SGs zusätzlich Hin- und Rückrunde eintragen. Die Saison im Slug wird zur Laufzeit automatisch auf die neueste auf fupa existierende Saison angehoben; ein Saisonwechsel erfordert also KEINE Pflege hier.",
       },
       fields: [
         {
@@ -164,7 +164,7 @@ export const Teams: CollectionConfig = {
           label: "Fupa Team-Slug",
           admin: {
             description:
-              "Haupt-Slug, z.B. 'sv-nord-muenchen-lerchenau-m1-2025-26'.",
+              "Haupt-Slug, z.B. 'sv-nord-muenchen-lerchenau-m1-2026-27'. Saison-Suffix wird automatisch aktualisiert.",
           },
         },
         {
@@ -173,7 +173,7 @@ export const Teams: CollectionConfig = {
           label: "Fupa Hinrunde-Slug",
           admin: {
             description:
-              "Nur Jugend-SGs. z.B. 'sg-n-lerchenau-fasanerie-n-u19-1-autumn2025'.",
+              "Nur Jugend-SGs. z.B. 'sg-n-lerchenau-fasanerie-n-u19-1-autumn2025'. Saison-Suffix wird automatisch aktualisiert.",
           },
         },
         {
@@ -182,7 +182,7 @@ export const Teams: CollectionConfig = {
           label: "Fupa Rückrunde-Slug",
           admin: {
             description:
-              "Nur Jugend-SGs. z.B. 'sg-n-lerchenau-fasanerie-n-u19-1-spring2026'.",
+              "Nur Jugend-SGs. z.B. 'sg-n-lerchenau-fasanerie-n-u19-1-spring2026'. Saison-Suffix wird automatisch aktualisiert.",
           },
         },
       ],

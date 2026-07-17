@@ -1,7 +1,101 @@
 export const FUPA_CLUB_SLUG = "sv-nord-muenchen-lerchenau";
 export const FUPA_CLUB_URL = `https://www.fupa.net/club/${FUPA_CLUB_SLUG}`;
-export const FUPA_TEAM_SLUG = "sv-nord-muenchen-lerchenau-m1-2026-27";
-export const FUPA_TEAM_URL = `https://www.fupa.net/team/${FUPA_TEAM_SLUG}`;
+
+/**
+ * Saison-agnostischer Basis-Slug der 1. Herren. Die volle Team-Slug
+ * (…-m1-2026-27) wird zur Laufzeit aus dem aktuellen Datum abgeleitet,
+ * damit die Seite jede neue Saison automatisch mitnimmt.
+ */
+export const FUPA_HERREN_BASE = "sv-nord-muenchen-lerchenau-m1";
+
+/**
+ * Eine fupa-Saison läuft vom 1. Juli bis 30. Juni. Liefert das Startjahr
+ * der Saison, in der `now` liegt (Juli 2026 → 2026, Juni 2026 → 2025).
+ */
+export function fupaSeasonStartYear(now: Date = new Date()): number {
+  return now.getMonth() + 1 >= 7 ? now.getFullYear() : now.getFullYear() - 1;
+}
+
+function seasonSlugFor(startYear: number): string {
+  return `${startYear}-${String((startYear + 1) % 100).padStart(2, "0")}`;
+}
+
+/** Aktueller fupa-Saison-Slug, z.B. "2026-27". */
+export function currentFupaSeasonSlug(now: Date = new Date()): string {
+  return seasonSlugFor(fupaSeasonStartYear(now));
+}
+
+/** Vorherige fupa-Saison, z.B. "2025-26" während der Saison 2026/27. */
+export function previousFupaSeasonSlug(now: Date = new Date()): string {
+  return seasonSlugFor(fupaSeasonStartYear(now) - 1);
+}
+
+/** Kurzes Saison-Label fürs UI, z.B. "26/27". */
+export function currentFupaSeasonName(now: Date = new Date()): string {
+  const start = fupaSeasonStartYear(now);
+  return `${String(start % 100).padStart(2, "0")}/${String((start + 1) % 100).padStart(2, "0")}`;
+}
+
+// fupa-Team-Slugs enden in einem Saison-Suffix. Drei Formen:
+//   …-m1-2025-26            volle Saison (Senioren, Juniorinnen)
+//   …-u19-1-autumn2025      Halbserie Jugend-SG (Herbst Jul–Jan)
+//   …-u19-1-spring2026      Halbserie Jugend-SG (Frühjahr Feb–Jun)
+//   …-o32-1-2026            Kalenderjahr (Ehrenliga/O32)
+const FULL_SEASON_RE = /^(.*)-\d{4}-\d{2}$/;
+const HALF_SEASON_RE = /^(.*)-(autumn|spring)\d{4}$/;
+const YEAR_SEASON_RE = /^(.*)-\d{4}$/;
+
+function withSeasonOffset(slug: string, now: Date, offset: number): string {
+  const startYear = fupaSeasonStartYear(now) + offset;
+  const half = HALF_SEASON_RE.exec(slug);
+  if (half) {
+    // Feb–Jun = Frühjahrsserie der laufenden Saison, sonst Herbstserie.
+    const month = now.getMonth() + 1;
+    const inSpring = month >= 2 && month <= 6;
+    return inSpring
+      ? `${half[1]}-spring${startYear + 1}`
+      : `${half[1]}-autumn${startYear}`;
+  }
+  const full = FULL_SEASON_RE.exec(slug);
+  if (full) return `${full[1]}-${seasonSlugFor(startYear)}`;
+  const year = YEAR_SEASON_RE.exec(slug);
+  if (year) return `${year[1]}-${now.getFullYear() + offset}`;
+  return slug;
+}
+
+/** Hebt einen gespeicherten Team-Slug auf die aktuelle Saison. */
+export function toCurrentSeasonSlug(
+  slug: string,
+  now: Date = new Date(),
+): string {
+  return withSeasonOffset(slug, now, 0);
+}
+
+/** Senkt einen Team-Slug auf die vorherige Saison (Fallback). */
+export function toPreviousSeasonSlug(
+  slug: string,
+  now: Date = new Date(),
+): string {
+  return withSeasonOffset(slug, now, -1);
+}
+
+/**
+ * Sortier-Schlüssel: Endmonat der im Suffix kodierten Saison als
+ * fortlaufende Monatszahl. Größer = neuere Daten.
+ */
+function seasonRecency(slug: string): number {
+  const half = /-(autumn|spring)(\d{4})$/.exec(slug);
+  if (half) {
+    const y = Number(half[2]);
+    // autumn2025 endet Jan 2026, spring2026 endet Jun 2026.
+    return half[1] === "autumn" ? (y + 1) * 12 + 1 : y * 12 + 6;
+  }
+  const full = /-(\d{4})-\d{2}$/.exec(slug);
+  if (full) return (Number(full[1]) + 1) * 12 + 6;
+  const year = /-(\d{4})$/.exec(slug);
+  if (year) return Number(year[1]) * 12 + 12;
+  return 0;
+}
 
 export function fupaTeamUrl(slug: string): string {
   return `https://www.fupa.net/team/${slug}`;
@@ -129,6 +223,9 @@ async function fupaFetch<T>(url: string, tag: string): Promise<T | null> {
         Accept: "application/json",
         "User-Agent": "svnord.de (+https://www.svnord.de)",
       },
+      // Hängende fupa-API darf das SSR nicht blockieren: nach 8s abbrechen
+      // und in den null-Fallback der Consumer degradieren.
+      signal: AbortSignal.timeout(8000),
       next: { revalidate: REVALIDATE, tags: [tag] },
     });
     if (!res.ok) return null;
@@ -138,42 +235,50 @@ async function fupaFetch<T>(url: string, tag: string): Promise<T | null> {
   }
 }
 
-export function getFupaTeam(slug: string = FUPA_TEAM_SLUG) {
+export function getFupaTeam(slug: string) {
   return fupaFetch<FupaTeam>(`${API}/teams/${slug}`, `fupa:team:${slug}`);
 }
 
-export function getFupaUpcoming(slug: string = FUPA_TEAM_SLUG) {
+export function getFupaUpcoming(slug: string) {
   return fupaFetch<FupaMatch[]>(
     `${API}/teams/${slug}/matches?flavor=current&limit=60`,
     `fupa:matches-upcoming:${slug}`,
   );
 }
 
-export function getFupaPast(slug: string = FUPA_TEAM_SLUG) {
+export function getFupaPast(slug: string) {
   return fupaFetch<FupaMatch[]>(
     `${API}/teams/${slug}/matches?flavor=past&limit=60`,
     `fupa:matches-past:${slug}`,
   );
 }
 
-export function getFupaPlayerStats(slug: string = FUPA_TEAM_SLUG) {
+export function getFupaPlayerStats(slug: string) {
   return fupaFetch<FupaPlayerStat[]>(
     `${API}/teams/${slug}/player-stats`,
     `fupa:playerstats:${slug}`,
   );
 }
 
-export const FUPA_COMPETITION_SLUG = "bayern-landesliga-suedost";
-export const FUPA_SEASON_SLUG = "2026-27";
-
-export function getFupaStanding(
-  competition: string = FUPA_COMPETITION_SLUG,
-  season: string = FUPA_SEASON_SLUG,
-) {
+export function getFupaStanding(competition: string, season: string) {
   return fupaFetch<FupaStandings>(
     `${API}/standings?competition=${competition}&season=${season}`,
     `fupa:standings:${competition}:${season}`,
   );
+}
+
+/**
+ * Tabelle zur Liga des übergebenen Teams. Wettbewerb UND Saison kommen
+ * aus dem fupa-Team-Datensatz selbst — nichts ist hartkodiert, Aufstieg
+ * und Saisonwechsel ziehen automatisch mit.
+ */
+export async function getFupaStandingForTeam(
+  teamSlug: string,
+): Promise<FupaStandings | null> {
+  const team = await getFupaTeam(teamSlug);
+  const competition = team?.competition;
+  if (!competition?.slug || !competition.season?.slug) return null;
+  return getFupaStanding(competition.slug, competition.season.slug);
 }
 
 export type FupaSquadPlayer = {
@@ -453,29 +558,150 @@ export type FupaMeta = {
 };
 
 /**
- * Picks the most relevant fupa team slug for "now". Youth SGs split the
- * season into autumn2025 / spring2026 halves; the stable senior slugs
- * (…m1-2025-26) stay in `slug`.
+ * Picks the most relevant fupa team slug for "now" from the stored CMS
+ * meta — season suffix is auto-upgraded to the CURRENT season. Youth SGs
+ * split the season into autumn/spring halves; senior slugs stay in `slug`.
  *
  * Preference order:
  *   spring half (Feb–Jun) → springSlug > slug > autumnSlug
  *   autumn half (Jul–Jan) → autumnSlug > slug > springSlug
+ *
+ * NOTE: the returned slug is not guaranteed to exist on fupa yet (fupa
+ * creates new team seasons gradually). Data fetches should go through
+ * `resolveLiveFupaSlug`, which verifies existence and falls back.
  */
 export function resolveFupaSlug(
   fupa: FupaMeta | null | undefined,
   now: Date = new Date(),
 ): string | null {
-  if (!fupa) return null;
+  return fupaSlugCandidates(fupa, now)[0] ?? null;
+}
+
+/**
+ * Für Halbserien-Slugs: die direkt vorangegangene Halbserie. Im Frühjahr
+ * (Feb–Jun) ist das der Herbst der laufenden Saison (autumn startYear),
+ * im Herbst (Jul–Jan) das Frühjahr der Vorsaison (spring startYear).
+ * fupa legt neue Halbserien erst spät an — die gerade beendete Halbserie
+ * ist der frischeste garantiert existierende Datensatz.
+ */
+function toPreviousHalfSlug(slug: string, now: Date): string | null {
+  const half = HALF_SEASON_RE.exec(slug);
+  if (!half) return null;
+  const startYear = fupaSeasonStartYear(now);
+  const month = now.getMonth() + 1;
+  const inSpring = month >= 2 && month <= 6;
+  return inSpring
+    ? `${half[1]}-autumn${startYear}`
+    : `${half[1]}-spring${startYear}`;
+}
+
+/**
+ * All slugs worth trying for a team, best first:
+ *   1. stored slugs upgraded to the current season (preference order),
+ *   2. every fallback — the directly preceding half-series, the stored
+ *      slugs as-is, and the stored slugs downgraded one season — merged
+ *      and sorted by season recency so fresher data is always tried first.
+ */
+export function fupaSlugCandidates(
+  fupa: FupaMeta | null | undefined,
+  now: Date = new Date(),
+): string[] {
+  if (!fupa) return [];
   const month = now.getMonth() + 1;
   const inSpring = month >= 2 && month <= 6;
   const primary = inSpring ? fupa.springSlug : fupa.autumnSlug;
-  if (primary) return primary;
-  if (fupa.slug) return fupa.slug;
   const secondary = inSpring ? fupa.autumnSlug : fupa.springSlug;
-  return secondary ?? null;
+  const stored = [primary, fupa.slug, secondary].filter((s): s is string =>
+    Boolean(s),
+  );
+  if (stored.length === 0) return [];
+
+  const fallbacks = [
+    ...stored
+      .map((s) => toPreviousHalfSlug(s, now))
+      .filter((s): s is string => Boolean(s)),
+    ...stored,
+    ...stored.map((s) => toPreviousSeasonSlug(s, now)),
+  ].sort((a, b) => seasonRecency(b) - seasonRecency(a));
+
+  const candidates = [
+    ...stored.map((s) => toCurrentSeasonSlug(s, now)),
+    ...fallbacks,
+  ];
+  return Array.from(new Set(candidates));
 }
 
-export function getFupaNews(slug: string = FUPA_TEAM_SLUG, limit = 6) {
+/**
+ * Neuester GESPEICHERTER Slug (ohne Saison-Upgrade). Offline-Fallback für
+ * Profil-Links: gespeicherte Slugs haben auf fupa nachweislich existiert,
+ * ein hochgerechneter Saison-Slug womöglich noch nicht.
+ */
+export function newestStoredFupaSlug(
+  fupa: FupaMeta | null | undefined,
+): string | null {
+  if (!fupa) return null;
+  const stored = [fupa.slug, fupa.autumnSlug, fupa.springSlug].filter(
+    (s): s is string => Boolean(s),
+  );
+  if (stored.length === 0) return null;
+  return stored.sort((a, b) => seasonRecency(b) - seasonRecency(a))[0];
+}
+
+// Aufgelöste Slugs pro Kandidatenliste merken — auch NEGATIVE Ergebnisse.
+// Nexts Fetch-Cache speichert nur 200er-Antworten, 404-Probes würden sonst
+// bei jedem Request erneut gegen api.fupa.net laufen.
+const liveSlugCache = new Map<
+  string,
+  { slug: string | null; expires: number }
+>();
+
+/**
+ * Resolves the freshest fupa team slug that ACTUALLY exists: walks the
+ * candidate list and returns the first slug fupa's API answers for.
+ * Positive probes ride the 30-min fetch cache; the resolved result
+ * (including "nothing exists") is additionally memoized per server
+ * instance for the same 30 minutes. Returns null when no candidate
+ * exists (e.g. team no longer on fupa).
+ */
+export async function resolveLiveFupaSlug(
+  fupa: FupaMeta | string | null | undefined,
+  now: Date = new Date(),
+): Promise<string | null> {
+  const meta = typeof fupa === "string" ? { slug: fupa } : fupa;
+  const candidates = fupaSlugCandidates(meta, now);
+  if (candidates.length === 0) return null;
+
+  const key = candidates.join("|");
+  const hit = liveSlugCache.get(key);
+  if (hit && hit.expires > Date.now()) return hit.slug;
+
+  let resolved: string | null = null;
+  for (const candidate of candidates) {
+    if (await getFupaTeam(candidate)) {
+      resolved = candidate;
+      break;
+    }
+  }
+  liveSlugCache.set(key, {
+    slug: resolved,
+    expires: Date.now() + REVALIDATE * 1000,
+  });
+  return resolved;
+}
+
+/**
+ * Aktuell existierender Slug der 1. Herren (aktuelle Saison, sonst
+ * Vorsaison). Fällt nie auf null zurück — als letzte Instanz der
+ * berechnete Slug der aktuellen Saison, damit Links stets ein Ziel haben.
+ */
+export async function resolveLiveHerrenSlug(
+  now: Date = new Date(),
+): Promise<string> {
+  const current = `${FUPA_HERREN_BASE}-${currentFupaSeasonSlug(now)}`;
+  return (await resolveLiveFupaSlug(current, now)) ?? current;
+}
+
+export function getFupaNews(slug: string, limit = 6) {
   return fupaFetch<FupaNewsItem[]>(
     `${STREAM}/team-seasons/${slug}?limit=${limit}&type=news_published`,
     `fupa:news:${slug}`,
@@ -494,14 +720,20 @@ export function fupaImage(
 
 export type Form = "W" | "D" | "L";
 
-export function isOurTeam(team: FupaTeamRef, slug: string = FUPA_TEAM_SLUG) {
+export function isOurTeam(team: FupaTeamRef, slug: string) {
   return team.slug === slug;
 }
 
-export function matchForm(
-  m: FupaMatch,
-  slug: string = FUPA_TEAM_SLUG,
-): Form | null {
+/**
+ * Saison-unabhängige "sind wir das?"-Prüfung über den Vereins-Slug.
+ * Für Tabellen (eine Liga = höchstens ein SV-Nord-Team) robuster als der
+ * saisongebundene Team-Slug.
+ */
+export function isOurClub(team: FupaTeamRef): boolean {
+  return team.clubSlug === FUPA_CLUB_SLUG;
+}
+
+export function matchForm(m: FupaMatch, slug: string): Form | null {
   if (m.homeGoal == null || m.awayGoal == null) return null;
   const we: "h" | "a" | null = isOurTeam(m.homeTeam, slug)
     ? "h"

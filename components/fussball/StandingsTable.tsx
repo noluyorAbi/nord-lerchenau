@@ -1,34 +1,46 @@
 import {
-  FUPA_TEAM_SLUG,
-  FUPA_TEAM_URL,
-  isOurTeam,
+  currentFupaSeasonName,
+  FUPA_CLUB_URL,
+  isOurClub,
   type FupaStandings,
 } from "@/lib/fupa";
 
 type Props = {
   standings: FupaStandings | null;
+  /** Liganame aus dem fupa-Team-Datensatz, z.B. "Landesliga Südost". */
+  competitionName?: string | null;
+  /** Saison-Label aus fupa, z.B. "26/27". Fallback: aktuelle Saison. */
+  seasonName?: string | null;
+  /** Link zum fupa-Teamprofil der aktuellen Saison. */
+  fupaUrl?: string | null;
 };
 
 /**
- * Vollständige Landesliga-Tabelle für die /fussball-Seite. Zeigt ALLE
+ * Vollständige Liga-Tabelle für die /fussball-Seite. Zeigt ALLE
  * Mannschaften (keine Kürzung), Spalten Platz · Team · Sp · S · U · N · TD · Pkt.
  * Kompakt gehalten (enge Zeilenhöhe, tabular-nums), monochrom mit dezent
  * hervorgehobener SV-Nord-Zeile. Die TD-Spalte erscheint erst ab sm.
  */
-export function StandingsTable({ standings }: Props) {
+export function StandingsTable({
+  standings,
+  competitionName,
+  seasonName,
+  fupaUrl,
+}: Props) {
   const rows = standings?.standings ?? [];
+  const season = seasonName ?? currentFupaSeasonName();
   // Vorsaison: solange noch kein Spiel gespielt ist, liefert fupa einen
   // Default-Spieltag (z.B. 34). Dann nur die Saison zeigen statt "X. Spieltag".
   const anyPlayed = rows.some((r) => (r.matches ?? 0) > 0);
   const roundLabel =
     anyPlayed && standings?.round?.number
-      ? `${standings.round.number}. Spieltag · 26/27`
-      : "Saison 26/27";
+      ? `${standings.round.number}. Spieltag · ${season}`
+      : `Saison ${season}`;
 
   return (
     <div className="flex flex-col overflow-hidden rounded-2xl bg-nord-ink text-white">
       <div className="flex items-center justify-between border-b border-white/10 px-5 py-3.5 font-mono text-xs uppercase tracking-[0.18em]">
-        <span>Landesliga Südost</span>
+        <span>{competitionName ?? "Liga-Tabelle"}</span>
         <span className="text-nord-gold">{roundLabel}</span>
       </div>
 
@@ -51,7 +63,7 @@ export function StandingsTable({ standings }: Props) {
             </div>
 
             {rows.map((r) => {
-              const us = isOurTeam(r.team, FUPA_TEAM_SLUG);
+              const us = isOurClub(r.team);
               // N (Niederlagen): fupa liefert `defeats`; fehlt der Wert,
               // leiten wir es aus Sp − S − U ab.
               const losses =
@@ -113,7 +125,7 @@ export function StandingsTable({ standings }: Props) {
 
       {rows.length > 0 ? (
         <a
-          href={FUPA_TEAM_URL}
+          href={fupaUrl ?? FUPA_CLUB_URL}
           target="_blank"
           rel="noopener noreferrer"
           className="border-t border-white/10 px-5 py-3 text-center font-mono text-[11px] uppercase tracking-[0.16em] text-white/60 transition hover:text-nord-gold"

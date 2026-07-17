@@ -4,11 +4,11 @@ import { FadeUp } from "@/components/motion/FadeUp";
 import { SectionEyebrow } from "@/components/SectionEyebrow";
 import { isOurBfvTeam, type BfvMatch } from "@/lib/bfv";
 import {
-  FUPA_TEAM_SLUG,
   getFupaUpcoming,
   isOurTeam,
   pickUpcoming,
-  resolveFupaSlug,
+  resolveLiveFupaSlug,
+  resolveLiveHerrenSlug,
   type FupaMatch,
 } from "@/lib/fupa";
 import { getPayloadClient } from "@/lib/payload";
@@ -102,7 +102,7 @@ function bfvMatchToRow(
 
 function fupaMatchToRow(
   m: FupaMatch,
-  ourSlug: string = FUPA_TEAM_SLUG,
+  ourSlug: string,
   teamLabel?: string,
 ): FixtureRow {
   const isHome = isOurTeam(m.homeTeam, ourSlug);
@@ -139,37 +139,45 @@ export async function MatchdayBlock() {
   const payload = await getPayloadClient();
   const now = new Date();
 
+  // Slug-unabhängige Payload-Queries sofort starten, damit die
+  // fupa-Slug-Auflösung sie nicht serialisiert.
+  const teamsPromise = payload.find({
+    collection: "teams",
+    where: { sport: { equals: "fussball" } },
+    sort: "order",
+    limit: 100,
+    depth: 0,
+  });
+  const fixturesPromise = payload.find({
+    collection: "fixtures",
+    where: { kickoff: { greater_than: now.toISOString() } },
+    sort: "kickoff",
+    limit: 10,
+    depth: 1,
+  });
+  // Slug der 1. Herren in der aktuellsten auf fupa existierenden Saison.
+  const herrenSlug = await resolveLiveHerrenSlug(now);
   const [teams, fixtures, fupaUpcoming] = await Promise.all([
-    payload.find({
-      collection: "teams",
-      where: { sport: { equals: "fussball" } },
-      sort: "order",
-      limit: 100,
-      depth: 0,
-    }),
-    payload.find({
-      collection: "fixtures",
-      where: { kickoff: { greater_than: now.toISOString() } },
-      sort: "kickoff",
-      limit: 10,
-      depth: 1,
-    }),
-    getFupaUpcoming(),
+    teamsPromise,
+    fixturesPromise,
+    getFupaUpcoming(herrenSlug),
   ]);
 
-  const weekendTeams: WeekendTeam[] = (teams.docs as Team[])
-    .map<WeekendTeam | null>((t) => {
-      const fupaSlug = resolveFupaSlug(t.fupa, now);
-      const bfvTeamId = t.bfv?.teamId ?? null;
-      if (!fupaSlug && !bfvTeamId) return null;
-      return {
-        name: t.name,
-        slug: t.slug,
-        fupaSlug: fupaSlug ?? null,
-        bfvTeamId,
-      };
-    })
-    .filter((t): t is WeekendTeam => t !== null);
+  const weekendTeams: WeekendTeam[] = (
+    await Promise.all(
+      (teams.docs as Team[]).map<Promise<WeekendTeam | null>>(async (t) => {
+        const fupaSlug = await resolveLiveFupaSlug(t.fupa, now);
+        const bfvTeamId = t.bfv?.teamId ?? null;
+        if (!fupaSlug && !bfvTeamId) return null;
+        return {
+          name: t.name,
+          slug: t.slug,
+          fupaSlug: fupaSlug ?? null,
+          bfvTeamId,
+        };
+      }),
+    )
+  ).filter((t): t is WeekendTeam => t !== null);
 
   let entries = await fetchWeekendEntries(weekendTeams, now);
   let mode: "weekend" | "extended" = "weekend";
@@ -192,13 +200,15 @@ export async function MatchdayBlock() {
   if (entries.length > 0) {
     rows = entries.map((e) =>
       e.source === "fupa"
-        ? fupaMatchToRow(e.fupa, e.team.fupaSlug ?? FUPA_TEAM_SLUG, e.team.name)
+        ? fupaMatchToRow(e.fupa, e.team.fupaSlug ?? herrenSlug, e.team.name)
         : bfvMatchToRow(e.bfv, e.kickoff, e.team.bfvTeamId ?? "", e.team.name),
     );
   } else if (fixtures.docs.length > 0) {
     rows = fixtures.docs.map(payloadFixtureToRow);
   } else {
-    rows = pickUpcoming(fupaUpcoming, 5).map((m) => fupaMatchToRow(m));
+    rows = pickUpcoming(fupaUpcoming, 5).map((m) =>
+      fupaMatchToRow(m, herrenSlug),
+    );
   }
 
   const useWeekend = entries.length > 0;

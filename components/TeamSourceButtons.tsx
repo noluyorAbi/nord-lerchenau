@@ -1,5 +1,10 @@
 import { bfvTeamUrl, type BfvMeta } from "@/lib/bfv";
-import { fupaTeamUrl, resolveFupaSlug, type FupaMeta } from "@/lib/fupa";
+import {
+  fupaTeamUrl,
+  newestStoredFupaSlug,
+  resolveLiveFupaSlug,
+  type FupaMeta,
+} from "@/lib/fupa";
 
 type Props = {
   bfv: BfvMeta | null | undefined;
@@ -13,14 +18,19 @@ type Props = {
  * has on the wider web: the BFV (official league registry) and fupa.net
  * (community mirror with squad + player photos).
  */
-export function TeamSourceButtons({
+export async function TeamSourceButtons({
   bfv,
   fupa,
   variant = "dark",
   className,
 }: Props) {
   const bfvUrl = bfvTeamUrl(bfv ?? null);
-  const fupaSlug = resolveFupaSlug(fupa ?? null);
+  // Neuester auf fupa existierender Saison-Slug (Auto-Upgrade alter Slugs).
+  // Ist die fupa-API nicht erreichbar, verlinkt der neueste gespeicherte
+  // Slug — der hat nachweislich existiert, der Link darf nie verschwinden.
+  const fupaSlug =
+    (await resolveLiveFupaSlug(fupa ?? null)) ??
+    newestStoredFupaSlug(fupa ?? null);
   const fupaUrl = fupaSlug ? fupaTeamUrl(fupaSlug) : null;
 
   if (!bfvUrl && !fupaUrl) return null;

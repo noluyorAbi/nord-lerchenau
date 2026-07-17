@@ -1,9 +1,9 @@
 import { SectionEyebrow } from "@/components/SectionEyebrow";
 import { formatKickoff, formatShortDate } from "@/lib/format-date";
 import {
-  FUPA_TEAM_SLUG,
-  FUPA_TEAM_URL,
+  currentFupaSeasonName,
   fupaImage,
+  fupaTeamUrl,
   getFupaNews,
   getFupaPast,
   getFupaPlayerStats,
@@ -14,6 +14,7 @@ import {
   pickNext,
   pickRecent,
   pickUpcoming,
+  resolveLiveHerrenSlug,
   type Form,
   type FupaMatch,
   type FupaNewsItem,
@@ -26,21 +27,24 @@ const FORM_STYLE: Record<Form, string> = {
   L: "bg-nord-red text-white",
 };
 
-function matchOpponent(m: FupaMatch) {
-  return isOurTeam(m.homeTeam) ? m.awayTeam : m.homeTeam;
+function matchOpponent(m: FupaMatch, ourSlug: string) {
+  return isOurTeam(m.homeTeam, ourSlug) ? m.awayTeam : m.homeTeam;
 }
 
-function matchVenue(m: FupaMatch): "Heim" | "Auswärts" {
-  return isOurTeam(m.homeTeam) ? "Heim" : "Auswärts";
+function matchVenue(m: FupaMatch, ourSlug: string): "Heim" | "Auswärts" {
+  return isOurTeam(m.homeTeam, ourSlug) ? "Heim" : "Auswärts";
 }
 
 export async function FupaBlock() {
+  // Aktuellste auf fupa existierende Saison der 1. Herren — nie hartkodiert.
+  const teamSlug = await resolveLiveHerrenSlug();
+  const teamUrl = fupaTeamUrl(teamSlug);
   const [team, upcoming, past, players, news] = await Promise.all([
-    getFupaTeam(),
-    getFupaUpcoming(),
-    getFupaPast(),
-    getFupaPlayerStats(),
-    getFupaNews(FUPA_TEAM_SLUG, 6),
+    getFupaTeam(teamSlug),
+    getFupaUpcoming(teamSlug),
+    getFupaPast(teamSlug),
+    getFupaPlayerStats(teamSlug),
+    getFupaNews(teamSlug, 6),
   ]);
 
   if (!team && !upcoming && !past && !players && !news) {
@@ -62,7 +66,7 @@ export async function FupaBlock() {
     .slice(0, 5);
 
   const compLabel = team?.competition.middleName ?? "Landesliga";
-  const seasonLabel = team?.competition.season.name ?? "26/27";
+  const seasonLabel = team?.competition.season.name ?? currentFupaSeasonName();
 
   return (
     <section className="border-b border-nord-line bg-nord-ink text-white">
@@ -84,7 +88,7 @@ export async function FupaBlock() {
             <p className="mt-2 max-w-[52ch] text-sm text-white/60">
               Herren 1 · automatisch aktualisiert aus{" "}
               <a
-                href={FUPA_TEAM_URL}
+                href={teamUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline-offset-4 hover:underline"
@@ -95,7 +99,7 @@ export async function FupaBlock() {
             </p>
           </div>
           <a
-            href={FUPA_TEAM_URL}
+            href={teamUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-full border border-white/20 px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.16em] transition hover:border-nord-gold hover:text-nord-gold"
@@ -105,12 +109,18 @@ export async function FupaBlock() {
         </div>
 
         <div className="grid gap-5 lg:grid-cols-3">
-          <NextMatchCard match={nextMatch} upcoming={upcomingTail} />
-          <RecentResultsCard recent={recent} />
+          <NextMatchCard
+            match={nextMatch}
+            upcoming={upcomingTail}
+            ourSlug={teamSlug}
+          />
+          <RecentResultsCard recent={recent} ourSlug={teamSlug} />
           <TopScorersCard scorers={topScorers} />
         </div>
 
-        {news && news.length > 0 ? <NewsStrip news={news} /> : null}
+        {news && news.length > 0 ? (
+          <NewsStrip news={news} teamUrl={teamUrl} />
+        ) : null}
       </div>
     </section>
   );
@@ -119,9 +129,11 @@ export async function FupaBlock() {
 function NextMatchCard({
   match,
   upcoming,
+  ourSlug,
 }: {
   match: FupaMatch | null;
   upcoming: FupaMatch[];
+  ourSlug: string;
 }) {
   if (!match) {
     return (
@@ -132,9 +144,9 @@ function NextMatchCard({
       </Card>
     );
   }
-  const opp = matchOpponent(match);
+  const opp = matchOpponent(match, ourSlug);
   const kickoff = new Date(match.kickoff);
-  const venue = matchVenue(match);
+  const venue = matchVenue(match, ourSlug);
   const crest = fupaImage(opp.image, "128x128", "webp");
 
   return (
@@ -177,7 +189,7 @@ function NextMatchCard({
             </div>
             <ul className="space-y-2">
               {upcoming.map((m) => {
-                const o = matchOpponent(m);
+                const o = matchOpponent(m, ourSlug);
                 return (
                   <li
                     key={m.id}
@@ -185,7 +197,7 @@ function NextMatchCard({
                   >
                     <span className="truncate">
                       <span className="text-white/40">
-                        {matchVenue(m) === "Heim" ? "H" : "A"}
+                        {matchVenue(m, ourSlug) === "Heim" ? "H" : "A"}
                       </span>{" "}
                       vs {o.name.middle}
                     </span>
@@ -203,7 +215,13 @@ function NextMatchCard({
   );
 }
 
-function RecentResultsCard({ recent }: { recent: FupaMatch[] }) {
+function RecentResultsCard({
+  recent,
+  ourSlug,
+}: {
+  recent: FupaMatch[];
+  ourSlug: string;
+}) {
   if (!recent.length) {
     return (
       <Card title="Ergebnisse" accent="sky">
@@ -214,7 +232,9 @@ function RecentResultsCard({ recent }: { recent: FupaMatch[] }) {
     );
   }
 
-  const formSeq = recent.map((m) => matchForm(m)).filter(Boolean) as Form[];
+  const formSeq = recent
+    .map((m) => matchForm(m, ourSlug))
+    .filter(Boolean) as Form[];
 
   return (
     <Card title="Ergebnisse" accent="sky">
@@ -244,10 +264,11 @@ function RecentResultsCard({ recent }: { recent: FupaMatch[] }) {
 
         <ul className="divide-y divide-white/10">
           {recent.map((m) => {
-            const opp = matchOpponent(m);
-            const f = matchForm(m);
-            const us = isOurTeam(m.homeTeam) ? m.homeGoal : m.awayGoal;
-            const them = isOurTeam(m.homeTeam) ? m.awayGoal : m.homeGoal;
+            const opp = matchOpponent(m, ourSlug);
+            const f = matchForm(m, ourSlug);
+            const home = isOurTeam(m.homeTeam, ourSlug);
+            const us = home ? m.homeGoal : m.awayGoal;
+            const them = home ? m.awayGoal : m.homeGoal;
             return (
               <li
                 key={m.id}
@@ -260,7 +281,7 @@ function RecentResultsCard({ recent }: { recent: FupaMatch[] }) {
                 </span>
                 <span className="min-w-0 truncate text-sm">
                   <span className="text-white/40">
-                    {matchVenue(m) === "Heim" ? "H" : "A"}
+                    {matchVenue(m, ourSlug) === "Heim" ? "H" : "A"}
                   </span>{" "}
                   vs {opp.name.middle}
                 </span>
@@ -339,7 +360,13 @@ function TopScorersCard({ scorers }: { scorers: FupaPlayerStat[] }) {
   );
 }
 
-function NewsStrip({ news }: { news: FupaNewsItem[] }) {
+function NewsStrip({
+  news,
+  teamUrl,
+}: {
+  news: FupaNewsItem[];
+  teamUrl: string;
+}) {
   return (
     <div className="mt-10">
       <div className="mb-4 flex items-end justify-between gap-4">
@@ -347,7 +374,7 @@ function NewsStrip({ news }: { news: FupaNewsItem[] }) {
           Liga-News · fupa
         </div>
         <a
-          href={`${FUPA_TEAM_URL}/news`}
+          href={`${teamUrl}/news`}
           target="_blank"
           rel="noopener noreferrer"
           className="font-mono text-[11px] uppercase tracking-[0.16em] text-nord-gold hover:underline"

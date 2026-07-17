@@ -12,7 +12,7 @@ import { ProbetrainingBanner } from "@/components/ProbetrainingBanner";
 import { TeamRichText } from "@/components/TeamRichText";
 import { TeamSourceButtons } from "@/components/TeamSourceButtons";
 import { bfvClubLogoUrl, bfvTeamImageUrl, bfvTeamUrl } from "@/lib/bfv";
-import { resolveFupaSlug } from "@/lib/fupa";
+import { newestStoredFupaSlug, resolveLiveFupaSlug } from "@/lib/fupa";
 import { formatKickoff } from "@/lib/format-date";
 import { getPayloadClient } from "@/lib/payload";
 import { mediaSrc } from "@/lib/publicUploads";
@@ -65,6 +65,11 @@ export default async function TeamPage({ params }: Props) {
 
   const bfv = team.bfv ?? null;
   const bfvUrl = bfvTeamUrl(bfv);
+  // Live verifizierter fupa-Slug (Auto-Saison-Upgrade). Null bei API-Ausfall
+  // oder wenn das Team nicht mehr auf fupa existiert — dann greift unten der
+  // BFV-Kader-Fallback. hasFupaMeta hält die Link-Box bei Ausfällen sichtbar.
+  const liveFupaSlug = team.fupa ? await resolveLiveFupaSlug(team.fupa) : null;
+  const hasFupaMeta = Boolean(newestStoredFupaSlug(team.fupa ?? null));
   const bfvTeamImage = bfvTeamImageUrl(bfv?.teamId);
   const cmsPhoto =
     team.photo && typeof team.photo === "object" ? mediaSrc(team.photo) : null;
@@ -174,7 +179,7 @@ export default async function TeamPage({ params }: Props) {
 
           <ProbetrainingBanner teamName={team.name} />
 
-          {bfvUrl || resolveFupaSlug(team.fupa ?? null) ? (
+          {bfvUrl || hasFupaMeta ? (
             <div className="overflow-hidden rounded-2xl bg-nord-ink p-8 text-white md:p-10">
               <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
                 <div className="min-w-0 flex-1">
@@ -204,7 +209,7 @@ export default async function TeamPage({ params }: Props) {
 
           {bfv?.teamId ? <BfvMatchesPanel bfv={bfv} /> : null}
           {bfv?.teamId ? <BfvTablePanel bfv={bfv} /> : null}
-          {team.fupa && resolveFupaSlug(team.fupa) ? (
+          {team.fupa && liveFupaSlug ? (
             <FupaSquadPanel fupa={team.fupa} teamName={team.name} />
           ) : bfv?.teamId ? (
             <BfvSquadPanel bfv={bfv} />

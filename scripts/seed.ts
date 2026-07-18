@@ -442,8 +442,6 @@ async function ensureTeam(
   });
   if (existing.docs.length > 0) {
     const id = existing.docs[0]!.id;
-    // Beschreibung ist im CMS editierbar: eine bereits im Admin gepflegte
-    // Beschreibung darf ein Reseed nicht überschreiben.
     const updateData = { ...data };
     if (
       shouldPreserveExistingDescription(

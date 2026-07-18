@@ -437,10 +437,16 @@ async function ensureTeam(
   });
   if (existing.docs.length > 0) {
     const id = existing.docs[0]!.id;
+    // Beschreibung ist im CMS editierbar: eine bereits im Admin gepflegte
+    // Beschreibung darf ein Reseed nicht überschreiben.
+    const updateData = { ...data };
+    if ((existing.docs[0] as { description?: unknown }).description) {
+      delete (updateData as { description?: unknown }).description;
+    }
     await payload.update({
       collection: "teams",
       id,
-      data: data as never,
+      data: updateData as never,
     });
     return id;
   }

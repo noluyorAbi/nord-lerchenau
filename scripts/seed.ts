@@ -5,6 +5,7 @@ import { getPayload } from "payload";
 
 import config from "@/payload.config";
 import { slug } from "@/lib/slug";
+import { shouldPreserveExistingDescription } from "@/lib/team-description-guard";
 
 type LexNode = Record<string, unknown>;
 
@@ -378,11 +379,15 @@ async function populateSportSection(
   });
   if (existing.docs.length === 0) return;
 
+  const hasDescription = shouldPreserveExistingDescription(
+    (existing.docs[0] as { description?: unknown }).description,
+  );
+
   await payload.update({
     collection: "teams",
     id: existing.docs[0]!.id,
     data: {
-      description: md(opts.descriptionMd),
+      ...(hasDescription ? {} : { description: md(opts.descriptionMd) }),
       trainers: trainerIds,
     } as never,
   });

@@ -445,7 +445,11 @@ async function ensureTeam(
     // Beschreibung ist im CMS editierbar: eine bereits im Admin gepflegte
     // Beschreibung darf ein Reseed nicht überschreiben.
     const updateData = { ...data };
-    if ((existing.docs[0] as { description?: unknown }).description) {
+    if (
+      shouldPreserveExistingDescription(
+        (existing.docs[0] as { description?: unknown }).description,
+      )
+    ) {
       delete (updateData as { description?: unknown }).description;
     }
     await payload.update({

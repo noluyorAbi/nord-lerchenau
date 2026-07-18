@@ -774,6 +774,17 @@ async function main() {
         spielklasse: "Herren / Landesliga",
       },
       fupa: { slug: "sv-nord-muenchen-lerchenau-m1-2026-27" },
+      descriptionMd: `## Die Erste
+
+Nach einer starken Rückrunde 2025/26 in der Bezirksliga tritt unsere Erste ab der Saison 2026/27 in der Landesliga an, der höchsten Spielklasse im Verein.
+
+## Trainerteam
+
+**Peter Zeussel**, Trainer (DFB B-Lizenz). **Karl-Heinz Lappe**, Co-Spielertrainer (DFB B-Lizenz). **Felix Kirmeyer**, Sportlicher Leiter (DFB C-Lizenz). **Tobias Lippenberger**, Torwart-Trainer.
+
+## Trainingszeiten
+
+Dienstag und Donnerstag, jeweils 19:00 bis 20:30 Uhr.`,
     },
     {
       name: "2. Herren",
@@ -789,6 +800,17 @@ async function main() {
         spielklasse: "Herren / Kreisklasse",
       },
       fupa: { slug: "sv-nord-muenchen-lerchenau-m2-2026-27" },
+      descriptionMd: `## Die Zwoate
+
+Unsere Zweite spielt in der Kreisklasse München und bildet das sportliche Bindeglied zwischen Erster und Dritter.
+
+## Trainerteam
+
+**Christian Harag**, Trainer (DFB B-Lizenz). **Leopold Moritz Braun**, Co-Trainer (DFB C-Lizenz). **Tobias Lippenberger** und **Marco Müller**, Torwart-Trainer.
+
+## Trainingszeiten
+
+Dienstag, 19:15 bis 20:45 Uhr, und Donnerstag, 19:45 bis 20:45 Uhr.`,
     },
     {
       name: "3. Herren",
@@ -804,6 +826,17 @@ async function main() {
         spielklasse: "Herren / B-Klasse",
       },
       fupa: { slug: "sv-nord-muenchen-lerchenau-m3-2026-27" },
+      descriptionMd: `## Die Dritte
+
+Mit Zusammenhalt und Lust am Spiel kämpft unsere Dritte in der B-Klasse München um Punkte.
+
+## Trainerteam
+
+**Andreas Borris**, Trainer. **Bernhard Moch**, Co-Spielertrainer. **Marco Müller**, Torwart-Trainer.
+
+## Trainingszeiten
+
+Dienstag und Donnerstag, jeweils 19:15 bis 20:45 Uhr.`,
     },
     {
       name: "Herren Ü32",
@@ -819,6 +852,17 @@ async function main() {
         spielklasse: "Senioren / A-Klasse",
       },
       fupa: { slug: "sv-nord-muenchen-lerchenau-o32-1-2026" },
+      descriptionMd: `## Senioren A
+
+Unsere Ü32 tritt in der Senioren A, A-Klasse Gruppe 1, an: Fußball mit vollem Einsatz und jeder Menge Erfahrung.
+
+## Trainerteam
+
+**Stefan Bäumler**, Trainer. **Christian Seizer**, Co-Trainer.
+
+## Trainingszeiten
+
+Montag, 19:30 bis 21:00 Uhr.`,
     },
     {
       name: "Herren Ü40",
@@ -834,6 +878,17 @@ async function main() {
         spielklasse: "Senioren Ü40 / Kreisklasse",
         partner: "Spielgemeinschaft mit SV WB Allianz München",
       },
+      descriptionMd: `## Senioren Ü40
+
+Als Spielgemeinschaft mit dem SV WB Allianz München tritt unsere Ü40 in der Kreisklasse 2 an.
+
+## Ansprechpartner
+
+**Stefan Bäumler**, Trainer. **Felix Kirmeyer**, Ansprechpartner.
+
+## Trainingszeiten
+
+Montag, 19:30 bis 21:00 Uhr.`,
     },
     // 2026_06_02 Vereinswunsch: AH als eigene Mannschaft (Inhalte von der
     // alten Website, tmp/strato-teams/page-ah.json). Kein BFV-Spielbetrieb.
@@ -879,6 +934,17 @@ Montag, 18:00 bis 19:30 Uhr.`,
         autumnSlug: "sg-n-lerchenau-fasanerie-n-u19-1-autumn2025",
         springSlug: "sg-n-lerchenau-fasanerie-n-u19-1-spring2026",
       },
+      descriptionMd: `## A1-Junioren
+
+Die Jahrgänge 2006 bis 2008 bilden als Spielgemeinschaft mit Fasanarie-Nord unsere A1 und spielen in der U19 Kreisliga Nord, der höchsten Jugendspielklasse im Verein.
+
+## Trainerteam
+
+**Gökrem Kocademir**, Trainer (DFB C-Lizenz). **Tom Kopatschek**, Teammanager und Physiotherapie. **Marco Müller**, Torwart-Trainer.
+
+## Trainingszeiten
+
+Dienstag und Donnerstag, jeweils 19:30 bis 21:00 Uhr.`,
     },
     {
       name: "A2-Junioren · U19-II",
@@ -898,6 +964,9 @@ Montag, 18:00 bis 19:30 Uhr.`,
         autumnSlug: "sg-n-lerchenau-fasanerie-n-u19-2-autumn2025",
         springSlug: "sg-n-lerchenau-fasanerie-n-u19-2-spring2026",
       },
+      descriptionMd: `## A2-Junioren
+
+Als zweite Mannschaft der U19 tritt die A2 ebenfalls in der Spielgemeinschaft mit Fasanarie-Nord an, in der U19 Kreisklasse Nord. Sie ist die sportliche Ergänzung zur A1 und gibt weiteren Spielern des Jahrgangs feste Spielpraxis.`,
     },
     {
       name: "B1-Junioren · U17-I",
@@ -917,6 +986,17 @@ Montag, 18:00 bis 19:30 Uhr.`,
         autumnSlug: "sg-n-lerchenau-fasanerie-n-u17-1-autumn2025",
         springSlug: "sg-n-lerchenau-fasanerie-n-u17-1-spring2026",
       },
+      descriptionMd: `## B1-Junioren
+
+Die Jahrgänge 2009 und 2010 spielen als Spielgemeinschaft mit Fasanarie-Nord in der U17 Kreisklasse Nord.
+
+## Trainerteam
+
+**Zeljko Jeremic**, Trainer (DFB C-Lizenz). **Jürgen Hönle**, Co-Trainer.
+
+## Trainingszeiten
+
+Dienstag und Donnerstag, jeweils 18:00 bis 19:30 Uhr.`,
     },
     {
       name: "B2-Junioren · U17-II",
@@ -936,6 +1016,17 @@ Montag, 18:00 bis 19:30 Uhr.`,
         autumnSlug: "sg-n-lerchenau-fasanerie-n-u17-2-autumn2025",
         springSlug: "sg-n-lerchenau-fasanerie-n-u17-2-spring2026",
       },
+      descriptionMd: `## B2-Junioren
+
+Aus demselben Jahrgangs-Pool wie die B1 gebildet, spielt auch die B2 als Spielgemeinschaft mit Fasanarie-Nord, in der U17 Kreisklasse Nord.
+
+## Trainerteam
+
+**Zeljko Jeremic**, Trainer (DFB C-Lizenz). **Jürgen Hönle**, Co-Trainer.
+
+## Trainingszeiten
+
+Dienstag und Donnerstag, jeweils 18:00 bis 19:30 Uhr.`,
     },
     {
       name: "C-Junioren · U14",
@@ -950,6 +1041,17 @@ Montag, 18:00 bis 19:30 Uhr.`,
         slug: "sv-nord-lerchenau-u14",
         spielklasse: "C-Junioren / Kreisklasse",
       },
+      descriptionMd: `## C-Junioren
+
+Der Jahrgang 2012 spielt in der U14 Kreisklasse Nord.
+
+## Trainerteam
+
+**Thomas Tiesler**, Trainer (DFB C-Lizenz). **Zoran Momcilovic** und **Horst Mauler**, Co-Trainer.
+
+## Trainingszeiten
+
+Dienstag und Donnerstag, jeweils 18:00 bis 19:30 Uhr.`,
     },
     {
       name: "D-Junioren · U13",
@@ -964,6 +1066,17 @@ Montag, 18:00 bis 19:30 Uhr.`,
         slug: "sv-nord-lerchenau-u13",
         spielklasse: "D-Junioren / Gruppe Nord",
       },
+      descriptionMd: `## D-Junioren U13
+
+Der Jahrgang 2013 spielt in der U13 Gruppe Nord.
+
+## Trainerteam
+
+**Birol Ucarkus**, Trainer (DFB C-Lizenz). **Thomas Wurm**, Co-Trainer (DFB C-Lizenz).
+
+## Trainingszeiten
+
+Dienstag und Donnerstag, jeweils 17:00 bis 18:15 Uhr.`,
     },
     {
       name: "D-Junioren · U12",
@@ -978,6 +1091,17 @@ Montag, 18:00 bis 19:30 Uhr.`,
         slug: "sv-nord-lerchenau-u12",
         spielklasse: "D-Junioren / Kreisklasse",
       },
+      descriptionMd: `## D-Junioren U12
+
+Der Jahrgang 2014 spielt in der U12 Kreisklasse Nord.
+
+## Trainerteam
+
+**Steffen Helmreich**, Trainer (DFB C-Lizenz). **Sandra Schinke**, Co-Trainerin (DFB Basiscoach). **Claudia Helmreich**, Co-Trainerin.
+
+## Trainingszeiten
+
+Dienstag und Donnerstag, jeweils 16:45 bis 18:00 Uhr.`,
     },
     {
       name: "E-Junioren · U10-1",
@@ -992,6 +1116,17 @@ Montag, 18:00 bis 19:30 Uhr.`,
         slug: "sv-nord-lerchenau-u10-1",
         spielklasse: "E-Junioren / Gruppe Orange",
       },
+      descriptionMd: `## E-Junioren U10-1
+
+Der Jahrgang 2016 spielt in der Gruppe Orange der U10 Nord.
+
+## Trainerteam
+
+**Karl-Heinz Lappe** und **Christian Harag**, Trainer (beide DFB B-Lizenz).
+
+## Trainingszeiten
+
+Dienstag und Donnerstag, jeweils 16:45 bis 18:00 Uhr, in der Halle.`,
     },
     {
       name: "E-Junioren · U10-2",
@@ -1006,6 +1141,17 @@ Montag, 18:00 bis 19:30 Uhr.`,
         slug: "sv-nord-lerchenau-u10-2",
         spielklasse: "E-Junioren / Gruppe Nord",
       },
+      descriptionMd: `## E-Junioren U10-2
+
+Der Jahrgang 2016 spielt in der Gruppe Nord der U10.
+
+## Trainerteam
+
+**Mike Königsmark**, Trainer. **Maik Hertwig**, Co-Trainer. **Kisha Beinhauer**, Betreuerin.
+
+## Trainingszeiten
+
+Dienstag und Donnerstag, jeweils 16:45 bis 18:00 Uhr.`,
     },
     {
       name: "F-Junioren · U9",
@@ -1020,6 +1166,9 @@ Montag, 18:00 bis 19:30 Uhr.`,
         slug: "sv-nord-lerchenau-u9",
         spielklasse: "F-Junioren",
       },
+      descriptionMd: `## F-Junioren U9
+
+Der Übergang vom spielerischen Training zum organisierten Ligabetrieb: Unsere U9 spielt in der Gruppe Nord.`,
     },
     {
       name: "F-Junioren · U8-I",
@@ -1034,6 +1183,17 @@ Montag, 18:00 bis 19:30 Uhr.`,
         slug: "sv-nord-lerchenau-u8-i",
         spielklasse: "F-Junioren / Gruppe Puma",
       },
+      descriptionMd: `## F-Junioren U8-I
+
+Gemeinsam mit der U8-II bildet die U8-I eine Trainingsgruppe in der Gruppe Puma: An Spieltagen werden die Kinder in zwei Mannschaften aufgeteilt, trainiert wird immer gemeinsam.
+
+## Trainerteam
+
+**Tommy Wimmer**, Trainer. **Daniel Bilic**, **Till Stein** und **Thomas Aumann**, Co-Trainer.
+
+## Trainingszeiten
+
+Dienstag und Donnerstag, jeweils 16:45 bis 18:00 Uhr.`,
     },
     {
       name: "F-Junioren · U8-II",
@@ -1048,6 +1208,17 @@ Montag, 18:00 bis 19:30 Uhr.`,
         slug: "sv-nord-lerchenau-u8-ii",
         spielklasse: "F-Junioren / Gruppe Puma",
       },
+      descriptionMd: `## F-Junioren U8-II
+
+Die U8-II teilt sich Training und Kader mit der U8-I: Beide trainieren gemeinsam und werden für Spieltage in der Gruppe Puma in zwei Mannschaften aufgeteilt.
+
+## Trainerteam
+
+**Tommy Wimmer**, Trainer. **Daniel Bilic**, **Till Stein** und **Thomas Aumann**, Co-Trainer.
+
+## Trainingszeiten
+
+Dienstag und Donnerstag, jeweils 16:45 bis 18:00 Uhr.`,
     },
     {
       name: "G-Junioren",
@@ -1073,6 +1244,15 @@ Bei Interesse könnt ihr uns gerne per WhatsApp erreichen.`,
       ageGroup: "ab 4 Jahren",
       order: 22,
       league: "Trainingsgruppe · kein Spielbetrieb",
+      descriptionMd: `## Willkommen bei den Bambinis
+
+Eine unserer wichtigsten Abteilungen in der SV-Nord-Talentschmiede: Bambinifußball ist der Anfang im Vereinsfußball, die ideale Gelegenheit zum Reinschnuppern.
+
+Für uns steht in dieser Altersklasse vor allem der Spaß im Vordergrund. Kinder ab 4 Jahren, die es einfach ein paar Mal ausprobieren wollen, sind herzlich zum Probetraining eingeladen.
+
+## Trainingszeiten
+
+Dienstag, 16:15 bis 17:15 Uhr.`,
     },
     {
       name: "B-Juniorinnen · U17",
@@ -1088,6 +1268,17 @@ Bei Interesse könnt ihr uns gerne per WhatsApp erreichen.`,
         spielklasse: "B-Juniorinnen / Kreisklasse",
       },
       fupa: { slug: "sv-nord-muenchen-lerchenau-wu17-1-2026-27" },
+      descriptionMd: `## B-Juniorinnen
+
+Die Jahrgänge 2009 und 2010 spielen in der U17 Kreisklasse Nord.
+
+## Trainerteam
+
+**Abraham Mike Yousaf**, Trainer. **Kalmaz Zerrin**, Co-Trainerin.
+
+## Trainingszeiten
+
+Dienstag und Donnerstag, jeweils 18:00 bis 19:30 Uhr.`,
     },
     {
       name: "C-Juniorinnen · U15",
@@ -1103,6 +1294,17 @@ Bei Interesse könnt ihr uns gerne per WhatsApp erreichen.`,
         spielklasse: "C-Juniorinnen / Kreisklasse",
       },
       fupa: { slug: "sv-nord-muenchen-lerchenau-wu15-1-2026-27" },
+      descriptionMd: `## C-Juniorinnen
+
+Die Jahrgänge 2011 und 2012 spielen in der U15 Kreisklasse Nord.
+
+## Trainerteam
+
+**Ergin Piker**, Trainer (DFB C-Lizenz). **Vanessa Lincke**, Co-Trainerin.
+
+## Trainingszeiten
+
+Dienstag und Donnerstag, jeweils 18:00 bis 19:30 Uhr.`,
     },
     {
       name: "D-Juniorinnen · U13",
@@ -1117,6 +1319,17 @@ Bei Interesse könnt ihr uns gerne per WhatsApp erreichen.`,
         slug: "sv-nord-muenchen-lerchenau-u13",
         spielklasse: "D-Juniorinnen / Kreisklasse",
       },
+      descriptionMd: `## D-Juniorinnen
+
+Die Jahrgänge 2013 und 2014 spielen in der U13 Kreisklasse Nord.
+
+## Trainerteam
+
+**Andreas Seizer**, Trainer. **Tomislav Jerkovic**, Co-Trainer.
+
+## Trainingszeiten
+
+Dienstag und Donnerstag, jeweils 17:00 bis 18:15 Uhr.`,
     },
     {
       name: "Volleyball",

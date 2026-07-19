@@ -29,6 +29,7 @@ export const NEWS_HERO_BY_SLUG: Record<string, string> = {
     "/news/historischer-aufstieg-in-die-landesliga.jpg",
   "karger-kommt": "/news/karger-kommt.jpg",
   "vorbereitung-landesliga-2026": "/news/vorbereitungsplan-landesliga-2026.jpg",
+  "neue-nordler-neuzugaenge-2026": "/news/neue-nordler-2026.jpg",
 };
 
 export type NewsFigure = {
@@ -51,6 +52,53 @@ export const NEWS_FIGURE_BY_SLUG: Record<string, NewsFigure> = {
     caption:
       "Unsere Vorbereitung auf die Landesliga: alle Trainingseinheiten, das Trainingslager und die Ergebnisse der fünf Testspiele auf einen Blick.",
     portrait: true,
+  },
+};
+
+/** A gallery item is always shown as a grid tile, so `portrait` has no meaning. */
+export type NewsGalleryItem = Omit<NewsFigure, "portrait">;
+
+export type NewsGallery = {
+  /** Section headline above the grid, e.g. "Unsere Neuzugänge". */
+  heading: string;
+  items: NewsGalleryItem[];
+};
+
+/**
+ * Image series rendered as a gallery below the article text. Used for posts
+ * that carry several equally important visuals (e.g. one card per new signing)
+ * where a single full-width figure would bury the rest.
+ */
+export const NEWS_GALLERY_BY_SLUG: Record<string, NewsGallery> = {
+  "neue-nordler-neuzugaenge-2026": {
+    heading: "Unsere Neuzugänge",
+    items: [
+      {
+        src: "/news/neuzugang-nico-karger.jpg",
+        alt: "Vorstellungsgrafik von Neuzugang Nico Karger im Trikot des SV Nord München-Lerchenau.",
+        caption: "Nico Karger kommt vom FC Pipinsried.",
+      },
+      {
+        src: "/news/neuzugang-medhat-mekhimar.jpg",
+        alt: "Vorstellungsgrafik von Neuzugang Medhat Mekhimar im Trikot des SV Nord München-Lerchenau.",
+        caption: "Medhat „Meti“ Mekhimar kommt vom FC Kempten.",
+      },
+      {
+        src: "/news/neuzugang-julius-leucht.jpg",
+        alt: "Vorstellungsgrafik von Neuzugang Julius Leucht im Trikot des SV Nord München-Lerchenau.",
+        caption: "Julius „Juli“ Leucht verstärkt unser Mittelfeld.",
+      },
+      {
+        src: "/news/neuzugang-niels-schneider.jpg",
+        alt: "Vorstellungsgrafik von Neuzugang Niels Schneider im Trikot des SV Nord München-Lerchenau.",
+        caption: "Niels Schneider verstärkt uns ab sofort.",
+      },
+      {
+        src: "/news/neuzugang-hueseyin-guemues.jpg",
+        alt: "Vorstellungsgrafik von Neuzugang Hüseyin Gümüs im Trikot des SV Nord München-Lerchenau.",
+        caption: "Hüseyin „Cenkay“ Gümüs komplettiert unsere Neuzugänge.",
+      },
+    ],
   },
 };
 

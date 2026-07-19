@@ -198,6 +198,67 @@ Danke Nico Karger.
 
 Auf eine geile und unvergessliche Zeit.`,
   },
+  {
+    title: "Neue Nordler: unsere Neuzugänge",
+    slug: "neue-nordler-neuzugaenge-2026",
+    excerpt:
+      "Fünf neue Gesichter für die Landesliga-Saison: Nico Karger, Medhat Mekhimar, Julius Leucht, Niels Schneider und Hüseyin Gümüs laufen ab sofort in Blau-Weiß auf.",
+    publishedAt: new Date("2026-07-16T18:00:00+02:00").toISOString(),
+    tags: ["verein"],
+    body: `Servus Burschen! Heute freuen wir uns, euch unsere Neuzugänge vorzustellen.
+
+## Nico Karger
+
+Mit Karges verpflichten wir einen absoluten Top-Stürmer und ehemaligen Profi des TSV 1860 München.
+
+Der 33-Jährige bringt nicht nur Erfahrung aus der 2. Bundesliga, 3. Liga und Regionalliga mit, sondern hat in den vergangenen Jahren auch in der Bayernliga eindrucksvoll seine Qualitäten als Torjäger unter Beweis gestellt.
+
+Die Zahlen der letzten vier Bayernliga-Saisons sprechen für sich:
+
+- 109 Spiele
+- 76 Tore
+- 25 Assists
+
+Mit seiner Abschlussstärke, seiner Erfahrung und seinem Torriecher gewinnen wir einen Spieler, der Spiele entscheiden kann und unsere Offensive auf ein neues Level hebt.
+
+Herzlich willkommen, Nico! Wir freuen uns riesig, dich in unseren Farben auflaufen zu sehen und können es kaum erwarten, dich vor unseren Fans auf dem Platz zu erleben.
+
+## Medhat Mekhimar
+
+Servus Meti! Der 23-jährige Linksfuß verstärkt unsere Defensive und bringt trotz seines jungen Alters bereits jede Menge Erfahrung mit. Mit 101 Pflichtspielen, 16 Toren und 4 Assists hat er sich als torgefährlicher Abwehrspieler einen Namen gemacht.
+
+In der vergangenen Saison absolvierte er 33 Spiele und erzielte 9 Tore für den FC Kempten.
+
+Mit seiner Größe, Zweikampfstärke und seinem starken linken Fuß wird Meti unsere Mannschaft verstärken. Herzlich willkommen, wir freuen uns auf eine erfolgreiche gemeinsame Zeit!
+
+## Julius Leucht
+
+Wir freuen uns, Julius Leucht in unserem Team begrüßen zu dürfen!
+
+Der 20-jährige Mittelfeldspieler überzeugt mit Spielintelligenz und großem Entwicklungspotenzial. Trotz seines jungen Alters bringt er bereits wertvolle Erfahrung aus dem Herren- und Juniorenbereich mit und möchte bei uns den nächsten Schritt in seiner Karriere gehen.
+
+Bisherige Karrierebilanz:
+
+- 67 Pflichtspiele
+- 6 Tore
+- 2 Assists
+
+Mit seiner Einsatzbereitschaft, seinem Ehrgeiz und seiner Mentalität passt Julius perfekt zu unserer Mannschaft. Wir freuen uns auf die gemeinsame Zeit und wünschen dir eine erfolgreiche und verletzungsfreie Saison!
+
+## Niels Schneider
+
+Wir freuen uns, mit Niels Schneider einen weiteren talentierten Spieler für unsere Farben gewonnen zu haben!
+
+Der 21-Jährige will bei den Nordlern den nächsten Schritt gehen. Herzlich willkommen, Niels, wir freuen uns auf dich!
+
+## Hüseyin Gümüs
+
+Auch Hüseyin, von allen nur Cenkay genannt, läuft ab sofort für den SV Nord auf.
+
+Servus Cenkay! Schön, dass du da bist. Wir freuen uns auf eine erfolgreiche gemeinsame Zeit in Blau-Weiß.
+
+Einmal Nordler, immer Nordler.`,
+  },
 ];
 
 async function main() {

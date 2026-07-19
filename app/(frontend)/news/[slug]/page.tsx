@@ -5,12 +5,14 @@ import { getPayload } from "payload";
 import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical";
 
 import { RefreshOnPreview } from "./RefreshOnPreview";
+import { FadeUp } from "@/components/motion/FadeUp";
 import { NewsRichText } from "@/components/news/NewsRichText";
 import {
   formatNewsDate,
   newsHeroForPost,
   newsTagLabel,
   NEWS_FIGURE_BY_SLUG,
+  NEWS_GALLERY_BY_SLUG,
 } from "@/lib/news-visual";
 import { mediaSrc } from "@/lib/publicUploads";
 import type { Media, Post } from "@/payload-types";
@@ -75,6 +77,7 @@ export default async function NewsPost({ params, searchParams }: Props) {
     ? ({ kind: "image", src: heroImg } as const)
     : newsHeroForPost(post.slug, tag);
   const figure = NEWS_FIGURE_BY_SLUG[post.slug] ?? null;
+  const gallery = NEWS_GALLERY_BY_SLUG[post.slug] ?? null;
 
   return (
     <>
@@ -165,6 +168,35 @@ export default async function NewsPost({ params, searchParams }: Props) {
         ) : null}
 
         <NewsRichText data={post.body as SerializedEditorState} />
+
+        {gallery ? (
+          <section className="mt-14 border-t border-nord-line pt-10">
+            <h2 className="font-display text-2xl font-black tracking-tight text-nord-ink md:text-3xl">
+              {gallery.heading}
+            </h2>
+            <div className="mt-6 grid gap-6 sm:grid-cols-2">
+              {gallery.items.map((item, i) => (
+                <FadeUp key={item.src} delay={i * 0.05}>
+                  <figure>
+                    <div className="overflow-hidden rounded-2xl border border-nord-line bg-nord-paper-2">
+                      <Image
+                        src={item.src}
+                        alt={item.alt}
+                        width={1080}
+                        height={1350}
+                        sizes="(min-width: 768px) 348px, (min-width: 640px) 284px, 100vw"
+                        className="h-auto w-full"
+                      />
+                    </div>
+                    <figcaption className="mt-3 border-l-2 border-nord-gold pl-3 text-[13px] leading-relaxed text-nord-muted">
+                      {item.caption}
+                    </figcaption>
+                  </figure>
+                </FadeUp>
+              ))}
+            </div>
+          </section>
+        ) : null}
 
         <div className="mt-14 flex flex-wrap items-center justify-between gap-4 border-t border-nord-line pt-8">
           <Link

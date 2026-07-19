@@ -126,8 +126,7 @@ export function SommerfestSection() {
 
             <FadeUp delay={0.5}>
               <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.14em] text-nord-paper/50">
-                Sportanlage SV Nord · Eintritt frei · Für Essen & Getränke ist
-                gesorgt
+                Sportanlage SV Nord · Für Essen & Getränke ist gesorgt
               </p>
             </FadeUp>
           </div>

@@ -7,7 +7,6 @@ export const dynamic = "force-dynamic";
 const BENEFITS = [
   "Training auf eigenem Platz im Eschengarten der Bezirkssportanlage Ebereschenstraße 17 und Hallentraining in der Grundschule Waldmeisterstraße 38",
   "Teilnahme an allen Vereinsveranstaltungen (Sommerfest, Weihnachtsfeier u. a.)",
-  "Freier Eintritt zu allen Heimspielen",
   "Mitbestimmung in der Jahreshauptversammlung",
 ];
 

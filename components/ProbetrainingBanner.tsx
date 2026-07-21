@@ -4,14 +4,7 @@ type Props = {
   teamName?: string;
 };
 
-function toWhatsAppNumber(raw: string | null | undefined): string | null {
-  if (!raw) return null;
-  const digits = raw.replace(/\D/g, "");
-  if (!digits) return null;
-  if (digits.startsWith("00")) return digits.slice(2);
-  if (digits.startsWith("0")) return `49${digits.slice(1)}`;
-  return digits;
-}
+const FALLBACK_EMAIL = "info@svnord.de";
 
 function formatPhoneDisplay(raw: string | null | undefined): string | null {
   if (!raw) return null;
@@ -26,12 +19,11 @@ export async function ProbetrainingBanner({ teamName }: Props) {
   try {
     const info = await payload.findGlobal({ slug: "contact-info" });
     phone = info.phone ?? null;
-    email = info.email ?? null;
+    email = info.email ?? FALLBACK_EMAIL;
   } catch {
-    email = "info@svnord.de";
+    email = FALLBACK_EMAIL;
   }
 
-  const wa = toWhatsAppNumber(phone);
   const phoneDisplay = formatPhoneDisplay(phone);
   const phoneTel = phone ? phone.replace(/\s+/g, "") : null;
 
@@ -66,9 +58,9 @@ export async function ProbetrainingBanner({ teamName }: Props) {
             {headline}
           </h2>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/80 md:text-base">
-            Schreib uns auf WhatsApp oder ruf kurz durch. Wir melden uns mit
-            Termin, Treffpunkt und allem was du wissen musst. Trikot bekommst
-            du, Schienbeinschoner bitte selbst mitbringen.
+            Schreib uns einfach eine E-Mail. Wir melden uns schnell bei dir mit
+            dem passenden Termin, dem Treffpunkt und allen wichtigen Infos.
+            Bitte bring deine eigene Sportkleidung und Schienbeinschoner mit.
           </p>
           {phoneDisplay ? (
             <div className="mt-5 font-mono text-[11px] uppercase tracking-[0.18em] text-white/60">
@@ -79,34 +71,37 @@ export async function ProbetrainingBanner({ teamName }: Props) {
         </div>
 
         <div className="flex flex-col gap-3">
-          {wa ? (
+          {email ? (
             <a
-              href={`https://wa.me/${wa}?text=${encodeURIComponent(
-                `Hallo SV Nord, ich interessiere mich für ein Probetraining${
+              href={`mailto:${email}?subject=${encodeURIComponent(
+                "Probetraining",
+              )}&body=${encodeURIComponent(
+                `Hallo SV Nord,\n\nich interessiere mich für ein Probetraining${
                   teamName ? ` bei der ${teamName}` : ""
-                }.`,
+                }.\n\nViele Grüße`,
               )}`}
-              target="_blank"
-              rel="noreferrer"
-              className="group inline-flex items-center justify-between gap-4 rounded-xl bg-[#25D366] px-5 py-4 font-display font-bold text-[#062b16] shadow-lg transition hover:-translate-y-0.5 hover:bg-[#1ebe5a]"
+              className="group inline-flex items-center justify-between gap-4 rounded-xl bg-nord-gold px-5 py-4 font-display font-bold text-nord-navy shadow-lg transition hover:-translate-y-0.5 hover:brightness-110"
             >
               <span className="flex items-center gap-3">
                 <svg
-                  width="22"
-                  height="22"
+                  width="20"
+                  height="20"
                   viewBox="0 0 24 24"
-                  fill="currentColor"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   aria-hidden
                 >
-                  <path d="M19.05 4.91A10 10 0 0 0 12 2a10 10 0 0 0-8.55 15.13L2 22l4.97-1.41A10 10 0 0 0 12 22a10 10 0 0 0 7.05-17.09Zm-7.06 15.4a8.3 8.3 0 0 1-4.24-1.16l-.3-.18-2.95.84.79-2.88-.2-.31a8.3 8.3 0 1 1 6.9 3.7Zm4.55-6.22c-.25-.13-1.47-.73-1.7-.81-.23-.08-.4-.13-.56.12-.16.25-.64.81-.78.97-.15.16-.29.18-.54.06-.25-.13-1.05-.39-2-1.24a7.5 7.5 0 0 1-1.39-1.73c-.14-.25 0-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.13-.56-1.35-.77-1.84-.2-.49-.41-.42-.56-.43h-.48a.9.9 0 0 0-.66.31c-.23.25-.86.84-.86 2.05 0 1.21.88 2.38 1 2.55.13.17 1.73 2.65 4.21 3.71.59.25 1.05.4 1.41.51.59.19 1.13.16 1.55.1.47-.07 1.47-.6 1.67-1.18.21-.59.21-1.09.15-1.19-.06-.11-.23-.18-.48-.31Z" />
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2Z" />
+                  <path d="m22 6-10 7L2 6" />
                 </svg>
                 <span>
-                  <span className="block text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-[#062b16]/60">
-                    WhatsApp
+                  <span className="block font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-nord-navy/60">
+                    E-Mail
                   </span>
-                  <span className="block text-base leading-tight">
-                    Jetzt schreiben
-                  </span>
+                  <span className="block text-base leading-tight">{email}</span>
                 </span>
               </span>
               <span className="font-mono text-lg transition group-hover:translate-x-0.5">
@@ -141,45 +136,6 @@ export async function ProbetrainingBanner({ teamName }: Props) {
                   <span className="block text-base leading-tight">
                     {phoneDisplay}
                   </span>
-                </span>
-              </span>
-              <span className="font-mono text-lg transition group-hover:translate-x-0.5">
-                →
-              </span>
-            </a>
-          ) : null}
-
-          {email ? (
-            <a
-              href={`mailto:${email}?subject=${encodeURIComponent(
-                "Probetraining",
-              )}&body=${encodeURIComponent(
-                `Hallo SV Nord,\n\nich interessiere mich für ein Probetraining${
-                  teamName ? ` bei der ${teamName}` : ""
-                }.\n\nViele Grüße`,
-              )}`}
-              className="group inline-flex items-center justify-between gap-4 rounded-xl border border-white/20 bg-white/5 px-5 py-4 font-display font-bold text-white backdrop-blur-sm transition hover:-translate-y-0.5 hover:border-nord-gold hover:bg-white/10"
-            >
-              <span className="flex items-center gap-3">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden
-                >
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2Z" />
-                  <path d="m22 6-10 7L2 6" />
-                </svg>
-                <span>
-                  <span className="block text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-white/60">
-                    E-Mail
-                  </span>
-                  <span className="block text-base leading-tight">{email}</span>
                 </span>
               </span>
               <span className="font-mono text-lg transition group-hover:translate-x-0.5">

@@ -1245,9 +1245,13 @@ Dienstag und Donnerstag, jeweils 16:45 bis 18:00 Uhr.`,
 
 Unsere Jüngsten mit ganz viel Spaß am Ball. Spielerischer Einstieg, Teamgeist und jede Menge Freude am Fußball stehen bei uns im Vordergrund.
 
-## Mitmachen
+## Probetraining
 
-Bei Interesse könnt ihr uns gerne per WhatsApp erreichen.`,
+Lust auf ein Probetraining bei den G-Junioren? Komm vorbei und werde Teil unseres Teams! Wenn du Spaß am Fußball hast und neue Freunde finden möchtest, bist du bei uns genau richtig.
+
+So einfach geht es: Schreib uns einfach eine E-Mail an info@svnord.de. Wir melden uns schnell bei dir mit dem passenden Termin, dem Treffpunkt und allen wichtigen Infos.
+
+Das musst du mitbringen: Bitte bring deine eigene Sportkleidung und Schienbeinschoner mit. Wir freuen uns auf dich!`,
     },
     {
       name: "Bambini",

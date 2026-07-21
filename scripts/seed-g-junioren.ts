@@ -56,8 +56,16 @@ function description(): { root: LexNode } {
         paragraph(
           "Unsere Jüngsten mit ganz viel Spaß am Ball. Spielerischer Einstieg, Teamgeist und jede Menge Freude am Fußball stehen bei uns im Vordergrund.",
         ),
-        heading("h2", "Mitmachen"),
-        paragraph("Bei Interesse könnt ihr uns gerne per WhatsApp erreichen."),
+        heading("h2", "Probetraining"),
+        paragraph(
+          "Lust auf ein Probetraining bei den G-Junioren? Komm vorbei und werde Teil unseres Teams! Wenn du Spaß am Fußball hast und neue Freunde finden möchtest, bist du bei uns genau richtig.",
+        ),
+        paragraph(
+          "So einfach geht es: Schreib uns einfach eine E-Mail an info@svnord.de. Wir melden uns schnell bei dir mit dem passenden Termin, dem Treffpunkt und allen wichtigen Infos.",
+        ),
+        paragraph(
+          "Das musst du mitbringen: Bitte bring deine eigene Sportkleidung und Schienbeinschoner mit. Wir freuen uns auf dich!",
+        ),
       ],
     },
   };

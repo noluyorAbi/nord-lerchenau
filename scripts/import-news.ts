@@ -2,7 +2,7 @@
  * One-off import for News articles from the legacy svnord-lerchenau.de site.
  * Idempotent: skips a post if its slug already exists.
  *
- * Run: bun run scripts/import-news.ts
+ * Run: PAYLOAD_DISABLE_PUSH=true bun run scripts/import-news.ts
  */
 import { getPayload } from "payload";
 
@@ -125,6 +125,33 @@ type ImportPost = {
 };
 
 const POSTS: ImportPost[] = [
+  {
+    title: "Landesliga-Auftakt: 5:3 in Moosinning",
+    slug: "landesliga-auftakt-moosinning-2026",
+    excerpt:
+      "Erstes Punktspiel in der Landesliga, erster Dreier: Beim Aufsteiger-Duell in Moosinning dreht der SV Nord ein 3:3 in den letzten fünf Minuten zum 5:3. Auch der Münchner Merkur berichtet über den Auftakt.",
+    publishedAt: new Date("2026-07-20T09:00:00+02:00").toISOString(),
+    tags: ["spielbericht"],
+    body: `Der erste Punktspieltag in der Landesliga Südost hätte kaum besser laufen können: Beim Aufsteiger-Duell auswärts beim FC Moosinning setzt sich der SV Nord München-Lerchenau mit 5:3 durch.
+
+## Fünf Minuten, die alles drehen
+
+Lange sah es nach einer Punkteteilung aus. Nach 85 Minuten stand es 3:3, beide Aufsteiger hatten sich einen offenen Schlagabtausch geliefert. Dann schlugen zwei Ausnahmespieler des Teams aus dem Münchner Norden zu.
+
+Karl-Heinz Lappe brachte die Gäste mit seinem dritten Treffer des Tages in der 85. Minute wieder in Führung. Den Schlusspunkt setzte Neuzugang Nico Karger in der 90. Minute zum 5:3.
+
+## Dreierpack zum Auftakt
+
+Für unseren spielenden Co-Trainer Lappe, seit Jahren einer der erfolgreichsten Torjäger im oberbayerischen Amateurfußball, war es ein perfekter Landesliga-Einstand. Und Karger, im Sommer vom FC Pipinsried gekommen, hat direkt im ersten Pflichtspiel gezeigt, warum wir uns über seine Zusage so gefreut haben.
+
+> Drei Punkte im ersten Landesliga-Spiel der Vereinsgeschichte. Danke an alle, die mit nach Moosinning gefahren sind.
+
+## Presse
+
+Der Münchner Merkur greift den Auftakt in seiner Landesliga-Übersicht auf und beschreibt das Spiel in Moosinning als das Spektakel des Spieltags.
+
+Quelle: Münchner Merkur, Ausgabe vom 20. Juli 2026, Rubrik Sport (Print).`,
+  },
   {
     title: "Vorbereitung? Abgehakt.",
     slug: "vorbereitung-landesliga-2026",

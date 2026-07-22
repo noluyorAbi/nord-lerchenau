@@ -50,6 +50,11 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URI || "",
     },
+    // Drizzle dev push compares the config against the live schema and blocks
+    // on an interactive prompt whenever they drift. Scripts (seed, imports)
+    // run non-interactively and only touch rows, never the schema, so they set
+    // PAYLOAD_DISABLE_PUSH=true and connect as-is.
+    push: process.env.PAYLOAD_DISABLE_PUSH !== "true",
   }),
   sharp,
   editor: lexicalEditor({

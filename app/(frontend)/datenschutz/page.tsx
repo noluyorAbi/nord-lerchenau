@@ -6,7 +6,7 @@ import { DATENSCHUTZ_SECTIONS } from "./_content";
 
 export const dynamic = "force-dynamic";
 
-const LAST_UPDATED = "14. Mai 2026";
+const LAST_UPDATED = "24. Juli 2026";
 
 export default async function DatenschutzPage() {
   const payload = await getPayloadClient();
@@ -29,10 +29,10 @@ export default async function DatenschutzPage() {
       lastUpdated={LAST_UPDATED}
       facts={[
         { label: "Rechtsgrundlage", value: "Art. 6 Abs. 1 DSGVO" },
-        { label: "Hosting", value: "Vercel · EU" },
-        { label: "DB", value: "Neon (EU)" },
+        { label: "Hosting", value: "Vercel (USA)" },
+        { label: "DB", value: "Neon · Frankfurt" },
         { label: "Newsletter", value: "Nein" },
-        { label: "Tracking", value: "Keine Cookies" },
+        { label: "Tracking", value: "Kein Tracking" },
       ]}
       sideLinks={[
         { href: "/impressum", label: "Impressum" },

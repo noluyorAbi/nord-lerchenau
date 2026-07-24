@@ -94,7 +94,7 @@ export const DATENSCHUTZ_SECTIONS: LegalSection[] = [
       { kind: "h3", text: "Vercel (Hosting)" },
       {
         kind: "p",
-        text: "Diese Website wird bei einem externen Hosting-Dienstleister betrieben: **Vercel Inc.** (340 S Lemon Ave #4133, Walnut, CA 91789, USA). Vercel verarbeitet Zugriffsdaten zur Bereitstellung der Website. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einer sicheren und effizienten Bereitstellung). Datenübermittlung in die USA durch Standardvertragsklauseln und DPF-Zertifizierung abgesichert.",
+        text: "Diese Website wird bei einem externen Hosting-Dienstleister betrieben: **Vercel Inc.**, 440 N Barranca Avenue #4133, Covina, CA 91723, USA. Vercel verarbeitet Zugriffsdaten zur Bereitstellung der Website; die serverseitige Verarbeitung erfolgt derzeit in der Vercel-Region Washington, D.C. (USA). Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einer sicheren und effizienten Bereitstellung). Die Datenübermittlung in die USA ist durch EU-Standardvertragsklauseln und die Zertifizierung von Vercel nach dem EU-U.S. Data Privacy Framework abgesichert.",
       },
       {
         kind: "p",
@@ -109,32 +109,36 @@ export const DATENSCHUTZ_SECTIONS: LegalSection[] = [
       { kind: "h3", text: "Neon (Datenbank)" },
       {
         kind: "p",
-        text: "Inhalte und Mitgliedsdaten werden in einer Postgres-Datenbank bei **Neon Inc.** in der EU-Region Frankfurt am Main gespeichert. Auch mit Neon besteht ein Vertrag zur Auftragsverarbeitung gemäß Art. 28 DSGVO. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.",
+        text: "Inhalte der Website und Kontaktanfragen werden in einer Postgres-Datenbank von **Neon, LLC**, einem Unternehmen der Databricks, Inc. (160 Spear Street, Suite 1300, San Francisco, CA 94105, USA), gespeichert. Der Datenbankstandort ist die **EU-Region Frankfurt am Main**. Auch hier besteht ein Vertrag zur Auftragsverarbeitung gemäß Art. 28 DSGVO; eine Zertifizierung nach dem EU-U.S. Data Privacy Framework liegt vor. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.",
       },
       {
         kind: "linkRow",
-        label: "Neon Privacy Policy",
-        href: "https://neon.tech/privacy-policy",
-        sub: "neon.tech/privacy-policy",
+        label: "Datenschutzhinweise Neon / Databricks",
+        href: "https://www.databricks.com/legal/privacynotice",
+        sub: "databricks.com/legal/privacynotice",
       },
     ],
   },
   {
     id: "cookies",
     num: "05",
-    title: "Cookies",
+    title: "Cookies und externe Inhalte",
     icon: "cookie",
-    intro: "Nur funktional notwendige Cookies",
+    intro: "Kein Tracking, kein Cookie-Banner",
     blocks: [
       {
         kind: "callout",
         tone: "key",
         title: "Wir setzen kein Tracking ein",
-        text: "**Keine Tracking-, Analyse- oder Marketing-Cookies.** Nur funktional notwendige Cookies, zulässig nach § 25 Abs. 2 Nr. 2 TDDDG (ehemals TTDSG) ohne Einwilligung. Rechtsgrundlage für deren Speicherung ist im Übrigen unser berechtigtes Interesse an einer funktionsfähigen Website (Art. 6 Abs. 1 lit. f DSGVO).",
+        text: "**Keine Tracking-, Analyse- oder Marketing-Cookies, keine Werbenetzwerke, keine Social-Media-Plugins.** Gesetzt wird nur ein technisch notwendiges Sitzungs-Cookie im passwortgeschützten Redaktionsbereich für angemeldete Redakteur:innen. Das ist nach § 25 Abs. 2 Nr. 2 TDDDG (ehemals TTDSG) ohne Einwilligung zulässig; Rechtsgrundlage der weiteren Verarbeitung ist unser berechtigtes Interesse an einer funktionsfähigen Website (Art. 6 Abs. 1 lit. f DSGVO).",
       },
       {
         kind: "p",
-        text: "Optionale Cookies sowie externe Inhalte werden ausschließlich nach Ihrer ausdrücklichen Einwilligung geladen (Art. 6 Abs. 1 lit. a DSGVO, § 25 Abs. 1 TDDDG). Statt eines Cookie-Banners nutzen wir dafür eine Zwei-Klick-Lösung: Drittanbieter-Inhalte und deren Cookies (z. B. BFV-Spielplan, FuPa-Block, Instagram-Feed) werden erst geladen, wenn Sie sie **aktiv** durch Klick starten. Ein gesondertes Consent-Management-Tool ist deshalb nicht im Einsatz; es werden ohne Ihre Einwilligung keine optionalen Cookies gesetzt.",
+        text: "Ein **Consent-Management-Tool (Cookie-Banner) ist nicht im Einsatz** und ist auch nicht erforderlich, weil wir keine einwilligungsbedürftigen Cookies verwenden (§ 25 Abs. 1 TDDDG).",
+      },
+      {
+        kind: "p",
+        text: "Einzelne Seiten binden externe Inhalte ein, bei deren Anzeige technisch bedingt Ihre IP-Adresse an den jeweiligen Anbieter übermittelt wird: die Kartenkacheln unserer Anfahrtskarten und die Vereinswappen des Fußballportals FuPa. Diese Inhalte setzen keine Cookies. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Darstellung von Spielinformationen und Anfahrtskarten). Die beteiligten Anbieter finden Sie unter „Eingebettete Drittanbieter“.",
       },
     ],
   },
@@ -165,7 +169,7 @@ export const DATENSCHUTZ_SECTIONS: LegalSection[] = [
       { kind: "h3", text: "Resend (E-Mail-Versand)" },
       {
         kind: "p",
-        text: "Zum technischen Versand nutzen wir **Resend Inc.** (San Francisco, CA, USA). Datenübermittlung in die USA durch Standardvertragsklauseln abgesichert.",
+        text: "Zum technischen Versand nutzen wir **Resend** (Plus Five Five, Inc., 2261 Market Street #5039, San Francisco, CA 94114, USA). Die Datenübermittlung in die USA ist durch EU-Standardvertragsklauseln und die Zertifizierung des Anbieters nach dem EU-U.S. Data Privacy Framework abgesichert.",
       },
       {
         kind: "linkRow",
@@ -206,6 +210,17 @@ export const DATENSCHUTZ_SECTIONS: LegalSection[] = [
         title: "Aufbewahrung",
         text: "Mitgliedsdaten werden gelöscht, sobald die Mitgliedschaft endet und gesetzliche Aufbewahrungspflichten (v. a. § 147 AO, § 257 HGB — max. **10 Jahre**) erfüllt sind.",
       },
+      { kind: "h3", text: "Online-Anmeldung (Vereinsplaner)" },
+      {
+        kind: "p",
+        text: "Die Aufnahmeanträge auf der Seite „Mitgliedschaft“ sind **Verlinkungen** auf Formulare unseres Vereinsverwaltungsprogramms **Vereinsplaner** (Lmnop group GmbH, Peter-Behrens-Platz 9, 4020 Linz, Österreich). Erst wenn Sie einen dieser Links anklicken, verlassen Sie unsere Website und Ihre Angaben werden dort erhoben. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Anbahnung der Mitgliedschaft). Mit dem Anbieter besteht ein Vertrag zur Auftragsverarbeitung nach Art. 28 DSGVO.",
+      },
+      {
+        kind: "linkRow",
+        label: "Vereinsplaner Datenschutz",
+        href: "https://vereinsplaner.at/privacypolicy",
+        sub: "vereinsplaner.at/privacypolicy",
+      },
     ],
   },
   {
@@ -213,12 +228,12 @@ export const DATENSCHUTZ_SECTIONS: LegalSection[] = [
     num: "08",
     title: "Eingebettete Drittanbieter",
     icon: "globe",
-    intro: "BFV · FuPa · MapLibre · Instagram · Social",
+    intro: "BFV · FuPa · Karten · Instagram · Social",
     blocks: [
       { kind: "h3", text: "BFV (Bayerischer Fußball-Verband)" },
       {
         kind: "p",
-        text: "Spielpläne, Tabellen und Kaderlisten beziehen wir über die öffentliche Widget-API des BFV. Beim Aufruf der entsprechenden Seiten kann Ihre IP-Adresse an den BFV übermittelt werden.",
+        text: "Spielpläne, Tabellen und Kaderlisten beziehen wir über die öffentliche Widget-API des **Bayerischen Fußball-Verbands e. V.** (Brienner Straße 50, 80333 München). Der Abruf erfolgt über unseren Server, Ihre IP-Adresse wird dabei **nicht** an den BFV übermittelt. Klicken Sie auf ein verlinktes BFV-Formular oder eine BFV-Seite, gelten die Datenschutzhinweise des BFV.",
       },
       {
         kind: "linkRow",
@@ -229,25 +244,31 @@ export const DATENSCHUTZ_SECTIONS: LegalSection[] = [
       { kind: "h3", text: "FuPa" },
       {
         kind: "p",
-        text: "Spielerprofile und Vereinsdaten beziehen wir über die öffentliche API von **FuPa GmbH** (Bärenkampallee 14, 32657 Lemgo). Beim Aufruf der entsprechenden Seiten kann Ihre IP-Adresse an FuPa übermittelt werden.",
+        text: "Spielpläne, Tabellen und Kaderdaten beziehen wir über die öffentliche API der **FuPa GmbH** (Peigertinger Str. 9, 94538 Fürstenstein). Diese Daten holt unser Server, Ihre IP-Adresse wird dabei nicht übermittelt. Die **Vereinswappen** der Gegner werden dagegen direkt von den FuPa-Bildservern geladen; dabei werden Ihre IP-Adresse, Browserkennung und die aufgerufene Seite an FuPa übertragen. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Darstellung der Spielinformationen).",
       },
       {
         kind: "linkRow",
         label: "FuPa Datenschutz",
-        href: "https://www.fupa.net/datenschutz",
-        sub: "fupa.net/datenschutz",
+        href: "https://www.fupa.net/about/privacy-policy",
+        sub: "fupa.net/about/privacy-policy",
       },
-      { kind: "h3", text: "MapLibre / OpenFreeMap" },
+      { kind: "h3", text: "Karten (MapLibre / OpenFreeMap)" },
       {
         kind: "p",
-        text: "Karten werden mit **MapLibre GL JS** und Kacheln von **OpenFreeMap** (Kartendaten © OpenStreetMap-Mitwirkende) dargestellt. Beim Laden wird Ihre IP an den Kacheldienst übermittelt.",
+        text: "Anfahrtskarten stellen wir mit der Open-Source-Bibliothek **MapLibre GL JS** dar, die von unserem eigenen Server ausgeliefert wird. Die Kartenkacheln stammen von **OpenFreeMap**, betrieben von der Hyperknot Software Kft. (Ungarn), Kartendaten © OpenStreetMap-Mitwirkende. Beim Laden einer Karte wird Ihre IP-Adresse an diesen Dienst übermittelt. Der Anbieter setzt keine Cookies und speichert nach eigenen Angaben im Normalbetrieb keine IP-Adressen. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.",
       },
-      { kind: "h3", text: "Instagram (Klick-zum-Laden)" },
+      {
+        kind: "linkRow",
+        label: "OpenFreeMap Datenschutz",
+        href: "https://openfreemap.org/privacy/",
+        sub: "openfreemap.org/privacy",
+      },
+      { kind: "h3", text: "Instagram" },
       {
         kind: "callout",
         tone: "key",
-        title: "Nur auf ausdrücklichen Klick",
-        text: "Der Instagram-Feed auf der Startseite wird **erst nach Klick** auf „Feed laden“ geladen. Erst dann werden Daten (Cookies, IP-Adresse) an Meta Platforms Ireland Ltd. übertragen. Rechtsgrundlage: Art. 6 Abs. 1 lit. a DSGVO.",
+        title: "Kein eingebetteter Feed",
+        text: "Wir binden **keinen** Instagram-Feed und keine Instagram-Plugins ein. Die Fotos auf unserer Startseite liegen auf unserem eigenen Server. Wir **verlinken** lediglich auf unser Instagram-Profil; erst wenn Sie diesen Link anklicken, werden Daten an Meta Platforms Ireland Ltd. übertragen.",
       },
       { kind: "h3", text: "Social-Media-Verlinkungen" },
       {
@@ -257,8 +278,41 @@ export const DATENSCHUTZ_SECTIONS: LegalSection[] = [
     ],
   },
   {
-    id: "rechte",
+    id: "ki-assistent",
     num: "09",
+    title: "KI-gestützter Website-Assistent",
+    icon: "key",
+    intro: "Was passiert mit dem, was du in den Chat tippst",
+    blocks: [
+      {
+        kind: "lead",
+        text: "Auf unserer Website bieten wir einen KI-gestützten Assistenten an, der Fragen zum Verein beantwortet.",
+      },
+      {
+        kind: "p",
+        text: "Wenn Sie den Assistenten **aktiv nutzen** und eine Frage absenden, wird der von Ihnen eingegebene Text zur Erzeugung einer Antwort an **OpenAI Ireland Ltd.** (1st Floor, The Liffey Trust Centre, 117-126 Sheriff Street Upper, Dublin 1, D01 YC43, Irland) übermittelt. Die Übermittlung läuft über unseren Server; Ihre IP-Adresse wird dabei **nicht** an OpenAI weitergegeben. Ohne Ihre Eingabe findet keine Übermittlung statt.",
+      },
+      {
+        kind: "callout",
+        tone: "warning",
+        title: "Bitte keine sensiblen Daten eingeben",
+        text: "Geben Sie im Chat **keine personenbezogenen oder vertraulichen Informationen** ein. Für Anliegen, die persönliche Daten betreffen, nutzen Sie bitte das [Kontaktformular](/kontakt) oder die im Impressum genannten Kontaktdaten. Wir speichern die Chatverläufe nicht.",
+      },
+      {
+        kind: "p",
+        text: "Rechtsgrundlage: Art. 6 Abs. 1 lit. a DSGVO (Einwilligung durch die aktive Nutzung des Chats) sowie Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einem niedrigschwelligen Informationsangebot).",
+      },
+      {
+        kind: "linkRow",
+        label: "OpenAI Privacy Policy",
+        href: "https://openai.com/policies/eu-privacy-policy/",
+        sub: "openai.com/policies/eu-privacy-policy",
+      },
+    ],
+  },
+  {
+    id: "rechte",
+    num: "10",
     title: "Rechte der betroffenen Person",
     icon: "scale",
     intro: "Ihre DSGVO-Rechte gegenüber dem Verein",
@@ -307,7 +361,7 @@ export const DATENSCHUTZ_SECTIONS: LegalSection[] = [
   },
   {
     id: "tls",
-    num: "10",
+    num: "11",
     title: "SSL-/TLS-Verschlüsselung",
     icon: "lock",
     intro: "Sichere Übertragung vertraulicher Inhalte",

@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { PageHero } from "@/components/PageHero";
+import { cachedQuery, collectionTag } from "@/lib/cms";
 import {
   formatNewsDate,
   newsHeroForPost,
@@ -10,9 +11,16 @@ import { getPayloadClient } from "@/lib/payload";
 import { mediaSrc } from "@/lib/publicUploads";
 import type { Media, Post } from "@/payload-types";
 
+// Stays dynamic: the page number comes from searchParams.
 export const dynamic = "force-dynamic";
 
 const PAGE_SIZE = 12;
+
+// The page number is attacker-controlled and becomes part of a cache key, so it
+// needs an upper bound: without one, /news?page=<n> mints an unbounded number of
+// persistent Data Cache entries, each costing a Postgres query. 100 pages is
+// ~1200 posts of headroom against the low hundreds the club actually publishes.
+const MAX_PAGE = 100;
 
 // Resolve an uploaded heroImage to a URL the same way PersonCard/SponsorMarquee
 // do; returns null when none is set so callers fall back to newsHeroForPost().
@@ -28,16 +36,25 @@ type Props = {
 
 export default async function NewsIndex({ searchParams }: Props) {
   const { page: pageParam } = await searchParams;
-  const page = Math.max(1, parseInt(pageParam ?? "1", 10) || 1);
+  const page = Math.min(
+    MAX_PAGE,
+    Math.max(1, parseInt(pageParam ?? "1", 10) || 1),
+  );
 
-  const payload = await getPayloadClient();
-  const result = await payload.find({
-    collection: "posts",
-    sort: "-publishedAt",
-    page,
-    limit: PAGE_SIZE,
-    depth: 1,
-  });
+  const result = await cachedQuery(
+    ["news-list", String(page)],
+    [collectionTag("posts")],
+    async () => {
+      const payload = await getPayloadClient();
+      return payload.find({
+        collection: "posts",
+        sort: "-publishedAt",
+        page,
+        limit: PAGE_SIZE,
+        depth: 1,
+      });
+    },
+  );
 
   return (
     <>

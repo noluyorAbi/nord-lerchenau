@@ -1,5 +1,6 @@
 import { MapEmbed } from "@/components/MapEmbed";
 import { SectionEyebrow } from "@/components/SectionEyebrow";
+import { cachedQuery, globalTag } from "@/lib/cms";
 import { getPayloadClient } from "@/lib/payload";
 
 const DEFAULT_ADDRESS = {
@@ -10,7 +11,6 @@ const DEFAULT_ADDRESS = {
 };
 
 export async function LocationMap() {
-  const payload = await getPayloadClient();
   let primary = DEFAULT_ADDRESS;
   let phone: string | null = null;
   let email: string | null = null;
@@ -18,7 +18,14 @@ export async function LocationMap() {
   let customEmbed: string | null = null;
 
   try {
-    const info = await payload.findGlobal({ slug: "contact-info" });
+    const info = await cachedQuery(
+      ["global", "contact-info"],
+      [globalTag("contact-info")],
+      async () => {
+        const payload = await getPayloadClient();
+        return payload.findGlobal({ slug: "contact-info" });
+      },
+    );
     const first = Array.isArray(info.addresses) ? info.addresses[0] : null;
     if (first?.street) {
       primary = {

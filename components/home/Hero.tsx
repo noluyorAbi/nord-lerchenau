@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { HeroMatchCard } from "@/components/home/HeroMatchCard";
 import { HeroItem, HeroStagger } from "@/components/motion/HeroStagger";
+import { cachedQuery, collectionTag } from "@/lib/cms";
 import { formatKickoff, formatShortDate } from "@/lib/format-date";
 import {
   fupaImage,
@@ -56,15 +57,21 @@ export async function Hero({ hero }: Props) {
   let fallbackEntry: WeekendFupaEntry | null = null;
   if (!herrenMatch) {
     try {
-      const payload = await getPayloadClient();
       const now = new Date();
-      const teamsRes = await payload.find({
-        collection: "teams",
-        where: { sport: { equals: "fussball" } },
-        sort: "order",
-        limit: 100,
-        depth: 0,
-      });
+      const teamsRes = await cachedQuery(
+        ["hero-fussball-teams"],
+        [collectionTag("teams")],
+        async () => {
+          const payload = await getPayloadClient();
+          return payload.find({
+            collection: "teams",
+            where: { sport: { equals: "fussball" } },
+            sort: "order",
+            limit: 100,
+            depth: 0,
+          });
+        },
+      );
       const teams: WeekendTeam[] = (
         await Promise.all(
           (teamsRes.docs as Team[]).map<Promise<WeekendTeam | null>>(

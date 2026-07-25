@@ -6,6 +6,7 @@ import { FupaBlock } from "@/components/home/FupaBlock";
 import { PageHero } from "@/components/PageHero";
 import { SectionEyebrow } from "@/components/SectionEyebrow";
 import { BFV_CLUB_URL } from "@/lib/bfv";
+import { cachedQuery, collectionTag } from "@/lib/cms";
 import {
   fupaTeamUrl,
   getFupaStandingForTeam,
@@ -13,8 +14,6 @@ import {
   resolveLiveHerrenSlug,
 } from "@/lib/fupa";
 import { getPayloadClient } from "@/lib/payload";
-
-export const dynamic = "force-dynamic";
 
 type CardTone = "navy" | "paper" | "sky" | "gold";
 
@@ -49,17 +48,22 @@ const TONE_CLASSES: Record<
 };
 
 export default async function FussballPage() {
-  const payload = await getPayloadClient();
-
   // Slug-unabhängige Payload-Query sofort starten, damit die
   // fupa-Slug-Auflösung sie nicht serialisiert.
-  const teamsPromise = payload.find({
-    collection: "teams",
-    where: { sport: { equals: "fussball" } },
-    sort: "order",
-    limit: 200,
-    depth: 0,
-  });
+  const teamsPromise = cachedQuery(
+    ["fussball-teams"],
+    [collectionTag("teams")],
+    async () => {
+      const payload = await getPayloadClient();
+      return payload.find({
+        collection: "teams",
+        where: { sport: { equals: "fussball" } },
+        sort: "order",
+        limit: 200,
+        depth: 0,
+      });
+    },
+  );
   // Aktuellste auf fupa existierende Saison der 1. Herren; Liga und Saison
   // der Tabelle kommen aus dem fupa-Team-Datensatz selbst.
   const herrenSlug = await resolveLiveHerrenSlug();

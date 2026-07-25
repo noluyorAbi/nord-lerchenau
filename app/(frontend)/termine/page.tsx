@@ -13,28 +13,45 @@ import {
   parseBfvKickoff,
   type BfvMatch,
 } from "@/lib/bfv";
+import {
+  TIME_WINDOWED_REVALIDATE_SECONDS,
+  cachedQuery,
+  collectionTag,
+} from "@/lib/cms";
 import { lexicalToPlainText } from "@/lib/lexical-text";
 import { getPayloadClient } from "@/lib/payload";
 
-export const dynamic = "force-dynamic";
+// Next only accepts a literal in a segment config export, so this cannot
+// reference the shared constant; tests/lib/cms-tags.test.ts asserts they match.
 export const revalidate = 900;
 
 export default async function TerminePage() {
-  const payload = await getPayloadClient();
-
   const [events, teams] = await Promise.all([
-    payload.find({
-      collection: "events",
-      where: { startsAt: { greater_than: new Date().toISOString() } },
-      sort: "startsAt",
-      limit: 200,
-      depth: 0,
-    }),
-    payload.find({
-      collection: "teams",
-      where: { "bfv.teamId": { exists: true } },
-      limit: 100,
-      depth: 0,
+    cachedQuery(
+      ["termine-events"],
+      [collectionTag("events")],
+      async () => {
+        const payload = await getPayloadClient();
+        return payload.find({
+          collection: "events",
+          where: { startsAt: { greater_than: new Date().toISOString() } },
+          sort: "startsAt",
+          limit: 200,
+          depth: 0,
+        });
+      },
+      // The `startsAt > now` cutoff is baked into the cached result, so it must
+      // expire with the page instead of after the 24 h default.
+      TIME_WINDOWED_REVALIDATE_SECONDS,
+    ),
+    cachedQuery(["termine-teams"], [collectionTag("teams")], async () => {
+      const payload = await getPayloadClient();
+      return payload.find({
+        collection: "teams",
+        where: { "bfv.teamId": { exists: true } },
+        limit: 100,
+        depth: 0,
+      });
     }),
   ]);
 

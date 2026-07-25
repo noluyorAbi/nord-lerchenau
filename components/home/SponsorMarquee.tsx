@@ -1,3 +1,4 @@
+import { cachedQuery, collectionTag } from "@/lib/cms";
 import { getPayloadClient } from "@/lib/payload";
 import { mediaSrc } from "@/lib/publicUploads";
 import { sponsorTone } from "@/lib/sponsor-visual";
@@ -12,13 +13,19 @@ type Sponsor = {
 };
 
 export async function SponsorMarquee() {
-  const payload = await getPayloadClient();
-  const result = await payload.find({
-    collection: "sponsors",
-    sort: "order",
-    limit: 40,
-    depth: 1,
-  });
+  const result = await cachedQuery(
+    ["home-sponsors"],
+    [collectionTag("sponsors")],
+    async () => {
+      const payload = await getPayloadClient();
+      return payload.find({
+        collection: "sponsors",
+        sort: "order",
+        limit: 40,
+        depth: 1,
+      });
+    },
+  );
 
   const dbSponsors: Sponsor[] = result.docs.map((doc) => {
     const d = doc as unknown as {

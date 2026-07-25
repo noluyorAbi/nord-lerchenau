@@ -1,11 +1,10 @@
 import Link from "next/link";
 
 import { PageHero } from "@/components/PageHero";
+import { cachedQuery, collectionTag } from "@/lib/cms";
 import { getPayloadClient } from "@/lib/payload";
 import { mediaSrc } from "@/lib/publicUploads";
 import type { Media, Person } from "@/payload-types";
-
-export const dynamic = "force-dynamic";
 
 const VORSTAND_NAMES = [
   "Ralf Kirmeyer",
@@ -98,16 +97,22 @@ function stripPhone(p: Person): Person {
 }
 
 export default async function VorstandPage() {
-  const payload = await getPayloadClient();
-  const result = await payload.find({
-    collection: "people",
-    where: {
-      function: { in: ["vorstand", "sportleitung", "jugendleitung"] },
+  const result = await cachedQuery(
+    ["vorstand-people"],
+    [collectionTag("people")],
+    async () => {
+      const payload = await getPayloadClient();
+      return payload.find({
+        collection: "people",
+        where: {
+          function: { in: ["vorstand", "sportleitung", "jugendleitung"] },
+        },
+        sort: "order",
+        limit: 100,
+        depth: 1,
+      });
     },
-    sort: "order",
-    limit: 100,
-    depth: 1,
-  });
+  );
 
   result.docs = result.docs.map(stripPhone);
 

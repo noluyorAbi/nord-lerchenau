@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { SectionEyebrow } from "@/components/SectionEyebrow";
+import { cachedQuery, collectionTag } from "@/lib/cms";
 import { getPayloadClient } from "@/lib/payload";
 import type { Person, Team } from "@/payload-types";
 
@@ -14,21 +15,28 @@ function trainerNames(team: Team): string[] {
 }
 
 export async function JugendHighlights() {
-  const payload = await getPayloadClient();
   let teams: Team[] = [];
   try {
-    const result = await payload.find({
-      collection: "teams",
-      where: {
-        and: [
-          { sport: { equals: "fussball" } },
-          { category: { in: ["junioren", "juniorinnen", "bambini"] } },
-        ],
+    // depth 1 pulls the trainers out of people, hence both tags.
+    const result = await cachedQuery(
+      ["jugend-teams"],
+      [collectionTag("teams"), collectionTag("people")],
+      async () => {
+        const payload = await getPayloadClient();
+        return payload.find({
+          collection: "teams",
+          where: {
+            and: [
+              { sport: { equals: "fussball" } },
+              { category: { in: ["junioren", "juniorinnen", "bambini"] } },
+            ],
+          },
+          sort: ["order", "name"],
+          limit: 50,
+          depth: 1,
+        });
       },
-      sort: ["order", "name"],
-      limit: 50,
-      depth: 1,
-    });
+    );
     teams = result.docs.filter(
       (t) => t.category && JUNIOR_CATEGORIES.has(t.category),
     );

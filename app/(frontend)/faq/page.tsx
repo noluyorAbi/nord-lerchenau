@@ -1,8 +1,7 @@
 import { JsonLd } from "@/components/seo/JsonLd";
 import { PageHero } from "@/components/PageHero";
+import { cachedQuery, globalTag } from "@/lib/cms";
 import { getPayloadClient } from "@/lib/payload";
-
-export const dynamic = "force-dynamic";
 
 const GROUP_LABELS: Record<string, string> = {
   allgemein: "Allgemein",
@@ -14,8 +13,14 @@ const GROUP_LABELS: Record<string, string> = {
 const GROUP_ORDER = ["allgemein", "mitgliedschaft", "training", "vereinsheim"];
 
 export default async function FaqPageRoute() {
-  const payload = await getPayloadClient();
-  const page = await payload.findGlobal({ slug: "faq-page" });
+  const page = await cachedQuery(
+    ["global", "faq-page"],
+    [globalTag("faq-page")],
+    async () => {
+      const payload = await getPayloadClient();
+      return payload.findGlobal({ slug: "faq-page" });
+    },
+  );
 
   const items = (page.items ?? []).filter(
     (i): i is NonNullable<typeof i> & { question: string; answer: string } =>

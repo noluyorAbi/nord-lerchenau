@@ -49,6 +49,15 @@ export default buildConfig({
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URI || "",
+      // Neon bills compute time, and an idle-but-open connection keeps the
+      // compute from suspending. pg defaults to keeping idle clients forever,
+      // which on serverless meant the pool held the database awake between
+      // requests. Now that pages are prerendered, runtime connections are rare
+      // (revalidation and the admin panel only), so release them quickly.
+      idleTimeoutMillis: 10_000,
+      // Bounded so a burst of parallel page renders during `next build` queues
+      // instead of opening a connection per render.
+      max: 8,
     },
     // Drizzle dev push compares the config against the live schema and blocks
     // on an interactive prompt whenever they drift. Scripts (seed, imports)

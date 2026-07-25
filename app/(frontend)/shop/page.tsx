@@ -70,8 +70,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "/shop" },
 };
 
-export const dynamic = "force-dynamic";
-
 export default async function ShopPage() {
   const result = await fetchClubshopProducts();
   const { products, shopUrl } = result;

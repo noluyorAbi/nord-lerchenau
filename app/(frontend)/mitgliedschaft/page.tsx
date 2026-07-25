@@ -1,8 +1,7 @@
 import { PageHero } from "@/components/PageHero";
 import { BFV_FORMULARE_URL } from "@/lib/bfv-formulare";
+import { cachedQuery, globalTag } from "@/lib/cms";
 import { getPayloadClient } from "@/lib/payload";
-
-export const dynamic = "force-dynamic";
 
 const BENEFITS = [
   "Training auf eigenem Platz im Eschengarten der Bezirkssportanlage Ebereschenstraße 17 und Hallentraining in der Grundschule Waldmeisterstraße 38",
@@ -71,8 +70,14 @@ const SATZUNG = {
 };
 
 export default async function MitgliedschaftPage() {
-  const payload = await getPayloadClient();
-  const contact = await payload.findGlobal({ slug: "contact-info" });
+  const contact = await cachedQuery(
+    ["global", "contact-info"],
+    [globalTag("contact-info")],
+    async () => {
+      const payload = await getPayloadClient();
+      return payload.findGlobal({ slug: "contact-info" });
+    },
+  );
 
   return (
     <>

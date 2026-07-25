@@ -5,6 +5,7 @@ import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical
 
 import { PageHero } from "@/components/PageHero";
 import { PersonCard } from "@/components/PersonCard";
+import { cachedQuery, collectionTag } from "@/lib/cms";
 import { getPayloadClient } from "@/lib/payload";
 import { mediaSrc } from "@/lib/publicUploads";
 import type { Media, Person } from "@/payload-types";
@@ -105,14 +106,21 @@ export async function SportSectionPage({
   highlights,
   cta,
 }: Props) {
-  const payload = await getPayloadClient();
-
-  const result = await payload.find({
-    collection: "teams",
-    where: { sport: { equals: sport } },
-    limit: 1,
-    depth: 2,
-  });
+  // depth 2 populates the trainers from `people`, so a person edit has to
+  // invalidate this entry as well.
+  const result = await cachedQuery(
+    ["sport-team", sport],
+    [collectionTag("teams"), collectionTag("people")],
+    async () => {
+      const payload = await getPayloadClient();
+      return payload.find({
+        collection: "teams",
+        where: { sport: { equals: sport } },
+        limit: 1,
+        depth: 2,
+      });
+    },
+  );
 
   const team = result.docs[0];
   if (!team) notFound();
@@ -122,12 +130,19 @@ export async function SportSectionPage({
   const portraitByName = new Map<string, string>();
   const lookupNames = (staticContacts ?? []).map((c) => c.photoName ?? c.name);
   if (lookupNames.length > 0) {
-    const people = await payload.find({
-      collection: "people",
-      where: { name: { in: lookupNames } },
-      limit: lookupNames.length,
-      depth: 1,
-    });
+    const people = await cachedQuery(
+      ["sport-contact-portraits", sport, lookupNames.join("|")],
+      [collectionTag("people")],
+      async () => {
+        const payload = await getPayloadClient();
+        return payload.find({
+          collection: "people",
+          where: { name: { in: lookupNames } },
+          limit: lookupNames.length,
+          depth: 1,
+        });
+      },
+    );
     for (const p of people.docs) {
       const src =
         p.photo && typeof p.photo === "object"

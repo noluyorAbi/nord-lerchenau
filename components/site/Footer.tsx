@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { ClubLogo } from "@/components/ClubLogo";
+import { cachedQuery, collectionTag, globalTag } from "@/lib/cms";
 import { getPayloadClient } from "@/lib/payload";
 import { mediaSrc } from "@/lib/publicUploads";
 import { sponsorTone } from "@/lib/sponsor-visual";
@@ -78,17 +79,44 @@ export async function Footer() {
   let contact: ContactGlobal = {};
   let sponsors: FooterSponsor[] = [];
   try {
-    const payload = await getPayloadClient();
     const [siteRes, navRes, contactRes, sponsorRes] = await Promise.all([
-      payload.findGlobal({ slug: "site-settings" }),
-      payload.findGlobal({ slug: "navigation" }),
-      payload.findGlobal({ slug: "contact-info" }),
-      payload.find({
-        collection: "sponsors",
-        sort: "order",
-        limit: 40,
-        depth: 1,
-      }),
+      cachedQuery(
+        ["global", "site-settings"],
+        [globalTag("site-settings")],
+        async () => {
+          const payload = await getPayloadClient();
+          return payload.findGlobal({ slug: "site-settings" });
+        },
+      ),
+      cachedQuery(
+        ["global", "navigation"],
+        [globalTag("navigation")],
+        async () => {
+          const payload = await getPayloadClient();
+          return payload.findGlobal({ slug: "navigation" });
+        },
+      ),
+      cachedQuery(
+        ["global", "contact-info"],
+        [globalTag("contact-info")],
+        async () => {
+          const payload = await getPayloadClient();
+          return payload.findGlobal({ slug: "contact-info" });
+        },
+      ),
+      cachedQuery(
+        ["footer", "sponsors"],
+        [collectionTag("sponsors")],
+        async () => {
+          const payload = await getPayloadClient();
+          return payload.find({
+            collection: "sponsors",
+            sort: "order",
+            limit: 40,
+            depth: 1,
+          });
+        },
+      ),
     ]);
     site = siteRes as SiteGlobal;
     nav = navRes as NavGlobal;

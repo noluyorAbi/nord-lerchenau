@@ -40,6 +40,17 @@ jobs:
       - name: Lint
         run: bun run lint
 
+      # Frontend pages are prerendered, so the build reads from Postgres. The
+      # service container starts empty and Payload skips its Drizzle push under
+      # NODE_ENV=production, so the tables have to be created first or every
+      # prerender throws.
+      - name: Create database schema
+        run: bun run db:push-schema
+        env:
+          DATABASE_URI: postgres://ci:ci@localhost:5432/ci?sslmode=disable
+          PAYLOAD_SECRET: ci-secret-ci-secret-ci-secret-ci
+          NEXT_PUBLIC_SERVER_URL: http://localhost:3000
+
       - name: Build (includes typecheck + generates next-env.d.ts)
         run: bun run build
         env:

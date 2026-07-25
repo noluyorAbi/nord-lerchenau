@@ -1,16 +1,28 @@
+import {
+  TIME_WINDOWED_REVALIDATE_SECONDS,
+  cachedQuery,
+  collectionTag,
+} from "@/lib/cms";
 import { getPayloadClient } from "@/lib/payload";
 import { formatKickoff } from "@/lib/format-date";
 
 export async function NextMatch() {
-  const payload = await getPayloadClient();
-
-  const result = await payload.find({
-    collection: "fixtures",
-    where: { kickoff: { greater_than: new Date().toISOString() } },
-    sort: "kickoff",
-    limit: 1,
-    depth: 1,
-  });
+  // depth 1 zieht den Mannschaftsnamen aus teams mit, daher beide Tags.
+  const result = await cachedQuery(
+    ["home-next-match"],
+    [collectionTag("fixtures"), collectionTag("teams")],
+    async () => {
+      const payload = await getPayloadClient();
+      return payload.find({
+        collection: "fixtures",
+        where: { kickoff: { greater_than: new Date().toISOString() } },
+        sort: "kickoff",
+        limit: 1,
+        depth: 1,
+      });
+    },
+    TIME_WINDOWED_REVALIDATE_SECONDS,
+  );
 
   const fixture = result.docs[0];
   if (!fixture) return null;

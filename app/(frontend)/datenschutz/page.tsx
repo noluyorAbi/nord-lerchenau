@@ -1,16 +1,21 @@
 import { LegalLayout } from "@/components/LegalLayout";
 import { LegalSections } from "@/components/legal/LegalSections";
+import { cachedQuery, globalTag } from "@/lib/cms";
 import { getPayloadClient } from "@/lib/payload";
 
 import { DATENSCHUTZ_SECTIONS } from "./_content";
 
-export const dynamic = "force-dynamic";
-
 const LAST_UPDATED = "24. Juli 2026";
 
 export default async function DatenschutzPage() {
-  const payload = await getPayloadClient();
-  const contact = await payload.findGlobal({ slug: "contact-info" });
+  const contact = await cachedQuery(
+    ["global", "contact-info"],
+    [globalTag("contact-info")],
+    async () => {
+      const payload = await getPayloadClient();
+      return payload.findGlobal({ slug: "contact-info" });
+    },
+  );
 
   const primary = Array.isArray(contact.addresses)
     ? contact.addresses[0]

@@ -4,6 +4,11 @@ import { FadeUp } from "@/components/motion/FadeUp";
 import { SectionEyebrow } from "@/components/SectionEyebrow";
 import { isOurBfvTeam, type BfvMatch } from "@/lib/bfv";
 import {
+  TIME_WINDOWED_REVALIDATE_SECONDS,
+  cachedQuery,
+  collectionTag,
+} from "@/lib/cms";
+import {
   getFupaUpcoming,
   isOurTeam,
   pickUpcoming,
@@ -136,25 +141,46 @@ function fupaMatchToRow(
 }
 
 export async function MatchdayBlock() {
-  const payload = await getPayloadClient();
   const now = new Date();
+  // The page is prerendered, so the "upcoming from now" boundary freezes into
+  // whichever render filled the cache entry. Bucketing the key by day caps that
+  // drift at a day. Quantising the query itself to midnight would make the
+  // entry a pure function of its key, but it would also list matches that
+  // already kicked off earlier today as upcoming, which is the worse error.
+  const dayKey = now.toISOString().slice(0, 10);
 
   // Slug-unabhängige Payload-Queries sofort starten, damit die
   // fupa-Slug-Auflösung sie nicht serialisiert.
-  const teamsPromise = payload.find({
-    collection: "teams",
-    where: { sport: { equals: "fussball" } },
-    sort: "order",
-    limit: 100,
-    depth: 0,
-  });
-  const fixturesPromise = payload.find({
-    collection: "fixtures",
-    where: { kickoff: { greater_than: now.toISOString() } },
-    sort: "kickoff",
-    limit: 10,
-    depth: 1,
-  });
+  const teamsPromise = cachedQuery(
+    ["matchday-fussball-teams"],
+    [collectionTag("teams")],
+    async () => {
+      const payload = await getPayloadClient();
+      return payload.find({
+        collection: "teams",
+        where: { sport: { equals: "fussball" } },
+        sort: "order",
+        limit: 100,
+        depth: 0,
+      });
+    },
+  );
+  // depth 1 pulls the team name out of teams, hence both tags.
+  const fixturesPromise = cachedQuery(
+    ["matchday-fixtures", dayKey],
+    [collectionTag("fixtures"), collectionTag("teams")],
+    async () => {
+      const payload = await getPayloadClient();
+      return payload.find({
+        collection: "fixtures",
+        where: { kickoff: { greater_than: now.toISOString() } },
+        sort: "kickoff",
+        limit: 10,
+        depth: 1,
+      });
+    },
+    TIME_WINDOWED_REVALIDATE_SECONDS,
+  );
   // Slug der 1. Herren in der aktuellsten auf fupa existierenden Saison.
   const herrenSlug = await resolveLiveHerrenSlug(now);
   const [teams, fixtures, fupaUpcoming] = await Promise.all([

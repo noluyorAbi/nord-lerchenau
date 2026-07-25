@@ -53,6 +53,13 @@ async function main() {
   // as payload.config is imported, so the caller has to set it. Run this via
   // `bun run db:push-schema`, which does. Bail loudly rather than appear to
   // succeed while creating nothing.
+  //
+  // That script deliberately uses NODE_ENV=test and NOT development. Payload
+  // only checks `!== "production"`, while "development" additionally activates
+  // the `development` export condition, which resolves @lexical/react to its
+  // .dev.mjs build. Those files have a circular import that throws under Bun:
+  //   ReferenceError: Cannot access 'DecoratorNode' before initialization
+  // Do not "fix" this back to development.
   if (process.env.NODE_ENV === "production") {
     console.error(
       "[push-schema] refusing to run with NODE_ENV=production: the Drizzle\n" +

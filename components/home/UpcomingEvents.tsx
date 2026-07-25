@@ -2,6 +2,11 @@ import Link from "next/link";
 
 import { FadeUp } from "@/components/motion/FadeUp";
 import { SectionEyebrow } from "@/components/SectionEyebrow";
+import {
+  TIME_WINDOWED_REVALIDATE_SECONDS,
+  cachedQuery,
+  collectionTag,
+} from "@/lib/cms";
 import { getPayloadClient } from "@/lib/payload";
 
 const MONTHS_DE = [
@@ -20,14 +25,21 @@ const MONTHS_DE = [
 ];
 
 export async function UpcomingEvents() {
-  const payload = await getPayloadClient();
-  const result = await payload.find({
-    collection: "events",
-    where: { startsAt: { greater_than: new Date().toISOString() } },
-    sort: "startsAt",
-    limit: 3,
-    depth: 0,
-  });
+  const result = await cachedQuery(
+    ["home-events"],
+    [collectionTag("events")],
+    async () => {
+      const payload = await getPayloadClient();
+      return payload.find({
+        collection: "events",
+        where: { startsAt: { greater_than: new Date().toISOString() } },
+        sort: "startsAt",
+        limit: 3,
+        depth: 0,
+      });
+    },
+    TIME_WINDOWED_REVALIDATE_SECONDS,
+  );
 
   if (result.docs.length === 0) return null;
 

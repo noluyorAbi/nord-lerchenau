@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { FadeUp } from "@/components/motion/FadeUp";
 import { SectionEyebrow } from "@/components/SectionEyebrow";
+import { cachedQuery, collectionTag } from "@/lib/cms";
 import {
   formatNewsDate,
   newsHeroForPost,
@@ -22,13 +23,19 @@ function heroImageSrc(heroImage: Post["heroImage"]): string | null {
 }
 
 export async function NewsGrid() {
-  const payload = await getPayloadClient();
-  const result = await payload.find({
-    collection: "posts",
-    sort: "-publishedAt",
-    limit: 3,
-    depth: 1,
-  });
+  const result = await cachedQuery(
+    ["home-news"],
+    [collectionTag("posts")],
+    async () => {
+      const payload = await getPayloadClient();
+      return payload.find({
+        collection: "posts",
+        sort: "-publishedAt",
+        limit: 3,
+        depth: 1,
+      });
+    },
+  );
 
   if (result.docs.length === 0) return null;
 

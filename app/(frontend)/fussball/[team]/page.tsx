@@ -12,6 +12,11 @@ import { ProbetrainingBanner } from "@/components/ProbetrainingBanner";
 import { TeamRichText } from "@/components/TeamRichText";
 import { TeamSourceButtons } from "@/components/TeamSourceButtons";
 import { bfvClubLogoUrl, bfvTeamImageUrl, bfvTeamUrl } from "@/lib/bfv";
+import {
+  TIME_WINDOWED_REVALIDATE_SECONDS,
+  cachedQuery,
+  collectionTag,
+} from "@/lib/cms";
 import { newestStoredFupaSlug, resolveLiveFupaSlug } from "@/lib/fupa";
 import { formatKickoff } from "@/lib/format-date";
 import { getPayloadClient } from "@/lib/payload";
@@ -20,18 +25,29 @@ import type { Person } from "@/payload-types";
 
 type Props = { params: Promise<{ team: string }> };
 
-export const dynamic = "force-dynamic";
+// The fixtures list filters on "later than now", which freezes into the
+// prerender, so the route needs the same bound as the query.
+// Next only accepts a literal in a segment config export, so this cannot
+// reference the shared constant; tests/lib/cms-tags.test.ts asserts they match.
+export const revalidate = 900;
 
 export default async function TeamPage({ params }: Props) {
   const { team: teamSlug } = await params;
-  const payload = await getPayloadClient();
 
-  const teamResult = await payload.find({
-    collection: "teams",
-    where: { slug: { equals: teamSlug } },
-    limit: 1,
-    depth: 2,
-  });
+  const teamResult = await cachedQuery(
+    ["team-page", teamSlug],
+    // depth 2 resolves the trainers, so a Person edit must invalidate this too.
+    [collectionTag("teams"), collectionTag("people")],
+    async () => {
+      const payload = await getPayloadClient();
+      return payload.find({
+        collection: "teams",
+        where: { slug: { equals: teamSlug } },
+        limit: 1,
+        depth: 2,
+      });
+    },
+  );
 
   const team = teamResult.docs[0];
   if (!team) notFound();
@@ -40,18 +56,26 @@ export default async function TeamPage({ params }: Props) {
     (t): t is Person => typeof t === "object" && t !== null,
   );
 
-  const fixturesResult = await payload.find({
-    collection: "fixtures",
-    where: {
-      and: [
-        { team: { equals: team.id } },
-        { kickoff: { greater_than: new Date().toISOString() } },
-      ],
+  const fixturesResult = await cachedQuery(
+    ["team-fixtures", String(team.id)],
+    [collectionTag("fixtures")],
+    async () => {
+      const payload = await getPayloadClient();
+      return payload.find({
+        collection: "fixtures",
+        where: {
+          and: [
+            { team: { equals: team.id } },
+            { kickoff: { greater_than: new Date().toISOString() } },
+          ],
+        },
+        sort: "kickoff",
+        limit: 5,
+        depth: 0,
+      });
     },
-    sort: "kickoff",
-    limit: 5,
-    depth: 0,
-  });
+    TIME_WINDOWED_REVALIDATE_SECONDS,
+  );
 
   const hasDescription =
     team.description &&

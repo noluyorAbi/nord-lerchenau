@@ -1,8 +1,11 @@
 import { ContactForm } from "@/components/ContactForm";
 import { MapEmbed } from "@/components/MapEmbed";
 import { PageHero } from "@/components/PageHero";
+import { cachedQuery, globalTag } from "@/lib/cms";
 import { getPayloadClient } from "@/lib/payload";
 
+// Stays dynamic: reads `searchParams` to prefill the form subject. The
+// contact-info read is still cached, so the dynamic render costs no query.
 export const dynamic = "force-dynamic";
 
 type Props = {
@@ -11,8 +14,14 @@ type Props = {
 
 export default async function KontaktPage({ searchParams }: Props) {
   const { subject } = await searchParams;
-  const payload = await getPayloadClient();
-  const contact = await payload.findGlobal({ slug: "contact-info" });
+  const contact = await cachedQuery(
+    ["global", "contact-info"],
+    [globalTag("contact-info")],
+    async () => {
+      const payload = await getPayloadClient();
+      return payload.findGlobal({ slug: "contact-info" });
+    },
+  );
 
   const addresses = Array.isArray(contact.addresses) ? contact.addresses : [];
   const hours = Array.isArray(contact.openingHours)

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
 import { TeamCard } from "@/components/TeamCard";
 import { BFV_CLUB_URL } from "@/lib/bfv";
+import { cachedQuery, collectionTag } from "@/lib/cms";
 import {
   FUSSBALL_CATEGORIES,
   type FussballCategorySlug,
@@ -19,20 +20,28 @@ type Props = {
 
 export async function CategoryPage({ slug, belowIntro, leadership }: Props) {
   const def = FUSSBALL_CATEGORIES[slug];
-  const payload = await getPayloadClient();
 
-  const result = await payload.find({
-    collection: "teams",
-    where: {
-      and: [
-        { sport: { equals: "fussball" } },
-        { category: { equals: def.category } },
-      ],
+  const result = await cachedQuery(
+    ["fussball-category-teams", slug],
+    // depth 1 pulls the trainers out of people and TeamCard renders their
+    // names, so a Person edit has to invalidate this too.
+    [collectionTag("teams"), collectionTag("people")],
+    async () => {
+      const payload = await getPayloadClient();
+      return payload.find({
+        collection: "teams",
+        where: {
+          and: [
+            { sport: { equals: "fussball" } },
+            { category: { equals: def.category } },
+          ],
+        },
+        sort: "order",
+        limit: 100,
+        depth: 1,
+      });
     },
-    sort: "order",
-    limit: 100,
-    depth: 1,
-  });
+  );
 
   const teams = result.docs;
   const bfvCount = teams.filter((t) => t.bfv?.teamId).length;

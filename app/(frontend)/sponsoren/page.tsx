@@ -2,12 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { PageHero } from "@/components/PageHero";
+import { cachedQuery, collectionTag } from "@/lib/cms";
 import { getPayloadClient } from "@/lib/payload";
 import { mediaSrc } from "@/lib/publicUploads";
 import { sponsorTone } from "@/lib/sponsor-visual";
 import { FALLBACK_SPONSORS } from "@/lib/sponsors-fallback";
-
-export const dynamic = "force-dynamic";
 
 type ListSponsor = {
   id: string | number;
@@ -18,13 +17,19 @@ type ListSponsor = {
 };
 
 export default async function SponsorenPage() {
-  const payload = await getPayloadClient();
-  const result = await payload.find({
-    collection: "sponsors",
-    sort: "order",
-    limit: 100,
-    depth: 1,
-  });
+  const result = await cachedQuery(
+    ["sponsors-page"],
+    [collectionTag("sponsors")],
+    async () => {
+      const payload = await getPayloadClient();
+      return payload.find({
+        collection: "sponsors",
+        sort: "order",
+        limit: 100,
+        depth: 1,
+      });
+    },
+  );
 
   const dbSponsors = result.docs as unknown as ListSponsor[];
   const sponsors: ListSponsor[] =

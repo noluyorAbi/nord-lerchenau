@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "bun run scripts/preflight-db.ts && next build",
+    "build:nodb": "SKIP_DB_PREFLIGHT=true next build",
+    "db:push-schema": "NODE_ENV=development PAYLOAD_DISABLE_PUSH=false bun run scripts/push-schema.ts",
     "start": "next start",
     "lint": "eslint",
     "payload": "payload",

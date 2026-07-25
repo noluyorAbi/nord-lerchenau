@@ -1,3 +1,4 @@
+import { cachedQuery, globalTag } from "@/lib/cms";
 import { getPayloadClient } from "@/lib/payload";
 
 type Props = {
@@ -12,12 +13,17 @@ function formatPhoneDisplay(raw: string | null | undefined): string | null {
 }
 
 export async function ProbetrainingBanner({ teamName }: Props) {
-  const payload = await getPayloadClient();
-
   let phone: string | null = null;
   let email: string | null = null;
   try {
-    const info = await payload.findGlobal({ slug: "contact-info" });
+    const info = await cachedQuery(
+      ["global", "contact-info"],
+      [globalTag("contact-info")],
+      async () => {
+        const payload = await getPayloadClient();
+        return payload.findGlobal({ slug: "contact-info" });
+      },
+    );
     phone = info.phone ?? null;
     email = info.email ?? FALLBACK_EMAIL;
   } catch {

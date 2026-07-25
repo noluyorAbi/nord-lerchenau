@@ -4,8 +4,6 @@ import { PageHero } from "@/components/PageHero";
 import { LegalSections } from "@/components/legal/LegalSections";
 import type { LegalSection } from "@/components/legal/types";
 
-export const dynamic = "force-dynamic";
-
 const LAST_UPDATED = "2. Juni 2026";
 
 // Wir nutzen denselben strukturellen Baustein wie Impressum und Datenschutz

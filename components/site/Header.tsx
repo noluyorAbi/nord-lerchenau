@@ -1,4 +1,5 @@
 import { HeaderShell } from "@/components/site/HeaderShell";
+import { cachedQuery, globalTag } from "@/lib/cms";
 import { getPayloadClient } from "@/lib/payload";
 
 type NavLink = { label: string; href: string };
@@ -18,8 +19,14 @@ const CTA = { label: "Mitglied werden", href: "/mitgliedschaft" };
 export async function Header() {
   let headerLinks: NavLink[] = [];
   try {
-    const payload = await getPayloadClient();
-    const nav = await payload.findGlobal({ slug: "navigation" });
+    const nav = await cachedQuery(
+      ["global", "navigation"],
+      [globalTag("navigation")],
+      async () => {
+        const payload = await getPayloadClient();
+        return payload.findGlobal({ slug: "navigation" });
+      },
+    );
     headerLinks = (nav.header ?? []).filter(
       (l): l is { id?: string | null; label: string; href: string } =>
         typeof l?.label === "string" && typeof l?.href === "string",

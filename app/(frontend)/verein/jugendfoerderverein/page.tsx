@@ -2,9 +2,8 @@ import { RichText } from "@payloadcms/richtext-lexical/react";
 import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical";
 
 import { PageHero } from "@/components/PageHero";
+import { cachedQuery, globalTag } from "@/lib/cms";
 import { getPayloadClient } from "@/lib/payload";
-
-export const dynamic = "force-dynamic";
 
 const DEFAULT_INTRO =
   "Der Förderverein der Fußballjunioren unterstützt die Jugendmannschaften über das hinaus, was der reine Spielbetrieb hergibt — damit alle Kinder das gleiche Erlebnis haben.";
@@ -23,8 +22,14 @@ const DEFAULT_FORM_PDF = "/downloads/jfv-beitrittserklaerung.pdf";
 const DEFAULT_MIN_FEE = 24;
 
 export default async function JugendfoerderPage() {
-  const payload = await getPayloadClient();
-  const page = await payload.findGlobal({ slug: "jugendfoerder-page" });
+  const page = await cachedQuery(
+    ["global", "jugendfoerder-page"],
+    [globalTag("jugendfoerder-page")],
+    async () => {
+      const payload = await getPayloadClient();
+      return payload.findGlobal({ slug: "jugendfoerder-page" });
+    },
+  );
 
   const hasBody =
     page.body && typeof page.body === "object" && "root" in page.body;

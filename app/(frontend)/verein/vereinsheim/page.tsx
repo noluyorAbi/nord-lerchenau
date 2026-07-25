@@ -2,16 +2,21 @@ import { RichText } from "@payloadcms/richtext-lexical/react";
 import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical";
 
 import { PageHero } from "@/components/PageHero";
+import { cachedQuery, globalTag } from "@/lib/cms";
 import { getPayloadClient } from "@/lib/payload";
-
-export const dynamic = "force-dynamic";
 
 const ESCHENGARTEN_MAPS_URL =
   "https://www.google.com/maps/search/?api=1&query=Eschengarten+Ebereschenstra%C3%9Fe+17+M%C3%BCnchen";
 
 export default async function VereinsheimPage() {
-  const payload = await getPayloadClient();
-  const page = await payload.findGlobal({ slug: "vereinsheim-page" });
+  const page = await cachedQuery(
+    ["global", "vereinsheim-page"],
+    [globalTag("vereinsheim-page")],
+    async () => {
+      const payload = await getPayloadClient();
+      return payload.findGlobal({ slug: "vereinsheim-page" });
+    },
+  );
 
   const hasBody =
     page.body && typeof page.body === "object" && "root" in page.body;

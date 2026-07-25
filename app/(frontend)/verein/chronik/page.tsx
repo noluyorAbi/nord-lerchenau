@@ -5,9 +5,8 @@ import { ChronikNarrative } from "@/components/chronik/ChronikNarrative";
 import { ChronikTimeline } from "@/components/chronik/ChronikTimeline";
 import { ChronikVorstandschaften } from "@/components/chronik/ChronikVorstandschaften";
 import { PageHero } from "@/components/PageHero";
+import { cachedQuery, globalTag } from "@/lib/cms";
 import { getPayloadClient } from "@/lib/payload";
-
-export const dynamic = "force-dynamic";
 
 const FOUNDED = 1947;
 const CHRONIK_ZEITSCHRIFTEN_URL = "https://my.hidrive.com/share/j-39fs2i9w";
@@ -59,8 +58,14 @@ const SECTIONS = [
 ];
 
 export default async function ChronikPage() {
-  const payload = await getPayloadClient();
-  const chronik = await payload.findGlobal({ slug: "chronik-page" });
+  const chronik = await cachedQuery(
+    ["global", "chronik-page"],
+    [globalTag("chronik-page")],
+    async () => {
+      const payload = await getPayloadClient();
+      return payload.findGlobal({ slug: "chronik-page" });
+    },
+  );
 
   const yearsAlive = new Date().getFullYear() - FOUNDED;
 

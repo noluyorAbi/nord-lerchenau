@@ -1,6 +1,15 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
+import {
+  CACHED_COLLECTIONS,
+  CACHED_GLOBALS,
+  collectionTag,
+  FULL_REVALIDATE_GLOBALS,
+  globalTag,
+  UNCACHED_COLLECTIONS,
+} from "@/lib/cms";
+
 type Payload = {
   secret: string;
   type: "collection" | "global";
@@ -8,43 +17,6 @@ type Payload = {
   slug?: string | null;
   sport?: string | null;
 };
-
-const COLLECTION_TAGS: Record<
-  string,
-  (slug?: string, sport?: string) => string[]
-> = {
-  posts: (slug) => {
-    const tags = ["news-list", "home-news"];
-    if (slug) tags.push(`post-${slug}`);
-    return tags;
-  },
-  teams: (slug, sport) => {
-    const tags: string[] = [];
-    if (slug) tags.push(`team-${slug}`);
-    if (sport) tags.push(`sport-${sport}`);
-    return tags;
-  },
-  fixtures: () => ["next-match", "fixtures"],
-  events: () => ["events", "home-events"],
-  sponsors: () => ["sponsors", "home-sponsors"],
-  people: () => ["people", "vorstand"],
-  submissions: () => [],
-  users: () => [],
-  media: () => [],
-};
-
-const GLOBAL_TAGS: Record<string, string[]> = {
-  "site-settings": [],
-  navigation: [],
-  "home-page": ["home"],
-  "contact-info": ["contact"],
-  "chronik-page": ["chronik"],
-  "vereinsheim-page": ["vereinsheim"],
-  "jugendfoerder-page": ["jugendfoerder"],
-  "legal-pages": ["legal"],
-};
-
-const FULL_REVALIDATE_GLOBALS = new Set(["site-settings", "navigation"]);
 
 export async function POST(request: Request) {
   let body: Payload;
@@ -65,16 +37,35 @@ export async function POST(request: Request) {
   const tags: string[] = [];
 
   if (body.type === "collection") {
-    const fn = COLLECTION_TAGS[body.resource];
-    if (fn) tags.push(...fn(body.slug ?? undefined, body.sport ?? undefined));
+    if (CACHED_COLLECTIONS.has(body.resource)) {
+      tags.push(collectionTag(body.resource));
+    } else if (!UNCACHED_COLLECTIONS.has(body.resource)) {
+      return NextResponse.json(
+        { ok: false, error: `Unknown collection: ${body.resource}` },
+        { status: 400 },
+      );
+    }
   } else if (body.type === "global") {
-    const globalTags = GLOBAL_TAGS[body.resource];
-    if (globalTags) tags.push(...globalTags);
+    if (!CACHED_GLOBALS.has(body.resource)) {
+      return NextResponse.json(
+        { ok: false, error: `Unknown global: ${body.resource}` },
+        { status: 400 },
+      );
+    }
+    tags.push(globalTag(body.resource));
     if (FULL_REVALIDATE_GLOBALS.has(body.resource)) {
       revalidatePath("/", "layout");
     }
+  } else {
+    return NextResponse.json(
+      { ok: false, error: "Unknown type" },
+      { status: 400 },
+    );
   }
 
+  // "max" gives stale-while-revalidate: visitors keep getting the cached page
+  // while the fresh one renders in the background, so an editor's save never
+  // makes someone wait on a cold render.
   for (const tag of tags) {
     revalidateTag(tag, "max");
   }

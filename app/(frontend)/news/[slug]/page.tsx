@@ -8,6 +8,11 @@ import { RefreshOnPreview } from "./RefreshOnPreview";
 import { FadeUp } from "@/components/motion/FadeUp";
 import { NewsRichText } from "@/components/news/NewsRichText";
 import {
+  TIME_WINDOWED_REVALIDATE_SECONDS,
+  cachedQuery,
+  collectionTag,
+} from "@/lib/cms";
+import {
   formatNewsDate,
   newsHeroForPost,
   newsTagLabel,
@@ -18,6 +23,7 @@ import { mediaSrc } from "@/lib/publicUploads";
 import type { Media, Post } from "@/payload-types";
 import config from "@/payload.config";
 
+// Stays dynamic: the draft preview flag comes from searchParams.
 export const dynamic = "force-dynamic";
 
 // Resolve an uploaded heroImage to a URL the same way PersonCard/SponsorMarquee
@@ -38,31 +44,50 @@ export default async function NewsPost({ params, searchParams }: Props) {
   const { preview } = await searchParams;
   const isPreview = preview === "1";
 
-  const payload = await getPayload({ config });
-
-  const result = await payload.find({
-    collection: "posts",
-    where: { slug: { equals: slug } },
-    limit: 1,
-    depth: 1,
-    draft: isPreview,
-  });
+  const findPost = async () => {
+    const payload = await getPayload({ config });
+    return payload.find({
+      collection: "posts",
+      where: { slug: { equals: slug } },
+      limit: 1,
+      depth: 1,
+      draft: isPreview,
+    });
+  };
+  // The draft preview must never come from the Data Cache, otherwise the
+  // editor keeps seeing the last published revision.
+  const result = isPreview
+    ? await findPost()
+    : await cachedQuery(
+        ["news-post", slug],
+        // depth 1 resolves the author, so a Person edit must invalidate this too.
+        [collectionTag("posts"), collectionTag("people")],
+        findPost,
+      );
 
   const post = result.docs[0];
   if (!post) notFound();
 
-  const related = await payload.find({
-    collection: "posts",
-    where: {
-      and: [
-        { id: { not_equals: post.id } },
-        { publishedAt: { less_than_equal: new Date().toISOString() } },
-      ],
+  const related = await cachedQuery(
+    ["news-related", String(post.id)],
+    [collectionTag("posts")],
+    async () => {
+      const payload = await getPayload({ config });
+      return payload.find({
+        collection: "posts",
+        where: {
+          and: [
+            { id: { not_equals: post.id } },
+            { publishedAt: { less_than_equal: new Date().toISOString() } },
+          ],
+        },
+        sort: "-publishedAt",
+        limit: 3,
+        depth: 1,
+      });
     },
-    sort: "-publishedAt",
-    limit: 3,
-    depth: 1,
-  });
+    TIME_WINDOWED_REVALIDATE_SECONDS,
+  );
 
   const author =
     typeof post.author === "object" && post.author !== null

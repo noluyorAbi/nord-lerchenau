@@ -54,12 +54,18 @@ async function main() {
   // `bun run db:push-schema`, which does. Bail loudly rather than appear to
   // succeed while creating nothing.
   //
-  // That script deliberately uses NODE_ENV=test and NOT development. Payload
-  // only checks `!== "production"`, while "development" additionally activates
-  // the `development` export condition, which resolves @lexical/react to its
-  // .dev.mjs build. Those files have a circular import that throws under Bun:
+  // Two details in that script are load-bearing, do not simplify them away.
+  //
+  // NODE_ENV=test rather than development: Payload only checks
+  // `!== "production"`, and "test" keeps this out of any dev-only code path.
+  //
+  // `bun --conditions=production`: Bun resolves the `development` export
+  // condition by default, which points @lexical/react at its .dev.mjs build.
+  // Those files have a circular import that throws on Bun 1.3.14 (what CI
+  // installs via `bun-version: latest`) while working on 1.3.5:
   //   ReferenceError: Cannot access 'DecoratorNode' before initialization
-  // Do not "fix" this back to development.
+  // Forcing the production condition resolves the same package to a build that
+  // loads cleanly. Verified against both Bun versions.
   if (process.env.NODE_ENV === "production") {
     console.error(
       "[push-schema] refusing to run with NODE_ENV=production: the Drizzle\n" +

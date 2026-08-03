@@ -102,6 +102,13 @@ export default buildConfig({
     meta: {
       titleSuffix: "· SV Nord Admin",
     },
+    // Light only. The default ('all') resolves the theme from the visitor's OS
+    // `prefers-color-scheme`, so board members on a dark-mode laptop landed in a
+    // dark CMS. Pinning it renders `data-theme="light"` on the server and skips
+    // the client-side OS lookup entirely, so there is no flash of the wrong
+    // theme. Payload also hides the theme radio in Account settings unless this
+    // is 'all', so no dead toggle is left behind.
+    theme: "light",
     // No autoLogin: the admin requires a real login. Accounts are provisioned
     // by scripts/seed.ts (ensureAdminUser). Auto-login would expose the whole
     // CMS to anonymous visitors and must never run in production.

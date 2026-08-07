@@ -338,6 +338,93 @@ export function bfvTeamImageUrl(
 }
 
 /**
+ * DFB-Net antwortet für Teams OHNE eigenes Mannschaftsfoto trotzdem mit
+ * einem Bild: entweder dem fussball.de-Platzhalter-PNG oder einem
+ * überzoomten Ausschnitt des Vereinswappens. Beides sieht auf der Seite aus
+ * wie ein kaputtes Foto.
+ *
+ * Erkennung über die Größe der ausgelieferten Datei: die Wappen-Ausschnitte
+ * sind byte-identische Dateien, die sich über viele Team-IDs wiederholen
+ * (Messung 2026-08-07 über alle 20 Team-IDs: jede Wappen-Variante ≤ 48 KB
+ * und mehrfach vergeben, jedes echte Mannschaftsfoto ≥ 104 KB und unikat).
+ * Die Liste ist eine Blockliste: ein neues echtes Foto wird automatisch
+ * durchgelassen, eine unbekannte Wappen-Variante bleibt sichtbar wie bisher.
+ */
+const BFV_CREST_IMAGE_BYTES = new Set([7950, 27109, 45267, 46368, 48419]);
+const BFV_PLACEHOLDER_MARKER = "placeholder_team_image";
+
+/** Reines Prädikat, damit die Erkennung ohne Netz testbar bleibt. */
+export function isBfvRealTeamPhoto(
+  finalUrl: string,
+  contentLength: number | null,
+): boolean {
+  if (finalUrl.includes(BFV_PLACEHOLDER_MARKER)) return false;
+  if (contentLength !== null && BFV_CREST_IMAGE_BYTES.has(contentLength))
+    return false;
+  return true;
+}
+
+// Ergebnis pro Team-ID merken. Ein HEAD-Request landet NICHT im Data-Cache
+// von Next (der cached nur GET), sonst liefe die Prüfung bei jedem Render.
+const bfvTeamPhotoCache = new Map<
+  string,
+  { url: string | null; expires: number }
+>();
+const BFV_TEAM_PHOTO_TTL = 1800_000; // 30 min
+
+/**
+ * Mannschaftsfoto-URL des Teams, aber nur wenn dahinter wirklich ein Foto
+ * steckt. Null, wenn BFV Platzhalter oder Wappen ausliefert.
+ *
+ * Fällt bei Netzfehlern bewusst auf die URL zurück (fail open): ein kurzer
+ * Ausfall soll kein vorhandenes Foto ausblenden.
+ */
+export async function resolveBfvTeamPhoto(
+  teamId: string | null | undefined,
+  size: 0 | 1 | 2 | 3 = 3,
+): Promise<string | null> {
+  const url = bfvTeamImageUrl(teamId, size);
+  if (!url) return null;
+
+  const hit = bfvTeamPhotoCache.get(url);
+  if (hit && hit.expires > Date.now()) return hit.url;
+
+  let resolved: string | null = url;
+  try {
+    const res = await fetch(url, {
+      method: "HEAD",
+      redirect: "follow",
+      signal: AbortSignal.timeout(8000),
+      // Kein "no-store": das würde die Team-Übersichten aus dem statischen
+      // Rendering in dynamisches Rendering kippen. Der Modul-Memo unten hält
+      // die Prüfung ohnehin von jedem Render fern.
+      next: { revalidate: BFV_TEAM_PHOTO_TTL / 1000 },
+    });
+    if (!res.ok) {
+      resolved = null;
+    } else {
+      const raw = res.headers.get("content-length");
+      const bytes = raw === null ? null : Number(raw);
+      resolved = isBfvRealTeamPhoto(
+        res.url || url,
+        Number.isFinite(bytes) ? bytes : null,
+      )
+        ? url
+        : null;
+    }
+  } catch {
+    // Netzfehler: URL behalten, lieber altes Verhalten als leerer Hero.
+    resolved = url;
+  }
+
+  bfvTeamPhotoCache.set(url, {
+    url: resolved,
+    expires: Date.now() + BFV_TEAM_PHOTO_TTL,
+  });
+  return resolved;
+}
+
+/**
  * Pick the right logo for a match side — prefer the BFV club logo, respect
  * the "logoPrivate" flag BFV ships so we don't render a placeholder.
  */

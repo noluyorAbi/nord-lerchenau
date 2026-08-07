@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { bfvTeamImageUrl } from "@/lib/bfv";
+import { resolveBfvTeamPhoto } from "@/lib/bfv";
 import { getFupaTeamPhoto } from "@/lib/fupa";
 import { mediaSrc } from "@/lib/publicUploads";
 import type { Person, Team } from "@/payload-types";
@@ -31,8 +31,9 @@ export async function TeamCard({ team }: Props) {
   const fupaPhoto = team.fupa
     ? await getFupaTeamPhoto(team.fupa, new Date(), "512x288")
     : null;
+  // BFV nur, wenn dahinter ein echtes Foto liegt und kein Wappen-Ausschnitt.
   const teamImage =
-    cmsPhoto ?? fupaPhoto?.url ?? bfvTeamImageUrl(team.bfv?.teamId);
+    cmsPhoto ?? fupaPhoto?.url ?? (await resolveBfvTeamPhoto(team.bfv?.teamId));
 
   return (
     <Link

@@ -11,7 +11,7 @@ import { PersonCard } from "@/components/PersonCard";
 import { ProbetrainingBanner } from "@/components/ProbetrainingBanner";
 import { TeamRichText } from "@/components/TeamRichText";
 import { TeamSourceButtons } from "@/components/TeamSourceButtons";
-import { bfvClubLogoUrl, bfvTeamImageUrl, bfvTeamUrl } from "@/lib/bfv";
+import { bfvClubLogoUrl, bfvTeamUrl, resolveBfvTeamPhoto } from "@/lib/bfv";
 import {
   TIME_WINDOWED_REVALIDATE_SECONDS,
   cachedQuery,
@@ -98,7 +98,8 @@ export default async function TeamPage({ params }: Props) {
   // BFV-Kader-Fallback. hasFupaMeta hält die Link-Box bei Ausfällen sichtbar.
   const liveFupaSlug = team.fupa ? await resolveLiveFupaSlug(team.fupa) : null;
   const hasFupaMeta = Boolean(newestStoredFupaSlug(team.fupa ?? null));
-  const bfvTeamImage = bfvTeamImageUrl(bfv?.teamId);
+  // BFV nur, wenn dahinter ein echtes Foto liegt und kein Wappen-Ausschnitt.
+  const bfvTeamImage = await resolveBfvTeamPhoto(bfv?.teamId);
   const cmsPhoto =
     team.photo && typeof team.photo === "object" ? mediaSrc(team.photo) : null;
   // Aktuellstes Mannschaftsfoto von fupa (16:9, Platzhalter ausgefiltert).

@@ -1,12 +1,13 @@
 import Link from "next/link";
 
 import { bfvTeamImageUrl } from "@/lib/bfv";
+import { getFupaTeamPhoto } from "@/lib/fupa";
 import { mediaSrc } from "@/lib/publicUploads";
 import type { Person, Team } from "@/payload-types";
 
 type Props = { team: Team };
 
-export function TeamCard({ team }: Props) {
+export async function TeamCard({ team }: Props) {
   const hasBfv = Boolean(team.bfv?.teamId);
   const hasFupa = Boolean(
     team.fupa?.slug || team.fupa?.springSlug || team.fupa?.autumnSlug,
@@ -22,11 +23,16 @@ export function TeamCard({ team }: Props) {
     .map((t) => t.name)
     .filter((n): n is string => typeof n === "string" && n.length > 0);
 
-  // BFV-Foto zuerst; sonst das im Admin hochgeladene Mannschaftsfoto
-  // (z. B. AH ohne BFV-Spielbetrieb).
+  // Reihenfolge: selbst hochgeladenes Foto aus dem Admin (bewusste
+  // Vereinsentscheidung) vor dem aktuellen fupa-Mannschaftsfoto, das der
+  // Verein dort laufend pflegt, und erst dann das BFV-Bild.
   const cmsPhoto =
     team.photo && typeof team.photo === "object" ? mediaSrc(team.photo) : null;
-  const teamImage = bfvTeamImageUrl(team.bfv?.teamId) ?? cmsPhoto;
+  const fupaPhoto = team.fupa
+    ? await getFupaTeamPhoto(team.fupa, new Date(), "512x288")
+    : null;
+  const teamImage =
+    cmsPhoto ?? fupaPhoto?.url ?? bfvTeamImageUrl(team.bfv?.teamId);
 
   return (
     <Link

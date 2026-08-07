@@ -1,8 +1,10 @@
 import { FupaSquadClient } from "@/components/fupa/FupaSquadClient";
 import {
+  fupaSeasonLabelFromSlug,
   fupaTeamUrl,
   getFupaTeamRoster,
   resolveLiveFupaSlug,
+  resolveLiveFupaSquadSlug,
   type FupaMeta,
 } from "@/lib/fupa";
 
@@ -12,8 +14,12 @@ type Props = {
 };
 
 export async function FupaSquadPanel({ fupa, teamName }: Props) {
-  // Neuester auf fupa existierender Saison-Slug (Auto-Upgrade alter Slugs).
-  const slug = await resolveLiveFupaSlug(fupa);
+  // Neueste Saison, die auf fupa tatsächlich einen Kader hat — eine frisch
+  // angelegte Saison ist tagelang leer, ihr Kader-Slug würde die Spielerfotos
+  // löschen. Ohne jeden Kader bleibt der reine Existenz-Slug für den
+  // "noch kein Kader gepflegt"-Hinweis samt Profil-Link.
+  const squadSlug = await resolveLiveFupaSquadSlug(fupa);
+  const slug = squadSlug ?? (await resolveLiveFupaSlug(fupa));
   if (!slug) return null;
 
   const roster = await getFupaTeamRoster(slug);
@@ -67,6 +73,7 @@ export async function FupaSquadPanel({ fupa, teamName }: Props) {
       }
       profileUrl={profileUrl}
       teamName={teamName}
+      season={fupaSeasonLabelFromSlug(slug)}
     />
   );
 }

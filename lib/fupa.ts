@@ -395,6 +395,29 @@ export function getFupaSquad(slug: string) {
 }
 
 /**
+ * fupa liefert für Teams ohne eigenes Mannschaftsfoto und für Spieler ohne
+ * Portrait ein GLOBALES Platzhalterbild — derselbe Pfad taucht z.B. auch
+ * beim FC Bayern auf. Der Team-Platzhalter beantwortet zudem JEDE
+ * Größenvariante mit HTTP 400, ungefiltert würde also ein kaputtes Bild
+ * gerendert. Beide Pfade werden deshalb wie "kein Bild" behandelt.
+ */
+export const FUPA_PLACEHOLDER_TEAM_IMAGE =
+  "https://image.fupa.net/team-image/FcwELVo19Aez";
+export const FUPA_PLACEHOLDER_PLAYER_IMAGE =
+  "https://image.fupa.net/player/Y1NfDiFUnwcn";
+
+export function isFupaPlaceholderImage(
+  img: FupaImage | null | undefined,
+): boolean {
+  if (!img?.path) return false;
+  const path = img.path.replace(/\/+$/, "");
+  return (
+    path === FUPA_PLACEHOLDER_TEAM_IMAGE ||
+    path === FUPA_PLACEHOLDER_PLAYER_IMAGE
+  );
+}
+
+/**
  * Enriched player record — merges the /squad entry (position, jersey, age,
  * photo, captain flags) with the /player-stats entry (assists, cards,
  * minutes, substitutes, topEleven, penalties). Keyed by the shared fupa
@@ -689,6 +712,127 @@ export async function resolveLiveFupaSlug(
   return resolved;
 }
 
+// Wie liveSlugCache, aber für die Kader-Auflösung: dieselbe Kandidatenliste
+// kann bei beiden Auflösern legitim auf verschiedene Slugs zeigen.
+const liveSquadSlugCache = new Map<
+  string,
+  { slug: string | null; expires: number }
+>();
+
+/**
+ * Auflösung für KADER-Daten (Spielerfotos, Trainer, Kaderliste).
+ *
+ * `resolveLiveFupaSlug` prüft nur, OB ein Team-Datensatz existiert. fupa legt
+ * eine neue Saison aber an, bevor irgendein Spieler übernommen ist: die
+ * Jugend-SG-Slugs `…-autumn2026` antworten mit HTTP 200 und einem LEEREN
+ * Kader, während `…-spring2026` noch den vollen Kader samt Fotos hält. Für
+ * Kader-Ansichten wird deshalb der neueste Slug gesucht, der tatsächlich
+ * Spieler enthält — sonst verschwinden die Spielerfotos beim Saisonwechsel.
+ *
+ * Für Tabelle, Spielplan und Profil-Links bleibt `resolveLiveFupaSlug`
+ * richtig: dort ist die laufende Saison auch mit leerem Kader die Wahrheit.
+ */
+export async function resolveLiveFupaSquadSlug(
+  fupa: FupaMeta | string | null | undefined,
+  now: Date = new Date(),
+): Promise<string | null> {
+  const meta = typeof fupa === "string" ? { slug: fupa } : fupa;
+  const candidates = fupaSlugCandidates(meta, now);
+  if (candidates.length === 0) return null;
+
+  const key = candidates.join("|");
+  const hit = liveSquadSlugCache.get(key);
+  if (hit && hit.expires > Date.now()) return hit.slug;
+
+  let resolved: string | null = null;
+  for (const candidate of candidates) {
+    const squad = await getFupaSquad(candidate);
+    if (squad?.players?.length) {
+      resolved = candidate;
+      break;
+    }
+  }
+  liveSquadSlugCache.set(key, {
+    slug: resolved,
+    expires: Date.now() + REVALIDATE * 1000,
+  });
+  return resolved;
+}
+
+export type FupaTeamPhoto = {
+  /** Fertige Bild-URL im 16:9-Format. */
+  url: string;
+  /** Fotograf:in laut fupa, für die Bildquelle. */
+  credit: string | null;
+  description: string | null;
+  /** Team-Slug (Saison), aus dem das Foto stammt. */
+  slug: string;
+};
+
+const teamPhotoCache = new Map<
+  string,
+  { photo: FupaTeamPhoto | null; expires: number }
+>();
+
+/**
+ * Aktuellstes Mannschaftsfoto einer Mannschaft von fupa. Läuft dieselbe
+ * Kandidatenliste ab wie die Kader-Auflösung und nimmt das erste ECHTE Foto
+ * (Platzhalter werden verworfen). Null, wenn fupa für keine Saison ein
+ * eigenes Mannschaftsfoto hat.
+ */
+export async function getFupaTeamPhoto(
+  fupa: FupaMeta | string | null | undefined,
+  now: Date = new Date(),
+  size: `${number}x${number}` = "960x540",
+): Promise<FupaTeamPhoto | null> {
+  const meta = typeof fupa === "string" ? { slug: fupa } : fupa;
+  const candidates = fupaSlugCandidates(meta, now);
+  if (candidates.length === 0) return null;
+
+  const key = `${size}|${candidates.join("|")}`;
+  const hit = teamPhotoCache.get(key);
+  if (hit && hit.expires > Date.now()) return hit.photo;
+
+  let photo: FupaTeamPhoto | null = null;
+  for (const candidate of candidates) {
+    const squad = await getFupaSquad(candidate);
+    const image = squad?.info?.teamImage;
+    if (!image || isFupaPlaceholderImage(image)) continue;
+    const url = fupaImage(image, size, "webp");
+    if (!url) continue;
+    photo = {
+      url,
+      credit: image.source?.trim() || null,
+      description: image.description?.trim() || null,
+      slug: candidate,
+    };
+    break;
+  }
+  teamPhotoCache.set(key, {
+    photo,
+    expires: Date.now() + REVALIDATE * 1000,
+  });
+  return photo;
+}
+
+/**
+ * Menschenlesbares Saison-Label aus einem fupa-Team-Slug, damit sichtbar
+ * bleibt, aus welcher Saison ein angezeigter Kader stammt.
+ */
+export function fupaSeasonLabelFromSlug(slug: string): string | null {
+  const half = HALF_SEASON_RE.exec(slug);
+  if (half) {
+    const year = /(\d{4})$/.exec(slug)?.[1];
+    return `${half[2] === "autumn" ? "Herbst" : "Frühjahr"} ${year}`;
+  }
+  const full = /-(\d{4})-(\d{2})$/.exec(slug);
+  if (full)
+    return `${String(Number(full[1]) % 100).padStart(2, "0")}/${full[2]}`;
+  const year = /-(\d{4})$/.exec(slug);
+  if (year) return year[1];
+  return null;
+}
+
 /**
  * Aktuell existierender Slug der 1. Herren (aktuelle Saison, sonst
  * Vorsaison). Fällt nie auf null zurück — als letzte Instanz der
@@ -714,6 +858,10 @@ export function fupaImage(
   ext: "webp" | "jpeg" | "png" = "webp",
 ): string | null {
   if (!img?.path) return null;
+  // Platzhalter nie rendern: der Team-Platzhalter liefert auf jede
+  // Größenvariante HTTP 400, der Spieler-Platzhalter eine anonyme
+  // Silhouette — die Initialen der Consumer sind das bessere Fallback.
+  if (isFupaPlaceholderImage(img)) return null;
   const base = img.path.endsWith("/") ? img.path : `${img.path}/`;
   return `${base}${size}.${ext}`;
 }

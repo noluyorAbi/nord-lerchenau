@@ -17,7 +17,11 @@ import {
   cachedQuery,
   collectionTag,
 } from "@/lib/cms";
-import { newestStoredFupaSlug, resolveLiveFupaSlug } from "@/lib/fupa";
+import {
+  getFupaTeamPhoto,
+  newestStoredFupaSlug,
+  resolveLiveFupaSlug,
+} from "@/lib/fupa";
 import { formatKickoff } from "@/lib/format-date";
 import { getPayloadClient } from "@/lib/payload";
 import { mediaSrc } from "@/lib/publicUploads";
@@ -97,9 +101,21 @@ export default async function TeamPage({ params }: Props) {
   const bfvTeamImage = bfvTeamImageUrl(bfv?.teamId);
   const cmsPhoto =
     team.photo && typeof team.photo === "object" ? mediaSrc(team.photo) : null;
-  // BFV-Foto zuerst; sonst das im Admin hochgeladene Mannschaftsfoto
-  // (z. B. G-Junioren ohne BFV-Spielbetrieb).
-  const heroImage = bfvTeamImage ?? cmsPhoto;
+  // Aktuellstes Mannschaftsfoto von fupa (16:9, Platzhalter ausgefiltert).
+  const fupaPhoto = team.fupa ? await getFupaTeamPhoto(team.fupa) : null;
+  // Reihenfolge: selbst hochgeladenes Foto aus dem Admin, dann das laufend
+  // gepflegte fupa-Mannschaftsfoto, zuletzt das BFV-Bild.
+  const hero = cmsPhoto
+    ? { src: cmsPhoto, source: "cms" as const, credit: null }
+    : fupaPhoto
+      ? {
+          src: fupaPhoto.url,
+          source: "fupa" as const,
+          credit: fupaPhoto.credit,
+        }
+      : bfvTeamImage
+        ? { src: bfvTeamImage, source: "bfv" as const, credit: null }
+        : null;
   const bfvClubCrest = bfvClubLogoUrl("00ES8GNHD400000DVV0AG08LVUPGND5I");
 
   return (
@@ -120,16 +136,16 @@ export default async function TeamPage({ params }: Props) {
       />
 
       <div className="mx-auto max-w-5xl px-6 py-10 md:px-8 md:py-14">
-        {heroImage ? (
+        {hero ? (
           <div className="mb-10 overflow-hidden rounded-2xl border border-nord-line bg-nord-ink">
             <div className="relative aspect-[16/9] w-full overflow-hidden">
-              {bfvTeamImage ? (
+              {hero.source === "bfv" ? (
                 <>
                   {/* Blurred fill backdrop keeps the frame saturated while the
                       foreground image is shown uncropped via object-contain. */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={bfvTeamImage}
+                    src={hero.src}
                     alt=""
                     aria-hidden
                     className="absolute inset-0 size-full scale-110 object-cover opacity-40 blur-xl"
@@ -137,17 +153,17 @@ export default async function TeamPage({ params }: Props) {
                   />
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={bfvTeamImage}
+                    src={hero.src}
                     alt={`Mannschaftsfoto ${team.name}`}
                     className="relative size-full object-contain"
                     loading="lazy"
                   />
                 </>
               ) : (
-                /* Uploaded team photo (no BFV): fill the frame edge to edge. */
+                /* fupa (16:9) and uploaded photos fill the frame edge to edge. */
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img
-                  src={heroImage}
+                  src={hero.src}
                   alt={`Mannschaftsfoto ${team.name}`}
                   className="size-full object-cover"
                   loading="lazy"
@@ -179,9 +195,11 @@ export default async function TeamPage({ params }: Props) {
                     </div>
                   </div>
                 </div>
-                {bfvTeamImage ? (
+                {hero.source !== "cms" ? (
                   <span className="hidden shrink-0 rounded-full border border-nord-gold bg-nord-gold/10 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-gold backdrop-blur md:inline-block">
-                    Foto · BFV
+                    {hero.source === "bfv"
+                      ? "Foto · BFV"
+                      : `Foto · fupa${hero.credit ? ` · ${hero.credit}` : ""}`}
                   </span>
                 ) : null}
               </div>

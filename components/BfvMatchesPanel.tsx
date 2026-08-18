@@ -61,7 +61,7 @@ export async function BfvMatchesPanel({ bfv }: Props) {
       <div className="overflow-hidden rounded-2xl border border-nord-line bg-white">
         <div className="flex items-center justify-between gap-3 border-b border-nord-line bg-nord-paper-2 px-5 py-3.5">
           <div>
-            <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold">
+            <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold-ink">
               Nächstes Spiel · BFV
             </div>
             {next ? (
@@ -125,7 +125,7 @@ export async function BfvMatchesPanel({ bfv }: Props) {
       <div className="overflow-hidden rounded-2xl border border-nord-line bg-white">
         <div className="flex items-center justify-between gap-3 border-b border-nord-line bg-nord-paper-2 px-5 py-3.5">
           <div>
-            <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold">
+            <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold-ink">
               Ergebnisse · BFV
             </div>
             <div className="mt-0.5 font-display text-sm font-bold text-nord-ink">
@@ -195,7 +195,7 @@ function NextMatchBody({ match, teamId }: { match: BfvMatch; teamId: string }) {
           highlight={side === "home"}
           align="right"
         />
-        <div className="font-display text-[32px] font-black leading-none text-nord-gold sm:text-[40px]">
+        <div className="font-display text-[32px] font-black leading-none text-nord-gold-ink sm:text-[40px]">
           vs
         </div>
         <TeamFace
@@ -325,7 +325,7 @@ function TeamFace({
         {name}
       </div>
       {highlight ? (
-        <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-nord-gold">
+        <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-nord-gold-ink">
           Wir
         </div>
       ) : null}

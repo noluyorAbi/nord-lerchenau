@@ -308,7 +308,7 @@ export default async function TeamPage({ params }: Props) {
 
           {trainers.length > 0 ? (
             <section>
-              <h2 className="mb-5 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
+              <h2 className="mb-5 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold-ink">
                 Trainer
               </h2>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

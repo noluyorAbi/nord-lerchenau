@@ -210,7 +210,7 @@ export async function SportSectionPage({
         <div className="grid gap-10 md:grid-cols-[1.55fr_1fr]">
           {/* MAIN */}
           <article>
-            <div className="mb-4 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
+            <div className="mb-4 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold-ink">
               Herzlich willkommen in der {title}-Abteilung
             </div>
 
@@ -356,7 +356,7 @@ export async function SportSectionPage({
                         {c.name}
                       </h3>
                       {c.role ? (
-                        <div className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-sky">
+                        <div className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-sky-ink">
                           {c.role}
                         </div>
                       ) : null}

@@ -5,12 +5,22 @@
   --color-nord-navy: #0b1b3f;
   --color-nord-navy-2: #14306e;
   --color-nord-sky: #6ec7ea;
+  /* Himmelblau auf Weiss traegt nur 1,9:1. Fuer Schrift auf hellem Grund
+     dieselbe Farbe abgedunkelt: 5,9:1 auf Weiss, 4,7:1 auf Papier. */
+  --color-nord-sky-ink: #2a6b85;
   --color-nord-gold: #c8a96a;
   --color-nord-gold-2: #a38146;
+  /* Gold ist die Markenfarbe auf Navy (7,5:1) und dort unveraendert richtig.
+     Auf Papier traegt derselbe Ton nur 1,8:1, also unlesbar. Schrift auf
+     hellem Grund nimmt deshalb diesen dunklen Goldton: 4,9:1 auf dem
+     dunkelsten Papierton, 6,2:1 auf Weiss. Nie auf dunklem Grund benutzen. */
+  --color-nord-gold-ink: #7a5c2a;
   --color-nord-paper: #f4f1ea;
   --color-nord-paper-2: #eae5d8;
   --color-nord-ink: #0c0c0e;
-  --color-nord-muted: #6b6b6b;
+  /* War #6b6b6b und blieb mit 4,24:1 auf dem dunkleren Papierton unter der
+     Grenze von 4,5:1 fuer Fliesstext. */
+  --color-nord-muted: #616161;
   --color-nord-line: rgb(12 12 14 / 0.12);
   --color-nord-red: #d43a2f;
 

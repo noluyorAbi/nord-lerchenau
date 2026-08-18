@@ -80,7 +80,7 @@ export default async function SponsorenPage() {
             </p>
           </div>
           <div className="rounded-xl border border-nord-line bg-white p-6">
-            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-nord-gold">
+            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-nord-gold-ink">
               Das bieten wir Ihnen
             </div>
             <ul className="mt-4 space-y-2 text-sm text-nord-ink">
@@ -106,7 +106,7 @@ export default async function SponsorenPage() {
 
         {premium.length > 0 ? (
           <section className="mb-14">
-            <h2 className="mb-5 text-sm font-bold uppercase tracking-[0.15em] text-nord-gold">
+            <h2 className="mb-5 text-sm font-bold uppercase tracking-[0.15em] text-nord-gold-ink">
               Premium Partner
             </h2>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -156,7 +156,7 @@ export default async function SponsorenPage() {
 
         <section className="mt-10 grid gap-8 rounded-2xl border border-nord-line bg-nord-paper-2 p-8 md:grid-cols-[1fr_auto] md:gap-12 md:p-12">
           <div>
-            <div className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-nord-gold">
+            <div className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-nord-gold-ink">
               Spende
             </div>
             <h2 className="text-2xl font-bold tracking-tight text-nord-ink md:text-3xl">
@@ -173,7 +173,7 @@ export default async function SponsorenPage() {
             </p>
 
             <div className="mt-6 rounded-xl border border-nord-line bg-white p-5">
-              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-nord-gold">
+              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-nord-gold-ink">
                 Warum das ein Gamechanger ist
               </div>
               <ul className="mt-3 space-y-2 text-sm text-nord-ink">
@@ -233,7 +233,7 @@ export default async function SponsorenPage() {
         </section>
 
         <section className="mt-10 rounded-2xl bg-gradient-to-br from-nord-navy to-nord-navy-2 p-8 text-white md:p-12">
-          <div className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-nord-gold">
+          <div className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-nord-gold-ink">
             Jugendförderverein
           </div>
           <h2 className="text-2xl font-bold tracking-tight md:text-3xl">

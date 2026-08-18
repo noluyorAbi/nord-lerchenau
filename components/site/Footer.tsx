@@ -208,12 +208,18 @@ export async function Footer() {
                   // Logos auf dem dunklen Glas-Chip.
                   const tone = sponsorTone(s.name);
                   const inner = s.logoUrl ? (
+                    // Feste Flaeche statt w-auto: ohne Breite ist ein Logo vor
+                    // dem Laden 0 Pixel breit, alle Chips wachsen beim
+                    // Nachladen, und die Fusszeile springt (gemessen 0,402 CLS
+                    // am Schreibtisch, der einzige Sprung der Startseite).
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={s.logoUrl}
                       alt={`Logo ${s.name}`}
                       loading="lazy"
-                      className="max-h-7 w-auto max-w-[8.5rem] object-contain"
+                      width={136}
+                      height={28}
+                      className="h-7 w-[8.5rem] object-contain"
                     />
                   ) : (
                     <span className="font-display text-[12px] font-semibold uppercase tracking-[0.05em]">

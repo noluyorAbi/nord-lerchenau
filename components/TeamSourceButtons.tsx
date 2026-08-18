@@ -56,7 +56,7 @@ export async function TeamSourceButtons({
           href={fupaUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="group inline-flex items-center gap-3 rounded-full bg-[#e8671d] px-4 py-2.5 font-display text-[13px] font-semibold uppercase tracking-[0.06em] text-white shadow-[0_8px_20px_-10px_rgba(232,103,29,0.5)] transition hover:-translate-y-px hover:bg-[#d95a12] hover:shadow-[0_12px_28px_-10px_rgba(232,103,29,0.65)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e8671d]/40"
+          className="group inline-flex items-center gap-3 rounded-full bg-[#bf4f0c] px-4 py-2.5 font-display text-[13px] font-semibold uppercase tracking-[0.06em] text-white shadow-[0_8px_20px_-10px_rgba(232,103,29,0.5)] transition hover:-translate-y-px hover:bg-[#a54308] hover:shadow-[0_12px_28px_-10px_rgba(232,103,29,0.65)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e8671d]/40"
           aria-label="Mannschaft auf fupa.net ansehen"
         >
           <FupaMark />
@@ -94,7 +94,7 @@ function FupaMark() {
   return (
     <span
       aria-hidden
-      className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white font-display text-[11px] font-black leading-none tracking-[0.02em] text-[#e8671d]"
+      className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white font-display text-[11px] font-black leading-none tracking-[0.02em] text-[#bf4f0c]"
     >
       FP
     </span>

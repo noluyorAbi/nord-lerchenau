@@ -633,7 +633,7 @@ export function InstagramTeaser() {
                       @{IG_HANDLE} · tägliche Einblicke
                     </span>
                   </span>
-                  <span className="shrink-0 font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-nord-gold transition group-hover:translate-x-0.5">
+                  <span className="shrink-0 font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-nord-gold-ink transition group-hover:translate-x-0.5">
                     Folgen ↗
                   </span>
                 </Link>
@@ -881,7 +881,7 @@ export function InstagramTeaser() {
               className="max-h-[80vh] w-auto max-w-full rounded-2xl object-contain shadow-2xl"
             />
             <div className="w-full max-w-2xl rounded-2xl bg-white/[0.06] px-5 py-4 text-center backdrop-blur">
-              <div className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-nord-gold">
+              <div className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-nord-gold-ink">
                 {activeShot.sub}
               </div>
               <div className="mt-1 font-display text-lg font-black text-white md:text-xl">

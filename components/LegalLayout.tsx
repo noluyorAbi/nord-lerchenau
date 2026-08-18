@@ -112,7 +112,7 @@ export function LegalLayout({
 
             {sideLinks && sideLinks.length > 0 ? (
               <div className="rounded-2xl border border-dashed border-nord-line bg-nord-paper-2 p-6">
-                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold">
+                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold-ink">
                   Auch nützlich
                 </div>
                 <ul className="mt-3 space-y-2 text-sm">

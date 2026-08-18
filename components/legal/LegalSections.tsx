@@ -282,7 +282,7 @@ export function LegalToc({ sections }: { sections: LegalSection[] }) {
             href={`#${s.id}`}
             className="group inline-flex items-center gap-2 rounded-full px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-nord-muted transition hover:bg-nord-paper-2 hover:text-nord-ink"
           >
-            <span className="font-display text-[12px] font-black text-nord-gold group-hover:text-nord-navy">
+            <span className="font-display text-[12px] font-black text-nord-gold-ink group-hover:text-nord-navy">
               {s.num}
             </span>
             <span className="font-display text-[11px] font-bold tracking-tight">

@@ -85,7 +85,7 @@ export default async function FussballPage() {
       <div className="mx-auto max-w-7xl px-6 py-12 md:px-10 md:py-16">
         <section className="mb-12 grid gap-6 rounded-2xl bg-nord-paper-2 p-8 md:grid-cols-[1.4fr_1fr] md:p-10">
           <div>
-            <div className="mb-2 font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold">
+            <div className="mb-2 font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold-ink">
               Herzlich Willkommen bei der Fußball-Abteilung
             </div>
             <p className="text-base leading-relaxed text-nord-ink">
@@ -112,7 +112,7 @@ export default async function FussballPage() {
             </div>
           </div>
           <div className="rounded-xl border border-nord-line bg-white p-5">
-            <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold">
+            <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold-ink">
               Sportliche Leitung
             </div>
             <ul className="mt-3 space-y-2 text-sm">
@@ -202,7 +202,7 @@ export default async function FussballPage() {
                 className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(110,199,234,0.3)_0%,transparent_60%)]"
               />
               <div className="relative">
-                <div className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-nord-gold">
+                <div className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-nord-gold-ink">
                   PR · Events · Equipment · Organisation
                 </div>
                 <h2 className="mt-3 font-display text-2xl font-black tracking-tight md:text-3xl">
@@ -228,7 +228,7 @@ export default async function FussballPage() {
               </div>
             </div>
             <div className="rounded-2xl border border-nord-line bg-white p-6 md:p-7">
-              <div className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-nord-gold">
+              <div className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-nord-gold-ink">
                 Social Media Abteilung
               </div>
               <p className="mt-2 text-xs text-nord-muted">

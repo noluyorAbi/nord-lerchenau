@@ -55,7 +55,7 @@ export default async function KontaktPage({ searchParams }: Props) {
         <div className="grid gap-8 md:grid-cols-[1.35fr_1fr] md:gap-10">
           <section className="rounded-2xl border border-nord-line bg-white p-6 shadow-[0_1px_0_rgba(11,27,63,0.04)] md:p-10">
             <div className="mb-7 md:mb-9">
-              <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold">
+              <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold-ink">
                 Nachricht
               </div>
               <h2
@@ -88,7 +88,7 @@ export default async function KontaktPage({ searchParams }: Props) {
           <aside className="space-y-5">
             {(contact.email || contact.phone) && (
               <div className="overflow-hidden rounded-2xl bg-nord-ink p-7 text-white md:p-8">
-                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold">
+                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold-ink">
                   Direkt erreichen
                 </div>
                 <p className="mt-3 font-display text-[22px] font-extrabold leading-tight">
@@ -138,7 +138,7 @@ export default async function KontaktPage({ searchParams }: Props) {
             {addresses.length > 0 ? (
               <div className="rounded-2xl border border-nord-line bg-white p-6">
                 <div className="flex items-center justify-between gap-3">
-                  <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold">
+                  <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold-ink">
                     Adressen
                   </div>
                   {directionsHref ? (
@@ -174,7 +174,7 @@ export default async function KontaktPage({ searchParams }: Props) {
 
             {hours.length > 0 ? (
               <div className="rounded-2xl border border-nord-line bg-white p-6">
-                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold">
+                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold-ink">
                   Öffnungszeiten
                 </div>
                 <dl className="mt-4 divide-y divide-nord-line/70 text-xs">

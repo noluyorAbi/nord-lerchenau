@@ -49,7 +49,7 @@ export function FupaSquadClient({
     <section className="overflow-hidden rounded-2xl border border-nord-line bg-white">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-nord-line bg-nord-paper-2 px-5 py-3.5">
         <div>
-          <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold">
+          <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold-ink">
             Kader · fupa
           </div>
           <div className="mt-0.5 font-display text-sm font-bold text-nord-ink">
@@ -136,7 +136,7 @@ function PositionGroup({
   return (
     <div className="px-5 py-4">
       <div className="mb-3 flex items-center justify-between gap-3">
-        <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-nord-gold">
+        <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-nord-gold-ink">
           {label}
         </div>
         <div className="font-mono text-[10px] text-nord-muted">
@@ -257,7 +257,7 @@ function CoachRow({ coach }: { coach: FupaSquadCoach }) {
         <span className="truncate font-display text-base font-bold text-nord-ink">
           {coach.firstName} {coach.lastName}
         </span>
-        <span className="truncate font-mono text-[12px] tracking-[0.06em] text-nord-gold">
+        <span className="truncate font-mono text-[12px] tracking-[0.06em] text-nord-gold-ink">
           {coach.role}
           {coach.age !== null ? ` · ${coach.age} J.` : ""}
         </span>

@@ -68,7 +68,7 @@ export async function TeamCard({ team }: Props) {
             </span>
           ) : null}
           {hasFupa ? (
-            <span className="rounded-full bg-[#e8671d] px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-[0.14em] text-white ring-1 ring-white/30">
+            <span className="rounded-full bg-[#bf4f0c] px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-[0.14em] text-white ring-1 ring-white/30">
               FuPa
             </span>
           ) : null}

@@ -54,7 +54,7 @@ export default function Page() {
       />
       <section className="mx-auto max-w-7xl px-6 pb-14 md:px-10 md:pb-20">
         <div className="mb-5 border-b border-nord-line pb-2">
-          <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
+          <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold-ink">
             Anfahrt
           </div>
           <h2 className="mt-2 font-display text-2xl font-black tracking-tight text-nord-ink md:text-3xl">

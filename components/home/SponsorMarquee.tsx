@@ -65,7 +65,7 @@ export async function SponsorMarquee() {
     <section className="border-y border-nord-line bg-nord-paper-2">
       <div className="mx-auto max-w-7xl px-6 py-14 md:px-10 md:py-16">
         <div className="mb-7 flex items-baseline justify-between gap-4">
-          <div className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-nord-gold">
+          <div className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-nord-gold-ink">
             Unsere Sponsoren
           </div>
           <a

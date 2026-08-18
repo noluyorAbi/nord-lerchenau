@@ -27,7 +27,7 @@ export function U8Showcase() {
     <section className="mb-10 overflow-hidden rounded-2xl border border-nord-line bg-white p-7 md:p-9">
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
+          <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold-ink">
             Unsere U8
           </div>
           <h2 className="mt-2 font-display text-2xl font-black tracking-tight text-nord-ink md:text-3xl">

@@ -52,7 +52,7 @@ export async function CategoryPage({ slug, belowIntro, leadership }: Props) {
       <div className="mx-auto max-w-7xl px-6 py-12 md:px-10 md:py-16">
         <section className="mb-10 grid gap-6 rounded-2xl bg-nord-paper-2 p-7 md:grid-cols-[1.4fr_1fr] md:p-9">
           <div>
-            <div className="mb-2 font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold">
+            <div className="mb-2 font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold-ink">
               {def.eyebrow}
             </div>
             <p className="text-base leading-relaxed text-nord-ink">
@@ -119,7 +119,7 @@ export async function CategoryPage({ slug, belowIntro, leadership }: Props) {
                   key={g.role}
                   className="rounded-xl border border-nord-line bg-white p-5"
                 >
-                  <div className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-nord-gold">
+                  <div className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-nord-gold-ink">
                     {g.role}
                   </div>
                   <ul className="mt-2 space-y-1">

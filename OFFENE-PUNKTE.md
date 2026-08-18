@@ -20,17 +20,21 @@ Legende: 👨‍💻 = du (Alpie/Dev) machst es · 🧑‍💼 = Ralf/Verein lie
 
 ## 👨‍💻 DU musst machen (Ops, geht nur über Konsole, nicht über Code)
 
-### 1. Bild-Upload im CMS reparieren (Vercel Blob verbinden)
+### 1. Bild-Upload im CMS reparieren (Blob-Speicher im Code aktivieren)
 
-Aktuell: lädst du im Admin (`/admin`) ein Bild hoch, landet es im Nichts (404). Grund: kein Blob-Speicher verbunden (`BLOB_READ_WRITE_TOKEN` fehlt). Der Code ist bereit, sobald der Token da ist.
+Korrektur zur früheren Fassung dieses Punktes: der Blob-Store **war** angelegt und `BLOB_READ_WRITE_TOKEN` steht seit dem 01.06.2026 in der Vercel-Env. Gefehlt hat der Code. Beim Umbau auf statische Bilder (Commit `76bf13d`) wurde das `vercelBlobStorage`-Plugin aus `payload.config.ts` entfernt und nie wieder eingehängt, also lief Payload in Produktion auf dem lokalen Datei-Adapter. Vercel-Funktionen haben ein schreibgeschütztes Dateisystem, deshalb schlug jeder Upload aus dem Admin fehl und `/api/media/file/<name>` antwortete mit 500.
 
-1. Vercel öffnen: https://vercel.com → Projekt **nord-lerchenau**.
-2. Tab **Storage** → **Create / Connect Store** → **Blob** auswählen → Store anlegen und mit dem Projekt verbinden.
-3. Vercel setzt dann automatisch `BLOB_READ_WRITE_TOKEN` in die Projekt-Env (Production).
-4. **Redeploy** anstoßen (Deployments → letztes Deployment → Redeploy), oder einfach einen kleinen Commit pushen.
-5. Testen: im `/admin` ein Bild hochladen. Es muss jetzt eine `...blob.vercel-storage.com`-URL bekommen und sichtbar bleiben.
+Der Code-Teil ist erledigt (Branch `fix/cms-image-uploads-blob`): Plugin wieder aktiv, Bilder werden direkt vom Blob-CDN ausgeliefert, keine Schema-Änderung nötig. Ausstehend sind die drei Betriebs-Schritte:
 
-Hinweis: alte, bereits hochgeladene Bilder zeigen weiter über die im Code mitgelieferten Dateien (`/public/uploads`). Nur NEU im Admin hochgeladene Bilder brauchen den Blob-Speicher.
+1. Branch mergen und deployen. Ab da funktionieren **neue** Uploads im Admin.
+2. Bestandsbilder in den Blob-Store schieben (einmalig, vom Entwickler-Rechner aus, weil die Quelldateien dort liegen):
+   `DATABASE_URI=<prod> BLOB_READ_WRITE_TOKEN=<token> bun --conditions=production run scripts/migrate-media-to-blob.ts --apply`
+   Ohne `--apply` läuft nur ein Trockenlauf, der zeigt was passieren würde. Das Skript schreibt **keine** Datenbankzeile.
+3. Erst wenn Schritt 2 sauber durchgelaufen ist: `NEXT_PUBLIC_PREFER_UPLOADED_MEDIA=true` in der Vercel-Env setzen und neu deployen. Danach schlägt ein im Admin ausgetauschtes Bild auch dann durch, wenn eine gleichnamige Datei im Code mitgeliefert wird.
+
+Test danach: im `/admin` ein Bild hochladen. Es muss eine `...blob.vercel-storage.com`-URL bekommen und nach einem Redeploy weiter sichtbar sein.
+
+Details und Messwerte: `docs/CMS-BILDER-ANALYSE-2026-08-18.md`.
 
 ### 2. Kontaktformular-Mails (Resend) — ✅ INTERIM LIVE seit 2026-07-06
 

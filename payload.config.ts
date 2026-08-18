@@ -7,6 +7,7 @@ import {
   HeadingFeature,
   lexicalEditor,
 } from "@payloadcms/richtext-lexical";
+import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
 import { buildConfig } from "payload";
 import sharp from "sharp";
 
@@ -116,9 +117,38 @@ export default buildConfig({
       beforeDashboard: ["@/payload/components/WelcomeDashboard#default"],
     },
   },
-  // Media is stored on local disk (Media.upload.staticDir = public/uploads) and
-  // served from there; the frontend resolves images to committed /public assets
-  // via lib/publicUploads. No external blob storage. If CMS-managed uploads are
-  // reintroduced later, add an external adapter here (e.g. S3 / Cloudflare R2).
-  plugins: [],
+  // Media uploads need durable storage on Vercel: a function's filesystem is
+  // read-only and per-invocation, so Payload's local-disk adapter cannot write
+  // Media.upload.staticDir there. Without an adapter every upload from /admin
+  // fails and the resulting doc points at /api/media/file/<name>, which 500s
+  // because the file is nowhere on the deployed instance.
+  //
+  // With BLOB_READ_WRITE_TOKEN set (Vercel, all environments) uploads go to
+  // Vercel Blob and media.url resolves to the public blob URL, so the club can
+  // upload from /admin and the image persists across deploys. Without the token
+  // the plugin disables itself and Payload falls back to local disk, which is
+  // what local dev and the seed scripts expect.
+  //
+  // disablePayloadAccessControl: the media collection is already world-readable
+  // (Media.access.read = anyone) and the blobs are stored with public access, so
+  // routing every image through /api/media/file/<name> would add a function
+  // invocation per image without protecting anything. With it on, media.url is
+  // the blob CDN URL and browsers fetch images straight from the CDN.
+  //
+  // No alwaysInsertFields: it only inserts the `prefix` field on the DISABLED
+  // path (see plugin-cloud-storage/plugin.js, the enabled branch never passes
+  // it through), so switching it on would give the token-less environment a
+  // column the token-carrying one lacks. Leaving it off means this plugin adds
+  // no column at all: it only re-hooks the existing `url` fields, so no schema
+  // migration is needed to deploy it.
+  //
+  // Swap to @payloadcms/storage-s3 (Cloudflare R2) here if vendor-neutral
+  // storage is preferred later; only this block changes.
+  plugins: [
+    vercelBlobStorage({
+      enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
+      collections: { media: { disablePayloadAccessControl: true } },
+      token: process.env.BLOB_READ_WRITE_TOKEN,
+    }),
+  ],
 });

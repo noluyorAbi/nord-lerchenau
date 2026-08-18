@@ -27,7 +27,7 @@ function index(): Map<string, string> {
       map.set(normalise(file), file);
     }
   } catch {
-    // directory missing — callers fall back to initials/placeholder
+    // directory missing , callers fall back to initials/placeholder
   }
   cache = map;
   return map;
@@ -39,15 +39,43 @@ export function publicUploadSrc(filename?: string | null): string | null {
   return file ? `/uploads/${file}` : null;
 }
 
+// When true, a real uploaded asset (absolute http(s) URL from the storage
+// adapter, e.g. Vercel Blob) wins over a committed /public/uploads asset with
+// the same normalised name. Set NEXT_PUBLIC_PREFER_UPLOADED_MEDIA=true in the
+// Vercel env ONLY AFTER every legacy media doc has been migrated to Blob and
+// carries a fresh absolute URL. Until then it stays off and the committed asset
+// wins, which is regression-proof against the stale /api/media/file/<name> URLs
+// the 180 seeded prod docs still hold.
+//
+// Consequence while it is off: the club can add NEW images (no committed twin,
+// so the blob URL is used), but replacing an image whose name collides with a
+// committed asset has no visible effect. That is deliberate: flipping the flag
+// before the migration would blank out every legacy image instead.
+const PREFER_UPLOADED =
+  process.env.NEXT_PUBLIC_PREFER_UPLOADED_MEDIA === "true";
+
+function absoluteUrl(url?: string | null): string | null {
+  return url && /^https?:\/\//i.test(url) ? url : null;
+}
+
 /**
- * Resolve a Payload media object to an image src, preferring the asset shipped
- * in public/uploads so the site renders without any external blob storage. The
- * stored `url` (e.g. a legacy blob URL) is only used as a fallback when no
- * committed file matches the (normalised) filename.
+ * Resolve a Payload media object to an image src.
+ *
+ * Default (PREFER_UPLOADED off): prefer the committed /public/uploads asset so
+ * the site renders without external storage and never regresses on a stale URL;
+ * fall back to the stored URL for genuinely new uploads with no committed twin.
+ *
+ * After the media migration (PREFER_UPLOADED on): prefer the live uploaded URL
+ * so the club can replace any image from /admin, including ones that shipped as
+ * committed assets, with the committed asset kept as a last-resort fallback.
  */
 export function mediaSrc(
   media?: { filename?: string | null; url?: string | null } | number | null,
 ): string | null {
   if (!media || typeof media !== "object") return null;
-  return publicUploadSrc(media.filename) ?? (media.url || null);
+  const committed = publicUploadSrc(media.filename);
+  const absolute = absoluteUrl(media.url);
+
+  if (PREFER_UPLOADED && absolute) return absolute;
+  return committed ?? absolute ?? media.url ?? null;
 }

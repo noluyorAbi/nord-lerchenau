@@ -8,6 +8,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "static.wixstatic.com",
       },
+      // Media uploaded through /admin lives in Vercel Blob, so mediaSrc can
+      // return an absolute blob URL. Today every consumer renders it via a
+      // plain <img> or a CSS background, but registering the host here means a
+      // later switch to next/image does not fail the render at runtime.
+      {
+        protocol: "https",
+        hostname: "*.public.blob.vercel-storage.com",
+      },
     ],
   },
   // lib/publicUploads resolves media to committed /public/uploads assets by

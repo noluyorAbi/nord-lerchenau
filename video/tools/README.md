@@ -17,7 +17,7 @@ node video/tools/finish.js      # video/out/wide-long.mp4 -> assets/demo-16x9-lo
 Prerequisites: `OPENAI_API_KEY`, `mlx_whisper` (`pip install mlx-whisper`,
 Apple Silicon), `ffmpeg`/`ffprobe`. `narrate.js` looks for the key in the
 environment, then in an interactive zsh, then in `~/.zshrc`; it never writes
-the key anywhere. Every run appends a cost line to `video/costs.jsonl`.
+the key anywhere. Every run appends a cost line to `video/costs.jsonl`. `DEMO_VIDEO_WHISPER_MODEL` (optional) picks the mlx_whisper model; unset uses the tool's default.
 
 `status.js` additionally shows the Claude-side spend when
 `<repo>/.claude/costs.csv` exists; that file is optional and unrelated to the

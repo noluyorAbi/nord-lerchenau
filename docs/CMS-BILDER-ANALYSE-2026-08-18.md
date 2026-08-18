@@ -209,42 +209,51 @@ abgelaufenes Token bricht damit hörbar ab, statt einen zuversichtlichen, aber
 falschen Upload-Plan zu drucken. Gegengeprüft mit einem ungültigen Token:
 `Vercel Blob: Access denied`, Abbruch.
 
-## 7. Reihenfolge für den Rollout
+## 7. Rollout (durchgeführt am 18.08.2026)
 
-1. `fix/cms-image-uploads-blob` mergen und deployen. Keine Schema-Migration
-   nötig, kein Reseed. Ab hier funktionieren neue Uploads.
-2. Trockenlauf, dann `--apply` von `scripts/migrate-media-to-blob.ts` vom
-   Entwickler-Rechner aus (die Quelldateien liegen nur dort).
-3. Stichprobe im Admin: Vorschaubilder der Bestandsbilder müssen laden.
-4. Erst dann `NEXT_PUBLIC_PREFER_UPLOADED_MEDIA=true` in der Vercel-Env setzen
-   und neu deployen. Umgekehrte Reihenfolge würde Bilder leeren statt reparieren.
-5. Kontrolle: im Admin ein bestehendes Bild ersetzen, die Änderung muss auf der
-   Seite ankommen.
+1. **Bestandsbilder in den Store**, vor dem Deploy, weil das Skript nur Bytes
+   schreibt und das laufende Deployment nicht berührt: 374 Dateien hochgeladen,
+   0 Fehler, erneuter Trockenlauf meldet 456 von 456 vorhanden.
+2. **Code deployed** (PR #10, Merge `8dd7905`). Danach: 52 Seiten gecrawlt, 295
+   verschiedene Bilder geprüft, 0 kaputt. Im Produktions-Admin luden die
+   Vorschaubilder wieder, vorher waren es acht graue Platzhalter-SVGs.
+3. **Upload im Produktions-Admin getestet**: der Datensatz bekam eine Blob-URL,
+   die Vorschau lud in voller Breite. Testdatensatz und Test-Blob danach
+   entfernt, im Store liegt kein `zz-`-Objekt mehr.
+4. **`NEXT_PUBLIC_PREFER_UPLOADED_MEDIA=true`** gesetzt und frisch deployed.
 
-Schritte 2 und 4 verändern Produktionsdaten und sind bewusst nicht automatisiert.
+### Der Stolperstein bei Schritt 4: der Daten-Cache
 
-## 6a. Grenze: 4 MB pro Upload
+Der erste Versuch von Schritt 4 hat neun Bilder zerschossen: acht
+Sponsorenlogos und das G-Junioren-Foto, auf `/news`, `/kontakt`, den
+News-Artikeln und den Mannschaftsseiten. Ursache: CMS-Abfragen laufen über
+`unstable_cache` (`lib/cms.ts`), und der Vercel-Daten-Cache überlebt ein
+Deployment. Zur Laufzeit gerenderte Seiten bekamen deshalb noch Media-Objekte
+aus der Zeit **vor** dem Blob-Adapter, mit der alten
+`/api/media/file/<name>`-URL, die es nicht mehr gibt. Statisch vorgerenderte
+Seiten waren nicht betroffen, weil sie beim Build frisch gelesen haben.
 
-Ein Upload aus dem `/admin` läuft als normaler Request durch eine
-Vercel-Funktion, und deren Request-Body ist auf **4,5 MB** begrenzt
-(`vercel.com/docs/functions/limitations`, Stand 01.07.2026). Größere Dateien
-antworten mit `413 FUNCTION_PAYLOAD_TOO_LARGE`. Ein Handy-Foto liegt oft
-darüber, deshalb steht der Hinweis jetzt direkt im Admin über der
-Bilder-Sammlung.
+Sofort zurückgenommen (Flag entfernt, neu deployt, Kontrolle: wieder 0 kaputt),
+dann korrekt wiederholt:
 
-Der offizielle Ausweg des Plugins, `clientUploads: true`, wurde geprüft und
-wieder verworfen: er ist mit der WebP-Konvertierung dieser Sammlung
-unvereinbar. Der Browser legt dabei das **Original unter dem Originalnamen** im
-Store ab, Payload benennt den Datensatz anschließend auf `<name>.webp` um, und
-nur die generierten Größen werden serverseitig geschrieben. `media.url` zeigt
-danach auf ein Objekt, das nie existiert. Gemessen, nicht vermutet: ein
-9,99-MB-JPEG über diesen Weg hinterließ `zz-big-photo.jpg` im Store, während
-`zz-big-photo.webp` mit 404 antwortete. Alle Größen und der Testdatensatz sind
-danach wieder entfernt worden.
+1. Flag in der Vercel-Env setzen, Wert genau `true`.
+2. **Frisch** deployen. Ein Redeploy eines bestehenden Deployments genügt
+   nicht: es übernimmt dessen Umgebung, das neue Flag käme gar nicht an.
+3. Jeden Cache-Tag leeren, per POST auf `/api/revalidate` mit
+   `REVALIDATE_SECRET`, für alle Collections (posts, teams, fixtures, events,
+   sponsors, people) und alle Globals (site-settings, navigation, home-page,
+   contact-info, chronik-page, vereinsheim-page, jugendfoerder-page,
+   legal-pages, faq-page).
 
-Wer die Grenze später wirklich aufheben will, muss die Konvertierung und die
-Namensgebung angleichen (Upload bereits im Zielformat, oder Verzicht auf
-`formatOptions`) und die Bildgröße dann anders in den Griff bekommen.
+**Schritt 3 ist nicht optional.** Ohne ihn zeigen genau die Seiten auf tote
+URLs, die nicht beim Build entstehen.
+
+### Endkontrolle
+
+52 Seiten, 295 verschiedene Bilder, **0 kaputt**. 22 davon kommen jetzt vom
+Blob-CDN, die übrigen 33 sind statische Dateien, die nie im CMS lagen. Ein im
+Admin ausgetauschtes Bild schlägt damit auch dann durch, wenn eine gleichnamige
+Datei im Code mitgeliefert wird.
 
 ## 7a. Review
 

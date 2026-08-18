@@ -20,23 +20,23 @@ Legende: 👨‍💻 = du (Alpie/Dev) machst es · 🧑‍💼 = Ralf/Verein lie
 
 ## 👨‍💻 DU musst machen (Ops, geht nur über Konsole, nicht über Code)
 
-### 1. Bild-Upload im CMS reparieren (Blob-Speicher im Code aktivieren)
+### 1. Bild-Upload im CMS reparieren: ERLEDIGT seit 18.08.2026
 
-Korrektur zur früheren Fassung dieses Punktes: der Blob-Store **war** angelegt und `BLOB_READ_WRITE_TOKEN` steht seit dem 01.06.2026 in der Vercel-Env. Gefehlt hat der Code. Beim Umbau auf statische Bilder (Commit `76bf13d`) wurde das `vercelBlobStorage`-Plugin aus `payload.config.ts` entfernt und nie wieder eingehängt, also lief Payload in Produktion auf dem lokalen Datei-Adapter. Vercel-Funktionen haben ein schreibgeschütztes Dateisystem, deshalb schlug jeder Upload aus dem Admin fehl und `/api/media/file/<name>` antwortete mit 500.
+Der Verein kann jetzt im `/admin` Bilder hochladen, austauschen und löschen. Sie landen dauerhaft im Vercel-Blob-Speicher und werden direkt vom CDN ausgeliefert.
 
-Der Code-Teil ist erledigt (Branch `fix/cms-image-uploads-blob`): Plugin wieder aktiv, Bilder werden direkt vom Blob-CDN ausgeliefert, keine Schema-Änderung nötig. Ausstehend sind die drei Betriebs-Schritte:
+Korrektur zur früheren Fassung dieses Punktes: der Blob-Store **war** angelegt und `BLOB_READ_WRITE_TOKEN` steht seit dem 01.06.2026 in der Vercel-Env. Gefehlt hat der Code. Beim Umbau auf statische Bilder (Commit `76bf13d`) wurde das `vercelBlobStorage`-Plugin aus `payload.config.ts` entfernt und nie wieder eingehängt, also lief Payload in Produktion auf dem lokalen Datei-Adapter. Vercel-Funktionen haben ein schreibgeschütztes Dateisystem, deshalb schlug jeder Upload fehl und `/api/media/file/<name>` antwortete mit 500.
 
-1. Branch mergen und deployen. Ab da funktionieren **neue** Uploads im Admin.
-2. Bestandsbilder in den Blob-Store schieben (einmalig, vom Entwickler-Rechner aus, weil die Quelldateien dort liegen):
-   `DATABASE_URI=<prod> BLOB_READ_WRITE_TOKEN=<token> bun --conditions=production run scripts/migrate-media-to-blob.ts --apply`
-   Ohne `--apply` läuft nur ein Trockenlauf, der zeigt was passieren würde. Das Skript schreibt **keine** Datenbankzeile.
-3. Erst wenn Schritt 2 sauber durchgelaufen ist: `NEXT_PUBLIC_PREFER_UPLOADED_MEDIA=true` in der Vercel-Env setzen und neu deployen. Danach schlägt ein im Admin ausgetauschtes Bild auch dann durch, wenn eine gleichnamige Datei im Code mitgeliefert wird.
+Was gemacht wurde (PR #10, Merge `8dd7905`):
 
-Test danach: im `/admin` ein Bild hochladen. Es muss eine `...blob.vercel-storage.com`-URL bekommen und nach einem Redeploy weiter sichtbar sein.
+1. Plugin wieder aktiv, Bilder kommen direkt vom Blob-CDN. Keine Schema-Änderung, kein Reseed nötig.
+2. Alle 456 Bestandsdateien in den Store geschoben (`scripts/migrate-media-to-blob.ts`), ohne eine einzige Datenbankzeile zu ändern.
+3. `NEXT_PUBLIC_PREFER_UPLOADED_MEDIA=true` gesetzt, damit ein ausgetauschtes Bild auch dann durchschlägt, wenn eine gleichnamige Datei im Code mitgeliefert wird.
 
-Bekannte Grenze: pro Bild höchstens **4 MB**. Ein Upload läuft durch eine Vercel-Funktion, und deren Request-Body ist auf 4,5 MB begrenzt. Der Hinweis steht im Admin über der Bilder-Sammlung; Handy-Fotos vorher verkleinern.
+Endkontrolle am 18.08.2026: 52 Seiten, 295 verschiedene Bilder, 0 kaputt. Upload im Produktions-Admin getestet und wieder aufgeräumt.
 
-Details und Messwerte: `docs/CMS-BILDER-ANALYSE-2026-08-18.md`.
+**Bekannte Grenze: höchstens 4 MB pro Bild.** Ein Upload läuft durch eine Vercel-Funktion, deren Request-Body auf 4,5 MB begrenzt ist. Der Hinweis steht im Admin über der Bilder-Sammlung; Handy-Fotos vorher verkleinern.
+
+Wenn das Flag jemals neu gesetzt werden muss: frisch deployen (ein Redeploy übernimmt die alte Umgebung) und danach **jeden Cache-Tag über `/api/revalidate` leeren**, sonst rendern die dynamischen Seiten weiter aus Einträgen von vor dem Umbau. Details und Messwerte: `docs/CMS-BILDER-ANALYSE-2026-08-18.md`.
 
 ### 2. Kontaktformular-Mails (Resend) — ✅ INTERIM LIVE seit 2026-07-06
 
@@ -100,7 +100,7 @@ Hinweis: schlägt der Mailversand fehl, sieht der Nutzer trotzdem "gesendet" (be
 ## 📋 Reihenfolge für den Go-Live
 
 1. 🧑‍💼 Ralf: Logos + Fotos + Jugend-Daten schicken, Domain-Zugang klären.
-2. 👨‍💻 Du: Vercel Blob verbinden (Punkt 1), Resend einrichten (Punkt 2).
+2. 👨‍💻 Du: Resend einrichten (Punkt 2). Punkt 1 (Bild-Upload) ist erledigt.
 3. 👨‍💻 Du: Logos in `tmp/live-sponsors/` + Reseed; Fotos/Daten im Admin eintragen.
 4. 🧑‍💼 Ralf: DNS-Werte setzen (Punkt 3).
 5. 👨‍💻 Du: Domain in Vercel, SSL prüfen, einmal alles durchklicken (siehe Checkliste unten).

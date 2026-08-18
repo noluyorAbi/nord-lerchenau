@@ -269,6 +269,27 @@ Migrationsskript (die bereits hochgeladenen Dateien sind davon nicht betroffen,
 alle neun regenerierten Varianten sind jpg aus jpg, Bytes und `Content-Type`
 stimmen überein, nachgemessen).
 
+## 7b. Nachtrag: Ersetzen wirkte erst nach einem Tag
+
+Nach dem Rollout fiel eine zweite Lücke auf. Hochladen ging, **Ersetzen** blieb
+bis zu 24 Stunden unsichtbar. `media` stand in `UNCACHED_COLLECTIONS` und hatte
+keinen `afterChange`-Hook, unter der Annahme, keine Seite lese die Sammlung. Das
+stimmt nur wörtlich: Seiten erreichen ein Bild über eine Relation an Mannschaft,
+News, Sponsor, Person oder Global, und diese Abfragen sind mit
+`DEFAULT_REVALIDATE_SECONDS = 86400` gecacht. Wer ein Bild austauschte, änderte
+nur den Media-Datensatz, also traf kein einziger Cache-Tag.
+
+Behoben in PR #12: `media` ist keine Nur-Schreiben-Sammlung mehr, ein
+Media-Save oder -Delete leert über `/api/revalidate` alle Reads, die ein Bild
+tragen können (posts, teams, sponsors, people, events plus site-settings,
+home-page, chronik-page, vereinsheim-page, jugendfoerder-page) und zusätzlich
+das Root-Layout für Header- und Footer-Logos. Zwei Tests halten die Listen mit
+der Tag-Registry synchron, weil ein Tippfehler dort stillschweigend nichts
+revalidieren würde, also genau den Fehler zurückbrächte.
+
+Gegen die Produktion geprüft: ein Media-Save feuert den Hook, die Route
+antwortet mit allen zehn Tags, und die Seiten bleiben bei 0 kaputten Bildern.
+
 ## 8. Bewusst nicht angefasst
 
 - Die 1327 lokalen Dateien in `public/uploads` und die Mehrfach-Datensätze in

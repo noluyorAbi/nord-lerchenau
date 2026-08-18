@@ -26,7 +26,7 @@ export default function HelpNav() {
         <LuCircleHelp aria-hidden />
         <span>Rundgang starten</span>
       </button>
-      <Link className="svnord-help__btn" href="/admin#video">
+      <Link className="svnord-help__btn" href="/admin#video" prefetch={false}>
         <LuCirclePlay aria-hidden />
         <span>Video ansehen</span>
       </Link>

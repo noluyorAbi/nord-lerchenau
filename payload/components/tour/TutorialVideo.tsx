@@ -51,7 +51,11 @@ export default function TutorialVideo() {
         )}
       </div>
       {TUTORIAL_VIDEO.url && TUTORIAL_VIDEO.chapters.length > 0 ? (
-        <div className="svnord-video__chapters" aria-label="Kapitel">
+        <div
+          className="svnord-video__chapters"
+          role="group"
+          aria-label="Kapitel"
+        >
           {TUTORIAL_VIDEO.chapters.map((c) => (
             <button
               key={c.at}
@@ -59,7 +63,7 @@ export default function TutorialVideo() {
               className="svnord-video__chapter"
               onClick={() => jump(c.at)}
             >
-              <time>{formatTime(c.at)}</time>
+              <time dateTime={`PT${c.at}S`}>{formatTime(c.at)}</time>
               <span>{c.label}</span>
             </button>
           ))}

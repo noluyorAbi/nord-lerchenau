@@ -8,14 +8,18 @@ Admin allein zurechtfinden.
 1. **Deutsch durchgehend.** Payload lief bisher mit englischer Oberfläche
    ("Create New", "Save", "Login"), während alle unsere Hilfetexte von „Neu
    erstellen“ und „Speichern“ sprachen. `i18n.supportedLanguages = { de }` in
-   `payload.config.ts` schaltet die komplette Payload-Oberfläche auf Deutsch;
-   mit nur einer Sprache erscheint auch kein Sprachwähler.
+   `payload.config.ts` schaltet die komplette Payload-Oberfläche auf Deutsch.
+   Der Sprachwähler unter Konto > Einstellungen bleibt sichtbar, bietet aber
+   nur noch Deutsch an.
 2. **Seitenleiste in der Reihenfolge der Nummern.** Payload sortiert Gruppen
    nach erstem Auftreten in der Config, Collections vor Globals. Die
    Collections stehen jetzt nach Gruppennummer in `payload.config.ts`, und
    `payload/components/tour/help-nav.css` erledigt per `order` den Rest über
    die Grenze Collection/Global hinweg. Ergebnis: 1, 2, 3, 4, 5, 9 statt
-   9, 2, 1, 3, 5, 4. Keine Datenbankauswirkung.
+   9, 2, 1, 3, 5, 4. Keine Datenbankauswirkung. Bewusster Kompromiss: `order`
+   ändert nur die sichtbare Reihenfolge, Tab-Reihenfolge und Screenreader
+   folgen weiter der DOM-Reihenfolge (1, 2, 3, 9, 4, 5); alle Gruppen bleiben
+   erreichbar und beschriftet.
 3. **Rundgang (driver.js).** Elf Schritte über Seitenleiste, Bereiche, Bilder
    & Medien, die Dashboard-Karten, das Video, das Glossar, das Konto und die
    Hilfe. Startet beim allerersten Besuch von selbst, danach nur auf Klick.
@@ -23,9 +27,11 @@ Admin allein zurechtfinden.
    Admin-Seite) und der Knopf im Willkommens-Kasten des Dashboards. Von einer
    anderen Seite aus navigiert er zuerst zum Dashboard und startet dort.
 4. **Video „In zwei Minuten erklärt“** auf dem Dashboard, 1:45 Minuten, echte
-   Bildschirmaufnahme dieses Admins mit deutscher Vertonung und Untertiteln.
-   Kapitel-Chips springen direkt zu Anmelden, Bereiche, Bild hochladen,
-   Artikel schreiben, Titelbild wählen, auf der Website.
+   Bildschirmaufnahme dieses Admins mit deutscher Vertonung und wortgenauen
+   Untertiteln. Kapitel-Chips springen direkt zu Anmelden, Bereiche, Bild
+   hochladen, Artikel schreiben, Titelbild wählen, auf der Website. Es liegt im
+   öffentlichen Blob-Store unter einer zufälligen URL; die Login-Szene zeigt
+   deshalb ein neutrales Demo-Konto, kein echtes.
 5. **Glossar „Was bedeutet was?“**: Neu erstellen, Speichern,
    Veröffentlichungsdatum, Alt-Text, Bilder & Medien, Slug, Pflichtfeld, je
    in einem Satz, aufklappbar.
@@ -67,15 +73,25 @@ Admin allein zurechtfinden.
   diesem Projekt an den `@/`-Aliassen. Nach dem Registrieren einer neuen
   Komponente also `payload.config.ts` bei laufendem Dev-Server einmal
   anfassen.
+- Der Rundgang klappt eingeklappte Gruppen auf und stellt sie am Ende wieder
+  so her, wie sie waren; Payload speichert jeden Toggle als Präferenz, und die
+  soll dem Rundgang nicht gehören. Auf Handybreite (bis 768 px) deckt die
+  offene Seitenleiste die ganze Seite ab, deshalb schließt er sie vor jedem
+  Schritt, der nicht in die Seitenleiste zeigt.
+- Payloads NavProvider setzt die gespeicherte Seitenleisten-Präferenz kurz nach
+  dem Laden asynchron; die Prüfung "Seitenleiste sichtbar" schaut deshalb auf
+  die Klasse `nav--nav-open`, nicht auf die Geometrie, und jeder
+  Seitenleisten-Schritt öffnet sie bei Bedarf erneut.
 
 ## Video neu produzieren
 
-Siehe `video/README.md`, Abschnitt „SV Nord: Admin-Tutorial“. Kurz: Dev-Server
-mit `NEXT_HIDE_DEV_INDICATOR=1`, Szenen mit `agent-browser record` aufnehmen,
-zu h264 wandeln, `narrate.js`, `assemble.js`, `render:wide-long`,
-`finish.js`, mit neuem datierten Namen in den Blob-Store, URL und
-Kapitelzeiten in `tutorial-video.ts` eintragen. Kosten pro Vertonung rund
-drei Cent (steht in `video/costs.jsonl`).
+Siehe `video/README.md`, Abschnitt „SV Nord: Admin-Tutorial“. Die Skripte
+liegen unter `video/tools/` im Repository. Kurz: Dev-Server mit
+`NEXT_HIDE_DEV_INDICATOR=1`, Szenen mit `agent-browser record` aufnehmen, zu
+h264 wandeln, `node video/tools/narrate.js`, `assemble.js`,
+`render:wide-long`, `finish.js`, mit neuem datierten Namen und Zufallssuffix
+in den Blob-Store, URL und Kapitelzeiten in `tutorial-video.ts` eintragen.
+Kosten pro Vertonung rund drei Cent (steht in `video/costs.jsonl`).
 
 ## Geprüft
 

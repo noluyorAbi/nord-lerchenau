@@ -110,7 +110,8 @@
 
 .svnord-video__chapter time {
   font-variant-numeric: tabular-nums;
-  color: #a38146;
+  /* Dark gold: the lighter #a38146 fell under 4.5:1 on the light card. */
+  color: #7a5c2a;
 }
 
 .svnord-video__pending {
@@ -138,10 +139,11 @@
   border: 1px solid var(--theme-elevation-150);
   border-radius: 8px;
   background: var(--theme-elevation-50);
-  overflow: hidden;
+  /* No overflow: hidden here: it clipped the summary's keyboard focus ring. */
 }
 
 .svnord-glossary summary {
+  border-radius: 8px;
   list-style: none;
   cursor: pointer;
   padding: 10px 14px;

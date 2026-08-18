@@ -3,7 +3,13 @@
 import React, { useEffect, useState } from "react";
 import { LuCircleHelp, LuCirclePlay } from "react-icons/lu";
 
-import { consumeResumeFlag, startTour, tourRunning, tourSeen } from "./tour";
+import {
+  clearResumeFlag,
+  hasResumeFlag,
+  startTour,
+  tourRunning,
+  tourSeen,
+} from "./tour";
 import "./dashboard-tour.css";
 
 /**
@@ -24,11 +30,14 @@ export default function DashboardTour() {
     // of it. The explicit resume flag still wins, since that was a click on
     // "Rundgang starten".
     const wantsVideo = window.location.hash === "#video";
-    const shouldStart = consumeResumeFlag() || (!wantsVideo && !tourSeen());
+    const shouldStart = hasResumeFlag() || (!wantsVideo && !tourSeen());
     if (!shouldStart) return;
     // Let the dashboard settle (fonts, sidebar hydration) before pointing at
-    // things, otherwise the first highlight lands on a moving target.
+    // things, otherwise the first highlight lands on a moving target. The
+    // resume flag is cleared here, inside the timer, so a StrictMode double
+    // mount (which clears the timer in between) cannot eat it.
     const t = window.setTimeout(() => {
+      clearResumeFlag();
       startTour();
       setAutoStarted(true);
     }, 700);

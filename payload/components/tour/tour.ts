@@ -25,12 +25,25 @@ export { TOUR_TARGET } from "./tour-targets";
  * user). A collapsed group hides its links, and a hidden link cannot be
  * highlighted, so open everything before the tour points at the sidebar.
  */
+let expandedByTour: HTMLButtonElement[] = [];
+
 function expandNavGroups() {
-  document
-    .querySelectorAll<HTMLButtonElement>(
+  // Payload persists every toggle as a user preference, so opening a group is
+  // not free: remember which ones we opened and put them back on destroy,
+  // otherwise starting the tour silently rewrites the editor's sidebar.
+  expandedByTour = Array.from(
+    document.querySelectorAll<HTMLButtonElement>(
       ".nav-group--collapsed .nav-group__toggle",
-    )
-    .forEach((toggle) => toggle.click());
+    ),
+  );
+  expandedByTour.forEach((toggle) => toggle.click());
+}
+
+function restoreNavGroups() {
+  expandedByTour.forEach((toggle) => {
+    if (toggle.isConnected) toggle.click();
+  });
+  expandedByTour = [];
 }
 
 function isVisible(selector: string): boolean {
@@ -57,13 +70,35 @@ function ensureNavOpen(): boolean {
   return true;
 }
 
-/** The nav is on screen when it is open (large screens open it by default). */
+/**
+ * The nav is on screen when Payload says it is open (`nav--nav-open`); the
+ * geometry alone lies, because a closed nav still measures 275px off-canvas.
+ */
 function navOnScreen(): boolean {
   const nav = document.querySelector<HTMLElement>(".nav");
-  if (!nav) return false;
+  if (!nav || !nav.classList.contains("nav--nav-open")) return false;
   const rect = nav.getBoundingClientRect();
   return rect.right > 0 && rect.width > 0;
 }
+
+/** Below Payload's small breakpoint an open sidebar is 100vw wide. */
+function navCoversPage(): boolean {
+  return window.matchMedia("(max-width: 768px)").matches;
+}
+
+function closeNav() {
+  const nav = document.querySelector<HTMLElement>(".nav");
+  if (!nav || !nav.classList.contains("nav--nav-open")) return;
+  document
+    .querySelector<HTMLButtonElement>(".template-default__nav-toggler")
+    ?.click();
+}
+
+const NAV_STEP = (selector: string) =>
+  selector === ".nav" ||
+  selector.startsWith('[id="nav-') ||
+  selector.startsWith("#nav-") ||
+  selector === tourTarget("help");
 
 /**
  * The plan for the whole tour. Text is written for someone who has never used
@@ -182,16 +217,10 @@ function buildSteps(): DriveStep[] {
     },
   ];
 
-  const navStep = (selector: string) =>
-    selector === ".nav" ||
-    selector.startsWith('[id="nav-') ||
-    selector.startsWith("#nav-") ||
-    selector === tourTarget("help");
-
   return steps.filter((step) => {
     if (typeof step.element !== "string") return true;
     if (!isVisible(step.element)) return false;
-    return navStep(step.element) ? navOnScreen() : true;
+    return NAV_STEP(step.element) ? navOnScreen() : true;
   });
 }
 
@@ -254,7 +283,17 @@ function drive() {
     prevBtnText: "Zurück",
     doneBtnText: "Fertig",
     steps: buildSteps(),
+    // Payload's NavProvider re-applies the stored sidebar preference shortly
+    // after mount and can close what we just opened, and on a phone an open
+    // sidebar covers the whole page. So per step: sidebar steps make sure it
+    // is open, page steps close it again where it would hide the target.
+    onHighlightStarted: (_el, step) => {
+      const selector = typeof step.element === "string" ? step.element : "";
+      if (selector && NAV_STEP(selector)) ensureNavOpen();
+      else if (navCoversPage()) closeNav();
+    },
     onDestroyed: () => {
+      restoreNavGroups();
       active = null;
     },
   });
@@ -283,15 +322,24 @@ export function startTourFromAnywhere() {
   window.location.assign("/admin");
 }
 
-/** Called by the dashboard on mount: honours a pending "start here" flag. */
-export function consumeResumeFlag(): boolean {
+/** True while a "start here" request from another page is pending. */
+export function hasResumeFlag(): boolean {
   try {
-    if (window.sessionStorage.getItem(RESUME_KEY) === "1") {
-      window.sessionStorage.removeItem(RESUME_KEY);
-      return true;
-    }
+    return window.sessionStorage.getItem(RESUME_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Clear the pending request. Kept separate from the check on purpose: React
+ * StrictMode runs effects twice in development, and a check that also
+ * consumed would answer true on the first pass and false on the real one.
+ */
+export function clearResumeFlag() {
+  try {
+    window.sessionStorage.removeItem(RESUME_KEY);
   } catch {
     // ignore
   }
-  return false;
 }

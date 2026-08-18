@@ -126,8 +126,8 @@ export default buildConfig({
   // label we write is German already; leaving Payload's own chrome ("Create
   // New", "Save", "Dashboard") in English made the whole thing feel foreign and
   // contradicted the German help texts that talk about "Neu erstellen" and
-  // "Speichern". With one supported language there is nothing to pick, so no
-  // language selector shows up either.
+  // "Speichern". Payload still renders its language selector under Konto >
+  // Einstellungen, but with a single supported language it offers only Deutsch.
   i18n: {
     fallbackLanguage: "de",
     supportedLanguages: { de },

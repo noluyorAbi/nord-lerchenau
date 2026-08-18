@@ -1,6 +1,10 @@
 /* Sidebar help block, and the sidebar order fix (see comment below). */
 
 .svnord-help {
+  /* .nav__wrap aligns children flex-start, so without a width the block
+     shrink-wraps its buttons; Payload's own groups set width: 100% too. */
+  width: 100%;
+  box-sizing: border-box;
   margin: 12px 0 8px;
   padding: 12px;
   border-radius: 10px;
@@ -18,7 +22,7 @@
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--theme-elevation-500);
+  color: var(--theme-elevation-700);
   margin-bottom: 2px;
 }
 
@@ -77,6 +81,12 @@
  * a collection in "9. System", the pages are globals in "4. Seiten"), so no
  * config order alone can produce 1, 2, 3, 4, 5, 9. The containers are flex
  * columns, so `order` on the group finishes the job.
+ *
+ * Known trade-off: `order` changes what sighted users see, not the DOM. Tab
+ * order and screen readers still meet the groups in config order (1, 2, 3, 9,
+ * 4, 5), i.e. "9. System" between "3. Verein" and "4. Seiten". Every group is
+ * still labelled, so nothing is unreachable, and the alternative (a custom
+ * admin.components.Nav) would fork Payload's sidebar for a cosmetic gain.
  */
 .nav-group[id="nav-group-1. Inhalte"] {
   order: 1;

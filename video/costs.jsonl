@@ -11,3 +11,7 @@
 {"ts":"2026-08-18T14:25:37.725Z","stage":"finish","apiUsd":0,"outputs":[{"format":"16x9-long","file":"assets/demo-16x9-long.mp4","mb":8.3}]}
 {"ts":"2026-08-18T14:31:57.556Z","stage":"assemble","apiUsd":0,"shortFrames":0,"longFrames":3163}
 {"ts":"2026-08-18T14:34:53.074Z","stage":"finish","apiUsd":0,"outputs":[{"format":"16x9-long","file":"assets/demo-16x9-long.mp4","mb":8.3}]}
+{"ts":"2026-08-18T14:53:10.364Z","stage":"assemble","apiUsd":0,"shortFrames":0,"longFrames":3163}
+{"ts":"2026-08-18T14:56:20.736Z","stage":"finish","apiUsd":0,"outputs":[{"format":"16x9-long","file":"assets/demo-16x9-long.mp4","mb":8.3}]}
+{"ts":"2026-08-18T15:05:12.176Z","stage":"assemble","apiUsd":0,"shortFrames":0,"longFrames":3163}
+{"ts":"2026-08-18T15:09:06.807Z","stage":"finish","apiUsd":0,"outputs":[{"format":"16x9-long","file":"assets/demo-16x9-long.mp4","mb":8.2}]}

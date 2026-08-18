@@ -62,7 +62,31 @@ export const CACHED_COLLECTIONS = new Set([
 ]);
 
 /** Written by the CMS but never read by a prerendered page. */
-export const UNCACHED_COLLECTIONS = new Set(["submissions", "users", "media"]);
+export const UNCACHED_COLLECTIONS = new Set(["submissions", "users"]);
+
+/**
+ * Media has no cache tag of its own: no page queries the collection directly,
+ * an upload is always reached through a relation on some other document.
+ * Replacing an image therefore has to bust every cached read that can embed
+ * one, otherwise the club sees no change until the 24h window on those reads
+ * expires. Uploads are rare, so busting all of them beats tracking which
+ * document points at which file.
+ */
+export const MEDIA_DEPENDENT_COLLECTIONS = [
+  "posts",
+  "teams",
+  "sponsors",
+  "people",
+  "events",
+] as const;
+
+export const MEDIA_DEPENDENT_GLOBALS = [
+  "site-settings",
+  "home-page",
+  "chronik-page",
+  "vereinsheim-page",
+  "jugendfoerder-page",
+] as const;
 
 export const CACHED_GLOBALS = new Set([
   "site-settings",

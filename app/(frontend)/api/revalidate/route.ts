@@ -7,6 +7,8 @@ import {
   collectionTag,
   FULL_REVALIDATE_GLOBALS,
   globalTag,
+  MEDIA_DEPENDENT_COLLECTIONS,
+  MEDIA_DEPENDENT_GLOBALS,
   UNCACHED_COLLECTIONS,
 } from "@/lib/cms";
 
@@ -37,7 +39,13 @@ export async function POST(request: Request) {
   const tags: string[] = [];
 
   if (body.type === "collection") {
-    if (CACHED_COLLECTIONS.has(body.resource)) {
+    if (body.resource === "media") {
+      // An upload is never queried on its own, so every read that can carry one
+      // has to go, plus the layout for the header and footer logos.
+      for (const c of MEDIA_DEPENDENT_COLLECTIONS) tags.push(collectionTag(c));
+      for (const g of MEDIA_DEPENDENT_GLOBALS) tags.push(globalTag(g));
+      revalidatePath("/", "layout");
+    } else if (CACHED_COLLECTIONS.has(body.resource)) {
       tags.push(collectionTag(body.resource));
     } else if (!UNCACHED_COLLECTIONS.has(body.resource)) {
       return NextResponse.json(

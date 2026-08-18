@@ -1,4 +1,8 @@
-import type { CollectionAfterChangeHook, GlobalAfterChangeHook } from "payload";
+import type {
+  CollectionAfterChangeHook,
+  CollectionAfterDeleteHook,
+  GlobalAfterChangeHook,
+} from "payload";
 
 function fireRevalidate(payload: {
   type: "collection" | "global";
@@ -40,3 +44,20 @@ export const revalidateGlobalOnChange =
     fireRevalidate({ type: "global", resource });
     return doc;
   };
+
+/**
+ * Media carries no slug and no sport, and the pages that show an upload never
+ * query the collection: they reach it through a relation. Both hooks therefore
+ * send the bare resource and let /api/revalidate decide which tags that means.
+ * Delete matters as much as change, because removing an image has to take the
+ * pages that still render it with it.
+ */
+export const revalidateMediaOnChange: CollectionAfterChangeHook = ({ doc }) => {
+  fireRevalidate({ type: "collection", resource: "media" });
+  return doc;
+};
+
+export const revalidateMediaOnDelete: CollectionAfterDeleteHook = ({ doc }) => {
+  fireRevalidate({ type: "collection", resource: "media" });
+  return doc;
+};

@@ -1,0 +1,70 @@
+{
+  "meta": {
+    "title": "SV Nord Admin",
+    "voice": "coral",
+    "voiceInstructions": "Freundlich, ruhig und deutlich, wie eine geduldige Kollegin, die einem Vereinsmitglied ohne Computererfahrung etwas zeigt. Deutsch, natürliches Tempo, keine Werbestimme.",
+    "fps": 30,
+    "formats": ["16x9-long"],
+    "holdSeconds": 0.7
+  },
+  "scenes": [
+    {
+      "id": "hook",
+      "kind": "title",
+      "variants": ["long"],
+      "headline": "SV Nord Admin",
+      "sub": "In zwei Minuten: einen News-Artikel mit Bild veröffentlichen",
+      "narration": "Willkommen im Admin der SV-Nord-Website. In zwei Minuten zeige ich dir, wie du selbst einen News-Artikel mit Bild veröffentlichst. Es ist einfacher, als es aussieht."
+    },
+    {
+      "id": "login",
+      "kind": "browser",
+      "variants": ["long"],
+      "footage": "footage/login.mp4",
+      "narration": "Du meldest dich unter svnord punkt de, Schrägstrich admin an, mit deinem Benutzernamen und Passwort. Danach landest du auf der Startseite des Admins."
+    },
+    {
+      "id": "dashboard",
+      "kind": "browser",
+      "variants": ["long"],
+      "footage": "footage/dashboard.mp4",
+      "narration": "Links stehen alle Bereiche, nummeriert nach Wichtigkeit. Eins, Inhalte, brauchst du am häufigsten: dort liegen News und Termine. Und ganz unten in der Seitenleiste findest du jederzeit Hilfe."
+    },
+    {
+      "id": "bild",
+      "kind": "browser",
+      "variants": ["long"],
+      "footage": "footage/bild.mp4",
+      "narration": "Ein Foto lädst du zuerst unter Bilder und Medien hoch. Neu erstellen, Datei auswählen, dann kurz beschreiben, was auf dem Bild zu sehen ist. Das ist der Alt-Text. Speichern, fertig. Höchstens vier Megabyte pro Bild."
+    },
+    {
+      "id": "news",
+      "kind": "browser",
+      "variants": ["long"],
+      "footage": "footage/news.mp4",
+      "narration": "Jetzt der Artikel. Unter News und Berichte auf Neu erstellen. Überschrift eintragen, ein paar Sätze Text. Das Datum ist schon vorbelegt."
+    },
+    {
+      "id": "titelbild",
+      "kind": "browser",
+      "variants": ["long"],
+      "footage": "footage/titelbild.mp4",
+      "narration": "Als Titelbild wählst du das Foto von eben: aus vorhandenen auswählen, anklicken. Dann speichern, und der Artikel ist online."
+    },
+    {
+      "id": "live",
+      "kind": "browser",
+      "variants": ["long"],
+      "footage": "footage/live.mp4",
+      "narration": "Wenige Sekunden später steht der Artikel auf der Website. Genau so funktioniert hier alles: Bereich wählen, Eintrag anlegen, Felder ausfüllen, speichern."
+    },
+    {
+      "id": "close",
+      "kind": "title",
+      "variants": ["long"],
+      "headline": "Fragen?",
+      "sub": "Unten links in der Seitenleiste: Rundgang starten",
+      "narration": "Und wenn du einmal nicht weiterweißt: unten links in der Seitenleiste startest du jederzeit den Rundgang, der dir jeden Bereich erklärt. Viel Spaß beim Ausprobieren."
+    }
+  ]
+}

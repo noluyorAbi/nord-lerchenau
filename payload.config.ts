@@ -8,6 +8,7 @@ import {
   lexicalEditor,
 } from "@payloadcms/richtext-lexical";
 import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
+import { de } from "@payloadcms/translations/languages/de";
 import { buildConfig } from "payload";
 import sharp from "sharp";
 
@@ -84,30 +85,52 @@ export default buildConfig({
       HeadingFeature({ enabledHeadingSizes: ["h1", "h2", "h3", "h4"] }),
     ],
   }),
+  // Order matters for the admin only: Payload builds the sidebar and the
+  // dashboard groups in the order it first meets each group here, collections
+  // before globals. Listed by group number so an editor sees 1. Inhalte first
+  // and 9. System last (payload/components/tour/help-nav.css finishes the
+  // ordering across the collection/global boundary). Nothing in the database
+  // depends on this order.
   collections: [
-    Users,
-    Media,
+    // 1. Inhalte
+    Posts,
+    Events,
+    // 2. Sport
     People,
     Teams,
-    Posts,
-    Sponsors,
     Fixtures,
-    Events,
+    // 3. Verein
+    Sponsors,
     Submissions,
+    // 9. System
+    Users,
+    Media,
   ],
   globals: [
-    SiteSettings,
-    Navigation,
+    // 4. Seiten
     HomePage,
-    ContactInfo,
     ChronikPage,
     VereinsheimPage,
     JugendfoerderPage,
-    LegalPages,
     FaqPage,
+    LegalPages,
+    // 5. Einstellungen
+    SiteSettings,
+    Navigation,
+    ContactInfo,
   ],
   typescript: {
     outputFile: path.resolve(dirname, "payload-types.ts"),
+  },
+  // German only. The people using this admin are club volunteers, and every
+  // label we write is German already; leaving Payload's own chrome ("Create
+  // New", "Save", "Dashboard") in English made the whole thing feel foreign and
+  // contradicted the German help texts that talk about "Neu erstellen" and
+  // "Speichern". With one supported language there is nothing to pick, so no
+  // language selector shows up either.
+  i18n: {
+    fallbackLanguage: "de",
+    supportedLanguages: { de },
   },
   admin: {
     meta: {
@@ -125,6 +148,9 @@ export default buildConfig({
     // CMS to anonymous visitors and must never run in production.
     components: {
       beforeDashboard: ["@/payload/components/WelcomeDashboard#default"],
+      // Help block at the bottom of the sidebar on every admin page: starts the
+      // guided tour, links to the tutorial video. See payload/components/tour.
+      afterNavLinks: ["@/payload/components/tour/HelpNav#default"],
     },
   },
   // Media uploads need durable storage on Vercel: a function's filesystem is

@@ -11,6 +11,8 @@ import {
   globalTag,
   TIME_WINDOWED_REVALIDATE_SECONDS,
   UNCACHED_COLLECTIONS,
+  MEDIA_DEPENDENT_COLLECTIONS,
+  MEDIA_DEPENDENT_GLOBALS,
 } from "@/lib/cms";
 
 /**
@@ -106,5 +108,29 @@ describe("cache tag registry", () => {
     expect(collectionTag("posts")).toBe("collection:posts");
     expect(globalTag("posts")).toBe("global:posts");
     expect(collectionTag("posts")).not.toBe(globalTag("posts"));
+  });
+  it("busts only real tags when a media document changes", () => {
+    // /api/revalidate turns a media change into these tags. A typo here would
+    // revalidate nothing and the club would keep seeing the replaced image,
+    // which is exactly the failure the hook exists to prevent.
+    for (const c of MEDIA_DEPENDENT_COLLECTIONS) {
+      expect(
+        CACHED_COLLECTIONS.has(c),
+        `${c} is listed as media-dependent but is not a cached collection`,
+      ).toBe(true);
+    }
+    for (const g of MEDIA_DEPENDENT_GLOBALS) {
+      expect(
+        CACHED_GLOBALS.has(g),
+        `${g} is listed as media-dependent but is not a cached global`,
+      ).toBe(true);
+    }
+  });
+
+  it("keeps media out of the write-only collections", () => {
+    // Media used to be write-only. It is read through relations, so leaving it
+    // in UNCACHED_COLLECTIONS would make the route accept the change and then
+    // silently revalidate nothing.
+    expect(UNCACHED_COLLECTIONS.has("media")).toBe(false);
   });
 });

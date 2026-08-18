@@ -5,6 +5,10 @@ import type { CollectionConfig } from "payload";
 
 import { anyone } from "../access/anyone";
 import { authenticated } from "../access/authenticated";
+import {
+  revalidateMediaOnChange,
+  revalidateMediaOnDelete,
+} from "../hooks/revalidate";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -24,6 +28,13 @@ export const Media: CollectionConfig = {
     delete: authenticated,
     read: anyone,
     update: authenticated,
+  },
+  // Replacing an image changes only this document, so without these hooks the
+  // pages that embed it keep serving the old file from the data cache until its
+  // 24h window expires. See the media branch in /api/revalidate for the tags.
+  hooks: {
+    afterChange: [revalidateMediaOnChange],
+    afterDelete: [revalidateMediaOnDelete],
   },
   upload: {
     staticDir: path.resolve(dirname, "../../public/uploads"),

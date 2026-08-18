@@ -55,14 +55,18 @@ Zwilling, fällt auf die kaputte `url` zurück und bleibt leer.
 ### 4.1 Storage-Adapter wieder aktiv (`payload.config.ts`)
 
 ```ts
+const BLOB_ENABLED =
+  Boolean(BLOB_TOKEN) &&
+  (Boolean(process.env.VERCEL) || process.env.BLOB_ENABLE_LOCAL === "true");
+
 vercelBlobStorage({
-  enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
+  enabled: BLOB_ENABLED,
   collections: { media: { disablePayloadAccessControl: true } },
-  token: process.env.BLOB_READ_WRITE_TOKEN,
+  token: BLOB_TOKEN,
 });
 ```
 
-Zwei bewusste Entscheidungen:
+Drei bewusste Entscheidungen:
 
 - **`disablePayloadAccessControl: true`.** Ohne diese Option liefert Payload
   jedes Bild über `/api/media/file/<name>` aus, also über einen Funktionsaufruf
@@ -77,9 +81,24 @@ Zwei bewusste Entscheidungen:
   nur Hooks an die bereits vorhandenen `url`-Felder. Damit ist für den Deploy
   keine Schema-Migration nötig.
 
+- **Token allein aktiviert nichts.** `BLOB_READ_WRITE_TOKEN` liegt in Vercel auch
+  im Scope _Development_, ein `vercel env pull` schreibt also ein gültiges
+  Produktions-Token in die lokale `.env.local`. Vor diesem Patch war das
+  folgenlos (`plugins: []`); danach hätte ein lokaler Seed oder ein Upload im
+  lokalen `/admin` direkt in den Store geschrieben, aus dem die Live-Seite liest.
+  Deshalb zählt zusätzlich `process.env.VERCEL`. Für einen bewussten Test gegen
+  den echten Store gibt es `BLOB_ENABLE_LOCAL=true` für genau diesen Lauf.
+
 Verifiziert durch Vergleich der aufgelösten Media-Felder mit und ohne Token:
 identische Feldliste, nur die Anzahl der `url`-afterRead-Hooks unterscheidet
-sich (2 gegen 1).
+sich (2 gegen 1). Die Aktivierungslogik ist in allen vier Kombinationen geprüft:
+
+| Umgebung                         | Blob aktiv |
+| -------------------------------- | ---------- |
+| Token, lokal, kein Opt-in        | nein       |
+| Token + `BLOB_ENABLE_LOCAL=true` | ja         |
+| Token + `VERCEL=1`               | ja         |
+| kein Token, `VERCEL=1`           | nein       |
 
 ### 4.2 Ausgetauschte Bilder können durchschlagen (`lib/publicUploads.ts`)
 
@@ -112,10 +131,14 @@ und das Ergebnis ist nach Prettier zeichengleich mit der Handarbeit.
 
 ### 4.4 Nebenbei (`next.config.ts`)
 
-`*.public.blob.vercel-storage.com` in `images.remotePatterns`. Heute rendert
-jeder Aufrufer von `mediaSrc` über ein einfaches `<img>` oder einen
-CSS-Hintergrund, ein späterer Wechsel auf `next/image` würde ohne diesen Eintrag
-zur Laufzeit scheitern.
+Der Blob-Host in `images.remotePatterns`, aber **auf den Store dieses Projekts
+gepinnt**, nicht als Wildcard. Heute rendert jeder Aufrufer von `mediaSrc` über
+ein einfaches `<img>` oder einen CSS-Hintergrund, ein späterer Wechsel auf
+`next/image` würde ohne den Eintrag zur Laufzeit scheitern. Eine Wildcard wäre
+allerdings ein offener Proxy gewesen: `/_next/image` optimiert jede URL, die auf
+ein Muster passt, also hätte sich jeder mit einem kostenlosen Blob-Store eigene
+Bilder unter `svnord.de` ausliefern lassen und die Optimizer-Kosten dem Verein
+in Rechnung gestellt.
 
 ## 5. Nachweis
 
@@ -177,6 +200,15 @@ Kehrseite dieser Idempotenz: die 82 Dateien aus der Juni-Phase werden nicht
 überschrieben. Sollte eine davon inhaltlich veraltet sein, den betreffenden Blob
 im Vercel-Dashboard löschen und `--apply` erneut laufen lassen.
 
+Das Skript teilt sich die Namens-Normalisierung per Import mit
+`lib/publicUploads`, statt sie zu kopieren, `put` läuft mit
+`allowOverwrite: false` (jeder Name wurde unmittelbar vorher als fehlend
+geprüft, ein Überschreiben hieße also, der Store hat sich unter uns geändert),
+und `head` behandelt nur einen echten `BlobNotFoundError` als "fehlt". Ein
+abgelaufenes Token bricht damit hörbar ab, statt einen zuversichtlichen, aber
+falschen Upload-Plan zu drucken. Gegengeprüft mit einem ungültigen Token:
+`Vercel Blob: Access denied`, Abbruch.
+
 ## 7. Reihenfolge für den Rollout
 
 1. `fix/cms-image-uploads-blob` mergen und deployen. Keine Schema-Migration
@@ -190,6 +222,16 @@ im Vercel-Dashboard löschen und `--apply` erneut laufen lassen.
    Seite ankommen.
 
 Schritte 2 und 4 verändern Produktionsdaten und sind bewusst nicht automatisiert.
+
+## 7a. Review
+
+Das Push-Gate hat den Patch mit acht Lenses geprüft. Keine blockierende
+Feststellung. Umgesetzt wurden die Hinweise zu: Wildcard-Bildhost (jetzt
+gepinnt), Token-Aktivierung ohne Vercel-Kontext (jetzt `BLOB_ENABLED`),
+kopierte Normalisierung (jetzt geteilt), verschluckte `head`-Fehler und
+`allowOverwrite` (beides enger gefasst), toter Term in der Fallback-Kette, und
+die fehlende Dokumentation von `NEXT_PUBLIC_PREFER_UPLOADED_MEDIA` in
+`.env.example`.
 
 ## 8. Bewusst nicht angefasst
 

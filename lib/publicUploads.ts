@@ -10,7 +10,13 @@ import path from "node:path";
 
 const UPLOADS_DIR = path.join(process.cwd(), "public", "uploads");
 
-function normalise(name: string): string {
+/**
+ * Reduce an upload filename to the key both sides of the media pipeline agree
+ * on: extension and Payload "-N" re-upload suffix removed, lowercased. Exported
+ * because scripts/migrate-media-to-blob.ts has to pick the same twin this
+ * module resolves to, and a second copy of the rule would drift silently.
+ */
+export function normaliseUploadName(name: string): string {
   return name
     .replace(/\.[^.]+$/, "") // strip extension
     .replace(/-\d+$/, "") // strip Payload "-1" upload suffix
@@ -24,7 +30,7 @@ function index(): Map<string, string> {
   const map = new Map<string, string>();
   try {
     for (const file of fs.readdirSync(UPLOADS_DIR)) {
-      map.set(normalise(file), file);
+      map.set(normaliseUploadName(file), file);
     }
   } catch {
     // directory missing , callers fall back to initials/placeholder
@@ -35,7 +41,7 @@ function index(): Map<string, string> {
 
 export function publicUploadSrc(filename?: string | null): string | null {
   if (!filename) return null;
-  const file = index().get(normalise(filename));
+  const file = index().get(normaliseUploadName(filename));
   return file ? `/uploads/${file}` : null;
 }
 
@@ -77,5 +83,7 @@ export function mediaSrc(
   const absolute = absoluteUrl(media.url);
 
   if (PREFER_UPLOADED && absolute) return absolute;
-  return committed ?? absolute ?? media.url ?? null;
+  // No `absolute` term here: when it is set it is media.url by construction, so
+  // listing it would imply a precedence that does not exist.
+  return committed ?? media.url ?? null;
 }

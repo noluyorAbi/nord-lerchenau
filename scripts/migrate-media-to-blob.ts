@@ -42,9 +42,11 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
-import { head, put } from "@vercel/blob";
+import { BlobNotFoundError, head, put } from "@vercel/blob";
 import { Client } from "pg";
 import sharp from "sharp";
+
+import { normaliseUploadName as normalise } from "@/lib/publicUploads";
 
 const UPLOADS_DIR = path.join(process.cwd(), "public", "uploads");
 const APPLY = process.argv.includes("--apply");
@@ -58,14 +60,6 @@ const MIME_BY_EXT: Record<string, string> = {
   ".svg": "image/svg+xml",
   ".webp": "image/webp",
 };
-
-/** Same normalisation lib/publicUploads uses, so both sides agree on twins. */
-function normalise(name: string): string {
-  return name
-    .replace(/\.[^.]+$/, "")
-    .replace(/-\d+$/, "")
-    .toLowerCase();
-}
 
 type Row = {
   id: number;
@@ -160,12 +154,18 @@ function resolveSource(name: string, local: LocalIndex): Source | null {
   };
 }
 
+/**
+ * Only a genuine 404 counts as "not there". An expired token, a suspended store
+ * or a network blip must abort the run instead of being reported as a missing
+ * file, which would otherwise turn into a confident but wrong upload plan.
+ */
 async function existsInBlob(name: string, token: string): Promise<boolean> {
   try {
     await head(name, { token });
     return true;
-  } catch {
-    return false;
+  } catch (err) {
+    if (err instanceof BlobNotFoundError) return false;
+    throw err;
   }
 }
 
@@ -241,7 +241,9 @@ async function main() {
       await put(name, data, {
         access: "public",
         addRandomSuffix: false,
-        allowOverwrite: true,
+        // Every name here was just confirmed absent, so an overwrite would mean
+        // the store changed under us. Fail that file loudly instead.
+        allowOverwrite: false,
         contentType:
           MIME_BY_EXT[path.extname(name).toLowerCase()] ??
           "application/octet-stream",

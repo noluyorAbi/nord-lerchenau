@@ -37,6 +37,16 @@ const dirname = path.dirname(filename);
 // Fail fast on Vercel if the JWT secret is missing: an empty secret produces
 // forgeable tokens. Locally (no VERCEL env) fall back to a placeholder so the
 // build and typecheck can still run without secrets present.
+// Blob uploads are armed only inside a Vercel deployment. BLOB_READ_WRITE_TOKEN
+// is set for Development too, so a `vercel env pull` puts a live production
+// token into .env.local; without this guard a local seed or /admin upload would
+// write straight into the store the live site reads from. BLOB_ENABLE_LOCAL=true
+// is the deliberate opt-in for verifying the upload path against the real store.
+const BLOB_TOKEN = process.env.BLOB_READ_WRITE_TOKEN;
+const BLOB_ENABLED =
+  Boolean(BLOB_TOKEN) &&
+  (Boolean(process.env.VERCEL) || process.env.BLOB_ENABLE_LOCAL === "true");
+
 const PAYLOAD_SECRET = process.env.PAYLOAD_SECRET;
 if (!PAYLOAD_SECRET && process.env.VERCEL) {
   throw new Error(
@@ -123,11 +133,12 @@ export default buildConfig({
   // fails and the resulting doc points at /api/media/file/<name>, which 500s
   // because the file is nowhere on the deployed instance.
   //
-  // With BLOB_READ_WRITE_TOKEN set (Vercel, all environments) uploads go to
-  // Vercel Blob and media.url resolves to the public blob URL, so the club can
-  // upload from /admin and the image persists across deploys. Without the token
-  // the plugin disables itself and Payload falls back to local disk, which is
-  // what local dev and the seed scripts expect.
+  // Inside a Vercel deployment uploads go to Vercel Blob and media.url resolves
+  // to the public blob URL, so the club can upload from /admin and the image
+  // persists across deploys. Elsewhere (and whenever the token is absent) the
+  // plugin disables itself and Payload falls back to local disk, which is what
+  // local dev and the seed scripts expect. See BLOB_ENABLED above for why the
+  // token alone is not enough.
   //
   // disablePayloadAccessControl: the media collection is already world-readable
   // (Media.access.read = anyone) and the blobs are stored with public access, so
@@ -146,9 +157,9 @@ export default buildConfig({
   // storage is preferred later; only this block changes.
   plugins: [
     vercelBlobStorage({
-      enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
+      enabled: BLOB_ENABLED,
       collections: { media: { disablePayloadAccessControl: true } },
-      token: process.env.BLOB_READ_WRITE_TOKEN,
+      token: BLOB_TOKEN,
     }),
   ],
 });

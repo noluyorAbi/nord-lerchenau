@@ -12,9 +12,15 @@ const nextConfig: NextConfig = {
       // return an absolute blob URL. Today every consumer renders it via a
       // plain <img> or a CSS background, but registering the host here means a
       // later switch to next/image does not fail the render at runtime.
+      //
+      // Pinned to THIS project's store, not `*.public.blob.vercel-storage.com`:
+      // /_next/image proxies any URL matching a pattern, so a wildcard would let
+      // anyone with a free blob store serve their own images off svnord.de and
+      // bill the optimizer to the club. Update the subdomain if the store is
+      // ever recreated (it is the id inside BLOB_READ_WRITE_TOKEN).
       {
         protocol: "https",
-        hostname: "*.public.blob.vercel-storage.com",
+        hostname: "wifujncy146uydef.public.blob.vercel-storage.com",
       },
     ],
   },

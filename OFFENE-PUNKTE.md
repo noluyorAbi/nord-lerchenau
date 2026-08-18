@@ -34,6 +34,8 @@ Der Code-Teil ist erledigt (Branch `fix/cms-image-uploads-blob`): Plugin wieder 
 
 Test danach: im `/admin` ein Bild hochladen. Es muss eine `...blob.vercel-storage.com`-URL bekommen und nach einem Redeploy weiter sichtbar sein.
 
+Bekannte Grenze: pro Bild höchstens **4 MB**. Ein Upload läuft durch eine Vercel-Funktion, und deren Request-Body ist auf 4,5 MB begrenzt. Der Hinweis steht im Admin über der Bilder-Sammlung; Handy-Fotos vorher verkleinern.
+
 Details und Messwerte: `docs/CMS-BILDER-ANALYSE-2026-08-18.md`.
 
 ### 2. Kontaktformular-Mails (Resend) — ✅ INTERIM LIVE seit 2026-07-06

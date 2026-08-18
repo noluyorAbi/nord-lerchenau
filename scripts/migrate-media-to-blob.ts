@@ -45,11 +45,18 @@ import path from "node:path";
 import { BlobNotFoundError, head, put } from "@vercel/blob";
 import { Client } from "pg";
 import sharp from "sharp";
+import type { FormatEnum } from "sharp";
 
 import { normaliseUploadName as normalise } from "@/lib/publicUploads";
 
 const UPLOADS_DIR = path.join(process.cwd(), "public", "uploads");
 const APPLY = process.argv.includes("--apply");
+
+/** sharp encoder for the extension a media row's filename carries. */
+function targetFormat(name: string): keyof FormatEnum {
+  const ext = path.extname(name).toLowerCase().slice(1);
+  return (ext === "jpg" ? "jpeg" : ext) as keyof FormatEnum;
+}
 
 const MIME_BY_EXT: Record<string, string> = {
   ".avif": "image/avif",
@@ -233,9 +240,14 @@ async function main() {
     }
     try {
       const raw = await fs.readFile(path.join(UPLOADS_DIR, source.file));
+      // Encode in the format the target name (and the contentType below)
+      // promises. Without toFormat, sharp keeps the SOURCE encoding, so a size
+      // regenerated from a .jpg original would be stored as JPEG bytes under a
+      // .webp name and served as image/webp: a file that lies about its type.
       const data = source.resize
         ? await sharp(raw)
             .resize(source.resize.width, source.resize.height, { fit: "cover" })
+            .toFormat(targetFormat(name))
             .toBuffer()
         : raw;
       await put(name, data, {

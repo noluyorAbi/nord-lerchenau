@@ -33,7 +33,7 @@ function index(): Map<string, string> {
       map.set(normaliseUploadName(file), file);
     }
   } catch {
-    // directory missing , callers fall back to initials/placeholder
+    // directory missing: callers fall back to initials/placeholder
   }
   cache = map;
   return map;

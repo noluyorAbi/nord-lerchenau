@@ -223,6 +223,29 @@ falschen Upload-Plan zu drucken. Gegengeprüft mit einem ungültigen Token:
 
 Schritte 2 und 4 verändern Produktionsdaten und sind bewusst nicht automatisiert.
 
+## 6a. Grenze: 4 MB pro Upload
+
+Ein Upload aus dem `/admin` läuft als normaler Request durch eine
+Vercel-Funktion, und deren Request-Body ist auf **4,5 MB** begrenzt
+(`vercel.com/docs/functions/limitations`, Stand 01.07.2026). Größere Dateien
+antworten mit `413 FUNCTION_PAYLOAD_TOO_LARGE`. Ein Handy-Foto liegt oft
+darüber, deshalb steht der Hinweis jetzt direkt im Admin über der
+Bilder-Sammlung.
+
+Der offizielle Ausweg des Plugins, `clientUploads: true`, wurde geprüft und
+wieder verworfen: er ist mit der WebP-Konvertierung dieser Sammlung
+unvereinbar. Der Browser legt dabei das **Original unter dem Originalnamen** im
+Store ab, Payload benennt den Datensatz anschließend auf `<name>.webp` um, und
+nur die generierten Größen werden serverseitig geschrieben. `media.url` zeigt
+danach auf ein Objekt, das nie existiert. Gemessen, nicht vermutet: ein
+9,99-MB-JPEG über diesen Weg hinterließ `zz-big-photo.jpg` im Store, während
+`zz-big-photo.webp` mit 404 antwortete. Alle Größen und der Testdatensatz sind
+danach wieder entfernt worden.
+
+Wer die Grenze später wirklich aufheben will, muss die Konvertierung und die
+Namensgebung angleichen (Upload bereits im Zielformat, oder Verzicht auf
+`formatOptions`) und die Bildgröße dann anders in den Griff bekommen.
+
 ## 7a. Review
 
 Das Push-Gate hat den Patch mit acht Lenses geprüft. Keine blockierende
@@ -231,7 +254,11 @@ gepinnt), Token-Aktivierung ohne Vercel-Kontext (jetzt `BLOB_ENABLED`),
 kopierte Normalisierung (jetzt geteilt), verschluckte `head`-Fehler und
 `allowOverwrite` (beides enger gefasst), toter Term in der Fallback-Kette, und
 die fehlende Dokumentation von `NEXT_PUBLIC_PREFER_UPLOADED_MEDIA` in
-`.env.example`.
+`.env.example`. Der Hinweis zur 4,5-MB-Grenze führte zu Abschnitt 6a und zum
+Hinweistext im Admin, der Hinweis zum sharp-Ausgabeformat zu `toFormat()` im
+Migrationsskript (die bereits hochgeladenen Dateien sind davon nicht betroffen,
+alle neun regenerierten Varianten sind jpg aus jpg, Bytes und `Content-Type`
+stimmen überein, nachgemessen).
 
 ## 8. Bewusst nicht angefasst
 

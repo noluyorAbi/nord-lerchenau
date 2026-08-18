@@ -158,6 +158,16 @@ export default buildConfig({
   plugins: [
     vercelBlobStorage({
       enabled: BLOB_ENABLED,
+      // NO clientUploads, deliberately. It would lift Vercel's 4.5 MB function
+      // request-body cap (vercel.com/docs/functions/limitations) by having the
+      // browser PUT straight into the store, but it is incompatible with the
+      // webp conversion this collection does: the browser writes the ORIGINAL
+      // under its original name, Payload then renames the document to <name>.webp
+      // and only the generated sizes get written server-side, so media.url points
+      // at an object that never exists. Measured, not assumed: a 9.99 MB jpeg
+      // uploaded that way left zz-big-photo.jpg in the store and answered 404 for
+      // the zz-big-photo.webp the row named. Uploads therefore go through the
+      // function, and Media.admin.description tells editors about the size cap.
       collections: { media: { disablePayloadAccessControl: true } },
       token: BLOB_TOKEN,
     }),

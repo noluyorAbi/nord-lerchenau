@@ -7,6 +7,7 @@ import {
   HeadingFeature,
   lexicalEditor,
 } from "@payloadcms/richtext-lexical";
+import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
 import { buildConfig } from "payload";
 import sharp from "sharp";
 
@@ -36,6 +37,16 @@ const dirname = path.dirname(filename);
 // Fail fast on Vercel if the JWT secret is missing: an empty secret produces
 // forgeable tokens. Locally (no VERCEL env) fall back to a placeholder so the
 // build and typecheck can still run without secrets present.
+// Blob uploads are armed only inside a Vercel deployment. BLOB_READ_WRITE_TOKEN
+// is set for Development too, so a `vercel env pull` puts a live production
+// token into .env.local; without this guard a local seed or /admin upload would
+// write straight into the store the live site reads from. BLOB_ENABLE_LOCAL=true
+// is the deliberate opt-in for verifying the upload path against the real store.
+const BLOB_TOKEN = process.env.BLOB_READ_WRITE_TOKEN;
+const BLOB_ENABLED =
+  Boolean(BLOB_TOKEN) &&
+  (Boolean(process.env.VERCEL) || process.env.BLOB_ENABLE_LOCAL === "true");
+
 const PAYLOAD_SECRET = process.env.PAYLOAD_SECRET;
 if (!PAYLOAD_SECRET && process.env.VERCEL) {
   throw new Error(
@@ -116,9 +127,49 @@ export default buildConfig({
       beforeDashboard: ["@/payload/components/WelcomeDashboard#default"],
     },
   },
-  // Media is stored on local disk (Media.upload.staticDir = public/uploads) and
-  // served from there; the frontend resolves images to committed /public assets
-  // via lib/publicUploads. No external blob storage. If CMS-managed uploads are
-  // reintroduced later, add an external adapter here (e.g. S3 / Cloudflare R2).
-  plugins: [],
+  // Media uploads need durable storage on Vercel: a function's filesystem is
+  // read-only and per-invocation, so Payload's local-disk adapter cannot write
+  // Media.upload.staticDir there. Without an adapter every upload from /admin
+  // fails and the resulting doc points at /api/media/file/<name>, which 500s
+  // because the file is nowhere on the deployed instance.
+  //
+  // Inside a Vercel deployment uploads go to Vercel Blob and media.url resolves
+  // to the public blob URL, so the club can upload from /admin and the image
+  // persists across deploys. Elsewhere (and whenever the token is absent) the
+  // plugin disables itself and Payload falls back to local disk, which is what
+  // local dev and the seed scripts expect. See BLOB_ENABLED above for why the
+  // token alone is not enough.
+  //
+  // disablePayloadAccessControl: the media collection is already world-readable
+  // (Media.access.read = anyone) and the blobs are stored with public access, so
+  // routing every image through /api/media/file/<name> would add a function
+  // invocation per image without protecting anything. With it on, media.url is
+  // the blob CDN URL and browsers fetch images straight from the CDN.
+  //
+  // No alwaysInsertFields: it only inserts the `prefix` field on the DISABLED
+  // path (see plugin-cloud-storage/plugin.js, the enabled branch never passes
+  // it through), so switching it on would give the token-less environment a
+  // column the token-carrying one lacks. Leaving it off means this plugin adds
+  // no column at all: it only re-hooks the existing `url` fields, so no schema
+  // migration is needed to deploy it.
+  //
+  // Swap to @payloadcms/storage-s3 (Cloudflare R2) here if vendor-neutral
+  // storage is preferred later; only this block changes.
+  plugins: [
+    vercelBlobStorage({
+      enabled: BLOB_ENABLED,
+      // NO clientUploads, deliberately. It would lift Vercel's 4.5 MB function
+      // request-body cap (vercel.com/docs/functions/limitations) by having the
+      // browser PUT straight into the store, but it is incompatible with the
+      // webp conversion this collection does: the browser writes the ORIGINAL
+      // under its original name, Payload then renames the document to <name>.webp
+      // and only the generated sizes get written server-side, so media.url points
+      // at an object that never exists. Measured, not assumed: a 9.99 MB jpeg
+      // uploaded that way left zz-big-photo.jpg in the store and answered 404 for
+      // the zz-big-photo.webp the row named. Uploads therefore go through the
+      // function, and Media.admin.description tells editors about the size cap.
+      collections: { media: { disablePayloadAccessControl: true } },
+      token: BLOB_TOKEN,
+    }),
+  ],
 });

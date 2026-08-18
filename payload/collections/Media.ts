@@ -14,7 +14,9 @@ export const Media: CollectionConfig = {
   admin: {
     useAsTitle: "filename",
     description:
-      "Alle hochgeladenen Bilder. 'Alt-Text' ist Pflicht (Beschreibung für Screenreader & SEO).",
+      "Alle hochgeladenen Bilder. 'Alt-Text' ist Pflicht (Beschreibung für Screenreader & SEO). " +
+      "Bitte höchstens 4 MB pro Datei hochladen: größere Dateien werden vom Server abgewiesen. " +
+      "Handy-Fotos vorher verkleinern (z.B. in der Fotos-App teilen und 'Mittel' wählen).",
     group: "9. System",
   },
   access: {

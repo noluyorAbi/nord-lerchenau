@@ -29,7 +29,7 @@ const TONE_CLASSES: Record<
   },
   paper: {
     card: "bg-nord-paper-2 text-nord-ink border border-nord-line",
-    eyebrow: "text-nord-gold",
+    eyebrow: "text-nord-gold-ink",
     meta: "text-nord-muted",
     arrow: "text-nord-navy",
   },
@@ -202,7 +202,7 @@ export default async function FussballPage() {
                 className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(110,199,234,0.3)_0%,transparent_60%)]"
               />
               <div className="relative">
-                <div className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-nord-gold-ink">
+                <div className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-nord-gold">
                   PR · Events · Equipment · Organisation
                 </div>
                 <h2 className="mt-3 font-display text-2xl font-black tracking-tight md:text-3xl">

@@ -193,7 +193,7 @@ export default async function ChronikPage() {
 
         <section id="eras" className="mb-16 scroll-mt-28">
           <div className="mb-5 flex items-baseline justify-between gap-4 border-b border-nord-line pb-2">
-            <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
+            <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold-ink">
               02 · Sieben Kapitel
             </div>
             <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-nord-muted">
@@ -238,7 +238,7 @@ export default async function ChronikPage() {
                 className="group rounded-2xl border border-nord-line bg-white p-5 transition hover:-translate-y-0.5 hover:border-nord-gold hover:shadow-md md:p-6"
               >
                 <div className="flex items-center justify-between gap-3">
-                  <span className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-nord-gold">
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-nord-gold-ink">
                     Kap. {String(i + 1).padStart(2, "0")}
                   </span>
                   <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-nord-muted">
@@ -263,7 +263,7 @@ export default async function ChronikPage() {
         >
           <div className="mb-5 flex items-baseline justify-between gap-4 border-b border-nord-line pb-2">
             <div>
-              <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
+              <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold-ink">
                 03 · Zeittafel
               </div>
               <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-nord-ink md:text-4xl">
@@ -288,7 +288,7 @@ export default async function ChronikPage() {
         >
           <div className="mb-5 flex items-baseline justify-between gap-4 border-b border-nord-line pb-2">
             <div>
-              <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
+              <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold-ink">
                 04 · Vorstandschaften
               </div>
               <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-nord-ink md:text-4xl">
@@ -306,7 +306,7 @@ export default async function ChronikPage() {
         >
           <div className="mb-5 flex items-baseline justify-between gap-4 border-b border-nord-line pb-2">
             <div>
-              <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
+              <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold-ink">
                 05 · Ehrentafel
               </div>
               <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-nord-ink md:text-4xl">
@@ -324,7 +324,7 @@ export default async function ChronikPage() {
         >
           <div className="mb-5 flex items-baseline justify-between gap-4 border-b border-nord-line pb-2">
             <div>
-              <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
+              <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold-ink">
                 06 · Erzählung
               </div>
               <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-nord-ink md:text-4xl">
@@ -348,7 +348,7 @@ export default async function ChronikPage() {
         >
           <div className="mb-5 flex items-baseline justify-between gap-4 border-b border-nord-line pb-2">
             <div>
-              <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
+              <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold-ink">
                 07 · Chronik Zeitschriften
               </div>
               <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-nord-ink md:text-4xl">

@@ -85,20 +85,20 @@ export default async function SponsorenPage() {
             </div>
             <ul className="mt-4 space-y-2 text-sm text-nord-ink">
               <li className="flex gap-2">
-                <span className="text-nord-gold">›</span> Höherer
+                <span className="text-nord-gold-ink">›</span> Höherer
                 Bekanntheitsgrad für Ihr Unternehmen
               </li>
               <li className="flex gap-2">
-                <span className="text-nord-gold">›</span> Ausdruck sozialen
+                <span className="text-nord-gold-ink">›</span> Ausdruck sozialen
                 Engagements (z.B. Mannschaftsfotos)
               </li>
               <li className="flex gap-2">
-                <span className="text-nord-gold">›</span> Zusätzliche Werbung
-                auf Social Media (Instagram, Facebook)
+                <span className="text-nord-gold-ink">›</span> Zusätzliche
+                Werbung auf Social Media (Instagram, Facebook)
               </li>
               <li className="flex gap-2">
-                <span className="text-nord-gold">›</span> Aushang auf unseren
-                Spielankündigungsplakaten
+                <span className="text-nord-gold-ink">›</span> Aushang auf
+                unseren Spielankündigungsplakaten
               </li>
             </ul>
           </div>
@@ -178,21 +178,21 @@ export default async function SponsorenPage() {
               </div>
               <ul className="mt-3 space-y-2 text-sm text-nord-ink">
                 <li className="flex gap-2">
-                  <span className="text-nord-gold">›</span>
+                  <span className="text-nord-gold-ink">›</span>
                   <span>
                     <strong>Kein Stress:</strong> Der Spender scannt den Code
                     einfach mit seiner Banking-App.
                   </span>
                 </li>
                 <li className="flex gap-2">
-                  <span className="text-nord-gold">›</span>
+                  <span className="text-nord-gold-ink">›</span>
                   <span>
                     <strong>Kein Tippen:</strong> IBAN und Verwendungszweck sind
                     schon teilweise fertig hinterlegt.
                   </span>
                 </li>
                 <li className="flex gap-2">
-                  <span className="text-nord-gold">›</span>
+                  <span className="text-nord-gold-ink">›</span>
                   <span>
                     <strong>Schneller Abschluss:</strong> Es dauert keine 30
                     Sekunden – die Hürde zu helfen war noch nie so niedrig.

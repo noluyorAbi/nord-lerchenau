@@ -264,7 +264,7 @@ function renderBlock(block: LegalBlock, idx: number): ReactNode {
               </div>
             ) : null}
           </div>
-          <span className="text-nord-gold" aria-hidden>
+          <span className="text-nord-gold-ink" aria-hidden>
             ↗
           </span>
         </a>

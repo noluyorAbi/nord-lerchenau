@@ -88,7 +88,7 @@ export default async function KontaktPage({ searchParams }: Props) {
           <aside className="space-y-5">
             {(contact.email || contact.phone) && (
               <div className="overflow-hidden rounded-2xl bg-nord-ink p-7 text-white md:p-8">
-                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold-ink">
+                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold">
                   Direkt erreichen
                 </div>
                 <p className="mt-3 font-display text-[22px] font-extrabold leading-tight">

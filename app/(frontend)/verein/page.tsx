@@ -84,7 +84,7 @@ const TONE_CLASSES: Record<
   },
   paper: {
     card: "bg-nord-paper-2 text-nord-ink border border-nord-line",
-    eyebrow: "text-nord-gold",
+    eyebrow: "text-nord-gold-ink",
     meta: "text-nord-muted",
     arrow: "text-nord-navy",
   },
@@ -118,7 +118,7 @@ export default function VereinPage() {
               key={stat.label}
               className="group rounded-2xl border border-nord-line bg-white p-5 text-nord-ink transition duration-300 ease-out hover:-translate-y-0.5 hover:border-nord-gold/60 hover:shadow-[0_18px_36px_-22px_rgba(212,160,23,0.45)] md:p-6"
             >
-              <div className="font-display text-4xl font-black leading-none tracking-tight transition-colors duration-300 group-hover:text-nord-gold md:text-5xl">
+              <div className="font-display text-4xl font-black leading-none tracking-tight transition-colors duration-300 group-hover:text-nord-gold-ink md:text-5xl">
                 {stat.value}
               </div>
               <div className="mt-3 font-mono text-[10px] font-semibold uppercase tracking-[0.15em] text-nord-muted">

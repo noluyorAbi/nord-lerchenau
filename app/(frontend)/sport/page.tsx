@@ -152,7 +152,7 @@ export default function SportPage() {
       />
       <section className="mx-auto max-w-7xl px-6 py-16 md:px-10 md:py-20">
         <div className="mb-10 rounded-2xl border border-nord-line bg-nord-paper-2 p-6 md:p-8">
-          <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
+          <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold-ink">
             Qualifizierte Übungsleiter
           </div>
           <p className="mt-2 max-w-3xl text-sm leading-relaxed text-nord-ink md:text-base">
@@ -192,7 +192,7 @@ export default function SportPage() {
         <section id="trainerlizenzen" className="mt-16 scroll-mt-28">
           <div className="mb-5 flex flex-wrap items-baseline justify-between gap-3 border-b border-nord-line pb-2">
             <div>
-              <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
+              <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold-ink">
                 Übungsleiter mit Trainerlizenz
               </div>
               <h2 className="mt-2 font-display text-2xl font-black tracking-tight text-nord-ink md:text-3xl">

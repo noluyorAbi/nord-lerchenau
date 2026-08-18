@@ -252,7 +252,10 @@ export function AiAssistant() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        aria-label={open ? "Assistent schließen" : "Assistent öffnen"}
+        // Der sichtbare Text der Schaltflaeche lautet "Nord-Assistent". Stand
+        // im zugaenglichen Namen nur "Assistent", konnte ihn per Sprache
+        // niemand ansteuern (WCAG 2.5.3, Label in Name).
+        aria-label={open ? "Nord-Assistent schließen" : "Nord-Assistent öffnen"}
         aria-expanded={open}
         className={`fixed bottom-24 right-6 z-40 inline-flex h-14 items-center gap-2 rounded-full bg-nord-navy pl-4 pr-5 text-white shadow-[0_14px_30px_-10px_rgba(26,61,188,0.55)] transition hover:-translate-y-0.5 hover:bg-nord-navy-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nord-gold md:bottom-28 md:right-8 ${
           open ? "scale-95 opacity-0 pointer-events-none" : ""

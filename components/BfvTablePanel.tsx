@@ -15,7 +15,7 @@ export async function BfvTablePanel({ bfv, compact }: Props) {
     return (
       <section className="rounded-2xl border border-nord-line bg-nord-paper-2 p-6">
         <div className="flex items-center justify-between gap-3">
-          <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold">
+          <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold-ink">
             BFV · Tabelle
           </div>
           {profileUrl ? (
@@ -46,7 +46,7 @@ export async function BfvTablePanel({ bfv, compact }: Props) {
     <section className="overflow-hidden rounded-2xl border border-nord-line bg-white">
       <div className="flex items-center justify-between gap-3 border-b border-nord-line bg-nord-paper-2 px-6 py-4">
         <div>
-          <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-nord-gold">
+          <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-nord-gold-ink">
             BFV · Tabelle
           </div>
           {bfv.spielklasse ? (
@@ -121,7 +121,7 @@ export async function BfvTablePanel({ bfv, compact }: Props) {
             <span className="hidden text-right tabular-nums text-nord-muted sm:inline">
               {formatGoalDiff(row.goalDifference)}
             </span>
-            <span className="text-right font-display text-[17px] font-black text-nord-gold">
+            <span className="text-right font-display text-[17px] font-black text-nord-gold-ink">
               {row.points}
               <span className="ml-1 font-normal text-[10px] text-nord-muted">
                 Pkt

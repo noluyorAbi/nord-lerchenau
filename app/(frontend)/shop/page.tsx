@@ -255,7 +255,7 @@ export default async function ShopPage() {
                     </div>
                     <div className="flex flex-1 flex-col gap-2 p-4">
                       {p.manufacturer ? (
-                        <div className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-nord-gold">
+                        <div className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-nord-gold-ink">
                           {p.manufacturer}
                         </div>
                       ) : null}

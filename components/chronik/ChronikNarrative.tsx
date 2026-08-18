@@ -169,7 +169,7 @@ export function ChronikNarrative() {
 
             {chapter.highlights ? (
               <div>
-                <div className="mb-2 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-nord-gold">
+                <div className="mb-2 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-nord-gold-ink">
                   Highlights
                 </div>
                 <ul className="grid gap-2 sm:grid-cols-3">

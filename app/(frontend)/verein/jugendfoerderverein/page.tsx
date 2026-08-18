@@ -72,13 +72,13 @@ export default async function JugendfoerderPage() {
         )}
 
         <section className="mt-10 rounded-2xl border border-nord-line bg-white p-8">
-          <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold">
+          <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold-ink">
             Unsere Unterstützung
           </div>
           <ul className="mt-4 space-y-2.5 text-base leading-relaxed text-nord-ink">
             {bullets.map((b) => (
               <li key={b} className="flex gap-2">
-                <span className="select-none text-nord-gold">›</span>
+                <span className="select-none text-nord-gold-ink">›</span>
                 <span>{b}</span>
               </li>
             ))}
@@ -86,7 +86,7 @@ export default async function JugendfoerderPage() {
         </section>
 
         <section className="mt-8 rounded-2xl bg-nord-paper-2 p-8">
-          <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold">
+          <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold-ink">
             Mitglied werden
           </div>
           <p className="mt-3 text-base leading-relaxed text-nord-ink">
@@ -116,7 +116,7 @@ export default async function JugendfoerderPage() {
 
         {iban ? (
           <section className="mt-8 rounded-2xl border border-nord-line bg-white p-6 md:p-8">
-            <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold">
+            <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold-ink">
               Direktspende
             </div>
             <div className="mt-3">

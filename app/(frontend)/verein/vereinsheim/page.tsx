@@ -30,7 +30,7 @@ export default async function VereinsheimPage() {
       />
       <article className="mx-auto max-w-3xl px-6 py-16 md:py-20">
         <div className="mb-8 rounded-2xl border border-nord-line bg-nord-paper-2 p-5 md:p-6">
-          <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold">
+          <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold-ink">
             SV Nord München-Lerchenau e.V.
           </div>
           <p className="mt-2 text-sm leading-relaxed text-nord-ink md:text-base">

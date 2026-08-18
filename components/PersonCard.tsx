@@ -50,7 +50,7 @@ export function PersonCard({ person }: Props) {
       <h3 className="mt-4 text-base font-bold tracking-tight text-nord-ink">
         {person.name}
       </h3>
-      <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-nord-sky">
+      <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-nord-sky-ink">
         {person.role}
       </div>
       <div className="mt-3 space-y-0.5 text-xs text-nord-muted">
@@ -61,7 +61,7 @@ export function PersonCard({ person }: Props) {
                 href={wa}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1.5 font-semibold text-[#128c4a] transition hover:text-[#0d6b39]"
+                className="inline-flex items-center gap-1.5 font-semibold text-[#0f7a41] transition hover:text-[#0d6b39]"
               >
                 <svg
                   viewBox="0 0 24 24"

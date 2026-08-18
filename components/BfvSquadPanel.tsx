@@ -16,7 +16,7 @@ export async function BfvSquadPanel({ bfv }: Props) {
       <section className="rounded-2xl border border-dashed border-nord-line bg-nord-paper-2 p-6">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold">
+            <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold-ink">
               Kader · BFV
             </div>
             <p className="mt-2 max-w-prose text-sm leading-relaxed text-nord-muted">
@@ -57,7 +57,7 @@ export async function BfvSquadPanel({ bfv }: Props) {
     <section className="overflow-hidden rounded-2xl border border-nord-line bg-white">
       <div className="flex items-center justify-between gap-3 border-b border-nord-line bg-nord-paper-2 px-5 py-3.5">
         <div>
-          <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold">
+          <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold-ink">
             Kader · BFV
           </div>
           <div className="mt-0.5 font-display text-sm font-bold text-nord-ink">

@@ -35,7 +35,7 @@ export async function FupaSquadPanel({ fupa, teamName }: Props) {
       <section className="rounded-2xl border border-dashed border-nord-line bg-nord-paper-2 p-6">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold">
+            <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold-ink">
               Kader · fupa
             </div>
             <p className="mt-2 max-w-prose text-sm leading-relaxed text-nord-muted">

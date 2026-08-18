@@ -110,7 +110,7 @@ export default async function MitgliedschaftPage() {
                 rel="noopener noreferrer"
                 className="group flex flex-col gap-3 rounded-xl border border-nord-gold/40 bg-gradient-to-br from-nord-paper-2 to-white p-6 transition hover:border-nord-gold hover:shadow-sm"
               >
-                <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-nord-gold">
+                <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-nord-gold-ink">
                   {form.tag}
                 </div>
                 <h3 className="text-xl font-bold tracking-tight text-nord-ink">
@@ -142,7 +142,7 @@ export default async function MitgliedschaftPage() {
           </div>
           <div className="grid gap-4 md:grid-cols-3">
             <div className="rounded-xl border border-nord-line bg-white p-6">
-              <div className="text-2xl font-bold text-nord-sky">01</div>
+              <div className="text-2xl font-bold text-nord-sky-ink">01</div>
               <h3 className="mt-3 text-lg font-bold tracking-tight text-nord-ink">
                 Melde dich vorab zum Training
               </h3>
@@ -176,7 +176,7 @@ export default async function MitgliedschaftPage() {
             </div>
 
             <div className="rounded-xl border border-nord-line bg-white p-6">
-              <div className="text-2xl font-bold text-nord-sky">02</div>
+              <div className="text-2xl font-bold text-nord-sky-ink">02</div>
               <h3 className="mt-3 text-lg font-bold tracking-tight text-nord-ink">
                 Antrag stellen
               </h3>
@@ -194,7 +194,7 @@ export default async function MitgliedschaftPage() {
             </div>
 
             <div className="rounded-xl border border-nord-line bg-white p-6">
-              <div className="text-2xl font-bold text-nord-sky">03</div>
+              <div className="text-2xl font-bold text-nord-sky-ink">03</div>
               <h3 className="mt-3 text-lg font-bold tracking-tight text-nord-ink">
                 Bestätigung Mitgliedschaft
               </h3>
@@ -219,7 +219,7 @@ export default async function MitgliedschaftPage() {
               >
                 <span
                   aria-hidden
-                  className="mt-0.5 shrink-0 font-bold text-nord-gold"
+                  className="mt-0.5 shrink-0 font-bold text-nord-gold-ink"
                 >
                   ✓
                 </span>
@@ -252,7 +252,7 @@ export default async function MitgliedschaftPage() {
                 </span>
               </span>
               <span
-                className="shrink-0 text-nord-gold transition-transform group-hover:translate-x-0.5"
+                className="shrink-0 text-nord-gold-ink transition-transform group-hover:translate-x-0.5"
                 aria-hidden
               >
                 ↓
@@ -271,7 +271,7 @@ export default async function MitgliedschaftPage() {
                 </span>
               </span>
               <span
-                className="shrink-0 text-nord-gold transition-transform group-hover:translate-x-0.5"
+                className="shrink-0 text-nord-gold-ink transition-transform group-hover:translate-x-0.5"
                 aria-hidden
               >
                 ↗
@@ -281,7 +281,7 @@ export default async function MitgliedschaftPage() {
         </section>
 
         <section className="mb-16 rounded-2xl border border-nord-line bg-nord-paper-2 p-8 md:p-10">
-          <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-nord-gold">
+          <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-nord-gold-ink">
             Kündigung
           </div>
           <h2 className="mt-2 text-lg font-bold tracking-tight text-nord-ink">

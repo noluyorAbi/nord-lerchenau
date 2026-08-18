@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { HeroMatchCard } from "@/components/home/HeroMatchCard";
@@ -197,15 +198,31 @@ export async function Hero({ hero }: Props) {
         {HERO_SLIDES.map((src, i) => (
           <div
             key={src}
-            className="hero-slide absolute inset-0 bg-cover bg-center"
+            className="hero-slide absolute inset-0"
             style={{
-              backgroundImage: `url(${src})`,
               // Vorwärts-Reihenfolge: Layer i wird ab i*HERO_PER_SLIDE_S sichtbar.
               // Negativer Delay verschiebt rückwärts, daher (slideCount - i).
               animationDelay:
                 i === 0 ? "0s" : `-${(slideCount - i) * HERO_PER_SLIDE_S}s`,
             }}
-          />
+          >
+            {/* Früher CSS-background-image. Der Browser findet eine Adresse im
+                Stilattribut erst nach dem Stylesheet, also war das grösste Bild
+                der Seite spät dran (LCP 4,2 s am Schreibtisch, 23,5 s auf dem
+                gedrosselten Handy). Als <Image> steht Bild 1 mit priority im
+                Kopf der Seite und wird als AVIF/WebP in Bildschirmbreite
+                ausgeliefert statt als 340 bis 580 kB grosses JPEG. */}
+            <Image
+              src={src}
+              alt=""
+              fill
+              sizes="100vw"
+              quality={70}
+              priority={i === 0}
+              loading={i === 0 ? "eager" : "lazy"}
+              className="object-cover object-center"
+            />
+          </div>
         ))}
       </div>
       {/* Darken the left/bottom for text legibility, let the right breathe */}
@@ -253,7 +270,7 @@ export async function Hero({ hero }: Props) {
                 }}
               >
                 <span className="block uppercase">{line1}</span>
-                <span className="block font-serif italic font-bold text-nord-gold">
+                <span className="block font-serif italic font-bold text-nord-gold-ink">
                   {line2}
                 </span>
               </h1>

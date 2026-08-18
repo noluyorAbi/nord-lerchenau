@@ -203,7 +203,7 @@ export default function VereinPage() {
                 key={name}
                 className="group flex items-baseline gap-3 border-b border-nord-line/70 py-3"
               >
-                <span className="font-mono text-[11px] tabular-nums tracking-[0.15em] text-nord-gold">
+                <span className="font-mono text-[11px] tabular-nums tracking-[0.15em] text-nord-gold-ink">
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <span className="font-display text-lg font-bold tracking-tight text-nord-ink transition-colors group-hover:text-nord-gold">
@@ -217,7 +217,7 @@ export default function VereinPage() {
         <aside className="mt-12 rounded-2xl border border-dashed border-nord-line bg-white p-8 md:p-10">
           <div className="grid gap-6 md:grid-cols-[2fr_1fr] md:items-center">
             <div>
-              <div className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-nord-gold">
+              <div className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-nord-gold-ink">
                 Mitglied werden
               </div>
               <h3 className="mt-3 font-display text-2xl font-black tracking-tight text-nord-ink md:text-3xl">

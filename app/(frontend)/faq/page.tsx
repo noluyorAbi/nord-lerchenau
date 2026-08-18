@@ -67,7 +67,7 @@ export default async function FaqPageRoute() {
         ) : (
           groups.map((group) => (
             <section key={group.key} className="mb-12 last:mb-0">
-              <h2 className="mb-4 font-mono text-[11px] uppercase tracking-[0.16em] text-nord-gold">
+              <h2 className="mb-4 font-mono text-[11px] uppercase tracking-[0.16em] text-nord-gold-ink">
                 {group.label}
               </h2>
               <div className="divide-y divide-nord-line overflow-hidden rounded-2xl border border-nord-line bg-white">
@@ -79,7 +79,7 @@ export default async function FaqPageRoute() {
                     <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-base font-bold text-nord-ink marker:hidden">
                       <span>{item.question}</span>
                       <span
-                        className="font-mono text-[18px] text-nord-gold transition-transform group-open:rotate-45"
+                        className="font-mono text-[18px] text-nord-gold-ink transition-transform group-open:rotate-45"
                         aria-hidden
                       >
                         +

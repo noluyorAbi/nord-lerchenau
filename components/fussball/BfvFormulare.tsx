@@ -15,7 +15,7 @@ export function BfvFormulare() {
         {BFV_FORM_GROUPS.map((group) => (
           <div key={group.title}>
             <div className="mb-3 flex items-baseline gap-2 border-b border-nord-line pb-2">
-              <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-nord-gold">
+              <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-nord-gold-ink">
                 {group.eyebrow}
               </span>
               <span className="font-display text-sm font-bold tracking-tight text-nord-ink">
@@ -38,7 +38,7 @@ export function BfvFormulare() {
                       </span>
                     </span>
                     <span
-                      className="shrink-0 pt-0.5 text-nord-gold transition-transform group-hover:translate-y-0.5"
+                      className="shrink-0 pt-0.5 text-nord-gold-ink transition-transform group-hover:translate-y-0.5"
                       aria-hidden
                     >
                       ↓

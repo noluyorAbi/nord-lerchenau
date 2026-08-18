@@ -196,7 +196,7 @@ export default async function VorstandPage() {
           className="group mb-20 flex items-center justify-between gap-4 rounded-2xl border border-nord-line bg-nord-paper-2 px-5 py-4 transition hover:-translate-y-0.5 hover:border-nord-gold hover:bg-white md:px-7 md:py-5"
         >
           <div className="min-w-0">
-            <div className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-nord-gold">
+            <div className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-nord-gold-ink">
               Schutzkonzept
             </div>
             <div className="mt-1 font-display text-lg font-black tracking-tight text-nord-ink md:text-xl">
@@ -289,7 +289,7 @@ function SectionHeader({
 }) {
   return (
     <div className="mb-6">
-      <div className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-nord-gold">
+      <div className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-nord-gold-ink">
         {eyebrow}
       </div>
       <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-nord-ink md:text-4xl">

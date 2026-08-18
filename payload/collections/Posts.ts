@@ -89,10 +89,14 @@ export const Posts: CollectionConfig = {
       type: "date",
       required: true,
       label: "Veröffentlichungsdatum",
+      // Prefilled with "now": without a default the very first save of every
+      // article failed on this field, and a first-time editor has no way of
+      // knowing that the fix is a date picker further down the form.
+      defaultValue: () => new Date().toISOString(),
       admin: {
         date: { pickerAppearance: "dayAndTime" },
         description:
-          "Datum + Uhrzeit, ab wann der Artikel öffentlich sein soll.",
+          "Steht oben am Artikel und bestimmt die Reihenfolge in der News-Liste (neuestes zuerst). Ist mit jetzt vorbelegt.",
       },
     },
     {

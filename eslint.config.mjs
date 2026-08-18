@@ -15,6 +15,9 @@ const eslintConfig = defineConfig([
     // Local tooling caches (gitignored), not part of the app:
     ".remember/**",
     "graphify-out/**",
+    // Remotion workspace for the admin tutorial video: own package.json, own
+    // eslint config, own dependencies. Not part of the Next app.
+    "video/**",
   ]),
 ]);
 

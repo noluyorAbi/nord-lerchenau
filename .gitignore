@@ -94,3 +94,11 @@ agentdb.rvf.lock
 CREDENTIALS.local.md
 *.local.md
 *.secrets.md
+
+# Remotion workspace for the admin tutorial (video/): renders, captures and
+# generated audio are heavy and reproducible from storyboard.json.
+/video/node_modules/
+/video/out/
+/video/public/footage/
+/video/public/audio/
+/assets/

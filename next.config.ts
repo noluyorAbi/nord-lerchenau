@@ -2,6 +2,11 @@ import { withPayload } from "@payloadcms/next/withPayload";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Dev only: hides the Next.js dev-tools bubble. Set when screen-recording the
+  // admin (video/storyboard.json), otherwise the button sits in every frame.
+  ...(process.env.NEXT_HIDE_DEV_INDICATOR === "1"
+    ? { devIndicators: false }
+    : {}),
   images: {
     remotePatterns: [
       {

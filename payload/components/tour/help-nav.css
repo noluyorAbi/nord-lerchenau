@@ -1,0 +1,122 @@
+/* Sidebar help block, and the sidebar order fix (see comment below). */
+
+.svnord-help {
+  /* .nav__wrap aligns children flex-start, so without a width the block
+     shrink-wraps its buttons; Payload's own groups set width: 100% too. */
+  width: 100%;
+  box-sizing: border-box;
+  margin: 12px 0 8px;
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--theme-elevation-50);
+  border: 1px solid var(--theme-elevation-150);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  /* Keep the block below every group but above Payload's own controls. */
+  order: 50;
+}
+
+.svnord-help__label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--theme-elevation-700);
+  margin-bottom: 2px;
+}
+
+.svnord-help__btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--theme-elevation-150);
+  background: var(--theme-elevation-0);
+  color: var(--theme-elevation-800);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 150ms cubic-bezier(0.2, 0, 0, 1),
+    transform 150ms cubic-bezier(0.2, 0, 0, 1),
+    border-color 150ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.svnord-help__btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.svnord-help__btn:hover {
+  background: var(--theme-elevation-100);
+  border-color: var(--theme-elevation-250);
+}
+
+.svnord-help__btn:active {
+  transform: translateY(1px);
+}
+
+.svnord-help__btn--primary {
+  background: #0b1b3f;
+  border-color: #0b1b3f;
+  color: #fff;
+}
+
+.svnord-help__btn--primary:hover {
+  background: #14306e;
+  border-color: #14306e;
+}
+
+/*
+ * Sidebar and dashboard order.
+ *
+ * Payload lists groups in the order it first meets them in the config, all
+ * collections before all globals. The numbered groups mix both kinds (Media is
+ * a collection in "9. System", the pages are globals in "4. Seiten"), so no
+ * config order alone can produce 1, 2, 3, 4, 5, 9. The containers are flex
+ * columns, so `order` on the group finishes the job.
+ *
+ * Known trade-off: `order` changes what sighted users see, not the DOM. Tab
+ * order and screen readers still meet the groups in config order (1, 2, 3, 9,
+ * 4, 5), i.e. "9. System" between "3. Verein" and "4. Seiten". Every group is
+ * still labelled, so nothing is unreachable, and the alternative (a custom
+ * admin.components.Nav) would fork Payload's sidebar for a cosmetic gain.
+ */
+.nav-group[id="nav-group-1. Inhalte"] {
+  order: 1;
+}
+.nav-group[id="nav-group-2. Sport"] {
+  order: 2;
+}
+.nav-group[id="nav-group-3. Verein"] {
+  order: 3;
+}
+.nav-group[id="nav-group-4. Seiten"] {
+  order: 4;
+}
+.nav-group[id="nav-group-5. Einstellungen"] {
+  order: 5;
+}
+.nav-group[id="nav-group-9. System"] {
+  order: 9;
+}
+.nav__controls {
+  order: 99;
+}
+
+/*
+ * The dashboard's collection cards come from the same grouping, in config
+ * order. payload.config.ts lists the collections as 1, 2, 3, 9 and the globals
+ * as 4, 5, so "9. System" is the fourth group there. Send it to the end.
+ * Only that one position is special-cased; if a group is added, the worst case
+ * is a cosmetic misplacement here, nothing functional.
+ */
+.collections__wrap > .collections__group:nth-child(4) {
+  order: 9;
+}

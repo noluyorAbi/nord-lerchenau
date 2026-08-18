@@ -2,6 +2,11 @@ import React from "react";
 import { LuCalendarPlus, LuFileText, LuImage, LuInbox } from "react-icons/lu";
 import { LuCompass, LuHandshake, LuHouse, LuPhoneCall } from "react-icons/lu";
 
+import DashboardTour from "./tour/DashboardTour";
+import TutorialVideo from "./tour/TutorialVideo";
+import { TOUR_TARGET } from "./tour/tour-targets";
+import "./welcome-dashboard.css";
+
 const cardStyle: React.CSSProperties = {
   border: "1px solid var(--theme-elevation-150)",
   borderRadius: 8,
@@ -44,6 +49,15 @@ const linkTitle: React.CSSProperties = {
 const linkHint: React.CSSProperties = {
   fontSize: 12,
   color: "var(--theme-elevation-500)",
+};
+
+const cardTitle: React.CSSProperties = {
+  margin: "0 0 12px",
+  fontSize: 14,
+  fontWeight: 700,
+  letterSpacing: "0.1em",
+  textTransform: "uppercase",
+  color: "var(--theme-elevation-700)",
 };
 
 const stepNumber: React.CSSProperties = {
@@ -122,6 +136,41 @@ const settingsLinks: QuickLink[] = [
   },
 ];
 
+/**
+ * The words that trip up a first-time editor, each explained in one breath.
+ * Ordered by how early someone meets them.
+ */
+const glossary: { term: string; text: string }[] = [
+  {
+    term: "Neu erstellen",
+    text: "Der Knopf oben rechts in jeder Liste. Legt einen leeren Eintrag an, den du dann ausfüllst. Bestehende Einträge bearbeitest du, indem du sie in der Liste anklickst.",
+  },
+  {
+    term: "Speichern",
+    text: "Erst nach dem Klick auf Speichern ist etwas auf der Website. Solange du nur tippst, sieht draußen niemand etwas. Nach dem Speichern dauert es wenige Sekunden.",
+  },
+  {
+    term: "Veröffentlichungsdatum",
+    text: "Jeder Artikel hat eines. Es steht oben am Artikel und bestimmt die Reihenfolge in der News-Liste, das neueste zuerst. Es ist mit jetzt vorbelegt, du kannst es aber ändern, etwa auf den Spieltag.",
+  },
+  {
+    term: "Alt-Text",
+    text: "Ein kurzer Satz, der beschreibt, was auf einem Bild zu sehen ist, etwa Mannschaftsfoto der D-Junioren 2026. Blinde Besucher hören ihn vorgelesen, und Google versteht das Bild. Deshalb ist er Pflicht.",
+  },
+  {
+    term: "Bilder & Medien",
+    text: "Der Ordner für alle Fotos und Logos. Ein Bild lädst du dort einmal hoch und wählst es danach in Artikeln oder bei Mannschaften aus. Höchstens 4 MB pro Datei; Handy-Fotos vorher verkleinern.",
+  },
+  {
+    term: "Slug",
+    text: "Der Teil der Internetadresse, der einen Eintrag benennt, etwa svnord.de/news/sommerfest-2026. Wird automatisch aus dem Titel gebildet, du musst ihn normalerweise nicht anfassen.",
+  },
+  {
+    term: "Pflichtfeld",
+    text: "Alles mit einem roten Sternchen. Ohne diese Felder lässt sich der Eintrag nicht speichern, das Admin sagt dir dann, welches fehlt.",
+  },
+];
+
 export default function WelcomeDashboard() {
   return (
     <div
@@ -133,6 +182,7 @@ export default function WelcomeDashboard() {
       }}
     >
       <div
+        data-tour={TOUR_TARGET.intro}
         style={{
           ...cardStyle,
           background:
@@ -170,6 +220,7 @@ export default function WelcomeDashboard() {
           <strong>9. System</strong> (Bilder, Logins). Links in der Seitenleiste
           findest du alles wieder.
         </p>
+        <DashboardTour />
       </div>
 
       <div
@@ -179,19 +230,8 @@ export default function WelcomeDashboard() {
           gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
         }}
       >
-        <div style={cardStyle}>
-          <h3
-            style={{
-              margin: "0 0 12px",
-              fontSize: 14,
-              fontWeight: 700,
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              color: "var(--theme-elevation-700)",
-            }}
-          >
-            Häufige Aufgaben
-          </h3>
+        <div style={cardStyle} data-tour={TOUR_TARGET.tasks}>
+          <h3 style={cardTitle}>Häufige Aufgaben</h3>
           <div style={{ display: "grid", gap: 8 }}>
             {dailyTasks.map((l) => (
               <a key={l.href} href={l.href} style={linkStyle}>
@@ -206,18 +246,7 @@ export default function WelcomeDashboard() {
         </div>
 
         <div style={cardStyle}>
-          <h3
-            style={{
-              margin: "0 0 12px",
-              fontSize: 14,
-              fontWeight: 700,
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              color: "var(--theme-elevation-700)",
-            }}
-          >
-            Seiten & Einstellungen
-          </h3>
+          <h3 style={cardTitle}>Seiten & Einstellungen</h3>
           <div style={{ display: "grid", gap: 8 }}>
             {settingsLinks.map((l) => (
               <a key={l.href} href={l.href} style={linkStyle}>
@@ -232,19 +261,25 @@ export default function WelcomeDashboard() {
         </div>
       </div>
 
-      <div style={cardStyle}>
-        <h3
+      <div style={cardStyle} data-tour={TOUR_TARGET.video}>
+        <h3 style={{ ...cardTitle, margin: "0 0 4px" }}>
+          In zwei Minuten erklärt
+        </h3>
+        <p
           style={{
             margin: "0 0 12px",
-            fontSize: 14,
-            fontWeight: 700,
-            letterSpacing: "0.1em",
-            textTransform: "uppercase",
-            color: "var(--theme-elevation-700)",
+            fontSize: 13,
+            color: "var(--theme-elevation-600)",
           }}
         >
-          So pflegst du Inhalte (Schritt für Schritt)
-        </h3>
+          Ein echter News-Artikel mit Bild, von der Anmeldung bis zur fertigen
+          Seite. Mit Kapiteln zum direkten Anspringen.
+        </p>
+        <TutorialVideo />
+      </div>
+
+      <div style={cardStyle} data-tour={TOUR_TARGET.steps}>
+        <h3 style={cardTitle}>So pflegst du Inhalte (Schritt für Schritt)</h3>
         <ol
           style={{ margin: 0, padding: 0, listStyle: "none", lineHeight: 1.6 }}
         >
@@ -258,7 +293,7 @@ export default function WelcomeDashboard() {
           <li style={{ display: "flex", marginBottom: 8 }}>
             <span style={stepNumber}>2</span>
             <span>
-              Oben rechts auf <strong>„Neu erstellen“</strong> klicken — oder
+              Oben rechts auf <strong>„Neu erstellen“</strong> klicken, oder
               einen bestehenden Eintrag in der Liste anklicken zum Bearbeiten.
             </span>
           </li>
@@ -273,7 +308,7 @@ export default function WelcomeDashboard() {
           <li style={{ display: "flex", marginBottom: 8 }}>
             <span style={stepNumber}>4</span>
             <span>
-              Bilder ziehst du per Drag-&-Drop in das Upload-Feld — oder klickst
+              Bilder ziehst du per Drag-&-Drop in das Upload-Feld, oder klickst
               auf <em>„Upload“</em>. Vergiss den <strong>Alt-Text</strong> nicht
               (kurze Beschreibung).
             </span>
@@ -288,11 +323,33 @@ export default function WelcomeDashboard() {
           <li style={{ display: "flex" }}>
             <span style={stepNumber}>?</span>
             <span style={{ color: "var(--theme-elevation-600)" }}>
-              Etwas unklar? Frag den Admin oder schau in der Live-Vorschau
-              (rechts oben bei News-Artikeln) was passieren würde.
+              Etwas unklar? Unten links in der Seitenleiste startest du
+              jederzeit den Rundgang, oder du schaust ins Video oben.
             </span>
           </li>
         </ol>
+      </div>
+
+      <div style={cardStyle} data-tour={TOUR_TARGET.glossary}>
+        <h3 style={{ ...cardTitle, margin: "0 0 4px" }}>Was bedeutet was?</h3>
+        <p
+          style={{
+            margin: "0 0 12px",
+            fontSize: 13,
+            color: "var(--theme-elevation-600)",
+          }}
+        >
+          Die Wörter, die im Admin immer wieder auftauchen, in je einem Satz.
+          Aufklappen, was dich interessiert.
+        </p>
+        <div className="svnord-glossary">
+          {glossary.map((g) => (
+            <details key={g.term}>
+              <summary>{g.term}</summary>
+              <div>{g.text}</div>
+            </details>
+          ))}
+        </div>
       </div>
     </div>
   );

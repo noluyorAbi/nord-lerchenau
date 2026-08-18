@@ -25,7 +25,13 @@ export default function TutorialVideo() {
     if (!v) return;
     v.currentTime = at;
     void v.play();
-    v.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    v.scrollIntoView({
+      behavior: reduced ? "auto" : "smooth",
+      block: "nearest",
+    });
   };
 
   return (
@@ -39,7 +45,17 @@ export default function TutorialVideo() {
             preload="metadata"
             poster={TUTORIAL_VIDEO.poster || undefined}
             src={TUTORIAL_VIDEO.url}
+            crossOrigin="anonymous"
           >
+            {TUTORIAL_VIDEO.captions ? (
+              <track
+                kind="captions"
+                srcLang="de"
+                label="Deutsch"
+                src={TUTORIAL_VIDEO.captions}
+                default
+              />
+            ) : null}
             Dein Browser kann dieses Video nicht abspielen.
           </video>
         ) : (

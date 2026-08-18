@@ -5,6 +5,7 @@ import { LuCompass, LuHandshake, LuHouse, LuPhoneCall } from "react-icons/lu";
 import DashboardTour from "./tour/DashboardTour";
 import TutorialVideo from "./tour/TutorialVideo";
 import { TOUR_TARGET } from "./tour/tour-targets";
+import "./welcome-dashboard.css";
 
 const cardStyle: React.CSSProperties = {
   border: "1px solid var(--theme-elevation-150)",
@@ -48,6 +49,15 @@ const linkTitle: React.CSSProperties = {
 const linkHint: React.CSSProperties = {
   fontSize: 12,
   color: "var(--theme-elevation-500)",
+};
+
+const cardTitle: React.CSSProperties = {
+  margin: "0 0 12px",
+  fontSize: 14,
+  fontWeight: 700,
+  letterSpacing: "0.1em",
+  textTransform: "uppercase",
+  color: "var(--theme-elevation-700)",
 };
 
 const stepNumber: React.CSSProperties = {
@@ -221,18 +231,7 @@ export default function WelcomeDashboard() {
         }}
       >
         <div style={cardStyle} data-tour={TOUR_TARGET.tasks}>
-          <h3
-            style={{
-              margin: "0 0 12px",
-              fontSize: 14,
-              fontWeight: 700,
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              color: "var(--theme-elevation-700)",
-            }}
-          >
-            Häufige Aufgaben
-          </h3>
+          <h3 style={cardTitle}>Häufige Aufgaben</h3>
           <div style={{ display: "grid", gap: 8 }}>
             {dailyTasks.map((l) => (
               <a key={l.href} href={l.href} style={linkStyle}>
@@ -247,18 +246,7 @@ export default function WelcomeDashboard() {
         </div>
 
         <div style={cardStyle}>
-          <h3
-            style={{
-              margin: "0 0 12px",
-              fontSize: 14,
-              fontWeight: 700,
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              color: "var(--theme-elevation-700)",
-            }}
-          >
-            Seiten & Einstellungen
-          </h3>
+          <h3 style={cardTitle}>Seiten & Einstellungen</h3>
           <div style={{ display: "grid", gap: 8 }}>
             {settingsLinks.map((l) => (
               <a key={l.href} href={l.href} style={linkStyle}>
@@ -274,16 +262,7 @@ export default function WelcomeDashboard() {
       </div>
 
       <div style={cardStyle} data-tour={TOUR_TARGET.video}>
-        <h3
-          style={{
-            margin: "0 0 4px",
-            fontSize: 14,
-            fontWeight: 700,
-            letterSpacing: "0.1em",
-            textTransform: "uppercase",
-            color: "var(--theme-elevation-700)",
-          }}
-        >
+        <h3 style={{ ...cardTitle, margin: "0 0 4px" }}>
           In zwei Minuten erklärt
         </h3>
         <p
@@ -300,18 +279,7 @@ export default function WelcomeDashboard() {
       </div>
 
       <div style={cardStyle} data-tour={TOUR_TARGET.steps}>
-        <h3
-          style={{
-            margin: "0 0 12px",
-            fontSize: 14,
-            fontWeight: 700,
-            letterSpacing: "0.1em",
-            textTransform: "uppercase",
-            color: "var(--theme-elevation-700)",
-          }}
-        >
-          So pflegst du Inhalte (Schritt für Schritt)
-        </h3>
+        <h3 style={cardTitle}>So pflegst du Inhalte (Schritt für Schritt)</h3>
         <ol
           style={{ margin: 0, padding: 0, listStyle: "none", lineHeight: 1.6 }}
         >
@@ -363,18 +331,7 @@ export default function WelcomeDashboard() {
       </div>
 
       <div style={cardStyle} data-tour={TOUR_TARGET.glossary}>
-        <h3
-          style={{
-            margin: "0 0 4px",
-            fontSize: 14,
-            fontWeight: 700,
-            letterSpacing: "0.1em",
-            textTransform: "uppercase",
-            color: "var(--theme-elevation-700)",
-          }}
-        >
-          Was bedeutet was?
-        </h3>
+        <h3 style={{ ...cardTitle, margin: "0 0 4px" }}>Was bedeutet was?</h3>
         <p
           style={{
             margin: "0 0 12px",

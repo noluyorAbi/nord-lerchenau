@@ -119,7 +119,17 @@
 }
 
 /* driver.js moves the highlight with a linear-ish default; use the settle. */
-.driver-active .driver-overlay,
-.driver-active .driver-popover {
-  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+@media (prefers-reduced-motion: no-preference) {
+  .driver-active .driver-overlay,
+  .driver-active .driver-popover {
+    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .driver-active .driver-overlay,
+  .driver-active .driver-popover,
+  .svnord-tour .driver-popover-footer button {
+    transition: none;
+  }
 }

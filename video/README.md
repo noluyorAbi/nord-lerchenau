@@ -31,7 +31,9 @@ Repository-Wurzelverzeichnis):
    Root-Prettier formatiert es beim nächsten Gate, also direkt danach
    `bunx prettier --write video/src` laufen lassen, sonst churnt die Datei.
 4. Poster: `ffmpeg -ss 2.5 -i assets/demo-16x9-long.mp4 -frames:v 1 -vf scale=1280:-1 -q:v 3 assets/tutorial-poster.jpg`.
-5. Video und Poster in den Vercel-Blob-Store laden, mit Datum im Namen und
+   Untertitel: `node video/tools/captions.js` schreibt `video/out/captions.de.vtt`
+   aus denselben Wort-Zeitstempeln (für die `<track>`-Spur des Players).
+5. Video, Poster und VTT in den Vercel-Blob-Store laden, mit Datum im Namen und
    `addRandomSuffix: true` (`admin/tutorial-<datum>.mp4`), URL und
    Kapitelzeiten (Szenenstarts aus `src/demovideo.content.ts`) in
    `payload/components/tour/tutorial-video.ts` eintragen, alte Objekte

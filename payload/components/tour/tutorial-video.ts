@@ -16,6 +16,13 @@ export const TUTORIAL_VIDEO = {
   url: "https://wifujncy146uydef.public.blob.vercel-storage.com/admin/tutorial-2026-08-18-mNRPpMRXk9bFl8Iqw2ESW8hOmxLmAE.mp4",
   poster:
     "https://wifujncy146uydef.public.blob.vercel-storage.com/admin/tutorial-2026-08-18-poster-rgrpy8uKkY5mNki2ufrh58n2AnC6mm.jpg",
+  /**
+   * WebVTT captions, generated from video/src/narration.json (the same word
+   * timestamps the burnt-in karaoke uses), so someone who cannot hear the
+   * narration gets it as selectable text. Empty means no track is rendered.
+   */
+  captions:
+    "https://wifujncy146uydef.public.blob.vercel-storage.com/admin/tutorial-2026-08-18.de-WwLjBZhrFlUyWlEFEgf3YCxC16t9bu.vtt",
   /** Seconds into the video where each chapter starts. */
   chapters: [
     { at: 12, label: "Anmelden" },

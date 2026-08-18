@@ -18,8 +18,6 @@ import { tourTarget } from "./tour-targets";
 const STORAGE_KEY = "svnord.admin.tour.v1";
 const TOUR_CLASS = "svnord-tour";
 
-export { TOUR_TARGET } from "./tour-targets";
-
 /**
  * Nav groups start collapsed after a while (Payload remembers the toggle per
  * user). A collapsed group hides its links, and a hidden link cannot be
@@ -94,7 +92,7 @@ function closeNav() {
     ?.click();
 }
 
-const NAV_STEP = (selector: string) =>
+const isNavStep = (selector: string) =>
   selector === ".nav" ||
   selector.startsWith('[id="nav-') ||
   selector.startsWith("#nav-") ||
@@ -220,12 +218,26 @@ function buildSteps(): DriveStep[] {
   return steps.filter((step) => {
     if (typeof step.element !== "string") return true;
     if (!isVisible(step.element)) return false;
-    return NAV_STEP(step.element) ? navOnScreen() : true;
+    return isNavStep(step.element) ? navOnScreen() : true;
   });
 }
 
 let active: Driver | null = null;
 let pending = false;
+/** Where focus was when the tour started, so Esc or "Fertig" hands it back. */
+let opener: HTMLElement | null = null;
+
+const reducedMotion = () =>
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/**
+ * If the tab is closed or navigated away mid-tour, onDestroyed never runs and
+ * the groups the tour opened would stay open in the editor's preferences.
+ * pagehide is the last reliable moment to put them back.
+ */
+function onPageHide() {
+  restoreNavGroups();
+}
 
 export function tourSeen(): boolean {
   try {
@@ -259,8 +271,13 @@ export function startTour() {
   // or navigates away mid-tour has seen the offer and must not be nagged again.
   // The buttons replay it on demand.
   markSeen();
+  opener =
+    document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : null;
   const opened = ensureNavOpen();
   expandNavGroups();
+  window.addEventListener("pagehide", onPageHide);
 
   // Give an off-canvas sidebar its slide-in before measuring the steps.
   pending = true;
@@ -270,7 +287,9 @@ export function startTour() {
 function drive() {
   pending = false;
   const instance = driver({
-    animate: true,
+    // The rest of the site gates motion on prefers-reduced-motion; the tour
+    // does the same, so a sliding spotlight never surprises anyone.
+    animate: !reducedMotion(),
     allowClose: true,
     overlayColor: "#0b1b3f",
     overlayOpacity: 0.55,
@@ -289,12 +308,17 @@ function drive() {
     // is open, page steps close it again where it would hide the target.
     onHighlightStarted: (_el, step) => {
       const selector = typeof step.element === "string" ? step.element : "";
-      if (selector && NAV_STEP(selector)) ensureNavOpen();
+      if (selector && isNavStep(selector)) ensureNavOpen();
       else if (navCoversPage()) closeNav();
     },
     onDestroyed: () => {
+      window.removeEventListener("pagehide", onPageHide);
       restoreNavGroups();
       active = null;
+      // Hand focus back to the button that started the tour, so a keyboard
+      // user continues where they were instead of at the top of the page.
+      if (opener?.isConnected) opener.focus();
+      opener = null;
     },
   });
 

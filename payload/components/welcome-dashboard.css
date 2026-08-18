@@ -1,0 +1,54 @@
+/* Styles owned by WelcomeDashboard itself (server component); the tour
+   stylesheets belong to the client components that render them. */
+
+.svnord-glossary {
+  display: grid;
+  gap: 6px;
+}
+
+.svnord-glossary details {
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 8px;
+  background: var(--theme-elevation-50);
+  /* No overflow: hidden here: it clipped the summary's keyboard focus ring. */
+}
+
+.svnord-glossary summary {
+  border-radius: 8px;
+  list-style: none;
+  cursor: pointer;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.svnord-glossary summary::-webkit-details-marker {
+  display: none;
+}
+
+.svnord-glossary summary::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--theme-elevation-500);
+  border-bottom: 2px solid var(--theme-elevation-500);
+  transform: rotate(45deg);
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
+  margin-right: 4px;
+}
+
+.svnord-glossary details[open] summary::after {
+  transform: rotate(-135deg);
+}
+
+.svnord-glossary details > div {
+  padding: 0 14px 12px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--theme-elevation-700);
+}

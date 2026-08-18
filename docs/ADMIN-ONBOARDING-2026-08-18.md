@@ -104,4 +104,12 @@ Kosten pro Vertonung rund drei Cent (steht in `video/costs.jsonl`).
   mit Poster und sechs Kapiteln sichtbar; Kapitel-Chip springt (Sekunde 39).
 - Deutsch: `<html lang="de">`, Buttons „Neu erstellen“, „Speichern“,
   „Anmelden“.
-- Gates: prettier, eslint, `tsc --noEmit`, 79 Tests.
+- Barrierefreiheit: Untertitel-Spur (`<track kind="captions">`, 43 Cues,
+  lädt cross-origin vom Blob-Store); Esc gibt den Fokus an den auslösenden
+  Knopf zurück; bei `prefers-reduced-motion` laufen Overlay und Popover ohne
+  Übergänge; Kapitel-Chips sind eine `role="group"` mit `<time dateTime>`.
+- Review: 25 Agenten (Workflow) auf dem ersten Commit, danach das
+  Push-Gate mit acht Lenses auf dem Bereich; alle bestanden, 26 Advisories
+  umgesetzt.
+- Gates: prettier, eslint, `tsc --noEmit`, 79 Tests; im `video/`-Workspace
+  typecheck, eslint und prettier.

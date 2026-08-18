@@ -12,6 +12,7 @@ node video/tools/narrate.js     # OpenAI TTS + local mlx_whisper word timestamps
 node video/tools/narrate.js --realign   # keep the WAVs, redo timestamps only
 node video/tools/assemble.js    # storyboard + timestamps -> src/demovideo.content.ts
 node video/tools/finish.js      # video/out/wide-long.mp4 -> assets/demo-16x9-long.mp4
+node video/tools/captions.js    # word timings -> video/out/captions.de.vtt
 ```
 
 Prerequisites: `OPENAI_API_KEY`, `mlx_whisper` (`pip install mlx-whisper`,

@@ -290,6 +290,32 @@ revalidieren würde, also genau den Fehler zurückbrächte.
 Gegen die Produktion geprüft: ein Media-Save feuert den Hook, die Route
 antwortet mit allen zehn Tags, und die Seiten bleiben bei 0 kaputten Bildern.
 
+## 7c. Abnahme aller drei Flüsse durch die Oberfläche
+
+Zum Schluss wurden die drei Dinge, die der Verein tatsächlich tut, einzeln
+durch das Admin gefahren, nicht über die API.
+
+**Anlegen** (lokal gegen den echten Store, dann in Produktion): Datensatz bekommt
+die Blob-URL, Vorschau lädt, alle Größen liegen im Store.
+
+**Ersetzen mit gleichem Dateinamen** (das Szenario, das ein Vereinsmitglied
+am ehesten trifft: neues Foto, gleiche Datei aus dem Handy): Payload prüft den
+Namen gegen die Datenbank, findet den eigenen Datensatz und hängt `-1` an. Aus
+`zz-replace-probe.webp` wurde `zz-replace-probe-1.webp`, die alte Datei und ihre
+Größen wurden gelöscht (404), der neue Blob trägt die neuen Bytes (Pixelprobe
+rot statt blau). Das ist die gute Variante: die URL ändert sich, also greift der
+CDN-Cache mit `max-age=31536000` nie auf ein altes Bild zu. Hätte Payload den
+Namen behalten, hätte der Browser das alte Bild bis zu ein Jahr weitergezeigt.
+
+**Löschen**: Datensatz weg, alle Blobs weg, Store frei von Testobjekten.
+
+Und der Beweis, dass die Hooks aus der **Produktions-Funktion** heraus feuern
+und nicht nur von einem Entwickler-Rechner: die Vercel-Request-Logs zeigen
+`POST /api/media 201` um 14:32:17 mit `POST /api/revalidate 200` um 14:32:18,
+und `DELETE /api/media/226 200` um 14:34:13 mit `POST /api/revalidate 200` um
+14:34:15. Danach 180 Zeilen in `media`, 0 Testobjekte im Store, 52 Seiten mit
+295 Bildern und 0 kaputt.
+
 ## 8. Bewusst nicht angefasst
 
 - Die 1327 lokalen Dateien in `public/uploads` und die Mehrfach-Datensätze in

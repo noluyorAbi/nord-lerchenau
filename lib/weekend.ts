@@ -75,8 +75,13 @@ async function fetchEntriesInWindow(
             ) {
               continue;
             }
-            const key = `${ts}:${m.homeTeam?.name?.short ?? ""}:${m.awayTeam?.name?.short ?? ""}`;
-            seen.add(key);
+            // Schluessel nur ueber den Anstoss: eine Mannschaft spielt nicht
+            // zweimal zur selben Minute. Frueher steckten die Vereinsnamen mit
+            // drin, und die schreiben die beiden Quellen verschieden
+            // ("SV N Lerchenau" gegen "SV Nord Muenchen-Lerchenau II"). Damit
+            // griff der Abgleich nie und jede Partie stand doppelt auf der
+            // Startseite, einmal aus FuPa und einmal vom Verband.
+            seen.add(String(ts));
             out.push({ source: "fupa", kickoff: d, fupa: m, team });
           }
         }
@@ -95,8 +100,7 @@ async function fetchEntriesInWindow(
             if (isSpielfrei(m.homeTeamName) || isSpielfrei(m.guestTeamName)) {
               continue;
             }
-            const key = `${ts}:${m.homeTeamName ?? ""}:${m.guestTeamName ?? ""}`;
-            if (seen.has(key)) continue;
+            if (seen.has(String(ts))) continue;
             out.push({ source: "bfv", kickoff: d, bfv: m, team });
           }
         }

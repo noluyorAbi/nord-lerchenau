@@ -1,7 +1,10 @@
-# Offene Punkte vor dem finalen Go-Live
+# Offene Punkte
 
-**Stand: 2026-06-27** · Website (Preview): https://nord-lerchenau.vercel.app · Zieldomain: `svnord-lerchenau.de`
-Saisonstart in ca. 2 Wochen.
+**Stand: 2026-08-19** · Live: https://www.svnord.de (kanonisch) und
+https://www.svnord-lerchenau.de · Kundenfassung dieser Liste: Teil III im
+Übergabe-Handbuch (`Uebergabe/`, nicht im Git).
+
+Die Seite ist seit Ende Juni live. Was hier steht, ist der Rest.
 
 Legende: 👨‍💻 = du (Alpie/Dev) machst es · 🧑‍💼 = Ralf/Verein liefert oder entscheidet.
 
@@ -51,12 +54,24 @@ Dauerhafte Lösung (offen):
 
 Hinweis: schlägt der Mailversand fehl, sieht der Nutzer trotzdem "gesendet" (best effort); die Nachricht liegt dann nur im Admin. Nach jeder Env-Änderung eine Testnachricht schicken.
 
-### 3. Domain live schalten (DNS auf Vercel)
+### 3. Domain: live, bis auf die nackte `svnord-lerchenau.de`
 
-1. Vercel → Projekt → **Settings → Domains** → `svnord-lerchenau.de` hinzufügen → Vercel zeigt die A-/CNAME-Werte.
-2. Beim Domain-Anbieter diese Werte eintragen. **MX-Einträge für `info@svnord.de` NICHT anfassen** (sonst keine Vereins-Mails mehr).
-3. `NEXT_PUBLIC_SERVER_URL` steht schon auf `https://svnord-lerchenau.de`, prüfen dass das auch in der Vercel-Env so ist.
-4. SSL kommt automatisch. Testen: `https://svnord-lerchenau.de` lädt.
+Erledigt: `svnord.de`, `www.svnord.de` und `www.svnord-lerchenau.de` liefern
+die Seite mit gültigem Zertifikat. Die Sitemap gibt `www.svnord.de` als
+kanonische Adresse aus.
+
+**Offen:** `svnord-lerchenau.de` ohne `www` bringt eine Zertifikatswarnung.
+Die Namensverwaltung dieser Domain liegt bei **Wix** (`ns8.wixdns.net`,
+`ns9.wixdns.net`), und der A-Eintrag der nackten Domain zeigt weiter auf Wix
+(`185.230.63.*`). Zwei Wege:
+
+1. Im Wix-Konto den A-Eintrag auf `76.76.21.21` setzen und die alten Wix-Werte
+   löschen, oder
+2. die Nameserver auf `ns1.vercel-dns.com` / `ns2.vercel-dns.com` umstellen.
+
+An `svnord-lerchenau.de` hängt **kein MX-Eintrag**, es kann also keine Mail
+verlorengehen. Für `svnord.de` gilt das Gegenteil: dort läuft das Postfach über
+`smtpin.rzone.de`, MX niemals anfassen.
 
 ### 4. Inhalte/Logos einpflegen (sobald Ralf liefert, siehe unten) + Reseed
 
@@ -69,11 +84,31 @@ Hinweis: schlägt der Mailversand fehl, sieht der Nutzer trotzdem "gesendet" (be
 
 ### Liefern (Dateien/Daten)
 
-- **Sponsor-Logos** für: a+b Pertler, Ballauf & Schopp, BTU Hartmeier, Seethaler, Württembergische, Wohnen und gut leben, BrandSchutz Hagenbusch, SWM, Get Flashed Media. (Seite zeigt sonst Namen ohne Logo.)
-- **Echte Mannschaftsfotos** (Junioren + Herren). Der alte HiDrive-Bilder-Link ist abgelaufen, neuen schicken.
+- ~~Sponsor-Logos~~ **erledigt**: alle neun Partner haben ein Logo (geprüft
+  über die Live-API am 19.08.2026).
+- **Echte Mannschaftsfotos**: 24 der 28 Mannschaften haben keines. Erste,
+  Zweite und Dritte holen ihr Foto automatisch vom Verbandsportal, die
+  G-Junioren haben eines im CMS. Der alte HiDrive-Link ist abgelaufen.
 - **Jugend-Jahrgänge** (z. B. A1 U19 = 2006, 2007, 2008) und **Trainer pro Jugend-Team**.
 - **AH-Mannschaft**-Inhalt (laut Doc liefert Heinz Fessenmayer).
 - DNS-/Registrar-Zugang für `svnord-lerchenau.de`, falls nicht über die Strato-Daten machbar.
+
+### Neu seit 19.08.2026 (aus der Übergabe-Prüfung)
+
+- **Mitgliederzahl uneinheitlich**: Kopf der Startseite "500+ Mitglieder, vier
+  Sportarten", Block darunter "630+", Vereinsseite "600+ Mitglieder, fünf
+  Abteilungen", Abteilungsübersicht "Sechs Sportarten". Eine Entscheidung, dann
+  überall gleich.
+- **Trainer fehlen**: bei 22 von 28 Mannschaften ist das Feld leer.
+- **Vereinstermine**: null kommende. Die zwei eingetragenen liegen in der
+  Vergangenheit, die Termineseite zeigt deshalb "0 Termine". Der Spielplan mit
+  226 Partien kommt vom Verband und ist davon nicht betroffen.
+- **Betriebskonten**: Server, Datenbank, Bildspeicher, Mailversand und
+  Assistent laufen auf Entwicklerkonten; Domain und Postfach beim Verein.
+  Entscheidung, ob das so bleibt.
+- **Sicherung**: es gibt keine eigene, geprüfte Sicherung der Datenbank. Was
+  der Anbieter an Änderungshistorie vorhält, ist tarifabhängig und nicht
+  nachgeprüft.
 
 ### Kurz bestätigen (eine Rückmeldung reicht)
 

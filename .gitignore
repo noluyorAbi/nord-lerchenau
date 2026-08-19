@@ -102,3 +102,8 @@ CREDENTIALS.local.md
 /video/public/footage/
 /video/public/audio/
 /assets/
+
+# Kundenuebergabe: Heft, Bildtafeln, Rechnungsentwurf. Enthaelt Angaben zu
+# Konten, Kosten und offenen Punkten und gehoert nicht in ein oeffentliches
+# Repository. Die Quelle liegt lokal unter Uebergabe/handbuch-quelle/.
+Uebergabe/

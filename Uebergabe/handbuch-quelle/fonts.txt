@@ -1,0 +1,7 @@
+# Eine Zeile je Schrift: Kurzname|Google-Familie|Achsen
+# Die drei Schriften der Website (Barlow Condensed fuer Ueberschriften,
+# JetBrains Mono fuer Augenbrauen und Fusszeilen, Inter fuer Kleintext)
+# plus Fraunces, die Serife der Seite, hier fuer den gedruckten Fliesstext.
+BarlowCondensed|Barlow+Condensed|wght@400;500;600;700
+JetBrainsMono|JetBrains+Mono|wght@400;500
+Fraunces|Fraunces|ital,wght@0,300;0,400;0,500;0,600;1,400

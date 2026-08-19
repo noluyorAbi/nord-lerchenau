@@ -72,6 +72,17 @@ export function MapEmbed({
         zoom,
         attributionControl: { compact: true },
         cooperativeGestures: true,
+        // maplibre beschriftet die Zwei-Finger-Sperre sonst englisch
+        // ("Use ctrl + scroll to zoom the map") mitten auf einer deutschen
+        // Seite, und der graue Schleier darunter traegt nur 3,5:1.
+        locale: {
+          "CooperativeGesturesHandler.WindowsHelpText":
+            "Zum Zoomen Strg gedrückt halten und scrollen",
+          "CooperativeGesturesHandler.MacHelpText":
+            "Zum Zoomen ⌘ gedrückt halten und scrollen",
+          "CooperativeGesturesHandler.MobileHelpText":
+            "Zum Zoomen zwei Finger benutzen",
+        },
       });
 
       const doResize = () => {

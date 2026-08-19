@@ -217,8 +217,10 @@ export async function Hero({ hero }: Props) {
               alt=""
               fill
               sizes="100vw"
-              quality={70}
               priority={i === 0}
+              // priority setzt fetchPriority nur auf dem <img>, nicht auf der
+              // Vorladezeile im Kopf; Lighthouse bemaengelt genau das.
+              fetchPriority={i === 0 ? "high" : "low"}
               loading={i === 0 ? "eager" : "lazy"}
               className="object-cover object-center"
             />

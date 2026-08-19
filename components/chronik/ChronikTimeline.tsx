@@ -537,7 +537,7 @@ export function ChronikTimeline() {
                   <span className="rounded-full bg-nord-navy px-2 py-1 text-white">
                     Kapitel {id}
                   </span>
-                  <span className="text-nord-gold">{era}</span>
+                  <span className="text-nord-gold-ink">{era}</span>
                   <span className="ml-auto">
                     {items.length} {items.length === 1 ? "Eintrag" : "Einträge"}
                   </span>

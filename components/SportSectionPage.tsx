@@ -76,7 +76,7 @@ function highlightStyles(accent: SportHighlight["accent"] = "navy") {
     case "gold":
       return {
         wrap: "border-nord-gold/40 bg-gradient-to-br from-[#fffbef] via-white to-[#fffaf0]",
-        eyebrow: "text-nord-gold",
+        eyebrow: "text-nord-gold-ink",
       };
     case "sky":
       return {
@@ -87,7 +87,7 @@ function highlightStyles(accent: SportHighlight["accent"] = "navy") {
     default:
       return {
         wrap: "border-nord-line bg-white",
-        eyebrow: "text-nord-gold",
+        eyebrow: "text-nord-gold-ink",
       };
   }
 }
@@ -409,7 +409,7 @@ export async function SportSectionPage({
             ) : null}
 
             <div className="rounded-2xl border border-nord-line bg-white p-6">
-              <div className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-nord-gold">
+              <div className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-nord-gold-ink">
                 Kontakt
               </div>
               <div className="mt-3 space-y-2 text-sm">

@@ -74,7 +74,7 @@ export async function CategoryPage({ slug, belowIntro, leadership }: Props) {
             </div>
           </div>
           <div className="flex flex-col gap-3 rounded-xl border border-nord-line bg-white p-5">
-            <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold">
+            <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold-ink">
               Weitere Kategorien
             </div>
             <ul className="space-y-1.5 text-sm">

@@ -89,7 +89,7 @@ export function LegalLayout({
 
             {facts.length > 0 ? (
               <div className="rounded-2xl border border-nord-line bg-white p-6">
-                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold">
+                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-nord-gold-ink">
                   Auf einen Blick
                 </div>
                 <dl className="mt-3 divide-y divide-nord-line/70 text-sm">

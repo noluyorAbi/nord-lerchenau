@@ -128,7 +128,7 @@ export function ChronikNarrative() {
               <span className="rounded-full bg-nord-navy px-2.5 py-1 text-white">
                 Kapitel {chapter.num}
               </span>
-              <span className="text-nord-gold">{chapter.era}</span>
+              <span className="text-nord-gold-ink">{chapter.era}</span>
             </div>
             <h3 className="mt-3 font-display text-3xl font-black leading-[1.05] tracking-tight text-nord-ink md:text-4xl">
               {chapter.title}

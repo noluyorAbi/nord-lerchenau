@@ -6,82 +6,16 @@ import { useEffect, useState } from "react";
 
 import { Logo } from "@/components/Logo";
 import { MobileMenu } from "@/components/site/MobileMenu";
-import { SiteNav, type NavItem } from "@/components/site/SiteNav";
+import { SiteNav } from "@/components/site/SiteNav";
+import { NAV_TREE } from "@/lib/nav-tree";
 
-type NavLink = { label: string; href: string };
 type CTA = { label: string; href: string };
 
 type Props = {
-  links: NavLink[];
   cta: CTA;
 };
 
-const NAV_TREE: NavItem[] = [
-  { label: "Startseite", href: "/" },
-  {
-    label: "Verein",
-    href: "/verein",
-    children: [
-      { label: "Übersicht", href: "/verein" },
-      { label: "Chronik", href: "/verein/chronik" },
-      { label: "Vorstand", href: "/verein/vorstand" },
-      { label: "Kinder- & Jugendschutz", href: "/verein/jugendschutz" },
-      { label: "Vereinsheim", href: "/verein/vereinsheim" },
-      { label: "Jugendförderverein", href: "/verein/jugendfoerderverein" },
-    ],
-  },
-  {
-    label: "Abteilungen",
-    href: "/sport",
-    children: [
-      {
-        label: "Fußball",
-        href: "/fussball",
-        children: [
-          {
-            label: "Herren",
-            href: "/fussball/herren",
-            children: [
-              { label: "Alle Herren-Teams", href: "/fussball/herren" },
-              { label: "1. Mannschaft", href: "/fussball/erste" },
-              { label: "2. Mannschaft", href: "/fussball/zweite" },
-              { label: "3. Mannschaft", href: "/fussball/dritte" },
-            ],
-          },
-          { label: "Junioren", href: "/fussball/junioren" },
-          { label: "Juniorinnen", href: "/fussball/juniorinnen" },
-          { label: "Bambinis", href: "/fussball/bambini" },
-          { label: "Schiedsrichter", href: "/schiedsrichter" },
-        ],
-      },
-      { label: "Gymnastik", href: "/gymnastik" },
-      { label: "Volleyball", href: "/volleyball" },
-      { label: "eSport", href: "/esport" },
-      { label: "Ski", href: "/ski" },
-    ],
-  },
-  {
-    label: "News / Termine",
-    href: "/termine",
-    children: [
-      { label: "News", href: "/news" },
-      { label: "Termine", href: "/termine" },
-    ],
-  },
-  { label: "Sponsoren", href: "/sponsoren" },
-  { label: "Shop", href: "/shop" },
-  {
-    label: "Kontakt",
-    href: "/kontakt",
-    children: [
-      { label: "Kontakt", href: "/kontakt" },
-      { label: "Mitgliedschaft", href: "/mitgliedschaft" },
-      { label: "FAQ", href: "/faq" },
-    ],
-  },
-];
-
-export function HeaderShell({ links, cta }: Props) {
+export function HeaderShell({ cta }: Props) {
   const pathname = usePathname();
   const isHome = pathname === "/";
   const [scrolled, setScrolled] = useState(false);
@@ -119,7 +53,7 @@ export function HeaderShell({ links, cta }: Props) {
             {cta.label}
           </Link>
           <MobileMenu
-            links={links}
+            items={NAV_TREE}
             cta={cta}
             theme={glass ? "dark" : "light"}
           />

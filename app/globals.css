@@ -93,3 +93,48 @@
     box-shadow: 0 0 0 8px rgb(212 58 47 / 0);
   }
 }
+
+/* Mobile-Menü (Radix Dialog). Das Projekt hat kein tailwindcss-animate, die
+   frueheren `animate-in`/`slide-in-from-right`-Klassen waren deshalb wirkungslos
+   und die Schublade sprang ohne Uebergang ins Bild. */
+@keyframes menu-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes menu-panel-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.menu-overlay[data-state="open"] {
+  animation: menu-overlay-in 200ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.menu-overlay[data-state="closed"] {
+  animation: menu-overlay-in 200ms cubic-bezier(0.32, 0.72, 0, 1) reverse;
+}
+
+.menu-panel[data-state="open"] {
+  animation: menu-panel-in 320ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.menu-panel[data-state="closed"] {
+  animation: menu-panel-in 260ms cubic-bezier(0.32, 0.72, 0, 1) reverse;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-panel[data-state="open"],
+  .menu-panel[data-state="closed"] {
+    animation-name: menu-overlay-in;
+    animation-duration: 150ms;
+  }
+}

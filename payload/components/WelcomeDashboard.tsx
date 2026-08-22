@@ -125,7 +125,7 @@ const settingsLinks: QuickLink[] = [
   {
     href: "/admin/globals/navigation",
     title: "Menüleiste",
-    hint: "Header- und Footer-Links",
+    hint: "Links in der Fußzeile",
     Icon: LuCompass,
   },
   {

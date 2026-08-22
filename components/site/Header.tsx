@@ -1,42 +1,12 @@
 import { HeaderShell } from "@/components/site/HeaderShell";
-import { cachedQuery, globalTag } from "@/lib/cms";
-import { getPayloadClient } from "@/lib/payload";
-
-type NavLink = { label: string; href: string };
-
-const FALLBACK_LINKS: NavLink[] = [
-  { label: "Verein", href: "/verein" },
-  { label: "Fußball", href: "/fussball" },
-  { label: "Sportabteilungen", href: "/sport" },
-  { label: "News", href: "/news" },
-  { label: "Termine", href: "/termine" },
-  { label: "Sponsoren", href: "/sponsoren" },
-  { label: "Kontakt", href: "/kontakt" },
-];
 
 const CTA = { label: "Mitglied werden", href: "/mitgliedschaft" };
 
-export async function Header() {
-  let headerLinks: NavLink[] = [];
-  try {
-    const nav = await cachedQuery(
-      ["global", "navigation"],
-      [globalTag("navigation")],
-      async () => {
-        const payload = await getPayloadClient();
-        return payload.findGlobal({ slug: "navigation" });
-      },
-    );
-    headerLinks = (nav.header ?? []).filter(
-      (l): l is { id?: string | null; label: string; href: string } =>
-        typeof l?.label === "string" && typeof l?.href === "string",
-    );
-  } catch {
-    // DB unavailable (e.g. CI build with empty schema). Use fallback.
-  }
-
-  const links: NavLink[] =
-    headerLinks.length > 0 ? headerLinks : FALLBACK_LINKS;
-
-  return <HeaderShell links={links} cta={CTA} />;
+/**
+ * The main menu is not read from the CMS. Desktop and mobile share one tree in
+ * `lib/nav-tree.ts`, so an entry cannot sit in two different places depending
+ * on the screen. The CMS `navigation` global still drives the footer columns.
+ */
+export function Header() {
+  return <HeaderShell cta={CTA} />;
 }

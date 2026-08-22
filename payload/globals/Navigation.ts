@@ -9,7 +9,8 @@ export const Navigation: GlobalConfig = {
   label: "Navigation (Menüleiste)",
   admin: {
     group: "5. Einstellungen",
-    description: "Menü-Einträge oben (Header) und unten (Footer).",
+    description:
+      "Links der Fußzeile. Das Hauptmenü oben ist bewusst fest im Code hinterlegt, damit es am Handy und im Browser identisch aufgebaut ist.",
   },
   access: { read: anyone, update: authenticated },
   hooks: { afterChange: [revalidateGlobalOnChange("navigation")] },
@@ -18,7 +19,14 @@ export const Navigation: GlobalConfig = {
       name: "header",
       type: "array",
       label: "Hauptmenü (oben in der Webseite)",
+      // Ausgeblendet statt gelöscht: die Spalte bleibt in der Datenbank, es
+      // braucht also keine Migration. Das Hauptmenü kommt seit dem Umbau aus
+      // `lib/nav-tree.ts`, weil Handy und Browser sonst zwei verschiedene
+      // Menüs zeigen (Fußball stand am Handy ganz oben, im Browser unter
+      // "Abteilungen"). Ein Feld, das nichts mehr bewirkt, gehört nicht in
+      // den Editor.
       admin: {
+        hidden: true,
         description: "Einträge in der Reihenfolge wie sie erscheinen sollen.",
       },
       fields: [

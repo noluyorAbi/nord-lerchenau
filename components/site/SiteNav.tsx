@@ -3,11 +3,7 @@
 import Link from "next/link";
 import { useRef, useState } from "react";
 
-export type NavItem = {
-  label: string;
-  href: string;
-  children?: NavItem[];
-};
+import type { NavItem } from "@/lib/nav-tree";
 
 type Props = {
   items: NavItem[];

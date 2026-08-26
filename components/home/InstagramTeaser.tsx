@@ -5,177 +5,19 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { FadeUp } from "@/components/motion/FadeUp";
+import { FALLBACK_GALLERY, type GalleryShot } from "@/lib/home-images";
 import { SectionEyebrow } from "@/components/SectionEyebrow";
 
 const IG_HANDLE = "svnord_lerchenau";
 const IG_PROFILE_URL = `https://www.instagram.com/${IG_HANDLE}/`;
 
-type GalleryShot = {
-  src: string;
-  caption: string;
-  sub: string;
-  /** Intrinsic pixel size — lets next/image reserve space and avoid layout shift. */
-  w: number;
-  h: number;
-  span?: "wide" | "tall" | "default";
-};
-
-const GALLERY: GalleryShot[] = [
-  {
-    src: "/fans/spieltag-garmisch.jpg",
-    caption: "Spieltag in den Bergen",
-    sub: "Auswärtsfahrt der Nordler",
-    w: 1600,
-    h: 1200,
-    span: "wide",
-  },
-  {
-    src: "/fans/tribuene-garmisch.jpg",
-    caption: "Volle Tribüne",
-    sub: "Mitgereiste Fans des SV Nord",
-    w: 1600,
-    h: 1200,
-  },
-  {
-    src: "/fans/fans-garmisch.jpg",
-    caption: "Mitten unter Nordlern",
-    sub: "Einmal Nordler, immer Nordler",
-    w: 1600,
-    h: 1200,
-  },
-  {
-    src: "/trainingslager/trainingslager-teamabend.jpg",
-    caption: "Trainingslager Garmisch",
-    sub: "Teamabend in Weiß",
-    w: 1600,
-    h: 1200,
-    span: "wide",
-  },
-  {
-    src: "/trainingslager/trainingslager-feier.jpg",
-    caption: "Mannschaftsabend",
-    sub: "Trainingslager 2026",
-    w: 1600,
-    h: 1200,
-  },
-  {
-    src: "/sport/u8/loewen.jpg",
-    caption: "U8 Löwen",
-    sub: "F-Junioren · U8-I",
-    w: 1674,
-    h: 1148,
-    span: "wide",
-  },
-  {
-    src: "/sport/u8/trainerteam.jpg",
-    caption: "Trainerteam U8",
-    sub: "Unsere Jugendtrainer",
-    w: 900,
-    h: 1600,
-  },
-  {
-    src: "/sport/u8/tiger.jpg",
-    caption: "U8 Tiger",
-    sub: "F-Junioren · U8-II",
-    w: 1829,
-    h: 1148,
-  },
-  {
-    src: "/sport/u8/team-2.jpg",
-    caption: "Trainer U8",
-    sub: "Eschengarten",
-    w: 900,
-    h: 1600,
-  },
-  {
-    src: "/news/historischer-aufstieg-in-die-landesliga.jpg",
-    caption: "Historischer Aufstieg",
-    sub: "1. Herren · Bezirksliga → Landesliga",
-    w: 1600,
-    h: 1066,
-    span: "tall",
-  },
-  {
-    src: "/sport/u8/team-3.jpg",
-    caption: "Trainer U8",
-    sub: "Jugendarbeit beim SV Nord",
-    w: 900,
-    h: 1600,
-  },
-  {
-    src: "/sport/ski-action.jpg",
-    caption: "Ski-Abteilung",
-    sub: "Tagesfahrten & Camps",
-    w: 1600,
-    h: 1200,
-  },
-  {
-    src: "/sport/u8/team-4.jpg",
-    caption: "Trainer U8",
-    sub: "Die jüngsten Nordler",
-    w: 900,
-    h: 1600,
-  },
-  {
-    src: "/sport/ski-gruppe.jpg",
-    caption: "Ski-Gruppe",
-    sub: "Vom Einsteiger bis zum Könner",
-    w: 800,
-    h: 600,
-  },
-  {
-    src: "/sport/gymnastik-gruppe.jpg",
-    caption: "Gymnastik",
-    sub: "Seit 1967 in der Waldmeisterschule",
-    w: 1000,
-    h: 666,
-    span: "wide",
-  },
-  {
-    src: "/sport/u8/team-5.jpg",
-    caption: "Trainer U8",
-    sub: "Fußballkindergarten & F-Junioren",
-    w: 1600,
-    h: 900,
-  },
-  {
-    src: "/news/karger-kommt.jpg",
-    caption: "Neuzugang",
-    sub: "Karger kommt",
-    w: 1600,
-    h: 2280,
-  },
-  {
-    src: "/sport/gymnastik-hero.jpg",
-    caption: "Gymnastik in Bewegung",
-    sub: "Zweimal pro Woche · abends",
-    w: 1600,
-    h: 1085,
-  },
-  {
-    src: "/sport/ski-hero.jpg",
-    caption: "Auf der Piste",
-    sub: "Skifahren mit dem SV Nord",
-    w: 1408,
-    h: 792,
-  },
-  {
-    src: "/teams/d2-2014.jpg",
-    caption: "D-Junioren D2 · 2014",
-    sub: "Mannschaftsfoto · Archiv",
-    w: 1600,
-    h: 1200,
-  },
-  {
-    src: "/jugend-bg.jpg",
-    caption: "Jugend am Eschengarten",
-    sub: "Von den Bambini bis zur A-Jugend",
-    w: 1600,
-    h: 1200,
-    span: "wide",
-  },
-];
-
+/**
+ * Fest kuratiert, Label und Bild als Paar. Ein Versuch, das Bild positionsweise
+ * aus der Galerie zu ziehen, hat genau das kaputt gemacht: der Punkt "U8 Loewen"
+ * zeigte dann das erste Galeriebild, also ein Fanfoto aus Garmisch. Wer diese
+ * fuenf Punkte pflegbar machen will, braucht eigene Felder mit Label und Bild,
+ * keine Kopplung ueber die Reihenfolge.
+ */
 const IG_HIGHLIGHTS: Array<{ label: string; src: string }> = [
   { label: "U8 Löwen", src: "/sport/u8/loewen.jpg" },
   { label: "U8 Tiger", src: "/sport/u8/tiger.jpg" },
@@ -219,7 +61,13 @@ const HIGHLIGHT_TAGS = [
 ];
 
 /** In-phone Instagram profile clone — own UI, own photos, no Meta embed. */
-function IgScreenClone({ onOpen }: { onOpen: (idx: number) => void }) {
+function IgScreenClone({
+  shots,
+  onOpen,
+}: {
+  shots: GalleryShot[];
+  onOpen: (idx: number) => void;
+}) {
   return (
     <div className="flex h-full flex-col bg-white text-[#0b0b0c]">
       {/* Scroll area */}
@@ -379,9 +227,9 @@ function IgScreenClone({ onOpen }: { onOpen: (idx: number) => void }) {
 
         {/* Post grid — WhatsApp & club photos */}
         <div className="grid grid-cols-3 gap-[2px] pb-4">
-          {GALLERY.map((shot, idx) => (
+          {shots.map((shot, idx) => (
             <button
-              key={shot.src}
+              key={`${shot.src}-${idx}`}
               type="button"
               onClick={() => onOpen(idx)}
               className="relative aspect-square overflow-hidden bg-black/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0095f6]"
@@ -402,7 +250,13 @@ function IgScreenClone({ onOpen }: { onOpen: (idx: number) => void }) {
   );
 }
 
-export function InstagramTeaser() {
+/**
+ * `tiles` kommt aus dem CMS (Startseite -> Bilder -> Galerie). Eine leere oder
+ * fehlende Liste bedeutet: der Verein hat dort nichts gepflegt, dann zeigt die
+ * Seite die mitgelieferten Fotos. Ein leeres Feld darf nie ein Loch ergeben.
+ */
+export function InstagramTeaser({ tiles }: { tiles?: GalleryShot[] }) {
+  const shots = tiles && tiles.length > 0 ? tiles : FALLBACK_GALLERY;
   const [clock, setClock] = useState("");
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
 
@@ -426,10 +280,10 @@ export function InstagramTeaser() {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setLightboxIdx(null);
       else if (e.key === "ArrowRight")
-        setLightboxIdx((i) => (i === null ? null : (i + 1) % GALLERY.length));
+        setLightboxIdx((i) => (i === null ? null : (i + 1) % shots.length));
       else if (e.key === "ArrowLeft")
         setLightboxIdx((i) =>
-          i === null ? null : (i - 1 + GALLERY.length) % GALLERY.length,
+          i === null ? null : (i - 1 + shots.length) % shots.length,
         );
     };
     window.addEventListener("keydown", onKey);
@@ -439,9 +293,9 @@ export function InstagramTeaser() {
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = prevOverflow;
     };
-  }, [lightboxIdx]);
+  }, [lightboxIdx, shots.length]);
 
-  const activeShot = lightboxIdx !== null ? GALLERY[lightboxIdx] : null;
+  const activeShot = lightboxIdx !== null ? shots[lightboxIdx] : null;
 
   return (
     <section className="border-b border-nord-line bg-nord-paper-2">
@@ -560,7 +414,7 @@ export function InstagramTeaser() {
 
                     {/* Screen content — in-phone Instagram clone */}
                     <div className="absolute inset-0 top-12 overflow-hidden">
-                      <IgScreenClone onOpen={setLightboxIdx} />
+                      <IgScreenClone shots={shots} onOpen={setLightboxIdx} />
                     </div>
 
                     {/* Home indicator */}
@@ -700,7 +554,7 @@ export function InstagramTeaser() {
                 </h3>
               </div>
               <span className="mb-1 hidden rounded-full bg-nord-paper-2 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-muted sm:inline-flex">
-                {GALLERY.length} Momente
+                {shots.length} Momente
               </span>
             </div>
             <Link
@@ -719,9 +573,9 @@ export function InstagramTeaser() {
           </div>
           {/* Masonry: jedes Bild behält sein natürliches Seitenverhältnis */}
           <div className="columns-1 gap-3 [column-fill:_balance] sm:columns-2 md:columns-3 lg:columns-4">
-            {GALLERY.map((shot, idx) => (
+            {shots.map((shot, idx) => (
               <FadeUp
-                key={shot.src}
+                key={`${shot.src}-${idx}`}
                 delay={(idx % 4) * 0.05}
                 className="mb-3 break-inside-avoid"
               >
@@ -827,7 +681,7 @@ export function InstagramTeaser() {
             onClick={(e) => {
               e.stopPropagation();
               setLightboxIdx((i) =>
-                i === null ? null : (i - 1 + GALLERY.length) % GALLERY.length,
+                i === null ? null : (i - 1 + shots.length) % shots.length,
               );
             }}
             className="absolute left-3 top-1/2 z-10 flex size-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/20 md:left-6"
@@ -850,7 +704,7 @@ export function InstagramTeaser() {
             onClick={(e) => {
               e.stopPropagation();
               setLightboxIdx((i) =>
-                i === null ? null : (i + 1) % GALLERY.length,
+                i === null ? null : (i + 1) % shots.length,
               );
             }}
             className="absolute right-3 top-1/2 z-10 flex size-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/20 md:right-6"
@@ -888,8 +742,8 @@ export function InstagramTeaser() {
                 {activeShot.caption}
               </div>
               <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.14em] text-white/50">
-                {(lightboxIdx ?? 0) + 1} / {GALLERY.length} · Esc zum Schließen
-                · ← / → zum Blättern
+                {(lightboxIdx ?? 0) + 1} / {shots.length} · Esc zum Schließen ·
+                ← / → zum Blättern
               </div>
             </div>
           </div>

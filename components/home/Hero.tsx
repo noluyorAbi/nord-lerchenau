@@ -4,6 +4,7 @@ import Link from "next/link";
 import { HeroMatchCard } from "@/components/home/HeroMatchCard";
 import { HeroItem, HeroStagger } from "@/components/motion/HeroStagger";
 import { cachedQuery, collectionTag } from "@/lib/cms";
+import { FALLBACK_HERO_SLIDES } from "@/lib/home-images";
 import { formatKickoff, formatShortDate } from "@/lib/format-date";
 import {
   fupaImage,
@@ -24,26 +25,19 @@ import {
 } from "@/lib/weekend";
 import type { HomePage, Team } from "@/payload-types";
 
-type Props = { hero: HomePage["hero"] };
-
-// Hero-Bilderlauf: starke Querformat-Fotos aus /public. Zum Tauschen
-// einfach die Pfade ändern oder Einträge ergänzen/entfernen; die Animation
-// passt sich automatisch an die Anzahl der Bilder an. Erstes Bild wird bei
-// aktivierter Bewegungsreduktion (prefers-reduced-motion) statisch gezeigt.
-const HERO_SLIDES = [
-  "/news/historischer-aufstieg-in-die-landesliga.jpg",
-  "/fans/spieltag-garmisch.jpg",
-  "/sport/u8/tiger.jpg",
-  "/sport/u8/loewen.jpg",
-  "/fans/tribuene-garmisch.jpg",
-  "/sport/u8/team-5.jpg",
-] as const;
+type Props = {
+  hero: HomePage["hero"];
+  /** Bilder aus dem CMS (Startseite -> Bilder). Leer heißt: mitgelieferte. */
+  slides?: string[];
+};
 
 // Sekunden pro Bild; die Überblendung dauert HERO_FADE_MS.
 const HERO_PER_SLIDE_S = 5.5;
 const HERO_FADE_MS = 800;
 
-export async function Hero({ hero }: Props) {
+export async function Hero({ hero, slides }: Props) {
+  const heroSlides =
+    slides && slides.length > 0 ? slides : FALLBACK_HERO_SLIDES;
   // Slug der 1. Herren in der aktuellsten auf fupa existierenden Saison.
   const herrenSlug = await resolveLiveHerrenSlug();
   const [upcoming, standings] = await Promise.all([
@@ -151,7 +145,7 @@ export async function Hero({ hero }: Props) {
     href: hero?.secondaryCtaHref ?? "/verein",
   };
 
-  const slideCount = HERO_SLIDES.length;
+  const slideCount = heroSlides.length;
   const totalS = slideCount * HERO_PER_SLIDE_S;
   // Anteil eines Bildes am Gesamtzyklus und Anteil der Überblendung.
   const visiblePct = 100 / slideCount;
@@ -161,7 +155,28 @@ export async function Hero({ hero }: Props) {
   // sein Zeitfenster verschoben. Überblendung nur via opacity (GPU). Bei
   // prefers-reduced-motion wird die Animation gestoppt; nur Bild 1 bleibt
   // sichtbar (alle weiteren Layer auf opacity:0).
-  const heroSlideshowCss = `
+  // Bei einem einzigen Bild gibt es nichts zu ueberblenden, und die Keyframes
+  // waeren sogar schaedlich: visiblePct ist dann 100, die Regeln fuer 100%
+  // stehen doppelt da, und das eine Foto verschwaende den groessten Teil des
+  // Zyklus unsichtbar. Ein Bild kann durchaus uebrig bleiben, wenn im CMS nur
+  // eines gepflegt ist oder wenn von mehreren nur eines eine brauchbare
+  // Quelle hat.
+  const heroSlideshowCss =
+    slideCount < 2
+      ? `
+    .hero-slide { opacity: 1; animation: none; }
+    @keyframes hero-scroll-bob {
+      0%, 100% { transform: translateY(0); opacity: 0.55; }
+      50% { transform: translateY(6px); opacity: 1; }
+    }
+    .hero-scroll-cue {
+      animation: hero-scroll-bob 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-scroll-cue { animation: none; opacity: 0.7; }
+    }
+  `
+      : `
     .hero-slide {
       opacity: 0;
       animation: hero-crossfade ${totalS}s cubic-bezier(0.16, 1, 0.3, 1) infinite;
@@ -195,9 +210,9 @@ export async function Hero({ hero }: Props) {
       {/* Full-bleed Bilderlauf: gestapelte Layer mit CSS-Crossfade */}
       <style dangerouslySetInnerHTML={{ __html: heroSlideshowCss }} />
       <div className="absolute inset-0" aria-hidden="true">
-        {HERO_SLIDES.map((src, i) => (
+        {heroSlides.map((src, i) => (
           <div
-            key={src}
+            key={`${src}-${i}`}
             className="hero-slide absolute inset-0"
             style={{
               // Vorwärts-Reihenfolge: Layer i wird ab i*HERO_PER_SLIDE_S sichtbar.

@@ -67,15 +67,15 @@ export interface Config {
   };
   blocks: {};
   collections: {
-    users: User;
-    media: Media;
+    posts: Post;
+    events: Event;
     people: Person;
     teams: Team;
-    posts: Post;
-    sponsors: Sponsor;
     fixtures: Fixture;
-    events: Event;
+    sponsors: Sponsor;
     submissions: Submission;
+    users: User;
+    media: Media;
     "payload-kv": PayloadKv;
     "payload-locked-documents": PayloadLockedDocument;
     "payload-preferences": PayloadPreference;
@@ -83,15 +83,15 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
-    users: UsersSelect<false> | UsersSelect<true>;
-    media: MediaSelect<false> | MediaSelect<true>;
+    posts: PostsSelect<false> | PostsSelect<true>;
+    events: EventsSelect<false> | EventsSelect<true>;
     people: PeopleSelect<false> | PeopleSelect<true>;
     teams: TeamsSelect<false> | TeamsSelect<true>;
-    posts: PostsSelect<false> | PostsSelect<true>;
-    sponsors: SponsorsSelect<false> | SponsorsSelect<true>;
     fixtures: FixturesSelect<false> | FixturesSelect<true>;
-    events: EventsSelect<false> | EventsSelect<true>;
+    sponsors: SponsorsSelect<false> | SponsorsSelect<true>;
     submissions: SubmissionsSelect<false> | SubmissionsSelect<true>;
+    users: UsersSelect<false> | UsersSelect<true>;
+    media: MediaSelect<false> | MediaSelect<true>;
     "payload-kv": PayloadKvSelect<false> | PayloadKvSelect<true>;
     "payload-locked-documents":
       | PayloadLockedDocumentsSelect<false>
@@ -108,21 +108,19 @@ export interface Config {
   };
   fallbackLocale: null;
   globals: {
-    "site-settings": SiteSetting;
-    navigation: Navigation;
     "home-page": HomePage;
-    "contact-info": ContactInfo;
     "chronik-page": ChronikPage;
     "vereinsheim-page": VereinsheimPage;
     "jugendfoerder-page": JugendfoerderPage;
-    "legal-pages": LegalPage;
     "faq-page": FaqPage;
+    "legal-pages": LegalPage;
+    "site-images": SiteImage;
+    "site-settings": SiteSetting;
+    navigation: Navigation;
+    "contact-info": ContactInfo;
   };
   globalsSelect: {
-    "site-settings": SiteSettingsSelect<false> | SiteSettingsSelect<true>;
-    navigation: NavigationSelect<false> | NavigationSelect<true>;
     "home-page": HomePageSelect<false> | HomePageSelect<true>;
-    "contact-info": ContactInfoSelect<false> | ContactInfoSelect<true>;
     "chronik-page": ChronikPageSelect<false> | ChronikPageSelect<true>;
     "vereinsheim-page":
       | VereinsheimPageSelect<false>
@@ -130,8 +128,12 @@ export interface Config {
     "jugendfoerder-page":
       | JugendfoerderPageSelect<false>
       | JugendfoerderPageSelect<true>;
-    "legal-pages": LegalPagesSelect<false> | LegalPagesSelect<true>;
     "faq-page": FaqPageSelect<false> | FaqPageSelect<true>;
+    "legal-pages": LegalPagesSelect<false> | LegalPagesSelect<true>;
+    "site-images": SiteImagesSelect<false> | SiteImagesSelect<true>;
+    "site-settings": SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    navigation: NavigationSelect<false> | NavigationSelect<true>;
+    "contact-info": ContactInfoSelect<false> | ContactInfoSelect<true>;
   };
   locale: null;
   widgets: {
@@ -144,57 +146,120 @@ export interface Config {
   };
 }
 export interface UserAuthOperations {
-  forgotPassword: {
-    email: string;
-    password: string;
-  };
-  login: {
-    email: string;
-    password: string;
-  };
+  forgotPassword:
+    | {
+        email: string;
+      }
+    | {
+        username: string;
+      };
+  login:
+    | {
+        email: string;
+        password: string;
+      }
+    | {
+        password: string;
+        username: string;
+      };
   registerFirstUser: {
-    email: string;
     password: string;
-  };
-  unlock: {
+    username: string;
     email: string;
-    password: string;
   };
+  unlock:
+    | {
+        email: string;
+      }
+    | {
+        username: string;
+      };
 }
 /**
+ * Vereinsnews, Spielberichte und Ankündigungen. Erscheint unter /news.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
+ * via the `definition` "posts".
  */
-export interface User {
+export interface Post {
   id: number;
-  name?: string | null;
+  /**
+   * Wird groß oben auf dem Artikel angezeigt.
+   */
+  title: string;
+  /**
+   * Wird automatisch aus der Überschrift erstellt. Nur ändern, wenn nötig.
+   */
+  slug: string;
+  /**
+   * 1 bis 2 Sätze. Wird in der News-Übersicht als Teaser angezeigt.
+   */
+  excerpt?: string | null;
+  /**
+   * Optionales Titelbild der News. Wird angezeigt, wenn gesetzt.
+   */
+  heroImage?: (number | null) | Media;
+  /**
+   * Der eigentliche Inhalt des Artikels.
+   */
+  body: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ("ltr" | "rtl") | null;
+      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Optional. Wer hat den Artikel geschrieben?
+   */
+  author?: (number | null) | Person;
+  /**
+   * Steht oben am Artikel und bestimmt die Reihenfolge in der News-Liste (neuestes zuerst). Ist mit jetzt vorbelegt.
+   */
+  publishedAt: string;
+  /**
+   * Mehrere möglich. Dient zur Filterung in der News-Liste.
+   */
+  tags?:
+    | (
+        | "spielbericht"
+        | "verein"
+        | "jugend"
+        | "event"
+        | "sponsoren"
+        | "allgemein"
+      )[]
+    | null;
   updatedAt: string;
   createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
-  collection: "users";
 }
 /**
+ * Alle hochgeladenen Bilder. 'Alt-Text' ist Pflicht (Beschreibung für Screenreader & SEO). Bitte höchstens 4 MB pro Datei hochladen: größere Dateien werden vom Server abgewiesen. Handy-Fotos vorher verkleinern (z.B. in der Fotos-App teilen und 'Mittel' wählen).
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
 export interface Media {
   id: number;
+  /**
+   * Kurze Beschreibung des Bildinhalts. Pflicht! Wird für Screenreader und Google verwendet.
+   */
   alt: string;
+  /**
+   * Optional. Wird unter dem Bild angezeigt.
+   */
   caption?: string | null;
+  /**
+   * Optional. z.B. 'Foto: Max Mustermann'.
+   */
   credit?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -243,6 +308,8 @@ export interface Media {
   };
 }
 /**
+ * Vorstand, Trainer:innen, Spieler:innen. Über das Feld 'Funktion' wird die Person der richtigen Sektion auf der Website zugeordnet.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "people".
  */
@@ -250,9 +317,12 @@ export interface Person {
   id: number;
   name: string;
   /**
-   * e.g. 1. Vorstand · Sportlicher Leiter · Trainer A1
+   * Wie soll die Rolle auf der Webseite stehen? z.B. '1. Vorstand', 'Sportlicher Leiter', 'Trainer A1'.
    */
   role: string;
+  /**
+   * Bestimmt, in welcher Sektion die Person auf der Webseite erscheint.
+   */
   function:
     | "vorstand"
     | "sportleitung"
@@ -261,29 +331,40 @@ export interface Person {
     | "zeugwart"
     | "spieler"
     | "andere";
+  /**
+   * Portraitfoto. Optional, aber empfohlen.
+   */
   photo?: (number | null) | Media;
+  /**
+   * Optional. Wird nur bei Vorstand/Trainer gezeigt.
+   */
   phone?: string | null;
   email?: string | null;
   /**
-   * Optional. Used for trainer/player assignment.
+   * Optional. Nötig für Trainer- und Spielerzuordnung zu einer Mannschaft.
    */
   team?: (number | null) | Team;
   /**
-   * Lower = earlier in lists.
+   * Kleinere Zahl = weiter oben in Listen.
    */
   order?: number | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
+ * Alle Teams (Senioren, Jugend, Volleyball etc.). BFV-/Fupa-IDs hier eintragen für Live-Daten.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "teams".
  */
 export interface Team {
   id: number;
+  /**
+   * z.B. '1. Herren', 'U19 Junioren', 'Bambini F3'.
+   */
   name: string;
   /**
-   * Auto-generated from name. Edit only if you know what you're doing.
+   * Wird automatisch aus dem Namen erstellt. Nur ändern, wenn nötig.
    */
   slug: string;
   sport:
@@ -293,55 +374,73 @@ export interface Team {
     | "ski"
     | "esport"
     | "schiedsrichter";
+  /**
+   * Grobe Einteilung für die Auflistung.
+   */
   category?:
     | ("senioren" | "junioren" | "juniorinnen" | "bambini" | "allgemein")
     | null;
   /**
-   * z.B. A1, B2, F3, Bambini
+   * z.B. A1, B2, F3, Bambini.
    */
   ageGroup?: string | null;
   /**
-   * Jahrgänge, kommagetrennt — z.B. '2006, 2007, 2008'.
+   * Jahrgänge, z. B. 2006, 2007, 2008. Erscheinen im Mannschaftstitel.
    */
   birthYears?: string | null;
   /**
-   * z.B. 2025/26
+   * z.B. '2025/26'.
    */
   season?: string | null;
   /**
-   * z.B. Bezirksliga Oberbayern
+   * z.B. 'Landesliga'.
    */
   league?: string | null;
   /**
-   * Link the team to its BFV registry entry so live data + links show up.
+   * BFV-Daten verknüpfen, damit Live-Spielplan und Tabelle auf der Webseite erscheinen.
    */
   bfv?: {
     /**
-     * 32-char BFV/DFB-Net ID, e.g. 016PMM83PG000000VV0AG811VUDIC8D7
+     * 32-stellige BFV/DFB-Net ID, z.B. 016PMM83PG000000VV0AG811VUDIC8D7.
      */
     teamId?: string | null;
     /**
-     * URL slug for BFV, e.g. sv-n-lerchenau
+     * z.B. 'sv-n-lerchenau'.
      */
     slug?: string | null;
     /**
-     * BFV-Wortlaut der Spielklasse, e.g. 'Herren / Bezirksliga'
+     * BFV-Wortlaut, z.B. 'Herren / Landesliga'.
      */
     spielklasse?: string | null;
     /**
-     * Für SG-Teams, z.B. 'Spielgemeinschaft mit Fasanarie-Nord'
+     * Nur für Spielgemeinschaften, z.B. 'Spielgemeinschaft mit Fasanarie-Nord'.
      */
     partner?: string | null;
   };
   /**
-   * Link the team to fupa.net so squad + player images light up.
+   * Verknüpft das Team mit fupa.net, damit Kader und Spielerfotos angezeigt werden. Bei Jugend-SGs zusätzlich Hin- und Rückrunde eintragen. Die Saison im Slug wird zur Laufzeit automatisch auf die neueste auf fupa existierende Saison angehoben; ein Saisonwechsel erfordert also KEINE Pflege hier.
    */
   fupa?: {
+    /**
+     * Haupt-Slug, z.B. 'sv-nord-muenchen-lerchenau-m1-2026-27'. Saison-Suffix wird automatisch aktualisiert.
+     */
     slug?: string | null;
+    /**
+     * Nur Jugend-SGs. z.B. 'sg-n-lerchenau-fasanerie-n-u19-1-autumn2025'. Saison-Suffix wird automatisch aktualisiert.
+     */
     autumnSlug?: string | null;
+    /**
+     * Nur Jugend-SGs. z.B. 'sg-n-lerchenau-fasanerie-n-u19-1-spring2026'. Saison-Suffix wird automatisch aktualisiert.
+     */
     springSlug?: string | null;
   };
+  /**
+   * Personen aus '2. Sport → Personen' auswählen (mehrere möglich).
+   */
   trainers?: (number | Person)[] | null;
+  /**
+   * Optionale Vorstellung des Teams.
+   */
   description?: {
     root: {
       type: string;
@@ -357,9 +456,12 @@ export interface Team {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Wird auf den Mannschafts-Karten angezeigt, wenn kein BFV-Foto verknüpft ist (z. B. AH). Bei den Abteilungen Gymnastik, Volleyball und Ski ist das zugleich das große Bild oben auf der Abteilungsseite: Wird hier ein Foto hochgeladen, ersetzt es das mitgelieferte Standardbild.
+   */
   photo?: (number | null) | Media;
   /**
-   * z.B. BFV Spielplan, Tabelle, etc.
+   * z.B. BFV Spielplan, Tabelle, externe Seiten.
    */
   externalLinks?:
     | {
@@ -368,24 +470,41 @@ export interface Team {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Kleinere Zahl = weiter oben in Listen.
+   */
   order?: number | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
+ * Vereinsfeste, Versammlungen und sonstige Termine. Erscheint unter /termine.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "posts".
+ * via the `definition` "events".
  */
-export interface Post {
+export interface Event {
   id: number;
-  title: string;
-  slug: string;
   /**
-   * 1–2 sentence teaser shown in cards.
+   * Name des Termins. z.B. 'Sommerfest 2026'.
    */
-  excerpt?: string | null;
-  heroImage?: (number | null) | Media;
-  body: {
+  title: string;
+  /**
+   * Wann startet die Veranstaltung?
+   */
+  startsAt: string;
+  /**
+   * Optional. Wann endet sie?
+   */
+  endsAt?: string | null;
+  /**
+   * z.B. 'Vereinsheim Lerchenau' oder Adresse.
+   */
+  location?: string | null;
+  /**
+   * Erscheint auf der Termine-Seite (Programm, Details). Listen und Absätze werden als Text angezeigt.
+   */
+  description?: {
     root: {
       type: string;
       children: {
@@ -399,56 +518,46 @@ export interface Post {
       version: number;
     };
     [k: string]: unknown;
-  };
-  author?: (number | null) | Person;
-  publishedAt: string;
-  tags?:
-    | (
-        | "spielbericht"
-        | "verein"
-        | "jugend"
-        | "event"
-        | "sponsoren"
-        | "allgemein"
-      )[]
-    | null;
+  } | null;
+  /**
+   * Optional. Foto oder Plakat zum Termin.
+   */
+  image?: (number | null) | Media;
+  /**
+   * Optional. Externer Link, z.B. zur Online-Anmeldung oder Eventseite. Erscheint als 'Zur Anmeldung'-Button.
+   */
+  ctaUrl?: string | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "sponsors".
- */
-export interface Sponsor {
-  id: number;
-  name: string;
-  logo: number | Media;
-  url?: string | null;
-  tier: "premium" | "standard";
-  order?: number | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
+ * Manuelle Spielansetzungen und Ergebnisse. Tipp: Live-Spielplan kommt automatisch vom BFV, hier nur Sonderfälle eintragen.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "fixtures".
  */
 export interface Fixture {
   id: number;
+  /**
+   * Welches Team spielt?
+   */
   team: number | Team;
   /**
-   * Name des gegnerischen Vereins
+   * Name des gegnerischen Vereins.
    */
   opponent: string;
   kickoff: string;
   /**
-   * z.B. Bezirksliga · Spieltag 20
+   * z.B. 'Landesliga · Spieltag 20', 'Pokal'.
    */
   competition?: string | null;
   /**
-   * z.B. Eschengarten · ASV Dachau
+   * z.B. 'Eschengarten' oder 'ASV Dachau Sportanlage'.
    */
   venue?: string | null;
+  /**
+   * Angekreuzt = wir spielen zuhause.
+   */
   isHome?: boolean | null;
   /**
    * Erst nach dem Spiel ausfüllen.
@@ -461,39 +570,36 @@ export interface Fixture {
   createdAt: string;
 }
 /**
+ * Sponsorenlogos. 'Premium' = große Karte, 'Standard' = kleine Kachel. Erscheint unter /sponsoren.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "events".
+ * via the `definition` "sponsors".
  */
-export interface Event {
+export interface Sponsor {
   id: number;
-  title: string;
-  startsAt: string;
-  endsAt?: string | null;
-  location?: string | null;
-  description?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ("ltr" | "rtl") | null;
-      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  image?: (number | null) | Media;
+  name: string;
   /**
-   * Optional. Externer Link, z.B. zur Anmeldung.
+   * PNG mit transparentem Hintergrund bevorzugt. Wird zentriert auf dunklem Hintergrund angezeigt.
    */
-  ctaUrl?: string | null;
+  logo: number | Media;
+  /**
+   * Optional. Vollständige URL inkl. https://.
+   */
+  url?: string | null;
+  /**
+   * Premium = große Karte, Standard = kleine Kachel.
+   */
+  tier: "premium" | "standard";
+  /**
+   * Kleinere Zahl = weiter oben.
+   */
+  order?: number | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
+ * Nachrichten aus dem Kontaktformular. Häkchen 'Erledigt' setzen, wenn beantwortet.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "submissions".
  */
@@ -505,13 +611,48 @@ export interface Submission {
   address: string;
   subject: string;
   message: string;
+  /**
+   * Häkchen setzen, wenn die Anfrage beantwortet ist.
+   */
   handled?: boolean | null;
   /**
-   * Interne Notizen — nicht öffentlich.
+   * Nur für Vereins-Admins sichtbar — nicht öffentlich.
    */
   notes?: string | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * Login-Konten für das Admin-Panel. Login per Benutzername (E-Mail funktioniert weiterhin). Hier weitere Admins anlegen oder Passwörter ändern.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: number;
+  /**
+   * Wird oben rechts im Admin-Menü gezeigt.
+   */
+  name?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  username: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: "users";
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -538,12 +679,12 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
-        relationTo: "users";
-        value: number | User;
+        relationTo: "posts";
+        value: number | Post;
       } | null)
     | ({
-        relationTo: "media";
-        value: number | Media;
+        relationTo: "events";
+        value: number | Event;
       } | null)
     | ({
         relationTo: "people";
@@ -554,24 +695,24 @@ export interface PayloadLockedDocument {
         value: number | Team;
       } | null)
     | ({
-        relationTo: "posts";
-        value: number | Post;
+        relationTo: "fixtures";
+        value: number | Fixture;
       } | null)
     | ({
         relationTo: "sponsors";
         value: number | Sponsor;
       } | null)
     | ({
-        relationTo: "fixtures";
-        value: number | Fixture;
-      } | null)
-    | ({
-        relationTo: "events";
-        value: number | Event;
-      } | null)
-    | ({
         relationTo: "submissions";
         value: number | Submission;
+      } | null)
+    | ({
+        relationTo: "users";
+        value: number | User;
+      } | null)
+    | ({
+        relationTo: "media";
+        value: number | Media;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -617,6 +758,144 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts_select".
+ */
+export interface PostsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  excerpt?: T;
+  heroImage?: T;
+  body?: T;
+  author?: T;
+  publishedAt?: T;
+  tags?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events_select".
+ */
+export interface EventsSelect<T extends boolean = true> {
+  title?: T;
+  startsAt?: T;
+  endsAt?: T;
+  location?: T;
+  description?: T;
+  image?: T;
+  ctaUrl?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "people_select".
+ */
+export interface PeopleSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  function?: T;
+  photo?: T;
+  phone?: T;
+  email?: T;
+  team?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "teams_select".
+ */
+export interface TeamsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  sport?: T;
+  category?: T;
+  ageGroup?: T;
+  birthYears?: T;
+  season?: T;
+  league?: T;
+  bfv?:
+    | T
+    | {
+        teamId?: T;
+        slug?: T;
+        spielklasse?: T;
+        partner?: T;
+      };
+  fupa?:
+    | T
+    | {
+        slug?: T;
+        autumnSlug?: T;
+        springSlug?: T;
+      };
+  trainers?: T;
+  description?: T;
+  photo?: T;
+  externalLinks?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        id?: T;
+      };
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "fixtures_select".
+ */
+export interface FixturesSelect<T extends boolean = true> {
+  team?: T;
+  opponent?: T;
+  kickoff?: T;
+  competition?: T;
+  venue?: T;
+  isHome?: T;
+  result?:
+    | T
+    | {
+        homeGoals?: T;
+        awayGoals?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sponsors_select".
+ */
+export interface SponsorsSelect<T extends boolean = true> {
+  name?: T;
+  logo?: T;
+  url?: T;
+  tier?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "submissions_select".
+ */
+export interface SubmissionsSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  phone?: T;
+  address?: T;
+  subject?: T;
+  message?: T;
+  handled?: T;
+  notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
@@ -624,6 +903,7 @@ export interface UsersSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   email?: T;
+  username?: T;
   resetPasswordToken?: T;
   resetPasswordExpiration?: T;
   salt?: T;
@@ -704,144 +984,6 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "people_select".
- */
-export interface PeopleSelect<T extends boolean = true> {
-  name?: T;
-  role?: T;
-  function?: T;
-  photo?: T;
-  phone?: T;
-  email?: T;
-  team?: T;
-  order?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "teams_select".
- */
-export interface TeamsSelect<T extends boolean = true> {
-  name?: T;
-  slug?: T;
-  sport?: T;
-  category?: T;
-  ageGroup?: T;
-  birthYears?: T;
-  season?: T;
-  league?: T;
-  bfv?:
-    | T
-    | {
-        teamId?: T;
-        slug?: T;
-        spielklasse?: T;
-        partner?: T;
-      };
-  fupa?:
-    | T
-    | {
-        slug?: T;
-        autumnSlug?: T;
-        springSlug?: T;
-      };
-  trainers?: T;
-  description?: T;
-  photo?: T;
-  externalLinks?:
-    | T
-    | {
-        label?: T;
-        url?: T;
-        id?: T;
-      };
-  order?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "posts_select".
- */
-export interface PostsSelect<T extends boolean = true> {
-  title?: T;
-  slug?: T;
-  excerpt?: T;
-  heroImage?: T;
-  body?: T;
-  author?: T;
-  publishedAt?: T;
-  tags?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "sponsors_select".
- */
-export interface SponsorsSelect<T extends boolean = true> {
-  name?: T;
-  logo?: T;
-  url?: T;
-  tier?: T;
-  order?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "fixtures_select".
- */
-export interface FixturesSelect<T extends boolean = true> {
-  team?: T;
-  opponent?: T;
-  kickoff?: T;
-  competition?: T;
-  venue?: T;
-  isHome?: T;
-  result?:
-    | T
-    | {
-        homeGoals?: T;
-        awayGoals?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "events_select".
- */
-export interface EventsSelect<T extends boolean = true> {
-  title?: T;
-  startsAt?: T;
-  endsAt?: T;
-  location?: T;
-  description?: T;
-  image?: T;
-  ctaUrl?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "submissions_select".
- */
-export interface SubmissionsSelect<T extends boolean = true> {
-  name?: T;
-  email?: T;
-  phone?: T;
-  address?: T;
-  subject?: T;
-  message?: T;
-  handled?: T;
-  notes?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -881,61 +1023,20 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   createdAt?: T;
 }
 /**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "site-settings".
- */
-export interface SiteSetting {
-  id: number;
-  name: string;
-  tagline?: string | null;
-  description?: string | null;
-  ogImage?: (number | null) | Media;
-  social?:
-    | {
-        platform: "instagram" | "facebook" | "youtube" | "x" | "tiktok";
-        url: string;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "navigation".
- */
-export interface Navigation {
-  id: number;
-  header?:
-    | {
-        label: string;
-        href: string;
-        id?: string | null;
-      }[]
-    | null;
-  footerColumns?:
-    | {
-        title: string;
-        links?:
-          | {
-              label: string;
-              href: string;
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
+ * Inhalte der Startseite (Hero, Schnellzugriff, Highlights).
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "home-page".
  */
 export interface HomePage {
   id: number;
+  /**
+   * Großer Begrüßungsbereich oben auf der Startseite.
+   */
   hero: {
+    /**
+     * Kleiner Text über der Hauptüberschrift.
+     */
     pretitle?: string | null;
     headlineLine1: string;
     headlineLine2: string;
@@ -945,6 +1046,31 @@ export interface HomePage {
     secondaryCtaLabel?: string | null;
     secondaryCtaHref?: string | null;
   };
+  /**
+   * Die Fotos oben im Kopfbereich und die Galerie weiter unten. Ohne Eintrag zeigt die Seite die mitgelieferten Bilder.
+   */
+  bilder?: {
+    /**
+     * Querformat-Fotos, die oben nacheinander eingeblendet werden. Reihenfolge per Drag-and-drop. Leer lassen heißt: mitgelieferte Bilder.
+     */
+    heroImages?:
+      | {
+          image: number | Media;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Die Fotowand unten auf der Startseite. Leer lassen heißt: mitgelieferte Bilder.
+     */
+    galerie?:
+      | {
+          image: number | Media;
+          caption: string;
+          sub?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
   stats?:
     | {
         label: string;
@@ -953,7 +1079,7 @@ export interface HomePage {
       }[]
     | null;
   /**
-   * Welche Sektionen werden auf der Startseite angezeigt?
+   * Welche Blöcke werden auf der Startseite angezeigt? Häkchen entfernen = ausblenden.
    */
   sections?: {
     showNextMatch?: boolean | null;
@@ -971,57 +1097,24 @@ export interface HomePage {
   createdAt?: string | null;
 }
 /**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "contact-info".
- */
-export interface ContactInfo {
-  id: number;
-  addresses?:
-    | {
-        /**
-         * z.B. 'Postanschrift', 'Vereinsheim Eschengarten'
-         */
-        label: string;
-        street: string;
-        postalCode: string;
-        city: string;
-        id?: string | null;
-      }[]
-    | null;
-  phone?: string | null;
-  email: string;
-  /**
-   * Für Mitgliedsbeiträge / Spenden.
-   */
-  iban?: string | null;
-  openingHours?:
-    | {
-        /**
-         * z.B. Mo–Fr, Sa, So
-         */
-        day: string;
-        /**
-         * z.B. 17:00–22:00 oder geschlossen
-         */
-        hours: string;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * Optional iframe src für Google Maps embed.
-   */
-  mapEmbedSrc?: string | null;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
+ * Inhalte der Seite /chronik.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "chronik-page".
  */
 export interface ChronikPage {
   id: number;
+  /**
+   * Großes Bild oben auf der Chronik-Seite.
+   */
   heroImage?: (number | null) | Media;
+  /**
+   * Kurzer Absatz unter der Überschrift.
+   */
   intro?: string | null;
+  /**
+   * Hinweis: Die Vereinschronik wird aktuell im Code gepflegt. Dieses Feld wird derzeit nicht auf der Seite angezeigt.
+   */
   body: {
     root: {
       type: string;
@@ -1041,12 +1134,17 @@ export interface ChronikPage {
   createdAt?: string | null;
 }
 /**
+ * Inhalte der Seite /vereinsheim.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "vereinsheim-page".
  */
 export interface VereinsheimPage {
   id: number;
   heroImage?: (number | null) | Media;
+  /**
+   * Kurzer Absatz unter der Überschrift.
+   */
   intro?: string | null;
   body: {
     root: {
@@ -1063,9 +1161,15 @@ export interface VereinsheimPage {
     };
     [k: string]: unknown;
   };
+  /**
+   * Mehrere Fotos vom Vereinsheim.
+   */
   gallery?:
     | {
         image: number | Media;
+        /**
+         * Optional.
+         */
         caption?: string | null;
         id?: string | null;
       }[]
@@ -1074,12 +1178,20 @@ export interface VereinsheimPage {
   createdAt?: string | null;
 }
 /**
+ * Inhalte der Seite /jugendfoerderverein.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "jugendfoerder-page".
  */
 export interface JugendfoerderPage {
   id: number;
+  /**
+   * Kurztext unter dem Seitentitel. Wenn leer, wird ein Standardtext angezeigt.
+   */
   intro?: string | null;
+  /**
+   * Ansprache an Eltern und Freunde des SV Nord — was macht der Jugendförderverein?
+   */
   body: {
     root: {
       type: string;
@@ -1095,28 +1207,81 @@ export interface JugendfoerderPage {
     };
     [k: string]: unknown;
   };
-  supportBullets?: { text: string; id?: string | null }[] | null;
+  /**
+   * Konkrete Aktivitäten, die der Förderverein unterstützt. Erscheint als Liste.
+   */
+  supportBullets?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
   minAnnualFee?: number | null;
+  /**
+   * Pfad zur PDF-Beitrittserklärung. Standard liegt unter /downloads/.
+   */
   formPdfUrl?: string | null;
+  /**
+   * Für Interessent:innen sichtbar.
+   */
   primaryContactEmail?: string | null;
   boardMemberName?: string | null;
   boardRole?: string | null;
   boardContactEmail?: string | null;
-  iban?: string | null;
-  heroImage?: (number | null) | Media;
   /**
-   * @deprecated Use `primaryContactEmail` instead. Kept for older docs.
+   * Optional. Nur ausfüllen, wenn eine Direktspende-IBAN veröffentlicht werden soll.
+   */
+  iban?: string | null;
+  /**
+   * Veraltet. Bitte 'Hauptkontakt-E-Mail' verwenden. Feld bleibt nur für Datenkompatibilität.
    */
   contactEmail?: string | null;
+  /**
+   * Optionales Titelbild. Aktuell nicht eingeblendet — Reserve für spätere Gestaltung.
+   */
+  heroImage?: (number | null) | Media;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
 /**
+ * Inhalte der Seite /faq.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq-page".
+ */
+export interface FaqPage {
+  id: number;
+  /**
+   * Kurze Einleitung über dem Fragen-Akkordeon.
+   */
+  intro?: string | null;
+  items?:
+    | {
+        question: string;
+        answer: string;
+        /**
+         * Fragen werden auf der Seite nach Kategorie gruppiert.
+         */
+        group?:
+          | ("allgemein" | "mitgliedschaft" | "training" | "vereinsheim")
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Pflichttexte für /impressum und /datenschutz.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "legal-pages".
  */
 export interface LegalPage {
   id: number;
+  /**
+   * Pflichtangaben gemäß § 5 TMG. Erscheint unter /impressum.
+   */
   impressumBody: {
     root: {
       type: string;
@@ -1132,6 +1297,9 @@ export interface LegalPage {
     };
     [k: string]: unknown;
   };
+  /**
+   * DSGVO-Erklärung. Vor Änderungen am besten Rechtsbeistand fragen. Erscheint unter /datenschutz.
+   */
   datenschutzBody: {
     root: {
       type: string;
@@ -1151,18 +1319,85 @@ export interface LegalPage {
   createdAt?: string | null;
 }
 /**
+ * Einzelne Bilder auf Unterseiten: die drei Fotos der U8.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "faq-page".
+ * via the `definition` "site-images".
  */
-export interface FaqPage {
+export interface SiteImage {
   id: number;
-  intro?: string | null;
-  items?:
+  /**
+   * Die drei Fotos im U8-Bereich.
+   */
+  u8?: {
+    trainerteam?: (number | null) | Media;
+    loewen?: (number | null) | Media;
+    tiger?: (number | null) | Media;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Vereinsname und SEO-Angaben (Beschreibung, Teilen-Bild), global verwendet.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  /**
+   * Wird global verwendet (z.B. im Footer).
+   */
+  name: string;
+  tagline?: string | null;
+  description?: string | null;
+  ogImage?: (number | null) | Media;
+  social?:
     | {
-        question: string;
-        answer: string;
-        group?:
-          | ("allgemein" | "mitgliedschaft" | "training" | "vereinsheim")
+        platform: "instagram" | "facebook" | "youtube" | "x" | "tiktok";
+        /**
+         * Vollständige URL inkl. https://.
+         */
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Links der Fußzeile. Das Hauptmenü oben ist bewusst fest im Code hinterlegt, damit es am Handy und im Browser identisch aufgebaut ist.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navigation".
+ */
+export interface Navigation {
+  id: number;
+  /**
+   * Einträge in der Reihenfolge wie sie erscheinen sollen.
+   */
+  header?:
+    | {
+        label: string;
+        /**
+         * z.B. '/news', '/fussball' oder vollständige URL.
+         */
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Spalten der Fußzeile. Pro Spalte: Überschrift + Links.
+   */
+  footerColumns?:
+    | {
+        title: string;
+        links?:
+          | {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[]
           | null;
         id?: string | null;
       }[]
@@ -1170,6 +1405,179 @@ export interface FaqPage {
   updatedAt?: string | null;
   createdAt?: string | null;
 }
+/**
+ * Adressen, Kontakt und Öffnungszeiten (Footer und /kontakt).
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-info".
+ */
+export interface ContactInfo {
+  id: number;
+  /**
+   * Mehrere möglich (Postanschrift, Vereinsheim …).
+   */
+  addresses?:
+    | {
+        /**
+         * z.B. 'Postanschrift', 'Vereinsheim Eschengarten'.
+         */
+        label: string;
+        street: string;
+        postalCode: string;
+        city: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional. Wird auf /kontakt angezeigt, wenn gesetzt. Leer lassen, wenn keine zentrale Nummer veröffentlicht werden soll.
+   */
+  phone?: string | null;
+  email: string;
+  /**
+   * Für Mitgliedsbeiträge und Spenden.
+   */
+  iban?: string | null;
+  openingHours?:
+    | {
+        /**
+         * z.B. 'Mo bis Fr', 'Sa', 'So'.
+         */
+        day: string;
+        /**
+         * z.B. '17:00 bis 22:00' oder 'geschlossen'.
+         */
+        hours: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional. Die 'src'-URL aus dem Google-Maps iframe-Embed-Code einfügen.
+   */
+  mapEmbedSrc?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-page_select".
+ */
+export interface HomePageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        pretitle?: T;
+        headlineLine1?: T;
+        headlineLine2?: T;
+        subline?: T;
+        primaryCtaLabel?: T;
+        primaryCtaHref?: T;
+        secondaryCtaLabel?: T;
+        secondaryCtaHref?: T;
+      };
+  bilder?:
+    | T
+    | {
+        heroImages?:
+          | T
+          | {
+              image?: T;
+              id?: T;
+            };
+        galerie?:
+          | T
+          | {
+              image?: T;
+              caption?: T;
+              sub?: T;
+              id?: T;
+            };
+      };
+  stats?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        id?: T;
+      };
+  sections?:
+    | T
+    | {
+        showNextMatch?: T;
+        showFupa?: T;
+        showNews?: T;
+        showSports?: T;
+        showEvents?: T;
+        showSponsors?: T;
+        showVereinsheim?: T;
+        showLocation?: T;
+        showMembershipCta?: T;
+        showInstagram?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "chronik-page_select".
+ */
+export interface ChronikPageSelect<T extends boolean = true> {
+  heroImage?: T;
+  intro?: T;
+  body?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vereinsheim-page_select".
+ */
+export interface VereinsheimPageSelect<T extends boolean = true> {
+  heroImage?: T;
+  intro?: T;
+  body?: T;
+  gallery?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "jugendfoerder-page_select".
+ */
+export interface JugendfoerderPageSelect<T extends boolean = true> {
+  intro?: T;
+  body?: T;
+  supportBullets?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  minAnnualFee?: T;
+  formPdfUrl?: T;
+  primaryContactEmail?: T;
+  boardMemberName?: T;
+  boardRole?: T;
+  boardContactEmail?: T;
+  iban?: T;
+  contactEmail?: T;
+  heroImage?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq-page_select".
+ */
 export interface FaqPageSelect<T extends boolean = true> {
   intro?: T;
   items?:
@@ -1183,7 +1591,33 @@ export interface FaqPageSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
-  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "legal-pages_select".
+ */
+export interface LegalPagesSelect<T extends boolean = true> {
+  impressumBody?: T;
+  datenschutzBody?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-images_select".
+ */
+export interface SiteImagesSelect<T extends boolean = true> {
+  u8?:
+    | T
+    | {
+        trainerteam?: T;
+        loewen?: T;
+        tiger?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1236,48 +1670,6 @@ export interface NavigationSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "home-page_select".
- */
-export interface HomePageSelect<T extends boolean = true> {
-  hero?:
-    | T
-    | {
-        pretitle?: T;
-        headlineLine1?: T;
-        headlineLine2?: T;
-        subline?: T;
-        primaryCtaLabel?: T;
-        primaryCtaHref?: T;
-        secondaryCtaLabel?: T;
-        secondaryCtaHref?: T;
-      };
-  stats?:
-    | T
-    | {
-        label?: T;
-        value?: T;
-        id?: T;
-      };
-  sections?:
-    | T
-    | {
-        showNextMatch?: T;
-        showFupa?: T;
-        showNews?: T;
-        showSports?: T;
-        showEvents?: T;
-        showSponsors?: T;
-        showVereinsheim?: T;
-        showLocation?: T;
-        showMembershipCta?: T;
-        showInstagram?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "contact-info_select".
  */
 export interface ContactInfoSelect<T extends boolean = true> {
@@ -1301,61 +1693,6 @@ export interface ContactInfoSelect<T extends boolean = true> {
         id?: T;
       };
   mapEmbedSrc?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "chronik-page_select".
- */
-export interface ChronikPageSelect<T extends boolean = true> {
-  heroImage?: T;
-  intro?: T;
-  body?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "vereinsheim-page_select".
- */
-export interface VereinsheimPageSelect<T extends boolean = true> {
-  heroImage?: T;
-  intro?: T;
-  body?: T;
-  gallery?:
-    | T
-    | {
-        image?: T;
-        caption?: T;
-        id?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "jugendfoerder-page_select".
- */
-export interface JugendfoerderPageSelect<T extends boolean = true> {
-  heroImage?: T;
-  body?: T;
-  iban?: T;
-  contactEmail?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "legal-pages_select".
- */
-export interface LegalPagesSelect<T extends boolean = true> {
-  impressumBody?: T;
-  datenschutzBody?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

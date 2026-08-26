@@ -87,3 +87,22 @@ export function mediaSrc(
   // listing it would imply a precedence that does not exist.
   return committed ?? media.url ?? null;
 }
+
+/**
+ * Wie `mediaSrc`, aber nur fuer Quellen, denen man ansehen kann, dass sie
+ * wirklich ausgeliefert werden: ein absoluter Speicher-Link oder ein
+ * mitgeliefertes Asset unter /uploads.
+ *
+ * Der Grund sind die Altlasten aus dem ersten Import: dort steht in `url` ein
+ * `/api/media/file/...`, hinter dem keine Datei mehr liegt. Als `src` ergaebe
+ * das ein kaputtes Bild statt des mitgelieferten Standardbilds. Ueberall, wo
+ * ein CMS-Bild ein fest hinterlegtes ersetzen darf, entscheidet deshalb diese
+ * Funktion und nicht `mediaSrc` allein.
+ */
+export function usableMediaSrc(
+  media?: { filename?: string | null; url?: string | null } | number | null,
+): string | null {
+  const src = mediaSrc(media);
+  if (!src) return null;
+  return /^https?:\/\//i.test(src) || src.startsWith("/uploads/") ? src : null;
+}

@@ -8,7 +8,7 @@ import { PersonCard } from "@/components/PersonCard";
 import { cachedQuery, collectionTag } from "@/lib/cms";
 import { lexicalHasContent } from "@/lib/lexical-text";
 import { getPayloadClient } from "@/lib/payload";
-import { mediaSrc } from "@/lib/publicUploads";
+import { mediaSrc, usableMediaSrc } from "@/lib/publicUploads";
 import type { Media, Person } from "@/payload-types";
 
 export type StaticContact = {
@@ -182,20 +182,10 @@ export async function SportSectionPage({
 
   const photo =
     team.photo && typeof team.photo === "object" ? (team.photo as Media) : null;
-  // Resolve the uploaded team photo via mediaSrc: prefer the committed asset in
-  // public/uploads, falling back to any stored URL.
-  const mediaHeroSrc = mediaSrc(photo);
   // Ein im CMS gepflegtes Mannschaftsfoto gewinnt, damit der Verein das
   // Hero-Bild selbst austauschen kann. Der kuratierte statische Hero bleibt
-  // Fallback. Uebernommen wird nur eine belastbare Quelle: ein absoluter
-  // Storage-Link oder ein mitgeliefertes /uploads-Asset. Die alten
-  // /api/media/file/... Werte aus dem Seed sind tot (z. B. das nie
-  // hochgeladene Ski-Foto) und wuerden sonst als kaputtes Bild rendern.
-  const usableMediaHero =
-    mediaHeroSrc &&
-    (/^https?:\/\//i.test(mediaHeroSrc) || mediaHeroSrc.startsWith("/uploads/"))
-      ? mediaHeroSrc
-      : null;
+  // Fallback, und uebernommen wird nur eine belastbare Quelle.
+  const usableMediaHero = usableMediaSrc(photo);
   const heroSrc = usableMediaHero ?? STATIC_HERO[sport] ?? null;
 
   return (

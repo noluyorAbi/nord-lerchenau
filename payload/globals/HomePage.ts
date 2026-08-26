@@ -79,6 +79,66 @@ export const HomePage: GlobalConfig = {
       ],
     },
     {
+      name: "bilder",
+      type: "group",
+      label: "Bilder der Startseite",
+      admin: {
+        description:
+          "Die Fotos oben im Kopfbereich und die Galerie weiter unten. Ohne Eintrag zeigt die Seite die mitgelieferten Bilder.",
+      },
+      fields: [
+        {
+          name: "heroImages",
+          type: "array",
+          label: "Bilderlauf im Kopfbereich",
+          labels: { singular: "Bild", plural: "Bilder" },
+          admin: {
+            description:
+              "Querformat-Fotos, die oben nacheinander eingeblendet werden. Reihenfolge per Drag-and-drop. Leer lassen heißt: mitgelieferte Bilder.",
+          },
+          fields: [
+            {
+              name: "image",
+              type: "upload",
+              relationTo: "media",
+              required: true,
+              label: "Foto",
+            },
+          ],
+        },
+        {
+          name: "galerie",
+          type: "array",
+          label: "Galerie (Bereich Instagram)",
+          labels: { singular: "Kachel", plural: "Kacheln" },
+          admin: {
+            description:
+              "Die Fotowand unten auf der Startseite. Leer lassen heißt: mitgelieferte Bilder.",
+          },
+          fields: [
+            {
+              name: "image",
+              type: "upload",
+              relationTo: "media",
+              required: true,
+              label: "Foto",
+            },
+            {
+              name: "caption",
+              type: "text",
+              required: true,
+              label: "Überschrift",
+            },
+            {
+              name: "sub",
+              type: "text",
+              label: "Zeile darunter",
+            },
+          ],
+        },
+      ],
+    },
+    {
       name: "stats",
       type: "array",
       maxRows: 4,

@@ -1,28 +1,45 @@
 type Card = {
+  /** Schluessel des zugehoerigen CMS-Felds unter "Weitere Bilder -> U8". */
+  key: "trainerteam" | "loewen" | "tiger";
   src: string;
   caption: string;
   sub: string;
 };
 
-const CARDS: Card[] = [
+const FALLBACK_CARDS: Card[] = [
   {
+    key: "trainerteam",
     src: "/sport/u8/trainerteam.jpg",
     caption: "Trainerteam U8",
     sub: "Unsere Trainer:innen der jüngsten Jahrgänge",
   },
   {
+    key: "loewen",
     src: "/sport/u8/loewen.jpg",
     caption: "U8 Löwen",
     sub: "F-Junioren · U8-I",
   },
   {
+    key: "tiger",
     src: "/sport/u8/tiger.jpg",
     caption: "U8 Tiger",
     sub: "F-Junioren · U8-II",
   },
 ];
 
-export function U8Showcase() {
+/**
+ * `images` kommt aus dem CMS (Weitere Bilder -> U8). Fehlt ein Eintrag, bleibt
+ * das mitgelieferte Foto stehen, damit kein Platzhalter entsteht.
+ */
+export function U8Showcase({
+  images,
+}: {
+  images?: Partial<Record<Card["key"], string | null>>;
+} = {}) {
+  const CARDS = FALLBACK_CARDS.map((card) => ({
+    ...card,
+    src: images?.[card.key] || card.src,
+  }));
   return (
     <section className="mb-10 overflow-hidden rounded-2xl border border-nord-line bg-white p-7 md:p-9">
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">

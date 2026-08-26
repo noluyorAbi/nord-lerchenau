@@ -1,5 +1,5 @@
 import { LegalLayout } from "@/components/LegalLayout";
-import { LegalSections } from "@/components/legal/LegalSections";
+import { LegalBody } from "@/components/legal/LegalBody";
 import { cachedQuery, globalTag } from "@/lib/cms";
 import { clubAddress, primaryAddressOf } from "@/lib/club-address";
 import { getPayloadClient } from "@/lib/payload";
@@ -15,6 +15,15 @@ export default async function DatenschutzPage() {
     async () => {
       const payload = await getPayloadClient();
       return payload.findGlobal({ slug: "contact-info" });
+    },
+  );
+
+  const legal = await cachedQuery(
+    ["global", "legal-pages"],
+    [globalTag("legal-pages")],
+    async () => {
+      const payload = await getPayloadClient();
+      return payload.findGlobal({ slug: "legal-pages" });
     },
   );
 
@@ -48,7 +57,10 @@ export default async function DatenschutzPage() {
         phone: contact.phone ?? null,
       }}
     >
-      <LegalSections sections={datenschutzSections(address)} />
+      <LegalBody
+        cms={legal.datenschutzBody}
+        fallback={datenschutzSections(address)}
+      />
     </LegalLayout>
   );
 }

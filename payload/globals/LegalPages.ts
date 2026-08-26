@@ -8,9 +8,9 @@ export const LegalPages: GlobalConfig = {
   slug: "legal-pages",
   label: "Impressum & Datenschutz",
   admin: {
-    hidden: true,
     group: "4. Seiten",
-    description: "Pflichttexte für /impressum und /datenschutz.",
+    description:
+      "Die Texte auf /impressum und /datenschutz. Leer lassen heißt: die mitgelieferte Fassung bleibt stehen.",
   },
   access: { read: anyone, update: authenticated },
   hooks: { afterChange: [revalidateGlobalOnChange("legal-pages")] },
@@ -18,21 +18,19 @@ export const LegalPages: GlobalConfig = {
     {
       name: "impressumBody",
       type: "richText",
-      required: true,
       label: "Impressum-Text",
       admin: {
         description:
-          "Pflichtangaben gemäß § 5 TMG. Erscheint unter /impressum.",
+          "Pflichtangaben zum Anbieter. Erscheint unter /impressum. Die Anschrift oben auf der Seite kommt aus den Kontaktdaten, nicht von hier.",
       },
     },
     {
       name: "datenschutzBody",
       type: "richText",
-      required: true,
       label: "Datenschutz-Text",
       admin: {
         description:
-          "DSGVO-Erklärung. Vor Änderungen am besten Rechtsbeistand fragen. Erscheint unter /datenschutz.",
+          "DSGVO-Erklärung. Vor Änderungen bitte Rechtsbeistand fragen: hier steht, welche Daten der Verein verarbeitet. Erscheint unter /datenschutz.",
       },
     },
   ],

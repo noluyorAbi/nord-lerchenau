@@ -23,10 +23,6 @@ export default function Page() {
           { label: "Halle", value: "Waldmeisterschule" },
           { label: "Altersspanne", value: "30-75 J." },
         ]}
-        // Keine fest verdrahteten Textkacheln mehr: der Verein pflegt den
-        // Abteilungstext im Admin unter Mannschaften, und zwei Quellen fuer
-        // denselben Inhalt laufen genau so auseinander, wie es der Verein am
-        // 21.08.2026 gemeldet hat.
         cta={{
           title: "Probetraining? Komm einfach vorbei.",
           body: "Schreib uns kurz, wir nennen dir Halle und Uhrzeit. Schuhe mit heller Sohle reichen, wir leihen dir alles andere.",

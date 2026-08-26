@@ -1,15 +1,15 @@
 /**
  * Bild-Verwendungsbericht.
  *
- * Beantwortet die zwei Fragen des Vereins aus dem Aenderungsdokument vom
+ * Beantwortet die zwei Fragen des Vereins aus dem Änderungsdokument vom
  * 21.08.2026: "Wo sehe ich, welches Foto auf welcher Seite ist?" und "Hier sind
- * viele Fotos doppelt, welche kann ich loeschen?".
+ * viele Fotos doppelt, welche kann ich löschen?".
  *
- * Der Bericht liest ausschliesslich (REST, keine Schreibzugriffe). Er raet
+ * Der Bericht liest ausschließlich (REST, keine Schreibzugriffe). Er rät
  * keine Feldnamen: jedes Dokument wird mit depth=1 geladen und komplett
  * durchlaufen, und alles was die Form eines Media-Dokuments hat (id +
  * filename + mimeType) zaehlt als Fundstelle. So werden auch Galerien,
- * Bild-Bloecke in Artikeln und Felder gefunden, die es zum Zeitpunkt dieses
+ * Bild-Blöcke in Artikeln und Felder gefunden, die es zum Zeitpunkt dieses
  * Skripts noch gar nicht gibt.
  *
  *   bun run media-usage                       # Produktion
@@ -23,8 +23,8 @@ const BASE = (process.argv[2] ?? "https://www.svnord.de").replace(/\/$/, "");
  * ausgeschrieben, damit das Skript ohne Payload-Bootstrap laeuft.
  * tests/scripts/media-usage.test.ts liest das payload-Verzeichnis und schlaegt
  * fehl, sobald eine neue Collection oder ein neues Global ein Upload-Feld
- * bekommt und hier fehlt: sonst waeren dessen Bilder ploetzlich
- * "Loeschkandidaten".
+ * bekommt und hier fehlt: sonst wären dessen Bilder ploetzlich
+ * "Löschkandidaten".
  */
 export const COLLECTIONS = [
   "teams",
@@ -74,10 +74,10 @@ function isMediaLike(value: unknown): value is MediaDoc {
 }
 
 /**
- * Laeuft ein Dokument ab und vermerkt jede eingebettete Mediendatei.
+ * Läuft ein Dokument ab und vermerkt jede eingebettete Mediendatei.
  * `path` sammelt die Feldnamen, damit im Bericht steht, wo genau das Bild
- * haengt. Groessen-Varianten (media.sizes) werden nicht weiterverfolgt, sie
- * gehoeren zum selben Bild.
+ * hängt. Größen-Varianten (media.sizes) werden nicht weiterverfolgt, sie
+ * gehören zum selben Bild.
  */
 function walk(value: unknown, owner: string, path: string[] = []): void {
   if (Array.isArray(value)) {
@@ -101,8 +101,40 @@ function walk(value: unknown, owner: string, path: string[] = []): void {
 
 async function get<T>(path: string): Promise<T> {
   const res = await fetch(`${BASE}${path}`);
-  if (!res.ok) throw new Error(`${res.status} ${res.statusText} fuer ${path}`);
+  if (!res.ok) throw new Error(`${res.status} ${res.statusText} für ${path}`);
   return (await res.json()) as T;
+}
+
+/**
+ * Alle Dokumente einer Collection, ueber alle Seiten hinweg.
+ *
+ * Eine feste Obergrenze wäre hier gefährlich: alles, was hinter der ersten
+ * Seite liegt, würde nicht durchsucht, und die Bilder daran landeten als
+ * "ohne Fundstelle" auf der Löschliste. Deshalb wird geblättert, bis Payload
+ * keine weitere Seite mehr meldet.
+ */
+async function allDocs(
+  slug: string,
+  depth: number,
+): Promise<Array<Record<string, unknown>>> {
+  const out: Array<Record<string, unknown>> = [];
+  const perPage = 200;
+  for (let page = 1; ; page += 1) {
+    const res = await get<{
+      docs: Array<Record<string, unknown>>;
+      hasNextPage?: boolean;
+      totalDocs?: number;
+    }>(`/api/${slug}?limit=${perPage}&depth=${depth}&page=${page}`);
+    out.push(...res.docs);
+    if (!res.hasNextPage || res.docs.length === 0) {
+      if (typeof res.totalDocs === "number" && out.length < res.totalDocs) {
+        throw new Error(
+          `${slug}: nur ${out.length} von ${res.totalDocs} Dokumenten gelesen`,
+        );
+      }
+      return out;
+    }
+  }
 }
 
 function titleOf(doc: Record<string, unknown>): string {
@@ -119,15 +151,16 @@ function kb(bytes?: number | null): string {
 
 async function main(): Promise<void> {
   const failed: string[] = [];
-  const media = (
-    await get<{ docs: MediaDoc[] }>("/api/media?limit=1000&depth=0")
-  ).docs;
+  const media = (await allDocs("media", 0)) as MediaDoc[];
 
   for (const slug of COLLECTIONS) {
-    const { docs } = await get<{ docs: Array<Record<string, unknown>> }>(
-      `/api/${slug}?limit=1000&depth=1`,
-    );
-    for (const doc of docs) walk(doc, `${LABELS[slug]} ${titleOf(doc)}`);
+    try {
+      for (const doc of await allDocs(slug, 1)) {
+        walk(doc, `${LABELS[slug]} ${titleOf(doc)}`);
+      }
+    } catch {
+      failed.push(slug);
+    }
   }
 
   for (const [slug, label] of GLOBALS) {
@@ -138,7 +171,7 @@ async function main(): Promise<void> {
       walk(doc, label);
     } catch {
       // Ein nicht lesbares Global darf den Bericht nicht abbrechen, aber es
-      // darf auch keine Loeschliste erzeugen, die so tut, als waere ueberall
+      // darf auch keine Löschliste erzeugen, die so tut, als wäre überall
       // gesucht worden.
       failed.push(slug);
     }
@@ -154,7 +187,7 @@ async function main(): Promise<void> {
     `${media.length} Bilder · ${used.length} in Verwendung · ${unused.length} ohne Fundstelle\n`,
   );
 
-  console.log("IN VERWENDUNG (nicht loeschen)");
+  console.log("IN VERWENDUNG (nicht löschen)");
   for (const m of used) {
     console.log(`  ${m.filename} (#${m.id}, ${kb(m.filesize)})`);
     for (const where of usage.get(m.id) ?? []) console.log(`      ${where}`);
@@ -165,16 +198,16 @@ async function main(): Promise<void> {
       `\nABGEBROCHEN: ${failed.join(", ")} nicht lesbar. Ohne diese Quellen`,
     );
     console.log(
-      "waere jede Loeschliste geraten, deshalb wird hier keine ausgegeben.\n",
+      "wäre jede Löschliste geraten, deshalb wird hier keine ausgegeben.\n",
     );
     process.exitCode = 1;
     return;
   }
 
-  console.log("\nOHNE FUNDSTELLE (Loeschkandidaten, vorher kurz ansehen)");
+  console.log("\nOHNE FUNDSTELLE (Löschkandidaten, vorher kurz ansehen)");
   for (const m of unused) {
     console.log(
-      `  ${m.filename} (#${m.id}, ${kb(m.filesize)}, geaendert ${m.updatedAt?.slice(0, 10) ?? "?"})`,
+      `  ${m.filename} (#${m.id}, ${kb(m.filesize)}, geändert ${m.updatedAt?.slice(0, 10) ?? "?"})`,
     );
   }
   console.log("");

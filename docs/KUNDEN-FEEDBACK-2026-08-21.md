@@ -37,6 +37,15 @@ nirgends verwendet. Bitte vor oder unmittelbar nach dem Deploy unter
 | 9   | Alt-Texte                               | Rückfrage aus dem Dokument war nicht eindeutig. Es gilt: **Alt-Text ist Pflicht** (kurze Bildbeschreibung, für Screenreader und Google). Bildunterschrift und Bildquelle sind ausgeblendet und müssen nicht gefüllt werden.                                                                        |
 | 10  | "Sport 018288000" im Handy-Menü         | Aus dem Screenshot nicht nachvollziehbar, auf der Seite findet sich keine solche Nummer. Bitte einmal beschreiben, wo genau das auftaucht.                                                                                                                                                         |
 
+## Nachtrag aus dem Review
+
+Zwei Fehler, die beim Review dieser Änderung aufgefallen sind und mit behoben
+wurden: ein im Editor geleerter Abteilungstext hätte die Hauptspalte der Seite
+leer gelassen, statt auf die Kurzfassung zurückzufallen; und der Bildbericht
+hätte bei mehr als 1000 Dokumenten in einer Sammlung nur die erste Seite
+durchsucht und die restlichen Bilder fälschlich als Löschkandidaten geführt.
+Beides ist jetzt abgesichert und durch Tests gedeckt.
+
 ## Was sich dadurch noch mit ändert
 
 Punkt 3 wirkt auf alle fünf Abteilungsseiten, nicht nur auf die beiden

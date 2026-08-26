@@ -10,8 +10,8 @@ export default function Page() {
         title="Gymnastik"
         fallbackLede="Seit 1967 in Bewegung. Zweimal pro Woche, Frauen wie Männer, jedes Alter willkommen."
         intro="Über 50 Jahre Gymnastik beim SV Nord. Zweimal pro Woche treffen wir uns in der Waldmeisterschule für Mobilität, Kraft und Ausgleich. Ein 35-köpfiger Stamm, lockerer Ton, fundiertes Training. Einsteiger:innen sind ausdrücklich willkommen."
-        // Keine Wochentage in den Pills: die Trainingszeiten stehen seit dem
-        // 21.08.2026 im CMS-Text der Abteilung und aendern sich zum 15.09.2026.
+        // Keine Wochentage hier: die Trainingszeiten stehen im CMS-Text der
+        // Abteilung und ändern sich zum 15.09.2026.
         pills={[
           "Seit 1967",
           "35 Aktive",
@@ -25,10 +25,6 @@ export default function Page() {
           { label: "Halle", value: "Waldmeisterschule" },
           { label: "Offen für", value: "alle Erwachsenen" },
         ]}
-        // Keine fest verdrahteten Textkacheln mehr: der Verein pflegt den
-        // Abteilungstext im Admin unter Mannschaften, und zwei Quellen fuer
-        // denselben Inhalt laufen genau so auseinander, wie es der Verein am
-        // 21.08.2026 gemeldet hat.
         cta={{
           title: "Komm vorbei, die erste Stunde ist gratis.",
           body: "Schreib uns kurz, dann sagen wir dir, wann der nächste Termin ist. Sportschuhe und Lust auf Bewegung reichen.",

@@ -6,6 +6,7 @@ import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical
 import { PageHero } from "@/components/PageHero";
 import { PersonCard } from "@/components/PersonCard";
 import { cachedQuery, collectionTag } from "@/lib/cms";
+import { lexicalHasContent } from "@/lib/lexical-text";
 import { getPayloadClient } from "@/lib/payload";
 import { mediaSrc } from "@/lib/publicUploads";
 import type { Media, Person } from "@/payload-types";
@@ -168,10 +169,11 @@ export async function SportSectionPage({
             ),
         );
 
-  const hasDescription =
-    team.description &&
-    typeof team.description === "object" &&
-    "root" in team.description;
+  // Bewusst der Inhalts-Check und nicht nur "ist ein Richtext-Objekt da":
+  // ein im Editor geleertes Feld speichert einen leeren Absatz, und weil die
+  // Beschreibung den Intro-Text verdraengt, stuende die Hauptspalte der Seite
+  // sonst komplett leer da.
+  const hasDescription = lexicalHasContent(team.description);
 
   const externalLinks = (team.externalLinks ?? []).filter(
     (l): l is { id?: string | null; label: string; url: string } =>

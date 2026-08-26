@@ -15,6 +15,17 @@ export type LeadershipGroup = { role: string; names: string[] };
 
 type LeadershipContact = { phone?: string | null; email?: string | null };
 
+/**
+ * Wessen Telefonnummer oeffentlich stehen darf. Der Verein hat am 25.08.2026
+ * ausdruecklich die Nummer von Felix Kirmeyer angefragt, und nur die. Auf
+ * /verein/vorstand werden Telefonnummern auf Vereinswunsch komplett
+ * unterdrueckt, deshalb wird hier niemand ungefragt aufgenommen: eine private
+ * Handynummer veroeffentlicht man nicht als Nebenwirkung einer Codeaenderung.
+ * E-Mail-Adressen sind davon nicht betroffen, das sind @svnord.de-Adressen und
+ * sie stehen bereits oeffentlich auf der Vorstand-Seite.
+ */
+const PHONE_PUBLIC = new Set(["Felix Kirmeyer"]);
+
 type Props = {
   slug: FussballCategorySlug;
   belowIntro?: React.ReactNode;
@@ -85,7 +96,7 @@ export async function CategoryPage({ slug, belowIntro, leadership }: Props) {
     );
     for (const person of people.docs as Person[]) {
       contactByName.set(person.name, {
-        phone: person.phone,
+        phone: PHONE_PUBLIC.has(person.name) ? person.phone : null,
         email: person.email,
       });
     }
@@ -223,8 +234,8 @@ export async function CategoryPage({ slug, belowIntro, leadership }: Props) {
   );
 }
 
-/** Telefon- und E-Mail-Button einer Person, im gleichen Stil wie auf
- *  /verein/vorstand. Fehlt ein Feld im CMS, faellt der Button weg. */
+/** Telefon- und E-Mail-Button einer Person. Fehlt ein Feld im CMS oder ist die
+ *  Nummer nicht freigegeben, faellt der jeweilige Button weg. */
 function LeadershipContactChips({ contact }: { contact?: LeadershipContact }) {
   const phone = contact?.phone?.trim() || null;
   const email = contact?.email?.trim() || null;

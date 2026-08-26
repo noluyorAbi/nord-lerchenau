@@ -18,9 +18,23 @@
 
 const BASE = (process.argv[2] ?? "https://www.svnord.de").replace(/\/$/, "");
 
-const COLLECTIONS = ["teams", "people", "sponsors", "events", "posts"] as const;
+/**
+ * Jede Quelle, die auf `media` zeigen kann. Die Listen sind bewusst
+ * ausgeschrieben, damit das Skript ohne Payload-Bootstrap laeuft.
+ * tests/scripts/media-usage.test.ts liest das payload-Verzeichnis und schlaegt
+ * fehl, sobald eine neue Collection oder ein neues Global ein Upload-Feld
+ * bekommt und hier fehlt: sonst waeren dessen Bilder ploetzlich
+ * "Loeschkandidaten".
+ */
+export const COLLECTIONS = [
+  "teams",
+  "people",
+  "sponsors",
+  "events",
+  "posts",
+] as const;
 
-const GLOBALS = [
+export const GLOBALS = [
   ["home-page", "Startseite"],
   ["chronik-page", "Seite Chronik"],
   ["vereinsheim-page", "Seite Vereinsheim"],
@@ -104,6 +118,7 @@ function kb(bytes?: number | null): string {
 }
 
 async function main(): Promise<void> {
+  const failed: string[] = [];
   const media = (
     await get<{ docs: MediaDoc[] }>("/api/media?limit=1000&depth=0")
   ).docs;
@@ -122,9 +137,10 @@ async function main(): Promise<void> {
       );
       walk(doc, label);
     } catch {
-      // Ein nicht oeffentlich lesbares Global darf den Bericht nicht abbrechen,
-      // aber es darf auch nicht so aussehen, als waere dort nichts.
-      console.warn(`WARNUNG: ${slug} nicht lesbar, dort wurde nicht gesucht.`);
+      // Ein nicht lesbares Global darf den Bericht nicht abbrechen, aber es
+      // darf auch keine Loeschliste erzeugen, die so tut, als waere ueberall
+      // gesucht worden.
+      failed.push(slug);
     }
   }
 
@@ -144,6 +160,17 @@ async function main(): Promise<void> {
     for (const where of usage.get(m.id) ?? []) console.log(`      ${where}`);
   }
 
+  if (failed.length > 0) {
+    console.log(
+      `\nABGEBROCHEN: ${failed.join(", ")} nicht lesbar. Ohne diese Quellen`,
+    );
+    console.log(
+      "waere jede Loeschliste geraten, deshalb wird hier keine ausgegeben.\n",
+    );
+    process.exitCode = 1;
+    return;
+  }
+
   console.log("\nOHNE FUNDSTELLE (Loeschkandidaten, vorher kurz ansehen)");
   for (const m of unused) {
     console.log(
@@ -153,6 +180,5 @@ async function main(): Promise<void> {
   console.log("");
 }
 
-await main();
-
-export {};
+// Nur beim direkten Aufruf ausfuehren; der Test importiert die Quellenlisten.
+if (process.argv[1]?.endsWith("media-usage.ts")) await main();

@@ -183,11 +183,18 @@ export async function SportSectionPage({
   // Resolve the uploaded team photo via mediaSrc: prefer the committed asset in
   // public/uploads, falling back to any stored URL.
   const mediaHeroSrc = mediaSrc(photo);
-  // Prefer the curated, tracked static hero whenever we ship one for this sport;
-  // only use a CMS/Blob upload where no static hero exists. This prevents a dead
-  // Blob URL (e.g. the Ski team photo that was never uploaded) from rendering as
-  // a broken image.
-  const heroSrc = STATIC_HERO[sport] ?? mediaHeroSrc ?? null;
+  // Ein im CMS gepflegtes Mannschaftsfoto gewinnt, damit der Verein das
+  // Hero-Bild selbst austauschen kann. Der kuratierte statische Hero bleibt
+  // Fallback. Uebernommen wird nur eine belastbare Quelle: ein absoluter
+  // Storage-Link oder ein mitgeliefertes /uploads-Asset. Die alten
+  // /api/media/file/... Werte aus dem Seed sind tot (z. B. das nie
+  // hochgeladene Ski-Foto) und wuerden sonst als kaputtes Bild rendern.
+  const usableMediaHero =
+    mediaHeroSrc &&
+    (/^https?:\/\//i.test(mediaHeroSrc) || mediaHeroSrc.startsWith("/uploads/"))
+      ? mediaHeroSrc
+      : null;
+  const heroSrc = usableMediaHero ?? STATIC_HERO[sport] ?? null;
 
   return (
     <>

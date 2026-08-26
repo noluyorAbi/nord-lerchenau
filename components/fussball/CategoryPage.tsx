@@ -9,8 +9,11 @@ import {
   type FussballCategorySlug,
 } from "@/lib/fussball-categories";
 import { getPayloadClient } from "@/lib/payload";
+import type { Person } from "@/payload-types";
 
 export type LeadershipGroup = { role: string; names: string[] };
+
+type LeadershipContact = { phone?: string | null; email?: string | null };
 
 type Props = {
   slug: FussballCategorySlug;
@@ -45,6 +48,35 @@ export async function CategoryPage({ slug, belowIntro, leadership }: Props) {
 
   const teams = result.docs;
   const bfvCount = teams.filter((t) => t.bfv?.teamId).length;
+
+  // Kontaktdaten der sportlichen Leitung kommen aus "2. Sport -> Personen",
+  // damit der Verein Telefon und E-Mail im Admin pflegen kann, statt sie hier
+  // fest zu verdrahten. Ohne passenden Personen-Eintrag bleibt es beim Namen.
+  const leadershipNames = [
+    ...new Set((leadership ?? []).flatMap((g) => g.names)),
+  ];
+  const contactByName = new Map<string, LeadershipContact>();
+  if (leadershipNames.length > 0) {
+    const people = await cachedQuery(
+      ["fussball-category-leadership", slug, leadershipNames.join("|")],
+      [collectionTag("people")],
+      async () => {
+        const payload = await getPayloadClient();
+        return payload.find({
+          collection: "people",
+          where: { name: { in: leadershipNames } },
+          limit: 50,
+          depth: 0,
+        });
+      },
+    );
+    for (const person of people.docs as Person[]) {
+      contactByName.set(person.name, {
+        phone: person.phone,
+        email: person.email,
+      });
+    }
+  }
 
   return (
     <>
@@ -122,13 +154,15 @@ export async function CategoryPage({ slug, belowIntro, leadership }: Props) {
                   <div className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-nord-gold-ink">
                     {g.role}
                   </div>
-                  <ul className="mt-2 space-y-1">
+                  <ul className="mt-2 space-y-3">
                     {g.names.map((n) => (
-                      <li
-                        key={`${g.role}-${n}`}
-                        className="font-display text-base font-semibold text-nord-ink"
-                      >
-                        {n}
+                      <li key={`${g.role}-${n}`}>
+                        <div className="font-display text-base font-semibold text-nord-ink">
+                          {n}
+                        </div>
+                        <LeadershipContactChips
+                          contact={contactByName.get(n)}
+                        />
                       </li>
                     ))}
                   </ul>
@@ -173,5 +207,35 @@ export async function CategoryPage({ slug, belowIntro, leadership }: Props) {
         </div>
       </div>
     </>
+  );
+}
+
+/** Telefon- und E-Mail-Button einer Person, im gleichen Stil wie auf
+ *  /verein/vorstand. Fehlt ein Feld im CMS, faellt der Button weg. */
+function LeadershipContactChips({ contact }: { contact?: LeadershipContact }) {
+  const phone = contact?.phone?.trim() || null;
+  const email = contact?.email?.trim() || null;
+  if (!phone && !email) return null;
+
+  return (
+    <div className="mt-2 flex flex-wrap gap-1.5">
+      {phone ? (
+        <a
+          href={`tel:${phone.replace(/\s+/g, "")}`}
+          className="inline-flex items-center gap-1.5 rounded-full bg-nord-paper-2 px-2.5 py-1 font-mono text-[10px] font-semibold tracking-[0.04em] text-nord-ink transition hover:bg-nord-navy hover:text-white"
+        >
+          <span className="uppercase tracking-[0.14em]">Tel</span>
+          <span>{phone}</span>
+        </a>
+      ) : null}
+      {email ? (
+        <a
+          href={`mailto:${email}`}
+          className="inline-flex items-center rounded-full bg-nord-paper-2 px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-nord-ink transition hover:bg-nord-navy hover:text-white"
+        >
+          E-Mail
+        </a>
+      ) : null}
+    </div>
   );
 }

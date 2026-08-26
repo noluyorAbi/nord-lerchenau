@@ -211,7 +211,7 @@ export const Teams: CollectionConfig = {
       label: "Mannschaftsfoto",
       admin: {
         description:
-          "Wird auf den Mannschafts-Karten angezeigt, wenn kein BFV-Foto verknüpft ist (z. B. AH). Sport-Hero-Bilder (Gymnastik/Volleyball/Ski) kommen weiterhin aus statischen Dateien.",
+          "Wird auf den Mannschafts-Karten angezeigt, wenn kein BFV-Foto verknüpft ist (z. B. AH). Bei den Abteilungen Gymnastik, Volleyball und Ski ist das zugleich das große Bild oben auf der Abteilungsseite: Wird hier ein Foto hochgeladen, ersetzt es das mitgelieferte Standardbild.",
       },
     },
     {

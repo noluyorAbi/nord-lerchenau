@@ -6,6 +6,7 @@ import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical
 import { PageHero } from "@/components/PageHero";
 import { PersonCard } from "@/components/PersonCard";
 import { cachedQuery, collectionTag } from "@/lib/cms";
+import { lexicalHasContent } from "@/lib/lexical-text";
 import { getPayloadClient } from "@/lib/payload";
 import { mediaSrc } from "@/lib/publicUploads";
 import type { Media, Person } from "@/payload-types";
@@ -168,10 +169,11 @@ export async function SportSectionPage({
             ),
         );
 
-  const hasDescription =
-    team.description &&
-    typeof team.description === "object" &&
-    "root" in team.description;
+  // Bewusst der Inhalts-Check und nicht nur "ist ein Richtext-Objekt da":
+  // ein im Editor geleertes Feld speichert einen leeren Absatz, und weil die
+  // Beschreibung den Intro-Text verdraengt, stuende die Hauptspalte der Seite
+  // sonst komplett leer da.
+  const hasDescription = lexicalHasContent(team.description);
 
   const externalLinks = (team.externalLinks ?? []).filter(
     (l): l is { id?: string | null; label: string; url: string } =>
@@ -183,11 +185,18 @@ export async function SportSectionPage({
   // Resolve the uploaded team photo via mediaSrc: prefer the committed asset in
   // public/uploads, falling back to any stored URL.
   const mediaHeroSrc = mediaSrc(photo);
-  // Prefer the curated, tracked static hero whenever we ship one for this sport;
-  // only use a CMS/Blob upload where no static hero exists. This prevents a dead
-  // Blob URL (e.g. the Ski team photo that was never uploaded) from rendering as
-  // a broken image.
-  const heroSrc = STATIC_HERO[sport] ?? mediaHeroSrc ?? null;
+  // Ein im CMS gepflegtes Mannschaftsfoto gewinnt, damit der Verein das
+  // Hero-Bild selbst austauschen kann. Der kuratierte statische Hero bleibt
+  // Fallback. Uebernommen wird nur eine belastbare Quelle: ein absoluter
+  // Storage-Link oder ein mitgeliefertes /uploads-Asset. Die alten
+  // /api/media/file/... Werte aus dem Seed sind tot (z. B. das nie
+  // hochgeladene Ski-Foto) und wuerden sonst als kaputtes Bild rendern.
+  const usableMediaHero =
+    mediaHeroSrc &&
+    (/^https?:\/\//i.test(mediaHeroSrc) || mediaHeroSrc.startsWith("/uploads/"))
+      ? mediaHeroSrc
+      : null;
+  const heroSrc = usableMediaHero ?? STATIC_HERO[sport] ?? null;
 
   return (
     <>
@@ -210,9 +219,14 @@ export async function SportSectionPage({
         <div className="grid gap-10 md:grid-cols-[1.55fr_1fr]">
           {/* MAIN */}
           <article>
-            <div className="mb-4 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold-ink">
-              Herzlich willkommen in der {title}-Abteilung
-            </div>
+            {/* Die CMS-Beschreibungen beginnen selbst mit "Willkommen bei der
+                X-Abteilung". Sobald sie gerendert wird, faellt die Zeile weg,
+                damit die Ueberschrift nicht doppelt dasteht. */}
+            {hasDescription ? null : (
+              <div className="mb-4 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold-ink">
+                Herzlich willkommen in der {title}-Abteilung
+              </div>
+            )}
 
             {pills && pills.length > 0 ? (
               <div className="mb-6 flex flex-wrap gap-2">
@@ -227,23 +241,25 @@ export async function SportSectionPage({
               </div>
             ) : null}
 
-            {intro ? (
-              <p className="mb-6 max-w-prose text-lg font-medium leading-relaxed text-nord-ink">
-                {intro}
-              </p>
-            ) : null}
-
-            {hasDescription &&
-            !(intro && highlights && highlights.length > 0) ? (
+            {/* Der im Admin gepflegte Vereinstext ist die Hauptquelle. Bisher
+                hat der fest im Code stehende `intro` ihn verdeckt, sobald es
+                Highlights gab: der Verein hat im CMS geschrieben und auf der
+                Seite ist nichts passiert. Jetzt gewinnt die Beschreibung, der
+                `intro` springt nur noch ein, solange keine gepflegt ist. */}
+            {hasDescription ? (
               <div className={RICH_TEXT_CLS}>
                 <RichText data={team.description as SerializedEditorState} />
               </div>
-            ) : !hasDescription && !intro ? (
+            ) : intro ? (
+              <p className="mb-6 max-w-prose text-lg font-medium leading-relaxed text-nord-ink">
+                {intro}
+              </p>
+            ) : (
               <div className="rounded-xl border border-dashed border-nord-line bg-white p-8 text-sm text-nord-muted">
                 Noch keine Beschreibung. Pflege die Seite im Admin unter{" "}
                 <em>Teams → {team.name}</em>.
               </div>
-            ) : null}
+            )}
 
             {highlights && highlights.length > 0 ? (
               <div className="mt-10 grid gap-4 sm:grid-cols-2">

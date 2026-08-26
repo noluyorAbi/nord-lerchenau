@@ -54,3 +54,40 @@ export function lexicalToPlainText(value: unknown): string | null {
   const text = lines.join("\n").trim();
   return text.length > 0 ? text : null;
 }
+
+/**
+ * Ob ein Richtext-Feld tatsaechlich Inhalt traegt.
+ *
+ * `lexicalToPlainText` allein reicht als Pruefung nicht: ein geleertes Feld
+ * speichert einen leeren Absatz statt `null`, und ein Text, der nur aus einem
+ * eingebetteten Bild besteht, hat gar keine Buchstaben. Beides falsch zu
+ * beantworten hat dieselbe Folge, naemlich dass die Seite den Inhalt des
+ * Vereins verschweigt oder eine leere Spalte zeigt.
+ */
+const TEXTUAL_TYPES = new Set([
+  "root",
+  "paragraph",
+  "heading",
+  "quote",
+  "list",
+  "listitem",
+  "text",
+  "linebreak",
+  "tab",
+  "link",
+  "autolink",
+]);
+
+function hasNonTextualNode(node: LexicalNode): boolean {
+  if (!node || typeof node !== "object") return false;
+  if (node.type && !TEXTUAL_TYPES.has(node.type)) return true;
+  return (node.children ?? []).some(hasNonTextualNode);
+}
+
+export function lexicalHasContent(value: unknown): boolean {
+  if (lexicalToPlainText(value) !== null) return true;
+  if (!value || typeof value !== "object") return false;
+  const root = (value as { root?: LexicalNode }).root;
+  if (!root || !Array.isArray(root.children)) return false;
+  return root.children.some(hasNonTextualNode);
+}

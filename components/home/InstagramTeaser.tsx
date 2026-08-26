@@ -148,7 +148,7 @@ const GALLERY: GalleryShot[] = [
   {
     src: "/sport/gymnastik-hero.jpg",
     caption: "Gymnastik in Bewegung",
-    sub: "Montag & Mittwoch · 19–20 Uhr",
+    sub: "Zweimal pro Woche · abends",
     w: 1600,
     h: 1085,
   },

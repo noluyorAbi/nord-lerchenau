@@ -17,6 +17,7 @@
     "db:reset": "docker compose down -v && docker compose up -d postgres",
     "seed": "bun run scripts/seed.ts",
     "download-images": "bun run scripts/download-images.ts",
+    "media-usage": "bun run scripts/media-usage.ts",
     "test": "vitest run",
     "test:watch": "vitest"
   },

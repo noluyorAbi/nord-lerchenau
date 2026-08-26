@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { lexicalToPlainText } from "@/lib/lexical-text";
+import { lexicalHasContent, lexicalToPlainText } from "@/lib/lexical-text";
 
 const text = (t: string) => ({ type: "text", text: t });
 const doc = (children: unknown[]) => ({ root: { type: "root", children } });
@@ -71,5 +71,37 @@ describe("lexicalToPlainText", () => {
       },
     ]);
     expect(lexicalToPlainText(value)).toBe("• Getränke\n• Bier\n• Limo");
+  });
+});
+
+describe("lexicalHasContent", () => {
+  test("treats an emptied editor as empty", () => {
+    // Genau das speichert Payload, wenn jemand den Text markiert und loescht.
+    expect(lexicalHasContent(doc([{ type: "paragraph", children: [] }]))).toBe(
+      false,
+    );
+    expect(
+      lexicalHasContent(doc([{ type: "paragraph", children: [text(" ")] }])),
+    ).toBe(false);
+    expect(lexicalHasContent(doc([]))).toBe(false);
+    expect(lexicalHasContent(null)).toBe(false);
+    expect(lexicalHasContent({})).toBe(false);
+  });
+
+  test("counts real text as content", () => {
+    expect(
+      lexicalHasContent(
+        doc([{ type: "paragraph", children: [text("Hallo")] }]),
+      ),
+    ).toBe(true);
+  });
+
+  test("counts a text made only of an embedded image as content", () => {
+    expect(lexicalHasContent(doc([{ type: "upload" }]))).toBe(true);
+    expect(
+      lexicalHasContent(
+        doc([{ type: "paragraph", children: [{ type: "upload" }] }]),
+      ),
+    ).toBe(true);
   });
 });

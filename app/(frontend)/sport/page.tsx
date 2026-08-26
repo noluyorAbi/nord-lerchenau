@@ -11,7 +11,7 @@ const CARDS = [
   {
     title: "Gymnastik",
     href: "/gymnastik",
-    desc: "Seit 1967. Montag und Mittwoch abends, Frauen und Männer willkommen.",
+    desc: "Seit 1967. Zweimal pro Woche abends, Frauen und Männer willkommen.",
   },
   {
     title: "Volleyball",

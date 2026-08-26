@@ -15,6 +15,11 @@
  *  2. Es füllt ein Feld nur, wenn es leer ist. Was der Verein selbst gesetzt
  *     hat, überschreibt ein zweiter Lauf niemals.
  *
+ * Der npm-Aufruf setzt `NODE_ENV=production` und `PAYLOAD_DISABLE_PUSH=true`.
+ * Ohne beides startet Payload beim Verbinden den Schemaabgleich und fragt
+ * interaktiv nach, und diese Frage darf an der Produktionsdatenbank nicht
+ * gestellt werden. Das Schema kommt getrennt, siehe scripts/sql.
+ *
  * Aufruf lokal:
  *
  *   bun run import-static-images -- --dry-run

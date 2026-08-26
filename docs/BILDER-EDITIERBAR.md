@@ -58,6 +58,9 @@ gibt, oder der neue Code liest Felder, die die Datenbank nicht kennt.
    Produktion, `BLOB_READ_WRITE_TOKEN` und `BLOB_ENABLE_LOCAL=true`, damit die
    Dateien im Blob-Speicher landen und nicht auf der lokalen Platte:
    `bun run import-static-images -- --dry-run` zum Ansehen, dann ohne Flag.
+   Der Aufruf setzt selbst `NODE_ENV=production` und `PAYLOAD_DISABLE_PUSH=true`.
+   Das ist kein Beiwerk: ohne das startet Payload den Schemaabgleich und stellt
+   die interaktive Rückfrage an der Produktionsdatenbank.
    Der Import lädt eine Datei nur hoch, wenn es sie noch nicht gibt, und füllt
    ein Feld nur, wenn es leer ist. Ein zweiter Lauf ändert nichts.
 3. **Deploy.** Erst danach den Code ausrollen.

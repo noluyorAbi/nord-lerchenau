@@ -134,27 +134,6 @@ export const HomePage: GlobalConfig = {
               type: "text",
               label: "Zeile darunter",
             },
-            // Bewusst zwei Checkboxen statt einer Auswahlliste: eine
-            // Auswahlliste legt in Postgres einen Enum-Typ an, und dessen
-            // Anlegen laesst sich beim Schema-Abgleich nicht von einem
-            // Umbenennen unterscheiden. Der Abgleich fragt dann nach, und
-            // genau diese Rueckfrage will auf der Produktionsdatenbank
-            // niemand beantworten muessen.
-            {
-              name: "breit",
-              type: "checkbox",
-              label: "Breite Kachel",
-              admin: { description: "Nimmt zwei Spalten ein." },
-            },
-            {
-              name: "hoch",
-              type: "checkbox",
-              label: "Hohe Kachel",
-              admin: {
-                description:
-                  "Hochformat. Wirkt nur, wenn die Kachel nicht breit ist.",
-              },
-            },
           ],
         },
       ],

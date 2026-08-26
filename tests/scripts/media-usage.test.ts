@@ -3,6 +3,10 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
+import {
+  MEDIA_DEPENDENT_COLLECTIONS,
+  MEDIA_DEPENDENT_GLOBALS,
+} from "@/lib/cms";
 import { COLLECTIONS, GLOBALS } from "@/scripts/media-usage";
 
 /**
@@ -53,6 +57,34 @@ describe("media usage report", () => {
       expect(
         checked.includes(slug),
         `global "${slug}" has an upload field but the media usage report never looks at it, so its images would be reported as safe to delete`,
+      ).toBe(true);
+    }
+  });
+});
+
+/**
+ * Dieselbe Verzeichnisprüfung für die zweite Liste derselben Tatsache. Die
+ * Registry in lib/cms.ts entscheidet, welche Caches ein neues Bild verwerfen
+ * müssen. Fehlt dort eine Quelle, zeigt die Seite nach dem Austausch weiter das
+ * alte Bild, und niemand sieht warum.
+ */
+describe("media dependent cache registry", () => {
+  it("covers every collection that can hold an image", () => {
+    for (const slug of slugsWithUploadField("collections").filter(
+      (s) => s !== "media",
+    )) {
+      expect(
+        (MEDIA_DEPENDENT_COLLECTIONS as readonly string[]).includes(slug),
+        `collection "${slug}" has an upload field but is not in MEDIA_DEPENDENT_COLLECTIONS, so replacing one of its images would not refresh the pages that show it`,
+      ).toBe(true);
+    }
+  });
+
+  it("covers every global that can hold an image", () => {
+    for (const slug of slugsWithUploadField("globals")) {
+      expect(
+        (MEDIA_DEPENDENT_GLOBALS as readonly string[]).includes(slug),
+        `global "${slug}" has an upload field but is not in MEDIA_DEPENDENT_GLOBALS, so replacing one of its images would not refresh the pages that show it`,
       ).toBe(true);
     }
   });

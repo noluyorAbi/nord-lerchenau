@@ -20,12 +20,13 @@ export default async function JuniorenPage() {
     },
   );
 
-  // Reihenfolge wie im U8-Bereich: Trainerteam, Löwen, Tiger.
-  const u8 = [
-    siteImages.u8?.trainerteam,
-    siteImages.u8?.loewen,
-    siteImages.u8?.tiger,
-  ].map((image) => usableMediaSrc(image as Media | number | null));
+  const u8 = {
+    trainerteam: usableMediaSrc(
+      siteImages.u8?.trainerteam as Media | number | null,
+    ),
+    loewen: usableMediaSrc(siteImages.u8?.loewen as Media | number | null),
+    tiger: usableMediaSrc(siteImages.u8?.tiger as Media | number | null),
+  };
 
   return (
     <CategoryPage

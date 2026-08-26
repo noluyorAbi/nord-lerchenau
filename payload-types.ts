@@ -1067,14 +1067,6 @@ export interface HomePage {
           image: number | Media;
           caption: string;
           sub?: string | null;
-          /**
-           * Nimmt zwei Spalten ein.
-           */
-          breit?: boolean | null;
-          /**
-           * Hochformat. Wirkt nur, wenn die Kachel nicht breit ist.
-           */
-          hoch?: boolean | null;
           id?: string | null;
         }[]
       | null;
@@ -1327,7 +1319,7 @@ export interface LegalPage {
   createdAt?: string | null;
 }
 /**
- * Einzelne Bilder auf Unterseiten: die drei Fotos der U8 und das Sommerfest-Plakat.
+ * Einzelne Bilder auf Unterseiten: die drei Fotos der U8.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-images".
@@ -1342,7 +1334,6 @@ export interface SiteImage {
     loewen?: (number | null) | Media;
     tiger?: (number | null) | Media;
   };
-  sommerfestPlakat?: (number | null) | Media;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1498,8 +1489,6 @@ export interface HomePageSelect<T extends boolean = true> {
               image?: T;
               caption?: T;
               sub?: T;
-              breit?: T;
-              hoch?: T;
               id?: T;
             };
       };
@@ -1626,7 +1615,6 @@ export interface SiteImagesSelect<T extends boolean = true> {
         loewen?: T;
         tiger?: T;
       };
-  sommerfestPlakat?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

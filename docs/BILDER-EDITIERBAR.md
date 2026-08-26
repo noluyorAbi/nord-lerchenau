@@ -14,13 +14,21 @@ sind im Admin austauschbar.
 | Bilderlauf oben auf der Startseite   | Startseite → Bilder → Bilderlauf im Kopfbereich |
 | Fotowand im Instagram-Bereich        | Startseite → Bilder → Galerie                   |
 | Die drei U8-Fotos                    | Weitere Bilder → U8                             |
-| Sommerfest-Plakat                    | Weitere Bilder → Sommerfest-Plakat              |
 | Titelbild eines Beitrags             | Beiträge → der Beitrag → Titelbild              |
 | Foto einer Abteilung oder Mannschaft | Mannschaften → Foto                             |
 
-Die fünf runden Bildpunkte im Instagram-Nachbau folgen automatisch den ersten
-fünf Kacheln der Galerie. Ihre kurzen Beschriftungen bleiben im Code, weil sie
-in einen Kreis von 56 Pixeln passen müssen.
+Zwei Dinge sind bewusst nicht im CMS gelandet, obwohl sie zunächst dort waren.
+Das Sommerfest-Plakat nicht, weil die Sommerfest-Sektion seit dem 31.07.2026
+gar nicht mehr ausgegeben wird: ein Feld dafür hätte genau den Fehler
+wiederholt, um den es hier geht, nämlich Pflege ohne Wirkung. Und die Galerie
+hat keine Kästchen für „breite" oder „hohe" Kachel, weil die Fotowand eine
+reine CSS-Spaltenanordnung ist und eine solche Angabe nirgends liest.
+
+Die fünf runden Bildpunkte im Instagram-Nachbau bleiben fest im Code, Bild und
+Beschriftung als Paar. Ein Versuch, das Bild aus der Galerie zu übernehmen, hat
+Beschriftung und Motiv entkoppelt: der Punkt „U8 Löwen" zeigte dann das erste
+Galeriebild, also ein Fanfoto. Wer sie pflegbar machen will, braucht eigene
+Felder mit Bild und Kurztext, keine Kopplung über die Reihenfolge.
 
 ## Grundregel: ein leeres Feld ist kein Loch
 
@@ -64,6 +72,18 @@ gibt, oder der neue Code liest Felder, die die Datenbank nicht kennt.
    Der Import lädt eine Datei nur hoch, wenn es sie noch nicht gibt, und füllt
    ein Feld nur, wenn es leer ist. Ein zweiter Lauf ändert nichts.
 3. **Deploy.** Erst danach den Code ausrollen.
+
+Zur Kontrolle nach Schritt 1 die drei Tabellen ansehen, `image_id` und
+`caption` müssen `not null` sein:
+
+```
+psql "$DATABASE_URI" -c "\d home_page_bilder_hero_images" \
+                     -c "\d home_page_bilder_galerie" -c "\d site_images"
+```
+
+Der Schemaabgleich aus `bun run db:push-schema` taugt dafür nicht: er weigert
+sich bei einer Datenbank, die schon Tabellen hat, und meldet dann Erfolg, ohne
+etwas geprüft zu haben.
 
 Nach dem Deploy einmal `bun run media-usage` laufen lassen: die neuen Bilder
 müssen unter „in Verwendung" stehen. Tun sie das nicht, ist eine Verknüpfung

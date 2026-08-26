@@ -12,9 +12,11 @@ const IG_HANDLE = "svnord_lerchenau";
 const IG_PROFILE_URL = `https://www.instagram.com/${IG_HANDLE}/`;
 
 /**
- * Die Kurz-Labels der Bildpunkte bleiben kuratiert, weil sie in einen Kreis von
- * 56 Pixeln passen muessen. Das Bild dahinter kommt aus der Galerie, sobald der
- * Verein dort etwas gepflegt hat; `src` ist nur der Rueckfall.
+ * Fest kuratiert, Label und Bild als Paar. Ein Versuch, das Bild positionsweise
+ * aus der Galerie zu ziehen, hat genau das kaputt gemacht: der Punkt "U8 Loewen"
+ * zeigte dann das erste Galeriebild, also ein Fanfoto aus Garmisch. Wer diese
+ * fuenf Punkte pflegbar machen will, braucht eigene Felder mit Label und Bild,
+ * keine Kopplung ueber die Reihenfolge.
  */
 const IG_HIGHLIGHTS: Array<{ label: string; src: string }> = [
   { label: "U8 Löwen", src: "/sport/u8/loewen.jpg" },
@@ -66,10 +68,6 @@ function IgScreenClone({
   shots: GalleryShot[];
   onOpen: (idx: number) => void;
 }) {
-  const highlights = IG_HIGHLIGHTS.map((h, i) => ({
-    label: h.label,
-    src: shots[i]?.src ?? h.src,
-  }));
   return (
     <div className="flex h-full flex-col bg-white text-[#0b0b0c]">
       {/* Scroll area */}
@@ -159,7 +157,7 @@ function IgScreenClone({
 
         {/* Highlights */}
         <div className="flex gap-4 overflow-x-auto px-4 py-4">
-          {highlights.map((h) => (
+          {IG_HIGHLIGHTS.map((h) => (
             <div
               key={h.label}
               className="flex w-14 shrink-0 flex-col items-center gap-1"
@@ -231,7 +229,7 @@ function IgScreenClone({
         <div className="grid grid-cols-3 gap-[2px] pb-4">
           {shots.map((shot, idx) => (
             <button
-              key={shot.src}
+              key={`${shot.src}-${idx}`}
               type="button"
               onClick={() => onOpen(idx)}
               className="relative aspect-square overflow-hidden bg-black/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0095f6]"
@@ -577,7 +575,7 @@ export function InstagramTeaser({ tiles }: { tiles?: GalleryShot[] }) {
           <div className="columns-1 gap-3 [column-fill:_balance] sm:columns-2 md:columns-3 lg:columns-4">
             {shots.map((shot, idx) => (
               <FadeUp
-                key={shot.src}
+                key={`${shot.src}-${idx}`}
                 delay={(idx % 4) * 0.05}
                 className="mb-3 break-inside-avoid"
               >

@@ -20,8 +20,7 @@ export const SiteImages: GlobalConfig = {
   label: "Weitere Bilder",
   admin: {
     group: "4. Seiten",
-    description:
-      "Einzelne Bilder auf Unterseiten: die drei Fotos der U8 und das Sommerfest-Plakat.",
+    description: "Einzelne Bilder auf Unterseiten: die drei Fotos der U8.",
   },
   access: { read: anyone, update: authenticated },
   hooks: { afterChange: [revalidateGlobalOnChange("site-images")] },
@@ -51,12 +50,6 @@ export const SiteImages: GlobalConfig = {
           label: "Tiger",
         },
       ],
-    },
-    {
-      name: "sommerfestPlakat",
-      type: "upload",
-      relationTo: "media",
-      label: "Sommerfest-Plakat (Startseite)",
     },
   ],
 };

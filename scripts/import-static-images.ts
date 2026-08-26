@@ -3,7 +3,7 @@
  *
  * Danach kann der Verein jedes dieser Bilder im Admin austauschen, ohne dass
  * jemand Code anfasst: Startseite → Bilder (Kopfbereich und Galerie), Weitere
- * Bilder (U8, Sommerfest) und die Titelbilder der vier importierten Beiträge.
+ * Bilder (U8) und die Titelbilder der vier importierten Beiträge.
  *
  * Zwei Regeln, die das Skript wiederholbar machen:
  *
@@ -47,8 +47,6 @@ const ALT_BY_FILE: Record<string, string> = {
   "/sport/u8/trainerteam.jpg": "Trainerteam der U8 des SV Nord",
   "/sport/u8/loewen.jpg": "Mannschaftsfoto der U8 Löwen",
   "/sport/u8/tiger.jpg": "Mannschaftsfoto der U8 Tiger",
-  "/news/sommerfest-2026.png":
-    "Plakat zum Sommerfest des SV Nord am 25. Juli 2026",
   "/news/historischer-aufstieg-in-die-landesliga.jpg":
     "Jubel nach dem Aufstieg in die Landesliga",
   "/news/karger-kommt.jpg": "Neuzugang Nico Karger im Trikot des SV Nord",
@@ -71,8 +69,6 @@ const U8_FILES = {
   loewen: "/sport/u8/loewen.jpg",
   tiger: "/sport/u8/tiger.jpg",
 } as const;
-
-const SOMMERFEST_FILE = "/news/sommerfest-2026.png";
 
 function altFor(file: string): string {
   const fromGallery = FALLBACK_GALLERY.find((shot) => shot.src === file);
@@ -155,8 +151,8 @@ async function main(): Promise<void> {
   // 1. Startseite: Kopfbereich und Galerie
   console.log("Startseite");
   const home = await payload.findGlobal({ slug: "home-page", depth: 0 });
-  const heroPflegt = (home.bilder?.heroImages ?? []).length > 0;
-  const galeriePflegt = (home.bilder?.galerie ?? []).length > 0;
+  const heroAlreadySet = (home.bilder?.heroImages ?? []).length > 0;
+  const galleryAlreadySet = (home.bilder?.galerie ?? []).length > 0;
 
   const heroImages: Array<{ image: number }> = [];
   for (const file of FALLBACK_HERO_SLIDES) {
@@ -164,66 +160,47 @@ async function main(): Promise<void> {
     if (id !== null) heroImages.push({ image: id });
   }
 
-  const galerie: Array<{
-    image: number;
-    caption: string;
-    sub?: string;
-    breit?: boolean;
-    hoch?: boolean;
-  }> = [];
+  const galerie: Array<{ image: number; caption: string; sub?: string }> = [];
   for (const shot of FALLBACK_GALLERY) {
     const id = await mediaIdFor(payload, known, shot.src, stats);
     if (id === null) continue;
-    galerie.push({
-      image: id,
-      caption: shot.caption,
-      sub: shot.sub,
-      breit: shot.span === "wide",
-      hoch: shot.span === "tall",
-    });
+    galerie.push({ image: id, caption: shot.caption, sub: shot.sub });
   }
 
-  if (!DRY_RUN && (!heroPflegt || !galeriePflegt)) {
+  if (!DRY_RUN && (!heroAlreadySet || !galleryAlreadySet)) {
     await payload.updateGlobal({
       slug: "home-page",
       data: {
         bilder: {
-          heroImages: heroPflegt ? home.bilder?.heroImages : heroImages,
-          galerie: galeriePflegt ? home.bilder?.galerie : galerie,
+          heroImages: heroAlreadySet ? home.bilder?.heroImages : heroImages,
+          galerie: galleryAlreadySet ? home.bilder?.galerie : galerie,
         },
       },
     });
-    stats.linked += heroPflegt ? 0 : heroImages.length;
-    stats.linked += galeriePflegt ? 0 : galerie.length;
+    stats.linked += heroAlreadySet ? 0 : heroImages.length;
+    stats.linked += galleryAlreadySet ? 0 : galerie.length;
   }
-  if (heroPflegt) console.log("  Kopfbereich ist gepflegt, unverändert");
-  if (galeriePflegt) console.log("  Galerie ist gepflegt, unverändert");
+  if (heroAlreadySet) console.log("  Kopfbereich ist gepflegt, unverändert");
+  if (galleryAlreadySet) console.log("  Galerie ist gepflegt, unverändert");
 
-  // 2. Weitere Bilder: U8 und Sommerfest
+  // 2. Weitere Bilder: U8
   console.log("\nWeitere Bilder");
   const siteImages = await payload.findGlobal({
     slug: "site-images",
     depth: 0,
   });
   const u8: Record<string, number> = {};
-  for (const [feld, file] of Object.entries(U8_FILES)) {
-    if (siteImages.u8?.[feld as keyof typeof U8_FILES]) continue;
+  for (const [field, file] of Object.entries(U8_FILES)) {
+    if (siteImages.u8?.[field as keyof typeof U8_FILES]) continue;
     const id = await mediaIdFor(payload, known, file, stats);
-    if (id !== null) u8[feld] = id;
+    if (id !== null) u8[field] = id;
   }
-  const sommerfestId = siteImages.sommerfestPlakat
-    ? null
-    : await mediaIdFor(payload, known, SOMMERFEST_FILE, stats);
-
-  if (!DRY_RUN && (Object.keys(u8).length > 0 || sommerfestId !== null)) {
+  if (!DRY_RUN && Object.keys(u8).length > 0) {
     await payload.updateGlobal({
       slug: "site-images",
-      data: {
-        u8: { ...(siteImages.u8 ?? {}), ...u8 },
-        ...(sommerfestId !== null ? { sommerfestPlakat: sommerfestId } : {}),
-      },
+      data: { u8: { ...(siteImages.u8 ?? {}), ...u8 } },
     });
-    stats.linked += Object.keys(u8).length + (sommerfestId !== null ? 1 : 0);
+    stats.linked += Object.keys(u8).length;
   }
 
   // 3. Titelbilder der importierten Beiträge

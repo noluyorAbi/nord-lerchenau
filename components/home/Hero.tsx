@@ -31,11 +31,6 @@ type Props = {
   slides?: string[];
 };
 
-// Hero-Bilderlauf: starke Querformat-Fotos aus /public. Zum Tauschen
-// einfach die Pfade ändern oder Einträge ergänzen/entfernen; die Animation
-// passt sich automatisch an die Anzahl der Bilder an. Erstes Bild wird bei
-// aktivierter Bewegungsreduktion (prefers-reduced-motion) statisch gezeigt.
-
 // Sekunden pro Bild; die Überblendung dauert HERO_FADE_MS.
 const HERO_PER_SLIDE_S = 5.5;
 const HERO_FADE_MS = 800;
@@ -160,7 +155,28 @@ export async function Hero({ hero, slides }: Props) {
   // sein Zeitfenster verschoben. Überblendung nur via opacity (GPU). Bei
   // prefers-reduced-motion wird die Animation gestoppt; nur Bild 1 bleibt
   // sichtbar (alle weiteren Layer auf opacity:0).
-  const heroSlideshowCss = `
+  // Bei einem einzigen Bild gibt es nichts zu ueberblenden, und die Keyframes
+  // waeren sogar schaedlich: visiblePct ist dann 100, die Regeln fuer 100%
+  // stehen doppelt da, und das eine Foto verschwaende den groessten Teil des
+  // Zyklus unsichtbar. Ein Bild kann durchaus uebrig bleiben, wenn im CMS nur
+  // eines gepflegt ist oder wenn von mehreren nur eines eine brauchbare
+  // Quelle hat.
+  const heroSlideshowCss =
+    slideCount < 2
+      ? `
+    .hero-slide { opacity: 1; animation: none; }
+    @keyframes hero-scroll-bob {
+      0%, 100% { transform: translateY(0); opacity: 0.55; }
+      50% { transform: translateY(6px); opacity: 1; }
+    }
+    .hero-scroll-cue {
+      animation: hero-scroll-bob 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-scroll-cue { animation: none; opacity: 0.7; }
+    }
+  `
+      : `
     .hero-slide {
       opacity: 0;
       animation: hero-crossfade ${totalS}s cubic-bezier(0.16, 1, 0.3, 1) infinite;
@@ -196,7 +212,7 @@ export async function Hero({ hero, slides }: Props) {
       <div className="absolute inset-0" aria-hidden="true">
         {heroSlides.map((src, i) => (
           <div
-            key={src}
+            key={`${src}-${i}`}
             className="hero-slide absolute inset-0"
             style={{
               // Vorwärts-Reihenfolge: Layer i wird ab i*HERO_PER_SLIDE_S sichtbar.

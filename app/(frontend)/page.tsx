@@ -32,15 +32,6 @@ export default async function HomePage() {
     },
   );
 
-  const siteImages = await cachedQuery(
-    ["global", "site-images"],
-    [globalTag("site-images")],
-    async () => {
-      const payload = await getPayloadClient();
-      return payload.findGlobal({ slug: "site-images", depth: 1 });
-    },
-  );
-
   const sections = home.sections ?? {};
 
   // Aus dem CMS gepflegte Bilder. Was hier leer bleibt, faellt in der jeweiligen
@@ -60,7 +51,6 @@ export default async function HomePage() {
         sub: row.sub ?? "",
         w: image.width ?? 1600,
         h: image.height ?? 1200,
-        span: row.breit ? "wide" : row.hoch ? "tall" : "default",
       };
     })
     .filter((tile): tile is GalleryShot => tile !== null);
@@ -69,11 +59,7 @@ export default async function HomePage() {
     <>
       <Hero hero={home.hero} slides={heroSlides} />
       <StatStrip />
-      <SommerfestSection
-        plakat={usableMediaSrc(
-          siteImages.sommerfestPlakat as Media | number | null,
-        )}
-      />
+      <SommerfestSection />
       {sections.showNextMatch !== false ? <MatchdayBlock /> : null}
       {sections.showNews !== false ? <NewsGrid /> : null}
       {sections.showInstagram !== false ? (

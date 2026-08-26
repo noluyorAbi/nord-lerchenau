@@ -64,7 +64,20 @@ export async function CategoryPage({ slug, belowIntro, leadership }: Props) {
         const payload = await getPayloadClient();
         return payload.find({
           collection: "people",
-          where: { name: { in: leadershipNames } },
+          // Nur Leitungsfunktionen. Ohne diesen Filter wuerde ein
+          // gleichnamiger Spieler-Eintrag seine private Nummer auf eine
+          // oeffentliche Seite bringen, und genau das schliesst die
+          // Feldbeschreibung in People.ts aus.
+          where: {
+            and: [
+              { name: { in: leadershipNames } },
+              {
+                function: {
+                  in: ["vorstand", "sportleitung", "jugendleitung", "trainer"],
+                },
+              },
+            ],
+          },
           limit: 50,
           depth: 0,
         });

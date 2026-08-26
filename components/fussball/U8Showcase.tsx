@@ -4,7 +4,7 @@ type Card = {
   sub: string;
 };
 
-const CARDS: Card[] = [
+const FALLBACK_CARDS: Card[] = [
   {
     src: "/sport/u8/trainerteam.jpg",
     caption: "Trainerteam U8",
@@ -22,7 +22,19 @@ const CARDS: Card[] = [
   },
 ];
 
-export function U8Showcase() {
+/**
+ * `images` kommt aus dem CMS (Weitere Bilder -> U8). Fehlt ein Eintrag, bleibt
+ * das mitgelieferte Foto stehen, damit kein Platzhalter entsteht.
+ */
+export function U8Showcase({
+  images,
+}: {
+  images?: Array<string | null | undefined>;
+} = {}) {
+  const CARDS = FALLBACK_CARDS.map((card, i) => ({
+    ...card,
+    src: images?.[i] || card.src,
+  }));
   return (
     <section className="mb-10 overflow-hidden rounded-2xl border border-nord-line bg-white p-7 md:p-9">
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">

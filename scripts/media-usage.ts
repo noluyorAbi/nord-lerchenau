@@ -40,6 +40,7 @@ export const GLOBALS = [
   ["vereinsheim-page", "Seite Vereinsheim"],
   ["jugendfoerder-page", "Seite Jugendfoerderverein"],
   ["faq-page", "Seite FAQ"],
+  ["site-images", "Weitere Bilder"],
   ["legal-pages", "Rechtstexte"],
   ["site-settings", "Einstellungen"],
 ] as const;

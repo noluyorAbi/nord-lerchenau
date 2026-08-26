@@ -86,6 +86,7 @@ export const MEDIA_DEPENDENT_GLOBALS = [
   "chronik-page",
   "vereinsheim-page",
   "jugendfoerder-page",
+  "site-images",
 ] as const;
 
 export const CACHED_GLOBALS = new Set([
@@ -98,6 +99,7 @@ export const CACHED_GLOBALS = new Set([
   "jugendfoerder-page",
   "legal-pages",
   "faq-page",
+  "site-images",
 ]);
 
 /**

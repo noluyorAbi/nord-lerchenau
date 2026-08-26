@@ -29,6 +29,7 @@ import { HomePage } from "./payload/globals/HomePage";
 import { JugendfoerderPage } from "./payload/globals/JugendfoerderPage";
 import { LegalPages } from "./payload/globals/LegalPages";
 import { Navigation } from "./payload/globals/Navigation";
+import { SiteImages } from "./payload/globals/SiteImages";
 import { SiteSettings } from "./payload/globals/SiteSettings";
 import { VereinsheimPage } from "./payload/globals/VereinsheimPage";
 
@@ -114,6 +115,7 @@ export default buildConfig({
     JugendfoerderPage,
     FaqPage,
     LegalPages,
+    SiteImages,
     // 5. Einstellungen
     SiteSettings,
     Navigation,

@@ -121,3 +121,46 @@ describe("mediaSrc with NEXT_PUBLIC_PREFER_UPLOADED_MEDIA on", () => {
     ).toBe("/uploads/Ralf_Kirmeyer.jpg");
   });
 });
+
+/**
+ * `usableMediaSrc` entscheidet überall dort, wo ein Bild aus dem CMS ein fest
+ * hinterlegtes ersetzen darf. Sagt es fälschlich ja, zeigt die Seite ein
+ * kaputtes Bild statt des mitgelieferten; sagt es fälschlich nein, bleibt eine
+ * Pflege des Vereins unsichtbar. Beide Richtungen stehen hier fest.
+ */
+describe("usableMediaSrc", () => {
+  it("accepts an absolute storage URL", async () => {
+    const { usableMediaSrc } = await loadModule(false);
+    // Kein mitgelieferter Zwilling, also bleibt nur die gespeicherte URL.
+    expect(usableMediaSrc({ filename: "Neues_Bild.webp", url: BLOB })).toBe(
+      BLOB,
+    );
+  });
+
+  it("accepts a committed asset under /uploads", async () => {
+    const { usableMediaSrc } = await loadModule(false);
+    expect(usableMediaSrc({ filename: "g-junioren.webp", url: null })).toBe(
+      "/uploads/g-junioren.jpg",
+    );
+  });
+
+  it("rejects the dead /api/media/file URLs from the first import", async () => {
+    const { usableMediaSrc } = await loadModule(false);
+    // An diesen Dokumenten steht die URL noch, die Datei dahinter gibt es nicht.
+    expect(
+      usableMediaSrc({
+        filename: "Neues_Bild.webp",
+        url: "/api/media/file/Neues_Bild.webp",
+      }),
+    ).toBeNull();
+  });
+
+  it("rejects an empty image field", async () => {
+    const { usableMediaSrc } = await loadModule(false);
+    expect(usableMediaSrc(null)).toBeNull();
+    expect(usableMediaSrc(undefined)).toBeNull();
+    // Eine unaufgelöste Verknüpfung ist nur eine Zahl und trägt keinen Pfad.
+    expect(usableMediaSrc(42)).toBeNull();
+    expect(usableMediaSrc({ filename: null, url: null })).toBeNull();
+  });
+});

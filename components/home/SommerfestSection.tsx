@@ -44,7 +44,8 @@ const PROGRAM: ProgramItem[] = [
 // (siehe docs/SOMMERFEST-CLEANUP.md).
 const SOMMERFEST_EXPIRES_AT = new Date("2026-07-31T00:00:00+02:00");
 
-export function SommerfestSection() {
+/** `plakat` kommt aus dem CMS (Weitere Bilder). Ohne Eintrag: mitgeliefert. */
+export function SommerfestSection({ plakat }: { plakat?: string | null } = {}) {
   if (new Date() >= SOMMERFEST_EXPIRES_AT) return null;
 
   return (
@@ -55,7 +56,7 @@ export function SommerfestSection() {
           <FadeUp>
             <div className="relative overflow-hidden rounded-3xl border border-white/10 shadow-2xl shadow-black/40">
               <Image
-                src="/news/sommerfest-2026.png"
+                src={plakat || "/news/sommerfest-2026.png"}
                 alt="SV Nord Sommerfest 2026 – Samstag, 25. Juli 2026"
                 width={1080}
                 height={1350}

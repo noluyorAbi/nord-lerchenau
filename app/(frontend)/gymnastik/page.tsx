@@ -8,30 +8,27 @@ export default function Page() {
         sport="gymnastik"
         eyebrow="Sport"
         title="Gymnastik"
-        fallbackLede="Seit 1967 in Bewegung. Montag und Mittwoch, Frauen wie Männer, jedes Alter willkommen."
+        fallbackLede="Seit 1967 in Bewegung. Zweimal pro Woche, Frauen wie Männer, jedes Alter willkommen."
         intro="Über 50 Jahre Gymnastik beim SV Nord. Zweimal pro Woche treffen wir uns in der Waldmeisterschule für Mobilität, Kraft und Ausgleich. Ein 35-köpfiger Stamm, lockerer Ton, fundiertes Training. Einsteiger:innen sind ausdrücklich willkommen."
-        pills={["Seit 1967", "35 Aktive", "Mo & Mi 19:00", "Waldmeisterschule"]}
+        // Keine Wochentage in den Pills: die Trainingszeiten stehen seit dem
+        // 21.08.2026 im CMS-Text der Abteilung und aendern sich zum 15.09.2026.
+        pills={[
+          "Seit 1967",
+          "35 Aktive",
+          "Zweimal pro Woche",
+          "Waldmeisterschule",
+        ]}
         stats={[
           { label: "Gegründet", value: "1967" },
           { label: "Mitglieder", value: "35" },
-          { label: "Training", value: "Mo + Mi · 19-20 Uhr" },
+          { label: "Training", value: "2× pro Woche" },
           { label: "Halle", value: "Waldmeisterschule" },
           { label: "Offen für", value: "alle Erwachsenen" },
         ]}
-        highlights={[
-          {
-            eyebrow: "Training",
-            title: "Zweimal pro Woche",
-            body: "Montag und Mittwoch je 19:00 bis 20:00 Uhr in der Waldmeisterschule. In den Schulferien pausieren wir; sonst läuft die Stunde verlässlich, das ganze Jahr.",
-            accent: "navy",
-          },
-          {
-            eyebrow: "Trainerteam",
-            title: "Kompetent & verlässlich",
-            body: "Unser Stamm von 35 Aktiven lebt von einer verlässlichen, fachlich starken Trainerin. Frauen und Männer trainieren gemeinsam, Spaß und Gemeinschaft inklusive.",
-            accent: "sky",
-          },
-        ]}
+        // Keine fest verdrahteten Textkacheln mehr: der Verein pflegt den
+        // Abteilungstext im Admin unter Mannschaften, und zwei Quellen fuer
+        // denselben Inhalt laufen genau so auseinander, wie es der Verein am
+        // 21.08.2026 gemeldet hat.
         cta={{
           title: "Komm vorbei, die erste Stunde ist gratis.",
           body: "Schreib uns kurz, dann sagen wir dir, wann der nächste Termin ist. Sportschuhe und Lust auf Bewegung reichen.",

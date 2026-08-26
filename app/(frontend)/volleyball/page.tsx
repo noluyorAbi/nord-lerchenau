@@ -23,20 +23,10 @@ export default function Page() {
           { label: "Halle", value: "Waldmeisterschule" },
           { label: "Altersspanne", value: "30-75 J." },
         ]}
-        highlights={[
-          {
-            eyebrow: "Generationen",
-            title: "30 bis 75 Jahre",
-            body: "Bei uns spielen Eltern mit ihren erwachsenen Kindern, Gemeinschaft und Spaß stehen über Leistung. Wer Lust auf Volleyball hat, ist willkommen.",
-            accent: "sky",
-          },
-          {
-            eyebrow: "Training",
-            title: "Freitag, 19:00 bis 20:00 Uhr",
-            body: "Einmal pro Woche in der Waldmeisterschule. In den Schulferien pausieren wir, sonst läuft die Stunde verlässlich, das ganze Jahr.",
-            accent: "navy",
-          },
-        ]}
+        // Keine fest verdrahteten Textkacheln mehr: der Verein pflegt den
+        // Abteilungstext im Admin unter Mannschaften, und zwei Quellen fuer
+        // denselben Inhalt laufen genau so auseinander, wie es der Verein am
+        // 21.08.2026 gemeldet hat.
         cta={{
           title: "Probetraining? Komm einfach vorbei.",
           body: "Schreib uns kurz, wir nennen dir Halle und Uhrzeit. Schuhe mit heller Sohle reichen, wir leihen dir alles andere.",

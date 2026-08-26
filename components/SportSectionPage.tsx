@@ -217,9 +217,14 @@ export async function SportSectionPage({
         <div className="grid gap-10 md:grid-cols-[1.55fr_1fr]">
           {/* MAIN */}
           <article>
-            <div className="mb-4 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold-ink">
-              Herzlich willkommen in der {title}-Abteilung
-            </div>
+            {/* Die CMS-Beschreibungen beginnen selbst mit "Willkommen bei der
+                X-Abteilung". Sobald sie gerendert wird, faellt die Zeile weg,
+                damit die Ueberschrift nicht doppelt dasteht. */}
+            {hasDescription ? null : (
+              <div className="mb-4 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold-ink">
+                Herzlich willkommen in der {title}-Abteilung
+              </div>
+            )}
 
             {pills && pills.length > 0 ? (
               <div className="mb-6 flex flex-wrap gap-2">
@@ -234,23 +239,25 @@ export async function SportSectionPage({
               </div>
             ) : null}
 
-            {intro ? (
-              <p className="mb-6 max-w-prose text-lg font-medium leading-relaxed text-nord-ink">
-                {intro}
-              </p>
-            ) : null}
-
-            {hasDescription &&
-            !(intro && highlights && highlights.length > 0) ? (
+            {/* Der im Admin gepflegte Vereinstext ist die Hauptquelle. Bisher
+                hat der fest im Code stehende `intro` ihn verdeckt, sobald es
+                Highlights gab: der Verein hat im CMS geschrieben und auf der
+                Seite ist nichts passiert. Jetzt gewinnt die Beschreibung, der
+                `intro` springt nur noch ein, solange keine gepflegt ist. */}
+            {hasDescription ? (
               <div className={RICH_TEXT_CLS}>
                 <RichText data={team.description as SerializedEditorState} />
               </div>
-            ) : !hasDescription && !intro ? (
+            ) : intro ? (
+              <p className="mb-6 max-w-prose text-lg font-medium leading-relaxed text-nord-ink">
+                {intro}
+              </p>
+            ) : (
               <div className="rounded-xl border border-dashed border-nord-line bg-white p-8 text-sm text-nord-muted">
                 Noch keine Beschreibung. Pflege die Seite im Admin unter{" "}
                 <em>Teams → {team.name}</em>.
               </div>
-            ) : null}
+            )}
 
             {highlights && highlights.length > 0 ? (
               <div className="mt-10 grid gap-4 sm:grid-cols-2">

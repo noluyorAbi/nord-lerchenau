@@ -1,6 +1,8 @@
 # Bilder editierbar machen
 
-Stand 26.08.2026.
+Stand 26.08.2026. Ausgeliefert am 27.08.2026: Schema und Import gegen die
+Produktion gelaufen, 19 Bilder neu hochgeladen, 34 Verknüpfungen gesetzt,
+Kontrolle über `bun run media-usage` bestanden.
 
 Bis hierher standen die meisten Fotos der Seite fest im Code. Der Verein konnte
 sie nicht austauschen, und ein Wunsch wie „anderes Bild oben auf der Startseite"

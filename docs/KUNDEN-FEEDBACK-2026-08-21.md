@@ -19,13 +19,16 @@ passiert. Das ist behoben.
 | 4   | "Wo sehe ich, welches Foto auf welcher Seite ist?" / "Welche kann ich löschen?" | Keine Antwort im Admin möglich.                                                                                                                                                                                         | Neuer Bericht `bun run media-usage`. Er listet jedes Bild mit seinen Fundstellen und getrennt davon die Bilder ohne jede Fundstelle. Stand 26.08.2026: 182 Bilder, davon 29 in Verwendung und 153 ohne Fundstelle. Die 153 sind Kopien aus wiederholten Datenimporten (`Bini_Hafner-1` bis `-27` und so weiter) und können weg.                                                                                                                                                                     |
 | 5   | "Hauptmenü: Warum erscheint hier Fußball?"                                      | Im Admin stand ein Feld "Hauptmenü", das nichts mehr bewirkt hat.                                                                                                                                                       | Bereits am 22.08.2026 erledigt (Commit `f111667`): Das Hauptmenü kommt aus dem Code, damit Handy und Browser identisch sind, und das wirkungslose Feld ist im Admin ausgeblendet. Dass Fußball oben eigenständig steht und zusätzlich unter "Sport" in der Fußzeile auftaucht, ist Absicht: Fußball ist die größte Abteilung und soll einen Klick entfernt sein.                                                                                                                                    |
 
-## Vor dem Deploy zu klären
+## Nachtrag: Stand 27.08.2026, alles ausgeliefert
 
-Am Team Gymnastik hängt die Datei `Volleyball 2026_07.webp`. Ab dem Moment, in
-dem Punkt 2 live geht, ist das auch das große Bild oben auf `/gymnastik`. Die
-passende Datei `Gymnastik 2026_07.webp` liegt bereits im Medienordner und wird
-nirgends verwendet. Bitte vor oder unmittelbar nach dem Deploy unter
-**Mannschaften → Gymnastik → Foto** umstellen.
+Die Punkte 1 bis 5 sind live. Zusätzlich erledigt:
+
+- Am Team Gymnastik hing die Datei `Volleyball 2026_07.webp`. Das war ein
+  Vertauscher beim Hochladen, und mit der Bild-Änderung wäre daraus das große
+  Bild auf `/gymnastik` geworden. Umgestellt auf `Gymnastik 2026_07.webp`, seit
+  dem 27.08.2026 ist das Foto oben auf der Seite.
+- Fast alle übrigen Bilder der Seite sind seither ebenfalls im Admin
+  austauschbar, siehe `docs/BILDER-EDITIERBAR.md`.
 
 ## Braucht eine Entscheidung des Vereins
 

@@ -1,9 +1,10 @@
 import { LegalLayout } from "@/components/LegalLayout";
-import { LegalSections } from "@/components/legal/LegalSections";
+import { LegalBody } from "@/components/legal/LegalBody";
 import { cachedQuery, globalTag } from "@/lib/cms";
+import { clubAddress, primaryAddressOf } from "@/lib/club-address";
 import { getPayloadClient } from "@/lib/payload";
 
-import { IMPRESSUM_SECTIONS } from "./_content";
+import { impressumSections } from "./_content";
 
 const LAST_UPDATED = "14. Mai 2026";
 
@@ -17,14 +18,16 @@ export default async function ImpressumPage() {
     },
   );
 
-  const primary = Array.isArray(contact.addresses)
-    ? contact.addresses[0]
-    : null;
-  const streetLines = primary
-    ? [primary.street, `${primary.postalCode} ${primary.city}`.trim()].filter(
-        (s) => s && s.trim().length > 0,
-      )
-    : [];
+  const legal = await cachedQuery(
+    ["global", "legal-pages"],
+    [globalTag("legal-pages")],
+    async () => {
+      const payload = await getPayloadClient();
+      return payload.findGlobal({ slug: "legal-pages" });
+    },
+  );
+
+  const address = clubAddress(primaryAddressOf(contact));
 
   return (
     <LegalLayout
@@ -35,7 +38,7 @@ export default async function ImpressumPage() {
       facts={[
         { label: "Vereinsname", value: "SV Nord M.-Lerchenau e.V." },
         { label: "Gegründet", value: "1947" },
-        { label: "Sitz", value: primary?.city ?? "München" },
+        { label: "Sitz", value: address.city },
         { label: "Register", value: "VR 6924" },
         { label: "Rechtsform", value: "e.V." },
       ]}
@@ -46,12 +49,15 @@ export default async function ImpressumPage() {
       ]}
       contact={{
         name: "SV Nord München-Lerchenau e.V.",
-        streetLines,
+        streetLines: address.lines,
         email: contact.email ?? null,
         phone: contact.phone ?? null,
       }}
     >
-      <LegalSections sections={IMPRESSUM_SECTIONS} />
+      <LegalBody
+        cms={legal.impressumBody}
+        fallback={impressumSections(address)}
+      />
     </LegalLayout>
   );
 }

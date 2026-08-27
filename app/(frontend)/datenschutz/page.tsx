@@ -1,9 +1,10 @@
 import { LegalLayout } from "@/components/LegalLayout";
-import { LegalSections } from "@/components/legal/LegalSections";
+import { LegalBody } from "@/components/legal/LegalBody";
 import { cachedQuery, globalTag } from "@/lib/cms";
+import { clubAddress, primaryAddressOf } from "@/lib/club-address";
 import { getPayloadClient } from "@/lib/payload";
 
-import { DATENSCHUTZ_SECTIONS } from "./_content";
+import { datenschutzSections } from "./_content";
 
 const LAST_UPDATED = "24. Juli 2026";
 
@@ -17,14 +18,16 @@ export default async function DatenschutzPage() {
     },
   );
 
-  const primary = Array.isArray(contact.addresses)
-    ? contact.addresses[0]
-    : null;
-  const streetLines = primary
-    ? [primary.street, `${primary.postalCode} ${primary.city}`.trim()].filter(
-        (s) => s && s.trim().length > 0,
-      )
-    : [];
+  const legal = await cachedQuery(
+    ["global", "legal-pages"],
+    [globalTag("legal-pages")],
+    async () => {
+      const payload = await getPayloadClient();
+      return payload.findGlobal({ slug: "legal-pages" });
+    },
+  );
+
+  const address = clubAddress(primaryAddressOf(contact));
 
   return (
     <LegalLayout
@@ -49,12 +52,15 @@ export default async function DatenschutzPage() {
       ]}
       contact={{
         name: "SV Nord München-Lerchenau e.V.",
-        streetLines,
+        streetLines: address.lines,
         email: contact.email ?? null,
         phone: contact.phone ?? null,
       }}
     >
-      <LegalSections sections={DATENSCHUTZ_SECTIONS} />
+      <LegalBody
+        cms={legal.datenschutzBody}
+        fallback={datenschutzSections(address)}
+      />
     </LegalLayout>
   );
 }

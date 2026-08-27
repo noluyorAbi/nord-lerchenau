@@ -26,7 +26,13 @@ export const HomePage: GlobalConfig = {
           name: "pretitle",
           type: "text",
           label: "Kleine Zeile darüber",
+          // Ausgeblendet statt gelöscht: die Spalte bleibt in der Datenbank,
+          // es braucht also keine Migration. Der Hero liest `pretitle` seit
+          // dem Umbau nicht mehr, wer die Zeile hier ändert sieht auf der
+          // Startseite nichts passieren. Ein Feld, das nichts mehr bewirkt,
+          // gehört nicht in den Editor.
           admin: {
+            hidden: true,
             description: "Kleiner Text über der Hauptüberschrift.",
           },
           defaultValue: "Heimspieltag · Sa 14:30 · Eschengarten",

@@ -74,7 +74,14 @@ export const People: CollectionConfig = {
       type: "text",
       label: "Telefon",
       admin: {
-        description: "Optional. Wird nur bei Vorstand/Trainer gezeigt.",
+        // Der alte Hinweis versprach das Gegenteil dessen, was passiert:
+        // auf /verein/vorstand entfernt `stripPhone` jede Nummer, und auf den
+        // Fussballseiten zeigt `PHONE_PUBLIC` nur namentlich freigegebene an.
+        // Wer hier eine Nummer eintraegt und auf ihr Erscheinen wartet, wartet
+        // vergeblich. Das Feld bleibt trotzdem sinnvoll: die Nummer einer
+        // bereits freigegebenen Person wird hier gepflegt.
+        description:
+          "Optional. Ändern wirkt sofort — aber eine Nummer erscheint nicht automatisch: auf der Vorstandsseite werden Telefonnummern grundsätzlich nicht angezeigt, auf den Fußballseiten nur für Personen, die der Verein ausdrücklich freigegeben hat. Für eine neue Freigabe bitte den Entwickler ansprechen.",
       },
     },
     { name: "email", type: "email", label: "E-Mail" },

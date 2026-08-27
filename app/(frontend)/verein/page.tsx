@@ -1,12 +1,15 @@
 import Link from "next/link";
 
 import { PageHero } from "@/components/PageHero";
+import { vereinsJahre } from "@/lib/verein-jahre";
+
+const JAHRE = vereinsJahre();
 
 const STATS = [
   { value: "1947", label: "Gegründet" },
   { value: "600+", label: "Mitglieder" },
   { value: "5", label: "Abteilungen" },
-  { value: "78", label: "Jahre" },
+  { value: String(JAHRE), label: "Jahre" },
 ];
 
 type CardTone = "navy" | "paper" | "sky" | "gold";
@@ -25,7 +28,7 @@ const CARDS: FeatureCard[] = [
     href: "/verein/chronik",
     eyebrow: "Geschichte",
     title: "Chronik",
-    desc: "Von 38 Gründern und einer Kuhhaut zu heute. 78 Jahre SV Nord in 7 Kapiteln, Zeittafel und Ehrentafel.",
+    desc: `Von 38 Gründern und einer Kuhhaut zu heute. ${JAHRE} Jahre SV Nord in 7 Kapiteln, Zeittafel und Ehrentafel.`,
     meta: "1947 → heute",
     tone: "paper",
   },

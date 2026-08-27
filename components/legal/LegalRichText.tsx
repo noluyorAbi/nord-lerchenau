@@ -2,6 +2,8 @@ import { RichText } from "@payloadcms/richtext-lexical/react";
 import type { JSXConvertersFunction } from "@payloadcms/richtext-lexical/react";
 import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical";
 
+import { slug } from "@/lib/slug";
+
 /**
  * Rechtstexte aus dem CMS, in der Optik der fest eingebauten Fassung.
  *
@@ -14,6 +16,52 @@ import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical
  * `LegalSections`, damit ein Wechsel zwischen CMS-Fassung und Rueckfall auf
  * der Seite nicht als Bruch auffaellt.
  */
+type LexicalTextish = { text?: string; children?: LexicalTextish[] };
+
+function flatten(nodes: unknown): string {
+  if (!Array.isArray(nodes)) return "";
+  return (nodes as LexicalTextish[])
+    .map((node) =>
+      typeof node?.text === "string" ? node.text : flatten(node?.children),
+    )
+    .join("");
+}
+
+/**
+ * Der Anker eines Abschnitts, abgeleitet aus seiner Ueberschrift.
+ *
+ * Die eingebaute Fassung fuehrt handvergebene Kuerzel (`ki-assistent`,
+ * `tls`), die aus dem Ueberschriftentext nicht rekonstruierbar sind. Ein
+ * Richtext-Feld hat keinen Platz fuer ein zweites, verstecktes Kuerzel, das
+ * ein Editor auch nicht pflegen koennte. Die Anker aendern sich mit dem
+ * Wechsel auf die CMS-Fassung deshalb, das ist der Preis und er steht in der
+ * PR. Wichtiger ist, dass es ueberhaupt wieder welche gibt: ohne sie waere
+ * eine Datenschutzerklaerung dieser Laenge eine durchlaufende Textwand.
+ */
+export function headingId(nodes: unknown): string | undefined {
+  const id = slug(flatten(nodes));
+  return id.length > 0 ? `abschnitt-${id}` : undefined;
+}
+
+/** Die Abschnittsueberschriften in Dokumentreihenfolge, fuer das Verzeichnis. */
+function tableOfContents(
+  data: SerializedEditorState,
+): Array<{ id: string; title: string }> {
+  const out: Array<{ id: string; title: string }> = [];
+  for (const node of data.root?.children ?? []) {
+    const candidate = node as {
+      type?: string;
+      tag?: string;
+      children?: unknown;
+    };
+    if (candidate.type !== "heading" || candidate.tag !== "h2") continue;
+    const title = flatten(candidate.children).trim();
+    const id = headingId(candidate.children);
+    if (title && id) out.push({ id, title });
+  }
+  return out;
+}
+
 const converters: JSXConvertersFunction = ({ defaultConverters }) => ({
   ...defaultConverters,
 
@@ -22,7 +70,10 @@ const converters: JSXConvertersFunction = ({ defaultConverters }) => ({
 
     if (node.tag === "h2") {
       return (
-        <h2 className="mt-12 flex items-baseline gap-3 font-display text-[22px] font-black tracking-tight text-nord-ink before:font-mono before:text-[11px] before:font-bold before:tracking-[0.16em] before:text-nord-gold before:content-[counter(legal-section,decimal-leading-zero)] first:mt-0 md:text-[25px] [counter-increment:legal-section]">
+        <h2
+          id={headingId(node.children)}
+          className="mt-12 flex items-baseline gap-3 font-display text-[22px] font-black tracking-tight text-nord-ink before:font-mono before:text-[11px] before:font-bold before:tracking-[0.16em] before:text-nord-gold before:content-[counter(legal-section,decimal-leading-zero)] first:mt-0 md:text-[25px] [counter-increment:legal-section]"
+        >
           {children}
         </h2>
       );
@@ -86,8 +137,35 @@ const converters: JSXConvertersFunction = ({ defaultConverters }) => ({
 });
 
 export function LegalRichText({ data }: { data: SerializedEditorState }) {
+  const sections = tableOfContents(data);
+
   return (
     <div className="[counter-reset:legal-section]">
+      {sections.length > 1 && (
+        <nav
+          aria-label="Abschnitte dieser Seite"
+          className="mb-10 rounded-xl border border-nord-line bg-nord-paper-2 p-4"
+        >
+          <div className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-nord-muted">
+            Abschnitte
+          </div>
+          <ol className="mt-3 grid gap-x-6 gap-y-1.5 sm:grid-cols-2">
+            {sections.map((section, index) => (
+              <li key={section.id} className="flex items-baseline gap-2.5">
+                <span className="font-mono text-[10px] font-bold tabular-nums text-nord-gold-ink">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <a
+                  href={`#${section.id}`}
+                  className="text-[14px] text-nord-ink underline-offset-2 hover:text-nord-navy hover:underline"
+                >
+                  {section.title}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )}
       <RichText converters={converters} data={data} disableContainer />
     </div>
   );

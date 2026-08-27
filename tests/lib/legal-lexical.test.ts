@@ -49,6 +49,14 @@ function plainStringsOf(sections: LegalSection[]): string[] {
           push(block.label);
           if (block.sub) push(block.sub);
           break;
+        default: {
+          // Eine neue Blockart darf nicht stillschweigend uebersprungen
+          // werden, sonst prueft dieser Test weniger, als er behauptet.
+          const unreachable: never = block;
+          throw new Error(
+            `Unbekannte Blockart: ${JSON.stringify(unreachable)}`,
+          );
+        }
       }
     }
   }
@@ -110,11 +118,25 @@ describe("legalSectionsToLexical", () => {
    * dafuer, dass die Uebersetzung aus dem Code und nicht aus jener Fassung
    * kommt: eine Verarbeitungstaetigkeit darf aus der Datenschutzerklaerung
    * nicht verschwinden.
+   *
+   * Geprueft wird die Ueberschrift und der genannte Auftragsverarbeiter, nicht
+   * ein Wortmuster: `/ki/` trifft auch "Cookies" und wuerde gruen bleiben,
+   * waehrend der ganze Abschnitt fehlt.
    */
   it("enthaelt den Abschnitt zum KI-Assistenten", () => {
     const text = lexicalToPlainText(
       legalSectionsToLexical(datenschutzSections(ADDRESS)),
     );
-    expect(text?.toLowerCase()).toMatch(/ki|assistent/);
+    expect(text).toContain("KI-gestützter Website-Assistent");
+    expect(text).toContain("OpenAI Ireland Ltd.");
+  });
+
+  it("behaelt die Ziele der Links, nicht nur ihren Text", () => {
+    const doc = JSON.stringify(
+      legalSectionsToLexical(datenschutzSections(ADDRESS)),
+    );
+    // Ohne die href-Behandlung bliebe der sichtbare Text gleich und aus der
+    // Kontaktadresse wuerde unklickbarer Text.
+    expect(doc).toContain("mailto:info@svnord.de");
   });
 });

@@ -14,6 +14,10 @@ import type { SportStat } from "@/components/SportSectionPage";
 type PillRow = { text?: string | null };
 type StatRow = { label?: string | null; value?: string | null };
 
+/* `PillRow & StatRow` mit lauter optionalen Feldern: der Seed prueft beide
+   Feldarten mit derselben Funktion, und beide Zeilenformen sind zuweisbar,
+   ohne dass irgendwo gecastet werden muss. */
+
 function trimmed(value: string | null | undefined): string {
   return typeof value === "string" ? value.trim() : "";
 }
@@ -40,9 +44,26 @@ export function preferCms<T>(fromCms: T[], fallback: T[]): T[] {
   return fromCms.length > 0 ? fromCms : fallback;
 }
 
-/** Ob der Seed diese Abteilung in Ruhe lassen muss. */
+/**
+ * Ob der Seed diese Abteilung in Ruhe lassen muss.
+ *
+ * Gezaehlt werden BRAUCHBARE Zeilen, nicht rohe. Der Unterschied ist der
+ * einzige Zustand, aus dem die Seite sonst nicht mehr herausfindet: haette
+ * eine Abteilung Zeilen, deren Text leer ist, dann liesse der Seed sie in Ruhe
+ * ("da steht ja was"), waehrend die Seite auf die mitgelieferten Werte
+ * zurueckfaellt ("brauchbar ist davon nichts"). Im Admin stuenden Zeilen, auf
+ * der Seite andere Werte, und kein weiterer Lauf korrigiert das je. Fuer den
+ * Verein saehe das aus wie "ich pflege und es passiert nichts", also genau
+ * das, wogegen dieser Umbau gebaut ist.
+ *
+ * Beide Seiten der Regel zaehlen deshalb dasselbe.
+ */
 export function shouldPreserveExistingRows(
-  rows: unknown[] | null | undefined,
+  rows: Array<PillRow & StatRow> | null | undefined,
 ): boolean {
-  return (rows ?? []).length > 0;
+  return (rows ?? []).some(
+    (row) =>
+      trimmed(row.text) !== "" ||
+      (trimmed(row.label) !== "" && trimmed(row.value) !== ""),
+  );
 }

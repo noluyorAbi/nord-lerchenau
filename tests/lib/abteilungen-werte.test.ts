@@ -66,6 +66,18 @@ describe("shouldPreserveExistingRows", () => {
     expect(shouldPreserveExistingRows([{ text: "x" }])).toBe(true);
   });
 
+  it("zählt dasselbe wie preferCms, nicht rohe Zeilen", () => {
+    // Sonst gäbe es einen Zustand, aus dem die Seite nicht herausfindet: der
+    // Seed lässt in Ruhe, weil Zeilen dastehen, die Seite fällt zurück, weil
+    // keine brauchbar ist, und kein weiterer Lauf korrigiert das.
+    const leereZeilen = [{ text: "   " }, { text: "" }];
+    expect(shouldPreserveExistingRows(leereZeilen)).toBe(false);
+    expect(preferCms(pillsFromCms(leereZeilen), ["alt"])).toEqual(["alt"]);
+
+    const halbeZeile = [{ label: "Training", value: " " }];
+    expect(shouldPreserveExistingRows(halbeZeile)).toBe(false);
+  });
+
   it("lässt den Seed schreiben, solange nichts dasteht", () => {
     expect(shouldPreserveExistingRows([])).toBe(false);
     expect(shouldPreserveExistingRows(null)).toBe(false);

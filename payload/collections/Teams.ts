@@ -188,6 +188,58 @@ export const Teams: CollectionConfig = {
       ],
     },
     {
+      name: "pills",
+      type: "array",
+      label: "Schlagworte (Abteilungsseite)",
+      labels: { singular: "Schlagwort", plural: "Schlagworte" },
+      admin: {
+        // Nur die fuenf Abteilungsseiten rendern diese Felder. Auf den rund
+        // 24 Fussballmannschaften waeren sie ein Bedienelement, das nichts
+        // bewirkt, also genau das, was am 26.08. aus dem Admin geflogen ist.
+        condition: (data) => data?.sport !== "fussball",
+        description:
+          "Die kleinen Kästchen oben auf der Abteilungsseite, z.B. 'Seit 1967' oder 'Zweimal pro Woche'. Leer lassen heißt: die mitgelieferten Schlagworte bleiben stehen.",
+      },
+      fields: [
+        {
+          name: "text",
+          type: "text",
+          required: true,
+          label: "Text",
+        },
+      ],
+    },
+    {
+      name: "stats",
+      type: "array",
+      label: "Zahlen (Kasten 'Auf einen Blick')",
+      labels: { singular: "Zahl", plural: "Zahlen" },
+      admin: {
+        // Nur die fuenf Abteilungsseiten rendern diese Felder. Auf den rund
+        // 24 Fussballmannschaften waeren sie ein Bedienelement, das nichts
+        // bewirkt, also genau das, was am 26.08. aus dem Admin geflogen ist.
+        condition: (data) => data?.sport !== "fussball",
+        description:
+          "Der dunkle Kasten rechts auf der Abteilungsseite. Hier stehen die Angaben, die sich tatsächlich ändern, z.B. Mitgliederzahl oder Trainingszeiten. Leer lassen heißt: die mitgelieferten Zahlen bleiben stehen.",
+      },
+      fields: [
+        {
+          name: "label",
+          type: "text",
+          required: true,
+          label: "Beschriftung",
+          admin: { description: "Links im Kasten, z.B. 'Mitglieder'." },
+        },
+        {
+          name: "value",
+          type: "text",
+          required: true,
+          label: "Wert",
+          admin: { description: "Rechts im Kasten, z.B. '35'." },
+        },
+      ],
+    },
+    {
       name: "trainers",
       type: "relationship",
       relationTo: "people",

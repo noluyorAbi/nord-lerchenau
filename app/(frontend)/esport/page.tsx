@@ -8,14 +8,6 @@ export default function Page() {
       title="eSport"
       fallbackLede="Virtuell für Nord am Ball — zwei Mannschaften, ein Controller, FC26 auf der Konsole."
       intro="Seit über zwei Jahren messen wir uns auch virtuell mit anderen Vereinen. Im Debütjahr direkt zur Meisterschaft, seither in der höchsten BFV-eLeague. SV-Nord-Blau im Trikot, FC26 auf dem Bildschirm."
-      pills={["BFV-eLeague", "eRegionalliga", "eLandesliga", "FC26"]}
-      stats={[
-        { label: "Aktiv seit", value: "2 Jahre" },
-        { label: "Mannschaften", value: "2" },
-        { label: "Spielklassen", value: "eRegional + eLandes" },
-        { label: "Konsole", value: "FC26" },
-        { label: "Einstieg", value: "ab 16 Jahren" },
-      ]}
       highlights={[
         {
           eyebrow: "Saison 25/26",

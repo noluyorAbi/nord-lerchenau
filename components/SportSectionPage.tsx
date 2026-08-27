@@ -5,6 +5,8 @@ import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical
 
 import { PageHero } from "@/components/PageHero";
 import { PersonCard } from "@/components/PersonCard";
+import { ABTEILUNGEN_DEFAULTS } from "@/lib/abteilungen-defaults";
+import { pillsFromCms, preferCms, statsFromCms } from "@/lib/abteilungen-werte";
 import { cachedQuery, collectionTag } from "@/lib/cms";
 import { lexicalHasContent } from "@/lib/lexical-text";
 import { getPayloadClient } from "@/lib/payload";
@@ -44,8 +46,6 @@ type Props = {
   excludeTrainerNames?: string[];
   staticContacts?: StaticContact[];
   intro?: string;
-  pills?: string[];
-  stats?: SportStat[];
   highlights?: SportHighlight[];
   cta?: SportCta;
 };
@@ -102,8 +102,6 @@ export async function SportSectionPage({
   excludeTrainerNames,
   staticContacts,
   intro,
-  pills,
-  stats,
   highlights,
   cta,
 }: Props) {
@@ -125,6 +123,15 @@ export async function SportSectionPage({
 
   const team = result.docs[0];
   if (!team) notFound();
+
+  /* Dieselbe Regel wie beim Beschreibungstext: was im Admin gepflegt ist,
+     gewinnt, der fest im Code stehende Wert springt nur ein, solange nichts
+     gepflegt ist. Genau hier stehen die Angaben, die veralten, also
+     Mitgliederzahlen, Trainingszeiten und Altersspannen. Wer sie im CMS
+     ändert, muss die Änderung auf der Seite sehen. */
+  const fallback = ABTEILUNGEN_DEFAULTS[sport];
+  const effectivePills = preferCms(pillsFromCms(team.pills), fallback.pills);
+  const effectiveStats = preferCms(statsFromCms(team.stats), fallback.stats);
 
   // Porträts für statische Ansprechpartner aus der People-Collection ziehen,
   // damit vorhandene CMS-Fotos nicht als Initialen-Kreis enden.
@@ -218,11 +225,11 @@ export async function SportSectionPage({
               </div>
             )}
 
-            {pills && pills.length > 0 ? (
+            {effectivePills && effectivePills.length > 0 ? (
               <div className="mb-6 flex flex-wrap gap-2">
-                {pills.map((p) => (
+                {effectivePills.map((p, i) => (
                   <span
-                    key={p}
+                    key={`${i}-${p}`}
                     className="inline-flex items-center rounded-full border border-nord-line bg-white px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-ink"
                   >
                     {p}
@@ -393,15 +400,15 @@ export async function SportSectionPage({
 
           {/* SIDEBAR */}
           <aside className="space-y-5 md:sticky md:top-24 md:h-fit md:self-start">
-            {stats && stats.length > 0 ? (
+            {effectiveStats && effectiveStats.length > 0 ? (
               <div className="rounded-2xl bg-nord-ink p-6 text-white">
                 <div className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-nord-gold">
                   Auf einen Blick
                 </div>
                 <dl className="mt-3 divide-y divide-white/10 text-sm">
-                  {stats.map((s) => (
+                  {effectiveStats.map((s, i) => (
                     <div
-                      key={s.label}
+                      key={`${i}-${s.label}`}
                       className="flex items-baseline justify-between gap-3 py-2.5 first:pt-0 last:pb-0"
                     >
                       <dt className="text-white/70">{s.label}</dt>

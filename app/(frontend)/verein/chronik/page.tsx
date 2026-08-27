@@ -7,8 +7,8 @@ import { ChronikVorstandschaften } from "@/components/chronik/ChronikVorstandsch
 import { PageHero } from "@/components/PageHero";
 import { cachedQuery, globalTag } from "@/lib/cms";
 import { getPayloadClient } from "@/lib/payload";
+import { vereinsJahre } from "@/lib/verein-jahre";
 
-const FOUNDED = 1947;
 const CHRONIK_ZEITSCHRIFTEN_URL = "https://my.hidrive.com/share/j-39fs2i9w";
 
 const STATS = [
@@ -67,7 +67,7 @@ export default async function ChronikPage() {
     },
   );
 
-  const yearsAlive = new Date().getFullYear() - FOUNDED;
+  const yearsAlive = vereinsJahre();
 
   return (
     <>

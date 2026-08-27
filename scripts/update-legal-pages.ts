@@ -12,7 +12,13 @@
  * Deshalb gibt es hier keinen Text mehr, nur noch die Uebersetzung der
  * gerenderten Abschnitte nach Lexical.
  *
- * Lauf: bun run scripts/update-legal-pages.ts
+ * Lauf: bun run legal-pages-aktualisieren
+ *
+ * Nur ueber dieses package.json-Skript, nie als blosses `bun run scripts/...`:
+ * es setzt PAYLOAD_DISABLE_PUSH=true. Ohne die Variable startet Payload mit
+ * dem Drizzle-Push, vergleicht die Konfiguration mit der Produktionsdatenbank
+ * und fragt bei jeder Abweichung interaktiv nach. Eine falsche Antwort benennt
+ * dort eine bestehende Tabelle um.
  */
 import { getPayload } from "payload";
 

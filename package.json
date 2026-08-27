@@ -18,6 +18,7 @@
     "seed": "bun run scripts/seed.ts",
     "download-images": "bun run scripts/download-images.ts",
     "media-usage": "bun run scripts/media-usage.ts",
+    "seed-abteilungs-zahlen": "NODE_ENV=production PAYLOAD_DISABLE_PUSH=true bun --conditions=production run scripts/seed-abteilungs-zahlen.ts",
     "import-static-images": "NODE_ENV=production PAYLOAD_DISABLE_PUSH=true bun --conditions=production run scripts/import-static-images.ts",
     "test": "vitest run",
     "test:watch": "vitest"

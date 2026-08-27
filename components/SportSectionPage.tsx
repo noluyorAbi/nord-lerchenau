@@ -6,6 +6,7 @@ import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical
 import { PageHero } from "@/components/PageHero";
 import { PersonCard } from "@/components/PersonCard";
 import { ABTEILUNGEN_DEFAULTS } from "@/lib/abteilungen-defaults";
+import { pillsFromCms, preferCms, statsFromCms } from "@/lib/abteilungen-werte";
 import { cachedQuery, collectionTag } from "@/lib/cms";
 import { lexicalHasContent } from "@/lib/lexical-text";
 import { getPayloadClient } from "@/lib/payload";
@@ -128,16 +129,9 @@ export async function SportSectionPage({
      gepflegt ist. Genau hier stehen die Angaben, die veralten, also
      Mitgliederzahlen, Trainingszeiten und Altersspannen. Wer sie im CMS
      ändert, muss die Änderung auf der Seite sehen. */
-  const cmsPills = (team.pills ?? [])
-    .map((row) => row.text?.trim())
-    .filter((text): text is string => Boolean(text));
   const fallback = ABTEILUNGEN_DEFAULTS[sport];
-  const effectivePills = cmsPills.length > 0 ? cmsPills : fallback.pills;
-
-  const cmsStats = (team.stats ?? [])
-    .map((row) => ({ label: row.label?.trim(), value: row.value?.trim() }))
-    .filter((row): row is SportStat => Boolean(row.label && row.value));
-  const effectiveStats = cmsStats.length > 0 ? cmsStats : fallback.stats;
+  const effectivePills = preferCms(pillsFromCms(team.pills), fallback.pills);
+  const effectiveStats = preferCms(statsFromCms(team.stats), fallback.stats);
 
   // Porträts für statische Ansprechpartner aus der People-Collection ziehen,
   // damit vorhandene CMS-Fotos nicht als Initialen-Kreis enden.
@@ -233,9 +227,9 @@ export async function SportSectionPage({
 
             {effectivePills && effectivePills.length > 0 ? (
               <div className="mb-6 flex flex-wrap gap-2">
-                {effectivePills.map((p) => (
+                {effectivePills.map((p, i) => (
                   <span
-                    key={p}
+                    key={`${i}-${p}`}
                     className="inline-flex items-center rounded-full border border-nord-line bg-white px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-ink"
                   >
                     {p}
@@ -412,9 +406,9 @@ export async function SportSectionPage({
                   Auf einen Blick
                 </div>
                 <dl className="mt-3 divide-y divide-white/10 text-sm">
-                  {effectiveStats.map((s) => (
+                  {effectiveStats.map((s, i) => (
                     <div
-                      key={s.label}
+                      key={`${i}-${s.label}`}
                       className="flex items-baseline justify-between gap-3 py-2.5 first:pt-0 last:pb-0"
                     >
                       <dt className="text-white/70">{s.label}</dt>

@@ -10,7 +10,14 @@
  * korrigiert hat, darf sie nicht durch einen zweiten Lauf verlieren.
  *
  * Lauf (nach scripts/sql/2026-08-27-abteilungs-zahlen.sql, vor dem Deploy):
- *   bun run scripts/seed-abteilungs-zahlen.ts
+ *   bun run seed-abteilungs-zahlen
+ *
+ * Nur ueber dieses package.json-Skript, nie als blosses `bun run scripts/...`:
+ * es setzt PAYLOAD_DISABLE_PUSH=true. Ohne die Variable startet Payload mit
+ * dem Drizzle-Push, vergleicht die Konfiguration mit der Produktionsdatenbank
+ * und fragt bei jeder Abweichung interaktiv nach. Eine falsche Antwort benennt
+ * dort eine bestehende Tabelle um. Dieselbe Absicherung tragen
+ * `import-static-images` und `scripts/import-news.ts`.
  */
 import { getPayload } from "payload";
 
@@ -18,6 +25,7 @@ import {
   ABTEILUNGEN_DEFAULTS,
   type SportKey,
 } from "@/lib/abteilungen-defaults";
+import { shouldPreserveExistingRows } from "@/lib/abteilungen-werte";
 import config from "@/payload.config";
 
 async function main() {
@@ -39,8 +47,8 @@ async function main() {
       continue;
     }
 
-    const hasPills = (team.pills ?? []).length > 0;
-    const hasStats = (team.stats ?? []).length > 0;
+    const hasPills = shouldPreserveExistingRows(team.pills);
+    const hasStats = shouldPreserveExistingRows(team.stats);
     if (hasPills && hasStats) {
       console.log(`· ${sport}: bereits gepflegt, unverändert`);
       continue;

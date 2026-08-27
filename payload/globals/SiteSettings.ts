@@ -9,8 +9,12 @@ export const SiteSettings: GlobalConfig = {
   label: "Allgemeine Einstellungen",
   admin: {
     group: "5. Einstellungen",
+    // Die SEO-Felder (Kurzbeschreibung, Teilen-Bild, Social-Profile) sind
+    // ausgeblendet, weil sie nichts bewirken: das Teilen-Bild wird dynamisch
+    // erzeugt. Eine Beschreibung, die sie trotzdem nennt, schickt den Verein
+    // auf die Suche nach Feldern, die es im Editor nicht gibt.
     description:
-      "Vereinsname und SEO-Angaben (Beschreibung, Teilen-Bild), global verwendet.",
+      "Der Vereinsname, wie er global verwendet wird (z.B. im Footer).",
   },
   access: { read: anyone, update: authenticated },
   hooks: { afterChange: [revalidateGlobalOnChange("site-settings")] },

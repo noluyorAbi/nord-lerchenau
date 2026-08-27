@@ -435,6 +435,31 @@ export interface Team {
     springSlug?: string | null;
   };
   /**
+   * Die kleinen Kästchen oben auf der Abteilungsseite, z.B. 'Seit 1967' oder 'Zweimal pro Woche'. Leer lassen heißt: die mitgelieferten Schlagworte bleiben stehen.
+   */
+  pills?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Der dunkle Kasten rechts auf der Abteilungsseite. Hier stehen die Angaben, die sich tatsächlich ändern, z.B. Mitgliederzahl oder Trainingszeiten. Leer lassen heißt: die mitgelieferten Zahlen bleiben stehen.
+   */
+  stats?:
+    | {
+        /**
+         * Links im Kasten, z.B. 'Mitglieder'.
+         */
+        label: string;
+        /**
+         * Rechts im Kasten, z.B. '35'.
+         */
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
    * Personen aus '2. Sport → Personen' auswählen (mehrere möglich).
    */
   trainers?: (number | Person)[] | null;
@@ -830,6 +855,19 @@ export interface TeamsSelect<T extends boolean = true> {
         slug?: T;
         autumnSlug?: T;
         springSlug?: T;
+      };
+  pills?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  stats?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        id?: T;
       };
   trainers?: T;
   description?: T;

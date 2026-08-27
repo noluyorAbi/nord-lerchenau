@@ -8,19 +8,6 @@ export default function Page() {
       title="Schiedsrichter"
       fallbackLede="Ohne Schiri kein Spiel — mehrere Nordler pfeifen aktiv im BFV-Spielbetrieb."
       intro="Schiedsrichter:in beim SV Nord ist mehr als Wochenende pfeifen. Ihr seid Botschafter:innen des Vereins, sorgt für faire Spiele und gebt dem Spielbetrieb Struktur. Wir stellen aktive Unparteiische von der Kreisklasse bis zur Bezirksliga."
-      pills={[
-        "BFV-Lizenz",
-        "Ehrenamt",
-        "Kreis → Bezirk",
-        "Nachwuchs willkommen",
-      ]}
-      stats={[
-        { label: "Aktive Schiris", value: "4" },
-        { label: "Verband", value: "BFV" },
-        { label: "Spielklassen", value: "Kreis bis Bezirk" },
-        { label: "Lizenz", value: "C/B möglich" },
-        { label: "Vergütung", value: "Spesen + Spielgeld" },
-      ]}
       highlights={[
         {
           eyebrow: "Was uns ausmacht",

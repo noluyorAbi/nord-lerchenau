@@ -10,19 +10,6 @@ export default function Page() {
         title="Volleyball"
         fallbackLede="Smash auf Holz: Familien-Volleyball mit Spaß-Faktor, seit 1984."
         intro="Wir sind die Volleyballer:innen des SV Nord, ursprünglich 1984 als Familien-Volleyballer gestartet, seit Jahren eigene Abteilung. Mixed, Hobby, alle Spielstärken. Hauptsache, der Ball geht übers Netz."
-        pills={[
-          "Hobby & Mixed",
-          "Seit 1984",
-          "alle Stärken",
-          "Waldmeisterschule",
-        ]}
-        stats={[
-          { label: "Aktiv seit", value: "1984" },
-          { label: "Form", value: "Hobby & Mixed" },
-          { label: "Training", value: "1× Woche" },
-          { label: "Halle", value: "Waldmeisterschule" },
-          { label: "Altersspanne", value: "30-75 J." },
-        ]}
         cta={{
           title: "Probetraining? Komm einfach vorbei.",
           body: "Schreib uns kurz, wir nennen dir Halle und Uhrzeit. Schuhe mit heller Sohle reichen, wir leihen dir alles andere.",

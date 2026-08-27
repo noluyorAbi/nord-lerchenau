@@ -12,19 +12,6 @@ export default function Page() {
         intro="Über 50 Jahre Gymnastik beim SV Nord. Zweimal pro Woche treffen wir uns in der Waldmeisterschule für Mobilität, Kraft und Ausgleich. Ein 35-köpfiger Stamm, lockerer Ton, fundiertes Training. Einsteiger:innen sind ausdrücklich willkommen."
         // Keine Wochentage hier: die Trainingszeiten stehen im CMS-Text der
         // Abteilung und ändern sich zum 15.09.2026.
-        pills={[
-          "Seit 1967",
-          "35 Aktive",
-          "Zweimal pro Woche",
-          "Waldmeisterschule",
-        ]}
-        stats={[
-          { label: "Gegründet", value: "1967" },
-          { label: "Mitglieder", value: "35" },
-          { label: "Training", value: "2× pro Woche" },
-          { label: "Halle", value: "Waldmeisterschule" },
-          { label: "Offen für", value: "alle Erwachsenen" },
-        ]}
         cta={{
           title: "Komm vorbei, die erste Stunde ist gratis.",
           body: "Schreib uns kurz, dann sagen wir dir, wann der nächste Termin ist. Sportschuhe und Lust auf Bewegung reichen.",

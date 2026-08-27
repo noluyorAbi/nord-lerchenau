@@ -8,19 +8,6 @@ export default function Page() {
       title="Ski"
       fallbackLede="Vom motivierten Neueinsteiger bis zur routinierten Könnerin: Pisten, Touren und das Ski-Camp."
       intro="Seit über zwanzig Jahren fester Bestandteil des SV Nord. Mit ausgebildeten, jungen Skilehrer:innen bringen wir Anfänger:innen sicher auf die Piste und routinierten Skifahrer:innen neue Linien bei. Wer aufs Brett oder die Ski steigen will, ist bei uns richtig."
-      pills={[
-        "Seit 20+ Jahren",
-        "Anfänger:in bis Profi",
-        "Skikurse",
-        "Ski-Camp",
-      ]}
-      stats={[
-        { label: "Aktiv seit", value: "über 20 J." },
-        { label: "Skilehrer:innen", value: "2 aktive" },
-        { label: "Form", value: "Kurse + Camp" },
-        { label: "Niveau", value: "alle Stufen" },
-        { label: "Wann", value: "Winter-Saison" },
-      ]}
       highlights={[
         {
           eyebrow: "Schule",

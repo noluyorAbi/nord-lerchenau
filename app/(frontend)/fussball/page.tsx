@@ -15,6 +15,16 @@ import {
 } from "@/lib/fupa";
 import { getPayloadClient } from "@/lib/payload";
 
+// Die Mannschaftszahlen im Einleitungstext standen als Wort und als Ziffer
+// fest im Quelltext und lagen daneben, sobald der Verein im CMS eine
+// Mannschaft anlegte. Sie kommen jetzt aus derselben Liste, die die Seite
+// ohnehin laedt, und stimmen damit nach jedem Anlegen und Loeschen selbst.
+const JUGEND_CATEGORIES = new Set<string>([
+  "junioren",
+  "juniorinnen",
+  "bambini",
+]);
+
 type CardTone = "navy" | "paper" | "sky" | "gold";
 
 const TONE_CLASSES: Record<
@@ -74,13 +84,19 @@ export default async function FussballPage() {
   ]);
 
   const bfvCount = result.docs.filter((t) => t.bfv?.teamId).length;
+  const jugendCount = result.docs.filter(
+    (t) => t.category && JUGEND_CATEGORIES.has(t.category),
+  ).length;
+  const seniorenCount = result.docs.filter(
+    (t) => t.category === "senioren",
+  ).length;
 
   return (
     <>
       <PageHero
         eyebrow="Fußball"
         title="Unsere Mannschaften"
-        lede="Unsere Fußballabteilung existiert seit 1947. In der Saison 2026/27 stellen wir 15 Jugendmannschaften, 5 Herrenmannschaften und eine Ehrenligamannschaft."
+        lede={`Unsere Fußballabteilung existiert seit 1947. In der Saison 2026/27 stellen wir ${jugendCount} Jugendmannschaften sowie ${seniorenCount} Herren- und Seniorenmannschaften.`}
       />
       <div className="mx-auto max-w-7xl px-6 py-12 md:px-10 md:py-16">
         <section className="mb-12 grid gap-6 rounded-2xl bg-nord-paper-2 p-8 md:grid-cols-[1.4fr_1fr] md:p-10">
@@ -90,8 +106,8 @@ export default async function FussballPage() {
             </div>
             <p className="text-base leading-relaxed text-nord-ink">
               Unsere Fußballabteilung existiert seit dem Jahre 1947. Wir stellen
-              in der Saison 2026/2027 fünfzehn Jugendmannschaften, fünf
-              Herrenmannschaften und eine Ehrenligamannschaft. Wir freuen uns
+              in der Saison 2026/2027 {jugendCount} Jugendmannschaften sowie{" "}
+              {seniorenCount} Herren- und Seniorenmannschaften. Wir freuen uns
               über alle Fußballbegeisterten von Jung bis Alt.
             </p>
             <p className="mt-3 text-sm italic text-nord-muted">
@@ -155,7 +171,7 @@ export default async function FussballPage() {
               title="Fußball — Erwachsene"
               body="Landesliga, Reserve, Dritte, Ehrenliga und Senioren. Vom ambitionierten Spieltag bis zur Altherrenrunde, alle Erwachsenenmannschaften des SV Nord."
               href="/fussball/herren"
-              meta="5 Herrenmannschaften · Ehrenliga"
+              meta={`${seniorenCount} Herren- und Seniorenmannschaften`}
               tone="navy"
             />
             <FussballPillar
@@ -163,7 +179,7 @@ export default async function FussballPage() {
               title="Fußball — Jugend"
               body="Großfeld, Kompaktfeld und Kleinfeld. Direkte Ansprechpartner für Eltern und Jugendspieler — von der A-Jugend bis zu den Bambinis."
               href="/fussball/junioren"
-              meta="15 Jugendmannschaften"
+              meta={`${jugendCount} Jugendmannschaften`}
               tone="sky"
             />
             <FussballPillar

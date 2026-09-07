@@ -91,8 +91,13 @@ export const People: CollectionConfig = {
       relationTo: "teams",
       label: "Mannschaft",
       admin: {
+        // Der alte Hinweis versprach eine Zuordnung, die es nicht gibt:
+        // keine Seite liest dieses Feld. Die Verknuepfung, die wirklich
+        // zaehlt, sitzt auf der Gegenseite, im Feld "Trainer:innen" der
+        // Mannschaft. Wer sich hier verlaesst, traegt einen Trainer ein,
+        // der auf der Webseite nirgends auftaucht.
         description:
-          "Optional. Nötig für Trainer- und Spielerzuordnung zu einer Mannschaft.",
+          "Nur zur Übersicht im Adminbereich. Damit eine Trainerin oder ein Trainer auf einer Mannschaftsseite erscheint, muss die Person in der Mannschaft selbst unter 'Trainer:innen' eingetragen werden.",
       },
     },
     {
@@ -100,7 +105,15 @@ export const People: CollectionConfig = {
       type: "number",
       defaultValue: 0,
       label: "Sortierung",
-      admin: { description: "Kleinere Zahl = weiter oben in Listen." },
+      admin: {
+        // Ehrlich statt allgemein: nur /verein/vorstand sortiert Personen
+        // ueber dieses Feld, und dort auch nur die Abschnitte Sportleitung
+        // und Jugendleitung. Der Vorstand selbst steht in einer festen
+        // Namensliste, und Trainer:innen erscheinen in der Reihenfolge,
+        // in der sie in der Mannschaft eingetragen sind.
+        description:
+          "Gilt nur für die Seite 'Verein → Vorstand', dort für die Abschnitte Sportleitung und Jugendleitung: kleinere Zahl = weiter oben. Für Trainer:innen hat das Feld keine Wirkung. Deren Reihenfolge ergibt sich aus dem Feld 'Trainer:innen' der jeweiligen Mannschaft.",
+      },
     },
   ],
 };

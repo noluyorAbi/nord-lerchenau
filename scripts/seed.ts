@@ -450,6 +450,11 @@ async function ensureTeam(
     ) {
       delete (updateData as { description?: unknown }).description;
     }
+    // The club owns the list order in the CMS: teams are spaced in steps of
+    // ten so a new team fits between two others without renumbering the rest.
+    // Writing the seed's 1..n back over that would silently undo every such
+    // insert, so an existing team keeps whatever order the CMS holds.
+    delete (updateData as { order?: unknown }).order;
     await payload.update({
       collection: "teams",
       id,

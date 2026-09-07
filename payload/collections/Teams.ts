@@ -281,7 +281,10 @@ export const Teams: CollectionConfig = {
       type: "number",
       defaultValue: 0,
       label: "Sortierung",
-      admin: { description: "Kleinere Zahl = weiter oben in Listen." },
+      admin: {
+        description:
+          "Kleinere Zahl = weiter oben in den Mannschaftslisten. Am besten in Zehnerschritten vergeben (10, 20, 30 …), dann passt eine neue Mannschaft dazwischen, ohne dass alle anderen umnummeriert werden müssen. Leer gelassen zählt als 0, die Mannschaft steht dann ganz oben.",
+      },
     },
   ],
 };

@@ -18,7 +18,8 @@ export default function Page() {
           mailSubject: "Gymnastik: Probetraining",
           primaryLabel: "Probetraining anfragen",
         }}
-        hideTrainers
+        // Trainer:innen kommen aus dem CMS (Mannschaften -> Gymnastik ->
+        // Trainer:innen), samt Foto aus Personen. Vereinswunsch 08.10.2026.
         staticContacts={[
           {
             name: "Elisabeth Schillinger",

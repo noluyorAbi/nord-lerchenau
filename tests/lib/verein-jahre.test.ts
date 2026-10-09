@@ -4,8 +4,8 @@ import { VEREIN_GEGRUENDET, vereinsJahre } from "@/lib/verein-jahre";
 
 describe("vereinsJahre", () => {
   it("rechnet ab dem Gründungsjahr", () => {
-    expect(vereinsJahre(new Date("2026-08-27T00:00:00Z"))).toBe(79);
-    expect(vereinsJahre(new Date("2027-01-01T00:00:00Z"))).toBe(80);
+    expect(vereinsJahre(new Date("2026-08-27T12:00:00Z"))).toBe(79);
+    expect(vereinsJahre(new Date("2027-01-01T12:00:00Z"))).toBe(80);
   });
 
   it("zählt zum Jahreswechsel weiter", () => {

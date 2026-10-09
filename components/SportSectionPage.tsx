@@ -93,6 +93,12 @@ function highlightStyles(accent: SportHighlight["accent"] = "navy") {
   }
 }
 
+function normalizeName(name: string | null | undefined): string {
+  return String(name ?? "")
+    .toLowerCase()
+    .trim();
+}
+
 export async function SportSectionPage({
   sport,
   eyebrow,
@@ -160,21 +166,18 @@ export async function SportSectionPage({
     }
   }
 
-  const excludeSet = new Set(
-    (excludeTrainerNames ?? []).map((n) => n.toLowerCase().trim()),
+  const hasStaticContacts = (staticContacts?.length ?? 0) > 0;
+  const staticNames = new Set(
+    (staticContacts ?? []).map((c) => normalizeName(c.name)),
   );
+  const excludeSet = new Set((excludeTrainerNames ?? []).map(normalizeName));
   const trainers = hideTrainers
     ? []
     : (team.trainers ?? [])
         .filter((t): t is Person => typeof t === "object" && t !== null)
-        .filter(
-          (t) =>
-            !excludeSet.has(
-              String(t.name ?? "")
-                .toLowerCase()
-                .trim(),
-            ),
-        );
+        .filter((t) => !excludeSet.has(normalizeName(t.name)))
+        // Wer schon als fester Ansprechpartner steht, bekommt keine zweite Karte.
+        .filter((t) => !staticNames.has(normalizeName(t.name)));
 
   // Bewusst der Inhalts-Check und nicht nur "ist ein Richtext-Objekt da":
   // ein im Editor geleertes Feld speichert einen leeren Absatz, und weil die
@@ -320,7 +323,7 @@ export async function SportSectionPage({
               <div className="mt-12">
                 <div className="mb-4 flex items-baseline justify-between border-b border-nord-line pb-2">
                   <h2 className="font-display text-xl font-black tracking-tight text-nord-ink md:text-2xl">
-                    Ansprechpartner
+                    {hasStaticContacts ? "Trainer:innen" : "Ansprechpartner"}
                   </h2>
                   <span className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-nord-muted">
                     {trainers.length}{" "}
@@ -333,7 +336,13 @@ export async function SportSectionPage({
                   ))}
                 </div>
               </div>
-            ) : staticContacts && staticContacts.length > 0 ? (
+            ) : null}
+
+            {/* Unabhaengig von den Trainer:innen: frueher stand hier ein
+                Entweder-oder, deshalb blendeten Seiten mit festen
+                Ansprechpartnern die im CMS eingetragenen Trainer:innen komplett
+                aus, samt Foto. */}
+            {hasStaticContacts ? (
               <div className="mt-12">
                 <div className="mb-4 flex items-baseline justify-between border-b border-nord-line pb-2">
                   <h2 className="font-display text-xl font-black tracking-tight text-nord-ink md:text-2xl">
@@ -341,7 +350,7 @@ export async function SportSectionPage({
                   </h2>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  {staticContacts.map((c) => (
+                  {(staticContacts ?? []).map((c) => (
                     <article
                       key={c.name}
                       className="overflow-hidden rounded-2xl border border-nord-line bg-white p-5"

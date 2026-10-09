@@ -112,15 +112,15 @@ verlorengehen. Für `svnord.de` gilt das Gegenteil: dort läuft das Postfach üb
 
 ### Kurz bestätigen (eine Rückmeldung reicht)
 
-| Punkt                           | Aktuell                                           | Frage                      |
-| ------------------------------- | ------------------------------------------------- | -------------------------- |
-| Spenden-QR                      | Liegt auf der Sponsorenseite                      | Platzierung ok?            |
-| Vorstand-Kachel "Abteilungen"   | zeigt 6                                           | genau 5 gewünscht? welche? |
-| Vorstand-Kachel "Jugendleitung" | zeigt 2                                           | auf 1 ändern?              |
-| BFV-Link (Jugendschutz-Seite)   | `bfv.de`                                          | richtig?                   |
-| Trainerin Abbrederis            | aus Vorstand raus, steht noch auf Gymnastik-Seite | auch dort raus?            |
-| Volleyball-Trainingszeit        | Freitag 19:00 bis 20:00                           | korrekt?                   |
-| Startseiten- + Garmisch-Fotos   | im Bilderlauf/Galerie                             | geschmacklich ok?          |
+| Punkt                           | Aktuell                                          | Frage                      |
+| ------------------------------- | ------------------------------------------------ | -------------------------- |
+| Spenden-QR                      | Liegt auf der Sponsorenseite                     | Platzierung ok?            |
+| Vorstand-Kachel "Abteilungen"   | zeigt 6                                          | genau 5 gewünscht? welche? |
+| Vorstand-Kachel "Jugendleitung" | zeigt 2                                          | auf 1 ändern?              |
+| BFV-Link (Jugendschutz-Seite)   | `bfv.de`                                         | richtig?                   |
+| Trainerin Abbrederis            | Gymnastik-Seite zeigt sie als Karte (08.10.2026) | erledigt: Ralf will Foto   |
+| Volleyball-Trainingszeit        | Freitag 19:00 bis 20:00                          | korrekt?                   |
+| Startseiten- + Garmisch-Fotos   | im Bilderlauf/Galerie                            | geschmacklich ok?          |
 
 ---
 

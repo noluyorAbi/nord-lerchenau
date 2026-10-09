@@ -140,7 +140,38 @@ async function mediaIdFor(
   return doc.id;
 }
 
+/**
+ * Am 26.08.2026 lief dieser Import gegen die Produktionsdatenbank mit leerem
+ * BLOB_READ_WRITE_TOKEN. Payload fiel still auf die lokale Festplatte zurueck:
+ * 18 Medien-Zeilen entstanden, die Dateien landeten in public/uploads auf dem
+ * Laptop statt im Speicher, und Startseite, U8 und Beitraege zeigten bis zum
+ * 08.10.2026 kaputte Bilder. Gegen eine entfernte Datenbank laeuft das Skript
+ * deshalb nur, wenn der Upload wirklich im Speicher ankommt.
+ */
+function assertUploadsReachStore(): void {
+  if (DRY_RUN) return;
+  const dbHost = (() => {
+    try {
+      return new URL(process.env.DATABASE_URI ?? "").hostname;
+    } catch {
+      return "";
+    }
+  })();
+  const localDb = dbHost === "localhost" || dbHost === "127.0.0.1";
+  const blobArmed =
+    Boolean(process.env.BLOB_READ_WRITE_TOKEN) &&
+    process.env.BLOB_ENABLE_LOCAL === "true";
+  if (!localDb && !blobArmed) {
+    throw new Error(
+      `Abbruch: Datenbank ${dbHost || "(unbekannt)"} ist nicht lokal, aber Uploads ` +
+        "gingen auf die lokale Festplatte. BLOB_READ_WRITE_TOKEN setzen und " +
+        "BLOB_ENABLE_LOCAL=true, oder mit --dry-run pruefen.",
+    );
+  }
+}
+
 async function main(): Promise<void> {
+  assertUploadsReachStore();
   const payload = await getPayload({ config });
   const known = await existingMedia(payload);
   const stats: Stats = { reused: 0, uploaded: 0, linked: 0 };

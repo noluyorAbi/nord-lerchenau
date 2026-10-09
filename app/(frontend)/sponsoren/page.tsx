@@ -5,7 +5,7 @@ import { PageHero } from "@/components/PageHero";
 import { cachedQuery, collectionTag } from "@/lib/cms";
 import { getPayloadClient } from "@/lib/payload";
 import { mediaSrc } from "@/lib/publicUploads";
-import { sponsorTone } from "@/lib/sponsor-visual";
+import { logoBox, sponsorTone } from "@/lib/sponsor-visual";
 import { FALLBACK_SPONSORS } from "@/lib/sponsors-fallback";
 
 type ListSponsor = {
@@ -13,7 +13,15 @@ type ListSponsor = {
   name: string;
   url?: string | null;
   tier: string;
-  logo?: { url?: string | null; filename?: string | null } | number | null;
+  logo?:
+    | {
+        url?: string | null;
+        filename?: string | null;
+        width?: number | null;
+        height?: number | null;
+      }
+    | number
+    | null;
 };
 
 export default async function SponsorenPage() {
@@ -122,7 +130,7 @@ export default async function SponsorenPage() {
             <h2 className="mb-5 text-sm font-bold uppercase tracking-[0.15em] text-nord-muted">
               Weitere Partner
             </h2>
-            <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-5">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
               {standard.map((s) => (
                 <SponsorCard key={s.id} sponsor={s} size="small" />
               ))}
@@ -267,6 +275,13 @@ function SponsorCard({ sponsor, size }: SponsorProps) {
   const logoUrl = mediaSrc(logo);
   // Fläche pro Logo: dunkle Logos auf Weiß, weiße Logos auf Navy.
   const tone = sponsorTone(s.name);
+  // Höhen-Deckel = kleinste Innenhöhe der Kachel über alle Breakpoints.
+  const box = logoBox(
+    logo?.width,
+    logo?.height,
+    size === "large" ? 14000 : 6000,
+    size === "large" ? 96 : 64,
+  );
 
   const content = (
     <div
@@ -283,7 +298,10 @@ function SponsorCard({ sponsor, size }: SponsorProps) {
         <img
           src={logoUrl}
           alt={`Logo ${s.name}`}
-          className="max-h-full max-w-full object-contain transition group-hover:scale-105"
+          width={box?.width}
+          height={box?.height}
+          style={box ? { width: box.width } : undefined}
+          className={`${box ? "h-auto" : "max-h-full"} max-w-full object-contain transition group-hover:scale-105`}
           loading="lazy"
         />
       ) : (

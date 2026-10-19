@@ -19,7 +19,7 @@ Every merge to `main` deploys to production. Read
 | Framework | Next.js 16.2, App Router                                 |
 | UI        | React 19, TypeScript strict                              |
 | Styling   | Tailwind CSS v4                                          |
-| CMS       | Payload 3.91, admin at `/admin`, German-only UI          |
+| CMS       | Payload 3.89, admin at `/admin`, German-only UI          |
 | Database  | Postgres: Neon in production, Docker Postgres 17 locally |
 | Media     | Vercel Blob in production, `public/uploads/` locally     |
 | Mail      | Resend (contact form)                                    |

@@ -1,7 +1,7 @@
 import type { CollectionConfig } from "payload";
 
 import { anyone } from "../access/anyone";
-import { authenticated } from "../access/authenticated";
+import { authenticated, authenticatedField } from "../access/authenticated";
 import { revalidateOnChange } from "../hooks/revalidate";
 
 export const People: CollectionConfig = {
@@ -73,6 +73,11 @@ export const People: CollectionConfig = {
       name: "phone",
       type: "text",
       label: "Telefon",
+      // Private numbers must not leave the server: the public REST and GraphQL
+      // APIs drop this field for anonymous requests. Pages read people through
+      // the Local API (overrideAccess defaults to true) and decide themselves
+      // which numbers to show.
+      access: { read: authenticatedField },
       admin: {
         // Der alte Hinweis versprach das Gegenteil dessen, was passiert:
         // auf /verein/vorstand entfernt `stripPhone` jede Nummer, und auf den
@@ -84,7 +89,12 @@ export const People: CollectionConfig = {
           "Optional. Ändern wirkt sofort — aber eine Nummer erscheint nicht automatisch: auf der Vorstandsseite werden Telefonnummern grundsätzlich nicht angezeigt, auf den Fußballseiten nur für Personen, die der Verein ausdrücklich freigegeben hat. Für eine neue Freigabe bitte den Entwickler ansprechen.",
       },
     },
-    { name: "email", type: "email", label: "E-Mail" },
+    {
+      name: "email",
+      type: "email",
+      label: "E-Mail",
+      access: { read: authenticatedField },
+    },
     {
       name: "team",
       type: "relationship",

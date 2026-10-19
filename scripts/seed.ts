@@ -4,6 +4,7 @@ import path from "node:path";
 import { getPayload } from "payload";
 
 import config from "@/payload.config";
+import { isLocalDatabaseUrl } from "@/lib/local-database";
 import { slug } from "@/lib/slug";
 import { shouldPreserveExistingDescription } from "@/lib/team-description-guard";
 
@@ -471,6 +472,21 @@ async function ensureTeam(
 }
 
 async function main() {
+  // This is a bootstrap for an empty local database, not a sync: it rewrites
+  // every global (legal pages included) and most team fields, and deletes a few
+  // retired people. Against production that silently reverts the club's edits.
+  if (
+    !isLocalDatabaseUrl(process.env.DATABASE_URI) &&
+    process.env.SEED_ALLOW_REMOTE !== "true"
+  ) {
+    console.error(
+      "[seed] DATABASE_URI is not a local database. Refusing to seed.\n" +
+        "  The seed overwrites globals and team fields. Use the targeted scripts\n" +
+        "  in docs/RUNBOOK.md for production, or set SEED_ALLOW_REMOTE=true if\n" +
+        "  you are seeding a fresh remote database on purpose.",
+    );
+    process.exit(1);
+  }
   const payload = await getPayload({ config });
 
   await ensureAdminUser(payload);

@@ -37,6 +37,26 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/**": ["./public/uploads/**"],
   },
+  // Baseline hardening without a CSP: the admin bundle, the map tiles and the
+  // inline JSON-LD would each need careful allowlisting, and a wrong CSP breaks
+  // the live site silently. These headers cannot break anything the site does
+  // today (no camera, microphone or location use, no third-party framing).
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=(), payment=()",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default withPayload(nextConfig, { devBundleServerPackages: false });

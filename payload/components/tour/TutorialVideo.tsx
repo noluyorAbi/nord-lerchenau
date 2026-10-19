@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { LuClapperboard } from "react-icons/lu";
 
 import { TUTORIAL_VIDEO } from "./tutorial-video";

@@ -351,42 +351,6 @@ export type FupaSquad = {
   info: FupaSquadInfo;
 };
 
-export type FupaClub = {
-  id: number;
-  name: string;
-  middleName: string;
-  shortName: string;
-  slug: string;
-  founded: string | null;
-  colors: string | null;
-  memberCount: string | null;
-  departments: string | null;
-  address: string | null;
-  achievements: string | null;
-  email: string | null;
-  website: string | null;
-  phoneClub: string | null;
-  phoneClubHome: string | null;
-  phoneVenue: string | null;
-  image: FupaImage;
-  district: { id: number; name: string; slug: string } | null;
-  contacts: Array<{
-    id: number;
-    slug: string;
-    name: string;
-    job: string | null;
-    image: FupaImage;
-  }>;
-  managers: Array<{
-    id: number;
-    slug: string;
-    name: string;
-    job: string | null;
-    image: FupaImage;
-  }>;
-  venues: unknown[];
-};
-
 export function getFupaSquad(slug: string) {
   return fupaFetch<FupaSquad>(
     `${API}/teams/${slug}/squad`,
@@ -568,10 +532,6 @@ export function findRosterPlayer(
     return players.find((p) => p.id === asNumber) ?? null;
   }
   return null;
-}
-
-export function getFupaClub(slug: string = FUPA_CLUB_SLUG) {
-  return fupaFetch<FupaClub>(`${API}/clubs/${slug}`, `fupa:club:${slug}`);
 }
 
 export type FupaMeta = {

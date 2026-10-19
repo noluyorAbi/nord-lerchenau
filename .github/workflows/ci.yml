@@ -6,9 +6,16 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   check:
-    name: Lint · Typecheck · Test
+    name: Format · Lint · Typecheck · Test · Build
     runs-on: ubuntu-latest
 
     services:
@@ -27,18 +34,30 @@ jobs:
           --health-retries 10
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
-          bun-version: latest
+          bun-version-file: package.json
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
+        env:
+          # Git hooks are a local developer aid; CI runs the same checks below.
+          HUSKY: 0
+
+      - name: Format
+        run: bun run format:check
 
       - name: Lint
         run: bun run lint
+
+      - name: Typecheck
+        run: bun run typecheck
+
+      - name: Unit tests
+        run: bun run test
 
       # Frontend pages are prerendered, so the build reads from Postgres. The
       # service container starts empty and Payload skips its Drizzle push under
@@ -51,13 +70,10 @@ jobs:
           PAYLOAD_SECRET: ci-secret-ci-secret-ci-secret-ci
           NEXT_PUBLIC_SERVER_URL: http://localhost:3000
 
-      - name: Build (includes typecheck + generates next-env.d.ts)
+      - name: Build
         run: bun run build
         env:
           DATABASE_URI: postgres://ci:ci@localhost:5432/ci?sslmode=disable
           PAYLOAD_SECRET: ci-secret-ci-secret-ci-secret-ci
           NEXT_PUBLIC_SERVER_URL: http://localhost:3000
           REVALIDATE_SECRET: ci
-
-      - name: Unit tests
-        run: bun run test

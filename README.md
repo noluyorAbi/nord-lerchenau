@@ -1,174 +1,113 @@
-# SV Nord München-Lerchenau · Website
+# SV Nord München-Lerchenau: club website
 
-Modern rebuild of **SV Nord München-Lerchenau e.V.** — a 78-year-old traditional sports club in Munich's Lerchenau district. Replaces the legacy Wix site with a fast, editable, fully-typed Next.js 16 app backed by Payload CMS.
+Website and CMS of SV Nord München-Lerchenau e.V., a multi-sport club in Munich.
+One Next.js application with Payload CMS mounted inside it: the public site and
+the admin share one deployment, one Postgres database and one media store.
+Content is maintained by the club in the admin; fixtures, tables and squads are
+pulled from BFV, fussball.de and FuPa.
 
-> _„Einmal Nordler, immer Nordler."_
+- Live: https://www.svnord.de
+- Admin: https://www.svnord.de/admin (two accounts, both full admins)
 
-## Highlights
+Every merge to `main` deploys to production. Read
+[Before you deploy](#before-you-deploy) first.
 
-- **Full site** — home, Verein (overview, Chronik, Vorstand, Vereinsheim, Jugendförderverein), Fußball (overview + 22 team pages), Volleyball, Gymnastik, Ski, Esport, Schiedsrichter, News (index + posts), Termine, Sponsoren, Mitgliedschaft, Kontakt, legal
-- **Payload CMS v3** mounted at `/admin` — 9 collections + 8 globals, Lexical rich-text editor with a persistent Word-like toolbar, live preview, image uploads
-- **Every word editable** — headlines, nav, footer, legal text, chronicle, team descriptions, sponsors, fixtures, events, contact info — nothing hardcoded
-- **Matchday UX** — live-ticker above the header, homepage Wochenendplan block (fixtures + Bezirksliga mini-table with "UNS" highlight), next-fixture hero card
-- **Design system** — warm paper + deep navy + gold club palette, Barlow Condensed display type, Fraunces italic heritage accents, Inter body, JetBrains Mono labels
-- **Motion** — hero stagger, stat counters, scroll fade-ups, sponsor marquee — all gated on `prefers-reduced-motion`
-- **Accessible** — skip-to-content link, visible focus rings, semantic landmarks, aria-live on form feedback
-- **Cache invalidation** — Payload `afterChange` hooks → `/api/revalidate` → `revalidateTag()` so the public site refreshes within ~1 s of an admin save
-- **Contact form** — zod validation + honeypot + Payload `Submissions` record + Resend email
-- **SEO** — `robots.txt`, dynamic `sitemap.xml`, OpenGraph metadata
+## Stack
 
-## Tech Stack
+| Layer     | Choice                                                   |
+| --------- | -------------------------------------------------------- |
+| Framework | Next.js 16.2, App Router                                 |
+| UI        | React 19, TypeScript strict                              |
+| Styling   | Tailwind CSS v4                                          |
+| CMS       | Payload 3.83, admin at `/admin`, German-only UI          |
+| Database  | Postgres: Neon in production, Docker Postgres 17 locally |
+| Media     | Vercel Blob in production, `public/uploads/` locally     |
+| Mail      | Resend (contact form)                                    |
+| AI        | OpenAI Chat Completions (`/api/chat`, club assistant)    |
+| Tooling   | Bun, Vitest, ESLint, Prettier, husky                     |
+| Hosting   | Vercel                                                   |
 
-| Layer           | Tech                                                    |
-| --------------- | ------------------------------------------------------- |
-| Framework       | Next.js 16 (App Router, Server Components)              |
-| UI              | React 19 · TypeScript strict                            |
-| Styling         | Tailwind CSS v4 (`@theme` tokens)                       |
-| Motion          | [Motion](https://motion.dev) (Framer Motion v12)        |
-| CMS             | [Payload v3](https://payloadcms.com) in-app at `/admin` |
-| Editor          | Lexical rich text with fixed toolbar                    |
-| DB              | Postgres (Docker dev · Neon prod)                       |
-| Storage         | local `public/uploads/` (dev) · Vercel Blob (prod)      |
-| Email           | [Resend](https://resend.com)                            |
-| Validation      | [Zod](https://zod.dev)                                  |
-| Primitives      | Radix UI (Dialog for mobile menu)                       |
-| Package manager | [Bun](https://bun.sh)                                   |
-| Deploy          | Vercel                                                  |
+## Quick start
 
-## Screenshots
-
-_(Add after first deploy — or run `bun dev` to see it locally.)_
-
-## Getting Started
-
-Prereqs: **Bun** 1.1+, **Docker Desktop**, a `.env.local` file.
+Requirements: Bun, Node 24 (`.nvmrc`), Docker.
 
 ```bash
-# 1. Install deps
-bun install
-
-# 2. Copy env template and fill in values
-cp .env.example .env.local
-# At minimum set DATABASE_URI, PAYLOAD_SECRET, NEXT_PUBLIC_SERVER_URL, REVALIDATE_SECRET
-
-# 3. Start local Postgres
-bun run db:up
-
-# 4. Generate Payload types (reads payload.config.ts)
-bun run payload:generate-types
-
-# 5. (One-time) Download legacy Wix images + seed demo content
-bun run download-images   # populates tmp/wix-images/
-bun run seed              # creates admin + Vorstand + teams + sample posts/globals
-
-# 6. Run dev server
-bun run dev
+bun install                  # also installs the git hooks (husky)
+cp .env.example .env.local   # fill DATABASE_URI, PAYLOAD_SECRET, REVALIDATE_SECRET
+bun run db:up                # local Postgres 17 in Docker
+bun run dev                  # http://localhost:3000, first start pushes the schema
+PAYLOAD_ADMIN_PASSWORD=... bun run seed   # demo content + admin@svnord.de
 ```
 
-- Public site: http://localhost:3000
-- Admin: http://localhost:3000/admin (login `admin@svnord.de` / `ChangeMeNach-P1` — change it immediately)
-
-## Project Structure
-
-```
-.
-├── app/
-│   ├── (frontend)/              Public site (own root layout, html+body)
-│   │   ├── fussball/[team]/     22 football team pages from one template
-│   │   ├── news/[slug]/         News post with live-preview support
-│   │   ├── api/contact/         Zod-validated contact form endpoint
-│   │   └── api/revalidate/      Internal cache-invalidation endpoint
-│   └── (payload)/               Payload CMS (own root layout, html+body)
-│       ├── admin/[[...segments]]/
-│       └── api/[...slug]/
-├── components/
-│   ├── home/                    Hero, MatchdayBlock, NewsGrid, Sports…
-│   ├── motion/                  FadeUp, HeroStagger, StatCounter
-│   ├── site/                    Header, Footer, MatchdayTicker, MobileMenu
-│   ├── Crest.tsx                SV Nord shield SVG
-│   └── …
-├── payload/
-│   ├── collections/             Users, Media, People, Teams, Posts, …
-│   ├── globals/                 SiteSettings, Navigation, HomePage, …
-│   ├── access/                  Shared access helpers
-│   └── hooks/                   revalidateOnChange
-├── lib/
-│   ├── slug.ts                  German transliteration slug helper
-│   ├── format-date.ts           de-DE date formatters
-│   ├── contact-schema.ts        Zod schema for the contact form
-│   └── payload.ts               Cached getPayloadClient()
-├── scripts/
-│   ├── download-images.ts       Mirrors Wix CDN → tmp/wix-images/
-│   └── seed.ts                  One-time demo content seed
-├── docs/
-│   ├── DEPLOYMENT.md            Step-by-step Vercel + Neon + Resend guide
-│   └── superpowers/             Design spec + phase plans
-├── tests/                       Vitest unit tests for lib/
-├── docker-compose.yml           Local Postgres
-└── payload.config.ts
-```
+`bun run seed` skips the admin user without `PAYLOAD_ADMIN_PASSWORD` and refuses
+any non-local database unless `SEED_ALLOW_REMOTE=true` is set (do not set it). Never point `.env.local` at production: `vercel env pull`
+writes the production `DATABASE_URI` and a live Blob token into it. See
+[docs/RUNBOOK.md](docs/RUNBOOK.md#local-development-traps).
 
 ## Scripts
 
-```bash
-bun run dev                     # Next.js dev server
-bun run build                   # Production build
-bun run start                   # Run production build
-bun run lint                    # ESLint
-bun run test                    # Vitest unit tests
-bun run payload                 # Payload CLI
-bun run payload:generate-types  # Regen payload-types.ts
-bun run payload:migrate         # Run DB migrations (usually auto)
-bun run db:up                   # Start Postgres in Docker
-bun run db:down                 # Stop Postgres
-bun run db:reset                # Drop + recreate the DB (destructive)
-bun run seed                    # Seed demo content
-bun run download-images         # Mirror Wix CDN images locally
+| Script                              | What it does                                                                               |
+| ----------------------------------- | ------------------------------------------------------------------------------------------ |
+| `bun run dev`                       | Next.js dev server (pushes the schema into the local database on start)                    |
+| `bun run build`                     | DB preflight, then production build (prerenders against the database)                      |
+| `bun run check`                     | Format check, lint, typecheck, unit tests                                                  |
+| `bun run format`                    | Prettier, writes                                                                           |
+| `bun run lint`                      | ESLint                                                                                     |
+| `bun run typecheck`                 | `tsc --noEmit`                                                                             |
+| `bun run test`                      | Vitest over `tests/`                                                                       |
+| `bun run db:up` / `db:down`         | Start / stop the local Postgres container                                                  |
+| `bun run db:reset`                  | Drop the local volume and start fresh (destructive, local only)                            |
+| `bun run db:push-schema`            | Create the schema in an empty database (CI); no-op on a populated one                      |
+| `bun run seed`                      | Bootstrap a fresh local database. Never against production                                 |
+| `bun run media-usage`               | List media documents nothing references (read only)                                        |
+| `bun run payload:generate-types`    | Regenerate `payload-types.ts` (the plain Payload CLI typegen fails here)                   |
+| `bun run legal-pages-aktualisieren` | Rewrite Impressum and Datenschutz in the CMS from `app/(frontend)/datenschutz/_content.ts` |
+
+One-off and historical scripts are listed in
+[docs/RUNBOOK.md](docs/RUNBOOK.md#scripts).
+
+## Git hooks and CI
+
+- `pre-commit`: lint-staged (Prettier, `eslint --fix` on staged files)
+- `commit-msg`: commitlint, Conventional Commits
+- `pre-push`: typecheck and unit tests
+
+CI (`.github/workflows/ci.yml`) runs format check, lint, typecheck, tests and a
+production build against an empty Postgres service container.
+
+## Before you deploy
+
+Details and reasoning in [docs/RUNBOOK.md](docs/RUNBOOK.md#deploying).
+
+1. Schema changes (fields, collections, globals) ship as additive SQL in `scripts/sql/`, applied to production **before** the merge. There are no Payload migrations and production never runs Drizzle push.
+2. Never run `bun run dev` or `bun run seed` against the production database.
+3. A changed `NEXT_PUBLIC_` variable needs a fresh deployment (not "Redeploy") and a purge of every cache tag via `/api/revalidate`.
+4. Preview deployments use the production database and Blob store: an admin save on a preview changes live content.
+5. `app/(payload)/admin/importMap.js` must be regenerated and committed after adding or moving an admin component.
+6. The build refuses to run when the database preflight fails, by design.
+
+## Project structure
+
+```
+app/(frontend)/     public site, own root layout; api/chat, api/contact, api/revalidate
+app/(payload)/      Payload admin, REST and GraphQL routes
+app/api/fupa/       FuPa player proxy
+components/         React components (home/, site/, seo/, chronik/, motion/)
+lib/                data access and pure logic (cms.ts cache layer, bfv.ts, fupa.ts, ...)
+payload/            collections, globals, access, hooks, admin components
+payload.config.ts   DB adapter, storage adapter, admin config
+scripts/            seed, preflight, one-off imports, scripts/sql/ schema changes
+tests/              Vitest unit tests
+video/              separate Remotion project for the admin tutorial video
+docs/               architecture, runbook, decisions, client documents
 ```
 
-## Payload Schema (short tour)
+## Documentation
 
-**Collections**
-
-| Collection    | What                                                            |
-| ------------- | --------------------------------------------------------------- |
-| `Users`       | Admins (Payload auth)                                           |
-| `Media`       | Uploads — Sharp resizes to thumbnail/card/feature/hero, WebP    |
-| `People`      | Vorstand, sport leads, trainers, optional players               |
-| `Teams`       | All sport teams (22 football + 5 other-sport docs), slug-hooked |
-| `Posts`       | News — Lexical body, tags, optional hero image                  |
-| `Sponsors`    | Logo + url + tier (premium / standard)                          |
-| `Fixtures`    | Match fixtures with optional result                             |
-| `Events`      | Training times, parties, tournaments, etc.                      |
-| `Submissions` | Contact-form results (admin-only read)                          |
-
-**Globals** — `SiteSettings`, `Navigation`, `HomePage`, `ContactInfo`, `ChronikPage`, `VereinsheimPage`, `JugendfoerderPage`, `LegalPages`.
-
-## Live Preview
-
-Post edits in `/admin` → click the "Live Preview" tab. The iframe loads the real `/news/[slug]` with device breakpoints (Mobile / Tablet / Desktop). Saves trigger `RefreshRouteOnSave`, so the preview re-renders within ~1 s.
-
-## Deployment
-
-See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) for the full step-by-step guide and [`docs/TODO.md`](docs/TODO.md) for the current live checklist.
-
-**Stack in production**
-
-- **Database** — [Neon](https://neon.com) Postgres (use the pooler host for `DATABASE_URI`)
-- **Hosting** — [Vercel](https://vercel.com) — one project, auto-deploy from `main`
-- **Media** — [Vercel Blob](https://vercel.com/storage/blob) (via `BLOB_READ_WRITE_TOKEN`; falls back to local `public/uploads/` in dev)
-- **Email** — [Resend](https://resend.com) for contact-form delivery
-
-Short version: push to GitHub ✓, provision Neon + Resend, import into Vercel, add env vars, attach a Vercel Blob store, deploy.
-
-## Design Source
-
-The visual direction came out of a design-handoff from [claude.ai/design](https://claude.ai/design). Key decisions:
-
-- **Personality** — modern sports-app energy × Bavarian heritage
-- **Hero treatment** — huge Barlow Condensed "EINMAL NORDLER, IMMER _Nordler._" with gold and italic-serif accents, next-fixture card on the right
-- **Ticker** — live Heimspieltag bar above the header
-- **Palette** — extracted from the SV Nord crest: deep navy `#0b1b3f`, sky `#6ec7ea`, gold `#c8a96a`, warm paper `#f4f1ea`, red accent `#d43a2f`
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): system overview, caching, CMS model, tech debt
+- [docs/RUNBOOK.md](docs/RUNBOOK.md): environments, env vars, deploying, traps, incidents
+- [CONTRIBUTING.md](CONTRIBUTING.md): setup, branch and commit workflow, review rules
+- [docs/README.md](docs/README.md): index of every document in the repo
 
 ## License
 
@@ -177,7 +116,3 @@ Code © 2026 SV Nord München-Lerchenau e.V. Contributors retain copyright to th
 Images embedded in the repo (Wix CDN URLs used as fallbacks) belong to SV Nord München-Lerchenau e.V. and are used with permission for the club's own website.
 
 The SV Nord crest, name, and "Einmal Nordler, immer Nordler." slogan are the property of SV Nord München-Lerchenau e.V.
-
----
-
-Built with ♡ in München.

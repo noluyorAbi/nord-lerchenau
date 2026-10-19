@@ -1,16 +1,9 @@
-import type { CollectionBeforeChangeHook, CollectionConfig } from "payload";
+import type { CollectionConfig } from "payload";
 
 import { anyone } from "../access/anyone";
 import { authenticated } from "../access/authenticated";
+import { fillSlugFrom } from "../hooks/fillSlug";
 import { revalidateOnChange } from "../hooks/revalidate";
-import { slug as toSlug } from "@/lib/slug";
-
-const fillSlug: CollectionBeforeChangeHook = ({ data }) => {
-  if (!data.slug && data.title) {
-    data.slug = toSlug(String(data.title));
-  }
-  return data;
-};
 
 export const Posts: CollectionConfig = {
   slug: "posts",
@@ -29,7 +22,7 @@ export const Posts: CollectionConfig = {
     update: authenticated,
   },
   hooks: {
-    beforeChange: [fillSlug],
+    beforeChange: [fillSlugFrom("title")],
     afterChange: [revalidateOnChange("posts")],
   },
   fields: [

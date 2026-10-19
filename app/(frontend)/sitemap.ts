@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 
 import { cachedQuery, collectionTag } from "@/lib/cms";
 import { getPayloadClient } from "@/lib/payload";
+import { SITE_URL as base } from "@/lib/site";
 
 const STATIC_PATHS = [
   "/",
@@ -29,8 +30,6 @@ const STATIC_PATHS = [
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = process.env.NEXT_PUBLIC_SERVER_URL ?? "http://localhost:3000";
-
   const now = new Date();
 
   const [posts, teams] = await Promise.all([

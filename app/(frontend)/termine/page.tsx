@@ -135,64 +135,6 @@ export default async function TerminePage() {
     items.push(item);
   }
 
-  // Static fallback events: surface high-priority Vereinstermine
-  // even before they are pflegt in the Admin.
-  const STATIC_EVENTS: EventDTO[] = [
-    {
-      kind: "event",
-      at: "2026-07-24T16:30:00+02:00",
-      id: "static-sommerfest-2026",
-      title: "SV Nord-Sommerfest 2026 (Fr./Sa. 24./25.07.)",
-      location: "BSA Ebereschenstraße · Eschengarten",
-      description:
-        "Freitag ab 16:30 Kiga-Turnier, U19/U17/U15W-Turniere und Senioren A-Spiel. Samstag ab 08:30 Vormittags-, Mittags- und Nachmittagsturniere aller Jugendmannschaften (SV Nord Sommercup), Spiele Zweite/Dritte, 17:30 Erste Mannschaft. Ab 18:30 gemeinsam im Eschengarten. Für das leibliche Wohl ist mit Grillen und Kuchen gesorgt. Einmal Nordler, immer Nordler.",
-      ctaUrl:
-        "https://mytman.io/turniere-suchen/?share_id=dcfcc1a6130a575108aece8f23e25f32",
-    },
-    {
-      kind: "event",
-      at: "2026-07-25T17:00:00+02:00",
-      id: "static-betreuer-essen-2026",
-      title: "Betreuer-Essen (Sommerfest)",
-      location: "BSA Ebereschenstraße · Eschengarten",
-      description:
-        "Samstag, 25. Juli 2026, ab 17:00 Uhr im Eschengarten. Gemeinsames Betreuer-Essen zum Ausklang des SV Nord-Sommerfests.",
-      ctaUrl: null,
-    },
-  ];
-  const normalizeTitle = (t: string) =>
-    t
-      .toLowerCase()
-      .replace(/\(.*?\)/g, "")
-      .replace(/[^a-zäöüß0-9]+/g, " ")
-      .trim();
-  // Kalendertag in Europe/Berlin (Server läuft in UTC): sonst landen Termine
-  // zwischen 00:00 und 01:59 Berliner Zeit im falschen Tages-Bucket.
-  const berlinDay = (iso: string) =>
-    new Date(iso).toLocaleDateString("de-DE", { timeZone: "Europe/Berlin" });
-  for (const e of STATIC_EVENTS) {
-    const d = new Date(e.at);
-    if (Number.isNaN(d.getTime()) || d.getTime() < now) continue;
-    // Skip the fallback when the same Termin is already pflegt im CMS
-    // (same day + overlapping title), sonst erscheint er doppelt.
-    const eDay = berlinDay(e.at);
-    const eNorm = normalizeTitle(e.title);
-    const duplicate = items.some((it) => {
-      if (it.kind !== "event") return false;
-      if (berlinDay(it.at) !== eDay) return false;
-      const itNorm = normalizeTitle(it.title);
-      // Leere/degenerierte Titel nie matchen; Teilstring erst ab 5 Zeichen,
-      // sonst unterdrückt z. B. ein Event "2026" den Fallback.
-      if (!itNorm || !eNorm) return false;
-      if (itNorm === eNorm) return true;
-      const [shorter, longer] =
-        itNorm.length <= eNorm.length ? [itNorm, eNorm] : [eNorm, itNorm];
-      return shorter.length >= 5 && longer.includes(shorter);
-    });
-    if (duplicate) continue;
-    items.push(e);
-  }
-
   items.sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime());
 
   const teamOptions = [...teamCounts.values()].sort((a, b) =>

@@ -3,7 +3,6 @@ import { InstagramTeaser } from "@/components/home/InstagramTeaser";
 import { MatchdayBlock } from "@/components/home/MatchdayBlock";
 import { MembershipCta } from "@/components/home/MembershipCta";
 import { NewsGrid } from "@/components/home/NewsGrid";
-import { SommerfestSection } from "@/components/home/SommerfestSection";
 import { SponsorMarquee } from "@/components/home/SponsorMarquee";
 import { SportsGrid } from "@/components/home/SportsGrid";
 import { StatStrip } from "@/components/home/StatStrip";
@@ -14,7 +13,7 @@ import { getPayloadClient } from "@/lib/payload";
 import { usableMediaSrc } from "@/lib/publicUploads";
 import type { Media } from "@/payload-types";
 
-// NextMatch, UpcomingEvents and MatchdayBlock all filter on "later than now".
+// UpcomingEvents and MatchdayBlock both filter on "later than now".
 // Expiring their data entries is not enough to refresh an already prerendered
 // page, so the route needs the same bound. Next only accepts a literal in a
 // segment config export, so this cannot reference the shared constant;
@@ -59,7 +58,6 @@ export default async function HomePage() {
     <>
       <Hero hero={home.hero} slides={heroSlides} />
       <StatStrip />
-      <SommerfestSection />
       {sections.showNextMatch !== false ? <MatchdayBlock /> : null}
       {sections.showNews !== false ? <NewsGrid /> : null}
       {sections.showInstagram !== false ? (

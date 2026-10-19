@@ -136,20 +136,3 @@ export async function fetchUpcomingAcrossTeams(
   const endMs = startMs + daysAhead * 24 * 60 * 60 * 1000;
   return fetchEntriesInWindow(teams, startMs, endMs);
 }
-
-// Legacy fupa-only entry helper kept for backwards-compatibility with the
-// existing MatchdayBlock import path.
-export type WeekendMatch = {
-  match: FupaMatch;
-  team: WeekendTeam;
-};
-
-export async function fetchWeekendMatches(
-  teams: WeekendTeam[],
-  now: Date = new Date(),
-): Promise<WeekendMatch[]> {
-  const entries = await fetchWeekendEntries(teams, now);
-  return entries
-    .filter((e): e is WeekendFupaEntry => e.source === "fupa")
-    .map((e) => ({ match: e.fupa, team: e.team }));
-}

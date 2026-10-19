@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import React from "react";
 import { LuCircleHelp, LuCirclePlay } from "react-icons/lu";
 
 import { startTourFromAnywhere } from "./tour";

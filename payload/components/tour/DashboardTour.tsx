@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { LuCircleHelp, LuCirclePlay } from "react-icons/lu";
 
 import {

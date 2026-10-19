@@ -1,10 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getPayload } from "payload";
 import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical";
 
-import { RefreshOnPreview } from "./RefreshOnPreview";
 import { FadeUp } from "@/components/motion/FadeUp";
 import { NewsRichText } from "@/components/news/NewsRichText";
 import {
@@ -19,12 +17,13 @@ import {
   NEWS_FIGURE_BY_SLUG,
   NEWS_GALLERY_BY_SLUG,
 } from "@/lib/news-visual";
+import { getPayloadClient } from "@/lib/payload";
 import { mediaSrc } from "@/lib/publicUploads";
 import type { Media, Post } from "@/payload-types";
-import config from "@/payload.config";
 
-// Stays dynamic: the draft preview flag comes from searchParams.
-export const dynamic = "force-dynamic";
+// Regenerated on demand per slug and purged by the posts tag. The bound matches
+// the "related posts" query below, which filters on the current time.
+export const revalidate = 900;
 
 // Resolve an uploaded heroImage to a URL the same way PersonCard/SponsorMarquee
 // do; returns null when none is set so callers fall back to newsHeroForPost().
@@ -36,34 +35,25 @@ function heroImageSrc(heroImage: Post["heroImage"]): string | null {
 
 type Props = {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ preview?: string }>;
 };
 
-export default async function NewsPost({ params, searchParams }: Props) {
+export default async function NewsPost({ params }: Props) {
   const { slug } = await params;
-  const { preview } = await searchParams;
-  const isPreview = preview === "1";
 
-  const findPost = async () => {
-    const payload = await getPayload({ config });
-    return payload.find({
-      collection: "posts",
-      where: { slug: { equals: slug } },
-      limit: 1,
-      depth: 1,
-      draft: isPreview,
-    });
-  };
-  // The draft preview must never come from the Data Cache, otherwise the
-  // editor keeps seeing the last published revision.
-  const result = isPreview
-    ? await findPost()
-    : await cachedQuery(
-        ["news-post", slug],
-        // depth 1 resolves the author, so a Person edit must invalidate this too.
-        [collectionTag("posts"), collectionTag("people")],
-        findPost,
-      );
+  const result = await cachedQuery(
+    ["news-post", slug],
+    // depth 1 resolves the author, so a Person edit must invalidate this too.
+    [collectionTag("posts"), collectionTag("people")],
+    async () => {
+      const payload = await getPayloadClient();
+      return payload.find({
+        collection: "posts",
+        where: { slug: { equals: slug } },
+        limit: 1,
+        depth: 1,
+      });
+    },
+  );
 
   const post = result.docs[0];
   if (!post) notFound();
@@ -72,7 +62,7 @@ export default async function NewsPost({ params, searchParams }: Props) {
     ["news-related", String(post.id)],
     [collectionTag("posts")],
     async () => {
-      const payload = await getPayload({ config });
+      const payload = await getPayloadClient();
       return payload.find({
         collection: "posts",
         where: {
@@ -106,8 +96,6 @@ export default async function NewsPost({ params, searchParams }: Props) {
 
   return (
     <>
-      {isPreview ? <RefreshOnPreview /> : null}
-
       <section className="relative isolate overflow-hidden border-b border-nord-line bg-nord-ink">
         <div className="absolute inset-0">
           {hero.kind === "image" ? (

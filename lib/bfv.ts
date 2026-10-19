@@ -27,7 +27,6 @@ export type BfvMeta = {
 
 export type BfvMatch = Schemas["Match"];
 export type BfvTeam = Schemas["Team"];
-export type BfvClub = Schemas["ClubInformation"];
 
 export function bfvTeamUrl(bfv: BfvMeta | null | undefined): string | null {
   if (!bfv?.teamId) return null;
@@ -135,24 +134,6 @@ export async function fetchBfvSquad(teamId: string): Promise<BfvSquad | null> {
       season: data.season?.name ?? null,
       players,
     };
-  } catch {
-    return null;
-  }
-}
-
-export async function fetchBfvClub(teamId: string): Promise<BfvClub | null> {
-  if (!teamId) return null;
-  try {
-    const res = await fetch(
-      `${BFV_API_BASE}/club/info?teamPermanentId=${teamId}`,
-      {
-        headers: { Accept: "application/json" },
-        next: { revalidate: CLUB_REVALIDATE, tags: [`bfv:club:${teamId}`] },
-      },
-    );
-    if (!res.ok) return null;
-    const body = (await res.json()) as { data?: { club?: BfvClub } };
-    return body.data?.club ?? null;
   } catch {
     return null;
   }

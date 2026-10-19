@@ -57,5 +57,5 @@ the 17 image: `bun run db:reset` and seed again.
 
 ## Tests
 
-`bun run test` runs Vitest over `tests/`. Pure logic in `lib/` is expected to
+`bun run test` runs Vitest over `tests/` (`tests/lib`, `tests/payload`, `tests/scripts`). Pure logic in `lib/` is expected to
 have a test next to its siblings in `tests/lib/`.

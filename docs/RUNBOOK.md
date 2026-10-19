@@ -111,8 +111,10 @@ check either; it refuses any database that already has tables.
 
 ## Content operations
 
-- Admin: https://www.svnord.de/admin. Two accounts, `admin` (developer) and
-  `verein` (club). Both are full admins; there is no role model.
+- Admin: https://www.svnord.de/admin. One account for the developer, one for
+  the club; usernames and passwords are in the private handover documents and
+  the `CMS_*` variables in Vercel, never in this repo. Both are full admins;
+  there is no role model.
 - An image replaced in the admin shows up within seconds (media hooks purge
   every dependent tag and the layout).
 - Unreferenced media: `bun run media-usage` lists them with admin links. The

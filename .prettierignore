@@ -1,0 +1,17 @@
+# Generated
+payload-types.ts
+app/(payload)/admin/importMap.js
+bun.lock
+
+# Separate toolchain with its own config
+video/
+
+# Point-in-time reports, kept verbatim
+docs/audits/
+
+# Local tooling caches and scratch space (not in .gitignore, or only in
+# .git/info/exclude, which Prettier does not read)
+.remember/
+graphify-out/
+tmp/
+Uebergabe/

@@ -4,6 +4,10 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    # Wait a week before proposing a fresh release: compromised or broken
+    # versions are usually yanked within days.
+    cooldown:
+      default-days: 7
     open-pull-requests-limit: 5
     groups:
       payload:
@@ -29,3 +33,5 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    cooldown:
+      default-days: 7

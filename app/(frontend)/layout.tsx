@@ -13,6 +13,7 @@ import { ScrollToTopButton } from "@/components/ScrollToTopButton";
 import { SiteSchema } from "@/components/seo/SiteSchema";
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
+import { SITE_URL } from "@/lib/site";
 import "../globals.css";
 
 const inter = Inter({
@@ -50,7 +51,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL ?? "https://www.svnord.de";
 const SITE_NAME = "SV Nord München-Lerchenau e. V.";
 const DESCRIPTION =
   "Traditionsverein im Münchner Norden seit 1947. Fußball in der Landesliga, dazu Volleyball, Gymnastik, Ski und eSport, über 600 Mitglieder, eine Familie.";

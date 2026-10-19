@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const base = process.env.NEXT_PUBLIC_SERVER_URL ?? "http://localhost:3000";
+import { SITE_URL as base } from "@/lib/site";
 
 // Explicit allowlist for AI crawlers so they index the public site but stay
 // out of the admin panel. Listing them by name also sidesteps the occasional

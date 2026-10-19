@@ -25,7 +25,7 @@
  *   bun run import-static-images -- --dry-run
  *   bun run import-static-images
  *
- * Gegen die Produktion siehe docs/BILDER-EDITIERBAR.md; dort steht die
+ * Gegen die Produktion siehe docs/decisions/BILDER-EDITIERBAR-2026-08-26.md; dort steht die
  * Reihenfolge aus Schema, Import und Deploy.
  */
 import fs from "node:fs";

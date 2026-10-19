@@ -1,3 +1,5 @@
+> **Archiv:** historischer Stand, nicht mehr gepflegt. Aktuell gelten `docs/RUNBOOK.md` und `docs/ARCHITECTURE.md`.
+
 # Sommerfest 2026 – Auto-Cleanup
 
 Die Sommerfest-Section auf der Landingpage ist zeitlich befristet und
@@ -25,7 +27,7 @@ bereinigen:
 2. `app/(frontend)/page.tsx` – Import `SommerfestSection` und das gerenderte
    `<SommerfestSection />` entfernen.
 3. `public/news/sommerfest-2026.png` – Poster löschen.
-4. Diese Datei (`docs/SOMMERFEST-CLEANUP.md`) löschen.
+4. Diese Datei (`docs/archive/SOMMERFEST-CLEANUP.md`) löschen.
 5. Pre-Handoff-Checks laufen lassen (prettier / lint / tsc), dann committen und
    nach `main` pushen.
 

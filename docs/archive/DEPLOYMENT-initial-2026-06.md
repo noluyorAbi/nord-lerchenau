@@ -1,3 +1,5 @@
+> **Archived:** historical document, no longer maintained. Superseded by `docs/RUNBOOK.md` and `docs/ARCHITECTURE.md`.
+
 # SV Nord Website — Deployment Guide
 
 This site is one Next.js 16 app with Payload CMS mounted at `/admin`. Deploy target: **Vercel**. Required external services:
@@ -19,7 +21,7 @@ This site is one Next.js 16 app with Payload CMS mounted at `/admin`. Deploy tar
 4. Save it to your local `.env.local.production` — you'll paste it into Vercel as `DATABASE_URI` in step 3.
 5. Optional CLI setup on a new machine: `npx neonctl@latest init`.
 
-> Current project details are tracked in [`TODO.md`](./TODO.md).
+> Current project details are tracked in [`TODO-deployment-2026-06.md`](./TODO-deployment-2026-06.md).
 
 ## 2. Get a Resend API key
 

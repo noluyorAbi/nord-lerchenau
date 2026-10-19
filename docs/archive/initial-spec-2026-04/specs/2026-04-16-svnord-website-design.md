@@ -1,3 +1,5 @@
+> **Archived:** historical document, no longer maintained. Superseded by `docs/RUNBOOK.md` and `docs/ARCHITECTURE.md`.
+
 # SV Nord München-Lerchenau · Website Redesign — Design Spec
 
 **Date:** 2026-04-16

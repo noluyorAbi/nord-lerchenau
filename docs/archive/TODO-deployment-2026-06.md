@@ -1,8 +1,10 @@
+> **Archived:** historical document, no longer maintained. Superseded by `docs/RUNBOOK.md` and `docs/ARCHITECTURE.md`.
+
 # Deployment TODO
 
 Tracks the steps to get this repo from "works on my machine" to live at
 **svnord-lerchenau.de**. Keep entries here short; link out to the full guide
-in [`DEPLOYMENT.md`](./DEPLOYMENT.md).
+in [`DEPLOYMENT-initial-2026-06.md`](./DEPLOYMENT-initial-2026-06.md).
 
 ## Infrastructure
 
@@ -35,7 +37,7 @@ in [`DEPLOYMENT.md`](./DEPLOYMENT.md).
 - [ ] Add environment variables (see `.env.local.production` on your machine for the values)
 - [ ] Deploy — first build takes 3–5 min (Payload builds its admin bundle)
 - [ ] **Storage → Create → Blob** — name it `svnord-media`; Vercel auto-injects `BLOB_READ_WRITE_TOKEN` on redeploy
-- [ ] Run the one-time prod seed from your laptop (see `DEPLOYMENT.md §5`)
+- [ ] Run the one-time prod seed from your laptop (see `DEPLOYMENT-initial-2026-06.md` §5)
 
 ### ⏳ DNS — `svnord-lerchenau.de`
 

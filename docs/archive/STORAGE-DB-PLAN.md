@@ -1,3 +1,5 @@
+> **Archiv:** historischer Stand, nicht mehr gepflegt. Aktuell gelten `docs/RUNBOOK.md` und `docs/ARCHITECTURE.md`.
+
 # Storage & Datenbank — Ist-Zustand und Plan
 
 Stand: 2026-06-30. Kontext: CMS ist noch nicht in Betrieb, Inhalte und Bilder

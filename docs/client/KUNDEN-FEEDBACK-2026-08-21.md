@@ -28,7 +28,7 @@ Die Punkte 1 bis 5 sind live. Zusätzlich erledigt:
   Bild auf `/gymnastik` geworden. Umgestellt auf `Gymnastik 2026_07.webp`, seit
   dem 27.08.2026 ist das Foto oben auf der Seite.
 - Fast alle übrigen Bilder der Seite sind seither ebenfalls im Admin
-  austauschbar, siehe `docs/BILDER-EDITIERBAR.md`.
+  austauschbar, siehe `docs/decisions/BILDER-EDITIERBAR-2026-08-26.md`.
 
 ## Braucht eine Entscheidung des Vereins
 

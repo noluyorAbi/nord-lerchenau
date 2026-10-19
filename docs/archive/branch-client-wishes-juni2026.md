@@ -1,3 +1,5 @@
+> **Archiv:** historischer Stand, nicht mehr gepflegt. Aktuell gelten `docs/RUNBOOK.md` und `docs/ARCHITECTURE.md`.
+
 # feat/client-wishes-juni2026
 
 Umsetzung der Kundenwünsche aus dem Änderungsdokument (Stand 1.6.2026).

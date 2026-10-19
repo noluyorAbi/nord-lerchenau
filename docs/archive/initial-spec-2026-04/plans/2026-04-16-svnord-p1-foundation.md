@@ -1,8 +1,10 @@
+> **Archived:** historical document, no longer maintained. Superseded by `docs/RUNBOOK.md` and `docs/ARCHITECTURE.md`.
+
 # SV Nord Website · Phase 1 — Foundation & Data · Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:subagent-driven-development` (recommended) or `superpowers:executing-plans` to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Spec:** `docs/superpowers/specs/2026-04-16-svnord-website-design.md`
+**Spec:** `docs/archive/initial-spec-2026-04/specs/2026-04-16-svnord-website-design.md`
 **Phase:** 1 of 6 — see spec §12 for the full phase list
 
 **Goal:** Stand up Payload CMS v3 inside this Next.js 16 app, define the full schema (9 collections + 8 globals), and seed the database with content imported from the firecrawl crawl of the existing svnord-lerchenau.de site. After this plan, an admin can log in at `/admin` and see all club data.
@@ -132,12 +134,12 @@ If a beta exists with Next 16 support, plan to use that; otherwise STOP and ask 
 
 - [ ] **Step 4: Document the chosen path**
 
-Append a one-line note to `docs/superpowers/specs/2026-04-16-svnord-website-design.md` §13 row "Next.js 16 + Payload v3 compatibility" with the verified version + result.
+Append a one-line note to `docs/archive/initial-spec-2026-04/specs/2026-04-16-svnord-website-design.md` §13 row "Next.js 16 + Payload v3 compatibility" with the verified version + result.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add docs/superpowers/specs/2026-04-16-svnord-website-design.md
+git add docs/archive/initial-spec-2026-04/specs/2026-04-16-svnord-website-design.md
 git commit -m "docs: record verified Payload + Next.js 16 compatibility status"
 ```
 

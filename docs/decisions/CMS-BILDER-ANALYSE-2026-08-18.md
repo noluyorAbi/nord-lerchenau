@@ -28,7 +28,7 @@ Vercel-Env gesetzt (Production, Preview, Development).
 ## 3. Ursache
 
 Beim Umbau auf statische Bilder (Commit `76bf13d`, 30.06.2026, Option A aus
-`docs/STORAGE-DB-PLAN.md`) wurde das `vercelBlobStorage`-Plugin aus
+`docs/archive/STORAGE-DB-PLAN.md`) wurde das `vercelBlobStorage`-Plugin aus
 `payload.config.ts` entfernt. Payload lief in Produktion damit auf dem
 lokalen Datei-Adapter mit `staticDir = public/uploads`.
 
@@ -39,7 +39,7 @@ daher die 500.
 
 Der Blob-Speicher wurde noch am selben Tag wieder eingebaut, aber im Commit
 `100cae4` auf `feat/cms-customer-editable`. Dieser Branch ist nie nach `main`
-gelangt. `OFFENE-PUNKTE.md` behauptete deshalb das Gegenteil der Realität
+gelangt. `docs/archive/OFFENE-PUNKTE-2026-08-19.md` behauptete deshalb das Gegenteil der Realität
 ("der Code ist bereit, sobald der Token da ist"): der Token war da, der Code
 fehlte. Diese Zeile ist jetzt korrigiert.
 
@@ -323,6 +323,6 @@ und `DELETE /api/media/226 200` um 14:34:13 mit `POST /api/revalidate 200` um
   sinnvoll, aber ein eigener Vorgang mit eigenem Risiko.
 - Die Positivliste in `.gitignore`. Sie bleibt als Rückfallebene nützlich,
   solange `NEXT_PUBLIC_PREFER_UPLOADED_MEDIA` aus ist.
-- `docs/STORAGE-DB-PLAN.md` beschreibt weiter den Stand vom 30.06.2026. Die
+- `docs/archive/STORAGE-DB-PLAN.md` beschreibt weiter den Stand vom 30.06.2026. Die
   Empfehlung "Blob kann raus" von damals galt für "nur der Entwickler pflegt
   Bilder"; seit das CMS für den Verein bedienbar ist, gilt sie nicht mehr.

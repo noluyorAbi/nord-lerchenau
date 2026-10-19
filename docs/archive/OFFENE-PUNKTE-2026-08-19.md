@@ -1,3 +1,5 @@
+> **Archiv:** historischer Stand, nicht mehr gepflegt. Aktuell gelten `docs/RUNBOOK.md` und `docs/ARCHITECTURE.md`.
+
 # Offene Punkte
 
 **Stand: 2026-08-19** · Live: https://www.svnord.de (kanonisch) und
@@ -39,7 +41,7 @@ Endkontrolle am 18.08.2026: 52 Seiten, 295 verschiedene Bilder, 0 kaputt. Upload
 
 **Bekannte Grenze: höchstens 4 MB pro Bild.** Ein Upload läuft durch eine Vercel-Funktion, deren Request-Body auf 4,5 MB begrenzt ist. Der Hinweis steht im Admin über der Bilder-Sammlung; Handy-Fotos vorher verkleinern.
 
-Wenn das Flag jemals neu gesetzt werden muss: frisch deployen (ein Redeploy übernimmt die alte Umgebung) und danach **jeden Cache-Tag über `/api/revalidate` leeren**, sonst rendern die dynamischen Seiten weiter aus Einträgen von vor dem Umbau. Details und Messwerte: `docs/CMS-BILDER-ANALYSE-2026-08-18.md`.
+Wenn das Flag jemals neu gesetzt werden muss: frisch deployen (ein Redeploy übernimmt die alte Umgebung) und danach **jeden Cache-Tag über `/api/revalidate` leeren**, sonst rendern die dynamischen Seiten weiter aus Einträgen von vor dem Umbau. Details und Messwerte: `docs/decisions/CMS-BILDER-ANALYSE-2026-08-18.md`.
 
 ### 2. Kontaktformular-Mails (Resend) — ✅ INTERIM LIVE seit 2026-07-06
 

@@ -1,13 +1,13 @@
 @AGENTS.md
 
-## Design Skills — MANDATORY
+## Design Skills (mandatory)
 
 Before any UI/frontend/design work, ALWAYS consider invoking these skills:
 
-- `emilkowal-animations` — Emil Kowalski animation principles (motion, interactions)
-- `design-with-taste` — opinionated taste-driven UI design
-- `design-principles` — impeccable design fundamentals
-- `design-motion-principles` — motion + visual design principles
+- `emilkowal-animations`: Emil Kowalski animation principles (motion, interactions)
+- `design-with-taste`: opinionated taste-driven UI design
+- `design-principles`: impeccable design fundamentals
+- `design-motion-principles`: motion + visual design principles
 
 Rules:
 
@@ -17,17 +17,15 @@ Rules:
 
 ## Standard pre-handoff checks
 
-Run all three on every change before reporting work as done. Fix every error — never report green if any step fails.
+Run on every change before reporting work as done. Fix every error; never report green if any step fails.
 
 ```bash
-bunx prettier --write '**/*.{ts,tsx,md,json,css}' --ignore-path .gitignore
-bun run lint
-bunx tsc --noEmit
+bun run format   # Prettier, writes; run first so the checks see the final source
+bun run check    # format check, lint, typecheck, unit tests
 ```
 
-- **prettier --write** — format first, so lint/tsc see the final source.
-- **bun run lint** — runs `eslint` (Next.js + React Hooks rules).
-- **bunx tsc --noEmit** — strict TypeScript check (the `lint` script does not type-check on its own).
+- **bun run check** runs the same gates as CI except the production build: Prettier check, `eslint` (Next.js and React Hooks rules), `tsc --noEmit` (strict) and Vitest.
+- **bun run format** fixes formatting only; lint and type errors must be fixed by hand.
 
 Optional, when you touched UI:
 

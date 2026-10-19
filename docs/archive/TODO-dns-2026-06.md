@@ -1,3 +1,5 @@
+> **Archiv:** historischer Stand, nicht mehr gepflegt. Aktuell gelten `docs/RUNBOOK.md` und `docs/ARCHITECTURE.md`.
+
 # TODO
 
 ## DNS Go-Live — Strato → Vercel (BLOCKIERT, naechste Session)

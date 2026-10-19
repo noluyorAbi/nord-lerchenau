@@ -1,3 +1,5 @@
+> **Archiv:** historischer Stand, nicht mehr gepflegt. Aktuell gelten `docs/RUNBOOK.md` und `docs/ARCHITECTURE.md`.
+
 # Rollout-Checkliste SV Nord München-Lerchenau Website
 
 > Handoff für den nächsten Agent. Stand: 2026-06-25.
@@ -29,7 +31,7 @@ live verifiziert (Überschrift = Label: Jugendliche/Erwachsene/Familien/Beitrags
 1. **DNS umstellen** (→ Ralf): `svnord-lerchenau.de` auf Vercel zeigen. Strato-SSH ist nutzlos (kein Next-Host),
    nur DNS-Records. **MX/Mail `info@svnord.de` nicht brechen.**
 2. **Env nach Domain** (→ Dev, ~5 Min): `NEXT_PUBLIC_SERVER_URL` setzen + Fallbacks `app/(frontend)/layout.tsx:54`,
-   `components/seo/SiteSchema.tsx:4`, Prod-Redeploy. Siehe TODO.md.
+   `components/seo/SiteSchema.tsx:4`, Prod-Redeploy. Siehe `docs/archive/TODO-dns-2026-06.md`.
 3. **Prod-DB-Stand prüfen/reseeden** (→ Dev+CMS): sicherstellen, dass live die korrigierten Daten zeigen
    (U13/U12-Spielklasse, Vorstand, Sponsoren). Sonst alte Inhalte.
 4. **HiDrive `SPlCBi6iX` besorgen** (→ Ralf): Ralfs letzte „Was noch fehlt"-Liste (13.06), nicht einsehbar →
@@ -99,9 +101,9 @@ impressum/datenschutz/chronik/vorstand/sponsoren/termine/news-detail: im Audit D
 - **Richtiger Weg:** App bleibt auf **Vercel**, nur **DNS bei Strato** auf Vercel zeigen (A-Record `76.76.21.21` bzw. CNAME laut Vercel-Domain-Setup). **MX-Records für `info@svnord.de` nicht kaputtmachen.**
 - Bei Ralf erfragen: brauchen wir nur **DNS-Verwaltung** (nicht das WP-Hosting). Klären, wo die Mail `info@svnord.de` liegt, bevor DNS angefasst wird.
 
-### 1.2 Nach Domain-Switch: `TODO.md` abarbeiten 🔒
+### 1.2 Nach Domain-Switch: `docs/archive/TODO-dns-2026-06.md` abarbeiten 🔒
 
-Siehe `TODO.md` im Repo. Konkret:
+Siehe `docs/archive/TODO-dns-2026-06.md` im Repo. Konkret:
 
 1. `vercel env rm NEXT_PUBLIC_SERVER_URL production` + neu setzen auf neue Domain.
 2. Prod redeployen (`NEXT_PUBLIC_` ist build-time).
@@ -243,7 +245,7 @@ HiDrive-Änderungsdokumente, je neuer desto maßgeblicher. Diese enthalten Ralfs
 
 **P0 — Blocker:**
 
-1. Hosting-Frage mit Ralf klären → DNS `svnord-lerchenau.de` auf Vercel (nicht Strato), MX/Mail nicht brechen. Danach `TODO.md` (env + Hardcoded-Fallbacks).
+1. Hosting-Frage mit Ralf klären → DNS `svnord-lerchenau.de` auf Vercel (nicht Strato), MX/Mail nicht brechen. Danach `docs/archive/TODO-dns-2026-06.md` (env + Hardcoded-Fallbacks).
 2. `SPlCBi6iX`-Doku besorgen + abgleichen (letzte verbindliche Liste).
 3. Prod-Reseed / CMS-Pflege, danach Live-Seite verifizieren.
 

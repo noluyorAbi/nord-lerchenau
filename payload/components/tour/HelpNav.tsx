@@ -1,10 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { LuCircleHelp, LuCirclePlay } from "react-icons/lu";
 
-import { startTourFromAnywhere } from "./tour";
+import { startTour, TOUR_RESUME_HREF } from "./tour";
 import { TOUR_TARGET } from "./tour-targets";
 import "./help-nav.css";
 
@@ -15,18 +14,24 @@ import "./help-nav.css";
  * there; the tour resumes itself after the navigation.
  */
 export default function HelpNav() {
-  const router = useRouter();
   return (
     <div className="svnord-help" data-tour={TOUR_TARGET.help}>
       <div className="svnord-help__label">Hilfe</div>
-      <button
-        type="button"
+      <Link
         className="svnord-help__btn svnord-help__btn--primary"
-        onClick={() => startTourFromAnywhere((href) => router.push(href))}
+        href={TOUR_RESUME_HREF}
+        prefetch={false}
+        onClick={(event) => {
+          // Already on the dashboard: start in place instead of reloading it.
+          if (window.location.pathname.replace(/\/$/, "") === "/admin") {
+            event.preventDefault();
+            startTour();
+          }
+        }}
       >
         <LuCircleHelp aria-hidden />
         <span>Rundgang starten</span>
-      </button>
+      </Link>
       <Link className="svnord-help__btn" href="/admin#video" prefetch={false}>
         <LuCirclePlay aria-hidden />
         <span>Video ansehen</span>

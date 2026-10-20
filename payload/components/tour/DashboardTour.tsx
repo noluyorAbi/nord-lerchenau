@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { LuCircleHelp, LuCirclePlay } from "react-icons/lu";
 
 import {
-  clearResumeFlag,
-  hasResumeFlag,
+  clearResumeRequest,
+  hasResumeRequest,
   startTour,
   tourRunning,
   tourSeen,
@@ -27,17 +27,17 @@ export default function DashboardTour() {
   useEffect(() => {
     if (tourRunning()) return;
     // Someone who followed "Video ansehen" wants the video, not a tour on top
-    // of it. The explicit resume flag still wins, since that was a click on
+    // of it. The explicit resume request still wins, since that was a click on
     // "Rundgang starten".
     const wantsVideo = window.location.hash === "#video";
-    const shouldStart = hasResumeFlag() || (!wantsVideo && !tourSeen());
+    const shouldStart = hasResumeRequest() || (!wantsVideo && !tourSeen());
     if (!shouldStart) return;
     // Let the dashboard settle (fonts, sidebar hydration) before pointing at
     // things, otherwise the first highlight lands on a moving target. The
-    // resume flag is cleared here, inside the timer, so a StrictMode double
+    // resume request is cleared here, inside the timer, so a StrictMode double
     // mount (which clears the timer in between) cannot eat it.
     const t = window.setTimeout(() => {
-      clearResumeFlag();
+      clearResumeRequest();
       startTour();
       setAutoStarted(true);
     }, 700);

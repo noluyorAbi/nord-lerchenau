@@ -262,7 +262,7 @@ export function tourRunning(): boolean {
 
 /**
  * Start the tour on the current page. Callers on other admin pages should
- * navigate to /admin first (see startTourFromAnywhere), otherwise most steps
+ * navigate to /admin first (see TOUR_RESUME_HREF), otherwise most steps
  * find nothing to point at.
  */
 export function startTour() {
@@ -326,44 +326,29 @@ function drive() {
   instance.drive();
 }
 
-const RESUME_KEY = "svnord.admin.tour.resume";
-
 /**
- * From any admin page: go to the dashboard and start there. The flag survives
- * the navigation and is consumed by the dashboard on mount.
+ * The sidebar's "Rundgang starten" links here from any admin page. A real link,
+ * not a programmatic push: Payload's leave-without-saving guard only catches
+ * anchor clicks and beforeunload, so an editor with unsaved changes still gets
+ * asked before the tour takes them to the dashboard. The query survives that
+ * guard's own re-navigation, which a flag set in onClick would not.
  */
-export function startTourFromAnywhere() {
-  if (window.location.pathname.replace(/\/$/, "") === "/admin") {
-    startTour();
-    return;
-  }
-  try {
-    window.sessionStorage.setItem(RESUME_KEY, "1");
-  } catch {
-    // Without sessionStorage the dashboard simply will not auto-start; the
-    // user lands there and can press the button again.
-  }
-  window.location.assign("/admin");
-}
+export const TOUR_RESUME_HREF = "/admin?tour=1";
 
-/** True while a "start here" request from another page is pending. */
-export function hasResumeFlag(): boolean {
-  try {
-    return window.sessionStorage.getItem(RESUME_KEY) === "1";
-  } catch {
-    return false;
-  }
+/** True when the dashboard was opened through TOUR_RESUME_HREF. */
+export function hasResumeRequest(): boolean {
+  return new URLSearchParams(window.location.search).get("tour") === "1";
 }
 
 /**
- * Clear the pending request. Kept separate from the check on purpose: React
- * StrictMode runs effects twice in development, and a check that also
- * consumed would answer true on the first pass and false on the real one.
+ * Drop the query so a reload does not start the tour again. Kept separate from
+ * the check on purpose: React StrictMode runs effects twice in development, and
+ * a check that also consumed would answer true on the first pass and false on
+ * the real one.
  */
-export function clearResumeFlag() {
-  try {
-    window.sessionStorage.removeItem(RESUME_KEY);
-  } catch {
-    // ignore
-  }
+export function clearResumeRequest() {
+  const url = new URL(window.location.href);
+  if (!url.searchParams.has("tour")) return;
+  url.searchParams.delete("tour");
+  window.history.replaceState(window.history.state, "", url);
 }

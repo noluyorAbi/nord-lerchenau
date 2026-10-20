@@ -336,16 +336,16 @@ export interface Person {
    */
   photo?: (number | null) | Media;
   /**
-   * Optional. Wird nur bei Vorstand/Trainer gezeigt.
+   * Optional. Ändern wirkt sofort — aber eine Nummer erscheint nicht automatisch: auf der Vorstandsseite werden Telefonnummern grundsätzlich nicht angezeigt, auf den Fußballseiten nur für Personen, die der Verein ausdrücklich freigegeben hat. Für eine neue Freigabe bitte den Entwickler ansprechen.
    */
   phone?: string | null;
   email?: string | null;
   /**
-   * Optional. Nötig für Trainer- und Spielerzuordnung zu einer Mannschaft.
+   * Nur zur Übersicht im Adminbereich. Damit eine Trainerin oder ein Trainer auf einer Mannschaftsseite erscheint, muss die Person in der Mannschaft selbst unter 'Trainer:innen' eingetragen werden.
    */
   team?: (number | null) | Team;
   /**
-   * Kleinere Zahl = weiter oben in Listen.
+   * Gilt nur für die Seite 'Verein → Vorstand', dort für die Abschnitte Sportleitung und Jugendleitung: kleinere Zahl = weiter oben. Für Trainer:innen hat das Feld keine Wirkung. Deren Reihenfolge ergibt sich aus dem Feld 'Trainer:innen' der jeweiligen Mannschaft.
    */
   order?: number | null;
   updatedAt: string;
@@ -496,7 +496,7 @@ export interface Team {
       }[]
     | null;
   /**
-   * Kleinere Zahl = weiter oben in Listen.
+   * Kleinere Zahl = weiter oben in den Mannschaftslisten. Am besten in Zehnerschritten vergeben (10, 20, 30 …), dann passt eine neue Mannschaft dazwischen, ohne dass alle anderen umnummeriert werden müssen. Leer gelassen zählt als 0, die Mannschaft steht dann ganz oben.
    */
   order?: number | null;
   updatedAt: string;
@@ -1310,7 +1310,7 @@ export interface FaqPage {
   createdAt?: string | null;
 }
 /**
- * Pflichttexte für /impressum und /datenschutz.
+ * Die Texte auf /impressum und /datenschutz. Leer lassen heißt: die mitgelieferte Fassung bleibt stehen.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "legal-pages".
@@ -1318,9 +1318,9 @@ export interface FaqPage {
 export interface LegalPage {
   id: number;
   /**
-   * Pflichtangaben gemäß § 5 TMG. Erscheint unter /impressum.
+   * Pflichtangaben zum Anbieter. Erscheint unter /impressum. Die Anschrift oben auf der Seite kommt aus den Kontaktdaten, nicht von hier.
    */
-  impressumBody: {
+  impressumBody?: {
     root: {
       type: string;
       children: {
@@ -1334,11 +1334,11 @@ export interface LegalPage {
       version: number;
     };
     [k: string]: unknown;
-  };
+  } | null;
   /**
-   * DSGVO-Erklärung. Vor Änderungen am besten Rechtsbeistand fragen. Erscheint unter /datenschutz.
+   * DSGVO-Erklärung. Vor Änderungen bitte Rechtsbeistand fragen: hier steht, welche Daten der Verein verarbeitet. Erscheint unter /datenschutz.
    */
-  datenschutzBody: {
+  datenschutzBody?: {
     root: {
       type: string;
       children: {
@@ -1352,7 +1352,7 @@ export interface LegalPage {
       version: number;
     };
     [k: string]: unknown;
-  };
+  } | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1376,7 +1376,7 @@ export interface SiteImage {
   createdAt?: string | null;
 }
 /**
- * Vereinsname und SEO-Angaben (Beschreibung, Teilen-Bild), global verwendet.
+ * Der Vereinsname, wie er global verwendet wird (z.B. im Footer).
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings".

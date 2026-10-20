@@ -77,10 +77,12 @@ check either; it refuses any database that already has tables.
 
 ## Local development traps
 
-- `vercel env pull` overwrites `.env.local` with production values, including
-  `DATABASE_URI` (production) and `BLOB_READ_WRITE_TOKEN`. Afterwards set
-  `DATABASE_URI` back to the local Docker database. `next dev` with push on
-  against production is the most dangerous command in this repo.
+- `vercel env pull` overwrites `.env.local` with the Development environment.
+  `DATABASE_URI` only exists in Production and Preview, so the local one is
+  gone afterwards and `BLOB_READ_WRITE_TOKEN` is added; put the local
+  `DATABASE_URI` back. `vercel env pull --environment=production` does bring
+  the production database URL: `next dev` with push on against production is
+  the most dangerous command in this repo.
 - The Blob token in `.env.local` is harmless on its own (see `BLOB_ENABLED` in
   `payload.config.ts`) unless `VERCEL=1` or `BLOB_ENABLE_LOCAL=true` is also
   set, in which case uploads and seeds write into the live store.

@@ -56,9 +56,14 @@ collection fail with a database error.
    one transaction. Column and index names must match what Payload derives from
    the config: create the schema in a throwaway local database
    (`bun run db:reset && bun run dev`) and copy the DDL from `pg_dump -s`.
-2. Apply to production **before** merging:
+   Enable the Blob plugin while doing so (`BLOB_ENABLE_LOCAL=true` and a dummy
+   `BLOB_READ_WRITE_TOKEN`), otherwise the columns it adds to `media` are
+   missing from the comparison.
+2. Apply to production **before the first push** of the branch, not just
+   before merging: preview deployments use the production database, so a pushed
+   branch with new fields already runs against it.
    `psql "$DATABASE_URI" -v ON_ERROR_STOP=1 -f scripts/sql/<file>.sql`
-3. Verify with `\d <table>`, then merge.
+3. Verify with `\d <table>`, then push and merge.
 
 Never "check" by running `bun run dev` against production: the dev push compares
 config and database and, on drift, asks interactively whether a table was

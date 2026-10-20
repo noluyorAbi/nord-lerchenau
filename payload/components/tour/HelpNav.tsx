@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { LuCircleHelp, LuCirclePlay } from "react-icons/lu";
 
 import { startTourFromAnywhere } from "./tour";
@@ -14,13 +15,14 @@ import "./help-nav.css";
  * there; the tour resumes itself after the navigation.
  */
 export default function HelpNav() {
+  const router = useRouter();
   return (
     <div className="svnord-help" data-tour={TOUR_TARGET.help}>
       <div className="svnord-help__label">Hilfe</div>
       <button
         type="button"
         className="svnord-help__btn svnord-help__btn--primary"
-        onClick={startTourFromAnywhere}
+        onClick={() => startTourFromAnywhere((href) => router.push(href))}
       >
         <LuCircleHelp aria-hidden />
         <span>Rundgang starten</span>

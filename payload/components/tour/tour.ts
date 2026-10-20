@@ -330,9 +330,10 @@ const RESUME_KEY = "svnord.admin.tour.resume";
 
 /**
  * From any admin page: go to the dashboard and start there. The flag survives
- * the navigation and is consumed by the dashboard on mount.
+ * the navigation and is consumed by the dashboard on mount. `navigate` is the
+ * caller's router push, so the admin stays a client-side transition.
  */
-export function startTourFromAnywhere() {
+export function startTourFromAnywhere(navigate: (href: string) => void) {
   if (window.location.pathname.replace(/\/$/, "") === "/admin") {
     startTour();
     return;
@@ -343,7 +344,7 @@ export function startTourFromAnywhere() {
     // Without sessionStorage the dashboard simply will not auto-start; the
     // user lands there and can press the button again.
   }
-  window.location.assign("/admin");
+  navigate("/admin");
 }
 
 /** True while a "start here" request from another page is pending. */

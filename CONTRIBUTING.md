@@ -17,9 +17,10 @@ bun run dev                     # first start pushes the schema into the empty D
 bun run seed                    # demo content + admin user (see scripts/seed.ts)
 ```
 
-Never point a local `.env.local` at the production database. `vercel env pull`
-writes production values (including `DATABASE_URI` and a live Blob token) into
-`.env.local`; restore the local `DATABASE_URI` afterwards. See
+Never point a local `.env.local` at the production database. A default
+`vercel env pull` overwrites `.env.local` with the Development environment,
+which has no `DATABASE_URI` and adds a live Blob token; put the local
+`DATABASE_URI` back afterwards. See
 `docs/RUNBOOK.md` for why this matters (Drizzle dev push can rename or drop
 production tables).
 
@@ -43,7 +44,8 @@ the 17 image: `bun run db:reset` and seed again.
 - **Payload schema** (fields, collections, globals): production does not run
   Drizzle push and there are no Payload migrations yet. Schema changes ship as
   an additive, idempotent SQL script under `scripts/sql/`, applied to production
-  **before** the code deploy. Details and the reasoning in `docs/RUNBOOK.md`.
+  **before the first push** of the branch, because preview deployments use the
+  production database. Details and the reasoning in `docs/RUNBOOK.md`.
 - **Admin components** referenced by path in the Payload config: after adding or
   moving one, `app/(payload)/admin/importMap.js` must be regenerated and
   committed. `payload generate:importmap` fails here on the `@/` aliases; the

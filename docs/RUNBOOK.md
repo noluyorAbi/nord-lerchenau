@@ -118,10 +118,10 @@ check either; it refuses any database that already has tables.
 
 ## Content operations
 
-- Admin: https://www.svnord.de/admin. One account for the developer, one for
-  the club; usernames and passwords are in the private handover documents and
-  the `CMS_*` variables in Vercel, never in this repo. Both are full admins;
-  there is no role model.
+- Admin: https://www.svnord.de/admin. Five accounts: one for the maintainer,
+  one shared club account and three the club created itself. Credentials stay
+  with the maintainer and in the `CMS_*` variables in Vercel, never in this
+  repo. Every account is a full admin; there is no role model.
 - An image replaced in the admin shows up within seconds (media hooks purge
   every dependent tag and the layout).
 - Unreferenced media: `bun run media-usage` lists them with admin links. The
@@ -132,12 +132,14 @@ check either; it refuses any database that already has tables.
 ## Open operational items
 
 - **Resend sender.** Mails go out from `kontakt@adatepe.dev`, a domain owned by
-  the previous developer. Create a Resend account for the club, verify
+  the maintainer personally. Create a Resend account for the club, verify
   `svnord.de` (SPF, DKIM, DMARC records at Strato, MX untouched), swap
   `RESEND_API_KEY` and set `RESEND_FROM_EMAIL=SV Nord Kontakt <kontakt@svnord.de>`,
   push a commit, send a test message.
 - **Apex `svnord-lerchenau.de`** TLS (see Environments).
-- **Backups.** Neon point-in-time restore on the Launch plan covers 7 days.
+- **Backups.** Neon point-in-time restore is set to 6 hours of history
+  (`history_retention_seconds: 21600`; the Launch plan allows up to 7 days).
+  There is no independent backup; take a `pg_dump` before risky operations.
   There is no independent dump. A weekly `pg_dump` to private storage is
   recommended.
 - **Preview database.** Give Preview its own Neon branch.

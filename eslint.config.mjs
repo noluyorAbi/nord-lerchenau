@@ -18,6 +18,8 @@ const eslintConfig = defineConfig([
     // Remotion workspace for the admin tutorial video: own package.json, own
     // eslint config, own dependencies. Not part of the Next app.
     "video/**",
+    // Remotion workspace for the README banner and demo video, same reasons.
+    "readme-video/**",
     // Local-only folders (gitignored or in .git/info/exclude):
     "Uebergabe/**",
     "tmp/**",

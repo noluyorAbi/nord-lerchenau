@@ -1,7 +1,7 @@
 {
   "name": "launch-video",
   "version": "1.0.0",
-  "description": "Remotion source for this project's launch assets (assets/demo.mp4, assets/demo.gif, assets/banner.png, assets/social-card.png).",
+  "description": "Remotion source for the admin tutorial video. Renders into out/; the README media lives in readme-video/.",
   "license": "MIT",
   "private": true,
   "dependencies": {
@@ -24,10 +24,10 @@
     "typecheck": "tsc",
     "lint": "eslint src && tsc",
     "compositions": "remotion compositions src/index.ts",
-    "render:mp4": "remotion render src/index.ts Demo ../assets/demo.mp4 --codec=h264 --crf=21 --log=error",
-    "render:gif": "remotion render src/index.ts Demo ../assets/demo.gif --codec=gif --every-nth-frame=2 --scale=0.5 --log=error",
-    "render:banner": "remotion still src/index.ts Banner ../assets/banner.png --log=error",
-    "render:social": "remotion still src/index.ts Social ../assets/social-card.png --log=error",
+    "render:mp4": "remotion render src/index.ts Demo out/demo.mp4 --codec=h264 --crf=21 --log=error",
+    "render:gif": "remotion render src/index.ts Demo out/demo.gif --codec=gif --every-nth-frame=2 --scale=0.5 --log=error",
+    "render:banner": "remotion still src/index.ts Banner out/banner.png --log=error",
+    "render:social": "remotion still src/index.ts Social out/social-card.png --log=error",
     "build": "npm run render:mp4 && npm run render:gif && npm run render:banner && npm run render:social",
     "render:vertical": "remotion render src/index.ts Vertical out/vertical.mp4 --codec=h264 --crf=20 --log=error --timeout=120000",
     "render:wide": "remotion render src/index.ts Wide out/wide.mp4 --codec=h264 --crf=20 --log=error --timeout=120000",

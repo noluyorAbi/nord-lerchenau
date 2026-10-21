@@ -101,7 +101,19 @@ CREDENTIALS.local.md
 /video/out/
 /video/public/footage/
 /video/public/audio/
-/assets/
+/assets/*
+# README media rendered by readme-video/ (banner, demo, social card) is tracked.
+!/assets/banner.png
+!/assets/demo.gif
+!/assets/demo.mp4
+!/assets/social-card.png
+
+# Remotion workspace for the README media (readme-video/).
+/readme-video/node_modules/
+/readme-video/out/
+
+# Local state of the launch skill.
+/.launch/
 
 # Kundenuebergabe: Heft, Bildtafeln, Rechnungsentwurf. Enthaelt Angaben zu
 # Konten, Kosten und offenen Punkten und gehoert nicht in ein oeffentliches

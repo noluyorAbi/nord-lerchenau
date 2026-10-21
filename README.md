@@ -1,16 +1,59 @@
-# SV Nord München-Lerchenau: club website
+<div align="center">
 
-Website and CMS of SV Nord München-Lerchenau e.V., a multi-sport club in Munich.
+<a href="https://www.svnord.de"><img src="assets/banner.png" width="100%" alt="SV Nord: the club website, run by the club itself. Next.js 16, Payload 3.91, 143 tests."></a>
+
+<h3>Website and CMS of SV Nord München-Lerchenau e.V., a multi-sport club in Munich since 1947.</h3>
+
+<p>
+  <a href="https://www.svnord.de"><b>Live site</b></a>
+  &nbsp;·&nbsp;
+  <a href="https://www.svnord.de/admin"><b>Admin</b></a>
+  &nbsp;·&nbsp;
+  <a href="docs/RUNBOOK.md"><b>Runbook</b></a>
+  &nbsp;·&nbsp;
+  <a href="docs/ARCHITECTURE.md"><b>Architecture</b></a>
+  &nbsp;·&nbsp;
+  <a href="CONTRIBUTING.md"><b>Contributing</b></a>
+</p>
+
+<p>
+  <a href="https://github.com/noluyorAbi/nord-lerchenau/actions/workflows/ci.yml"><img src="https://github.com/noluyorAbi/nord-lerchenau/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI"></a>
+  <img src="https://img.shields.io/badge/Next.js-16.3-0b1b3f?style=flat-square&logo=nextdotjs&logoColor=white" alt="Next.js 16.3">
+  <img src="https://img.shields.io/badge/Payload-3.91-0b1b3f?style=flat-square&logo=payloadcms&logoColor=white" alt="Payload 3.91">
+  <img src="https://img.shields.io/badge/React-19-0b1b3f?style=flat-square&logo=react&logoColor=6ec7ea" alt="React 19">
+  <img src="https://img.shields.io/badge/TypeScript-strict-0b1b3f?style=flat-square&logo=typescript&logoColor=6ec7ea" alt="TypeScript strict">
+  <img src="https://img.shields.io/badge/Postgres-17-0b1b3f?style=flat-square&logo=postgresql&logoColor=6ec7ea" alt="Postgres 17">
+  <img src="https://img.shields.io/badge/Bun-1.3-0b1b3f?style=flat-square&logo=bun&logoColor=white" alt="Bun 1.3">
+</p>
+
+<br>
+
+<a href="assets/demo.mp4"><img src="assets/demo.gif" width="88%" alt="26-second tour of the site: home page with the next match, team page, club history, fixtures and online membership."></a>
+
+<sub>26-second tour, recorded on a local dev server with seed data. <a href="assets/demo.mp4">Full-resolution MP4</a>.</sub>
+
+</div>
+
+<br>
+
 One Next.js application with Payload CMS mounted inside it: the public site and
-the admin share one deployment, one Postgres database and one media store.
-Content is maintained by the club in the admin; fixtures, tables and squads are
-pulled from BFV, fussball.de and FuPa.
+the admin share one deployment, one Postgres database and one media store. The
+club maintains every page in the admin; fixtures, tables and squads are pulled
+from BFV, fussball.de and FuPa.
 
-- Live: https://www.svnord.de
-- Admin: https://www.svnord.de/admin (two accounts, both full admins)
+<table>
+  <tr>
+    <td align="center" width="20%"><h3>56</h3><sub>pages in the sitemap</sub></td>
+    <td align="center" width="20%"><h3>28</h3><sub>teams with their own page</sub></td>
+    <td align="center" width="20%"><h3>9 / 10</h3><sub>Payload collections / globals</sub></td>
+    <td align="center" width="20%"><h3>143</h3><sub>unit tests, all green</sub></td>
+    <td align="center" width="20%"><h3>1</h3><sub>deployment for site and admin</sub></td>
+  </tr>
+</table>
 
-Every merge to `main` deploys to production. Read
-[Before you deploy](#before-you-deploy) first.
+> [!IMPORTANT]
+> Every merge to `main` deploys to production, and preview deployments use the
+> production database. Read [Before you push](#before-you-push) first.
 
 ## Stack
 
@@ -40,11 +83,17 @@ PAYLOAD_ADMIN_PASSWORD=... bun run seed   # demo content + admin@svnord.de
 ```
 
 `bun run seed` skips the admin user without `PAYLOAD_ADMIN_PASSWORD` and refuses
-any non-local database unless `SEED_ALLOW_REMOTE=true` is set (do not set it). Never point `.env.local` at production: `vercel env pull`
-writes the production `DATABASE_URI` and a live Blob token into it. See
+any non-local database unless `SEED_ALLOW_REMOTE=true` is set (do not set it).
+
+Never point `.env.local` at production. A default `vercel env pull` overwrites
+`.env.local` with the Development environment, which has no `DATABASE_URI`, so
+put the local one back afterwards. See
 [docs/RUNBOOK.md](docs/RUNBOOK.md#local-development-traps).
 
-## Scripts
+<details>
+<summary><b>All scripts</b></summary>
+
+<br>
 
 | Script                              | What it does                                                                               |
 | ----------------------------------- | ------------------------------------------------------------------------------------------ |
@@ -66,27 +115,36 @@ writes the production `DATABASE_URI` and a live Blob token into it. See
 One-off and historical scripts are listed in
 [docs/RUNBOOK.md](docs/RUNBOOK.md#scripts).
 
+</details>
+
 ## Git hooks and CI
 
-- `pre-commit`: lint-staged (Prettier, `eslint --fix` on staged files)
-- `commit-msg`: commitlint, Conventional Commits
-- `pre-push`: typecheck and unit tests
+| Hook         | Runs                                                  |
+| ------------ | ----------------------------------------------------- |
+| `pre-commit` | lint-staged: Prettier, `eslint --fix` on staged files |
+| `commit-msg` | commitlint, Conventional Commits                      |
+| `pre-push`   | typecheck and unit tests                              |
 
-CI (`.github/workflows/ci.yml`) runs format check, lint, typecheck, tests and a
-production build against an empty Postgres service container.
+CI (`.github/workflows/ci.yml`) runs on pushes to `main` and on pull requests
+against it: format check, lint, typecheck, tests and a production build against
+an empty Postgres service container. `main` is protected: a pull request with
+green CI is required, no force pushes, linear history.
 
-## Before you deploy
+## Before you push
 
 Details and reasoning in [docs/RUNBOOK.md](docs/RUNBOOK.md#deploying).
 
-1. Schema changes (fields, collections, globals) ship as additive SQL in `scripts/sql/`, applied to production **before** the merge. There are no Payload migrations and production never runs Drizzle push.
-2. Never run `bun run dev` or `bun run seed` against the production database.
-3. A changed `NEXT_PUBLIC_` variable needs a fresh deployment (not "Redeploy") and a purge of every cache tag via `/api/revalidate`.
-4. Preview deployments use the production database and Blob store: an admin save on a preview changes live content.
+1. **Schema changes** (fields, collections, globals) ship as additive SQL in `scripts/sql/`, applied to production **before the first push** of the branch, because preview deployments use the production database. There are no Payload migrations and production never runs Drizzle push.
+2. **Never** run `bun run dev` or `bun run seed` against the production database.
+3. **Previews are live data.** An admin save or a form submission on a preview changes production content and sends real mail.
+4. A changed `NEXT_PUBLIC_` variable needs a fresh deployment (not "Redeploy") and a purge of every cache tag via `/api/revalidate`.
 5. `app/(payload)/admin/importMap.js` must be regenerated and committed after adding or moving an admin component.
 6. The build refuses to run when the database preflight fails, by design.
 
-## Project structure
+<details>
+<summary><b>Project structure</b></summary>
+
+<br>
 
 ```
 app/(frontend)/     public site, own root layout; api/chat, api/contact, api/revalidate
@@ -98,21 +156,31 @@ payload/            collections, globals, access, hooks, admin components
 payload.config.ts   DB adapter, storage adapter, admin config
 scripts/            seed, preflight, one-off imports, scripts/sql/ schema changes
 tests/              Vitest unit tests
-video/              separate Remotion project for the admin tutorial video
+video/              Remotion project for the admin tutorial video
+readme-video/       Remotion project for the banner and demo in this README
 docs/               architecture, runbook, decisions, client documents
 ```
 
+</details>
+
 ## Documentation
 
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): system overview, caching, CMS model, tech debt
-- [docs/RUNBOOK.md](docs/RUNBOOK.md): environments, env vars, deploying, traps, incidents
-- [CONTRIBUTING.md](CONTRIBUTING.md): setup, branch and commit workflow, review rules
-- [docs/README.md](docs/README.md): index of every document in the repo
+| Document                                     | Covers                                                 |
+| -------------------------------------------- | ------------------------------------------------------ |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | System overview, caching, CMS model, tech debt         |
+| [docs/RUNBOOK.md](docs/RUNBOOK.md)           | Environments, env vars, deploying, traps, incidents    |
+| [CONTRIBUTING.md](CONTRIBUTING.md)           | Setup, branch and commit workflow, review rules        |
+| [docs/README.md](docs/README.md)             | Index of every document in the repo                    |
+| [readme-video/](readme-video/README.md)      | How to re-render the banner and demo (`npm run build`) |
 
 ## License
 
-Code © 2026 SV Nord München-Lerchenau e.V. Contributors retain copyright to their commits.
+All rights reserved. Code © 2026 SV Nord München-Lerchenau e.V.; contributors
+retain copyright to their commits. No license is granted to copy, modify or
+redistribute this code.
 
-Images embedded in the repo (Wix CDN URLs used as fallbacks) belong to SV Nord München-Lerchenau e.V. and are used with permission for the club's own website.
+Images embedded in the repo (Wix CDN URLs used as fallbacks) belong to SV Nord
+München-Lerchenau e.V. and are used with permission for the club's own website.
 
-The SV Nord crest, name, and "Einmal Nordler, immer Nordler." slogan are the property of SV Nord München-Lerchenau e.V.
+The SV Nord crest, name, and "Einmal Nordler, immer Nordler." slogan are the
+property of SV Nord München-Lerchenau e.V.

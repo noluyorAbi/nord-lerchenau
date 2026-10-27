@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 
-import { CONSENT_TEXT } from "@/lib/photo-consent";
+import { escapeHtml, renderMailHtml } from "@/lib/mail-template";
+import { CONSENT_TEXT, PENDING_TTL_MS } from "@/lib/photo-consent";
 import { SITE_URL } from "@/lib/site";
 
 /**
@@ -22,7 +23,7 @@ type MailConfig = NonNullable<ReturnType<typeof resendConfig>>;
 /** Resend meldet API-Fehler im Rueckgabewert statt per Exception. */
 async function send(
   cfg: MailConfig,
-  mail: { to: string; subject: string; text: string },
+  mail: { to: string; subject: string; text: string; html: string },
 ): Promise<void> {
   const { error } = await cfg.resend.emails.send({ from: cfg.from, ...mail });
   if (error) throw new Error(`Resend: ${error.message}`);
@@ -44,72 +45,139 @@ type ConsentMailData = {
   token: string;
 };
 
+const TTL_DAYS = Math.round(PENDING_TTL_MS / (24 * 60 * 60 * 1000));
+
+export function confirmationRequestMail(data: ConsentMailData) {
+  const links = consentLinks(data.token);
+  const child = escapeHtml(data.childName);
+  const team = escapeHtml(data.teamName);
+  return {
+    subject: `Bitte bestätigen: Mannschaftsfoto ${data.teamName}`,
+    html: renderMailHtml({
+      preheader: `Ein Klick, dann darf das Mannschaftsfoto mit ${data.childName} auf svnord.de erscheinen.`,
+      eyebrow: "Mannschaftsfoto",
+      heading: "Bitte bestätige deine Zustimmung",
+      paragraphs: [
+        `Hallo ${escapeHtml(data.parentName)},`,
+        `danke! Du hast zugestimmt, dass Mannschaftsfotos mit <strong>${child}</strong> (${team}) auf unserer Website erscheinen dürfen. Damit die Zustimmung gilt, bestätige sie bitte mit einem Klick.`,
+      ],
+      button: { label: "Zustimmung bestätigen", url: links.confirm },
+      quote: { label: "Dem hast du zugestimmt", text: CONSENT_TEXT },
+      footnotes: [
+        `Der Link ist ${TTL_DAYS} Tage gültig. Ohne Bestätigung veröffentlichen wir nichts.`,
+        `Du kannst deine Zustimmung jederzeit zurückziehen: <a href="${escapeHtml(links.revoke)}" style="color:#0b1b3f;">Zustimmung widerrufen</a>. Bewahre diese Mail dafür am besten auf.`,
+        "Du hast das Formular nicht ausgefüllt? Dann ignoriere diese Mail einfach, es passiert nichts.",
+      ],
+    }),
+    text: [
+      `Hallo ${data.parentName},`,
+      "",
+      `danke! Du hast zugestimmt, dass Mannschaftsfotos mit ${data.childName} (${data.teamName}) auf unserer Website erscheinen dürfen. Damit die Zustimmung gilt, bestätige sie bitte hier:`,
+      "",
+      links.confirm,
+      "",
+      `Der Link ist ${TTL_DAYS} Tage gültig. Ohne Bestätigung veröffentlichen wir nichts.`,
+      "",
+      "Dem hast du zugestimmt:",
+      CONSENT_TEXT,
+      "",
+      "Du kannst deine Zustimmung jederzeit zurückziehen. Bewahre diese Mail dafür am besten auf:",
+      links.revoke,
+      "",
+      "Du hast das Formular nicht ausgefüllt? Dann ignoriere diese Mail einfach, es passiert nichts.",
+      "",
+      "SV Nord München-Lerchenau e.V.",
+    ].join("\n"),
+  };
+}
+
 export async function sendConfirmationRequest(
   data: ConsentMailData,
 ): Promise<void> {
-  const links = consentLinks(data.token);
   const cfg = resendConfig();
   if (!cfg) {
     // Lokal ohne Resend: Link im Log, damit sich der Ablauf testen laesst.
     if (process.env.NODE_ENV !== "production") {
-      console.info("[foto-zustimmung] Bestaetigungslink:", links.confirm);
+      console.info(
+        "[foto-zustimmung] Bestaetigungslink:",
+        consentLinks(data.token).confirm,
+      );
     }
     return;
   }
-  await send(cfg, {
-    to: data.email,
-    subject: `Bitte bestätigen: Mannschaftsfoto ${data.teamName}`,
+  await send(cfg, { to: data.email, ...confirmationRequestMail(data) });
+}
+
+type ClubNotice = {
+  childName: string;
+  teamName: string;
+  confirmedCount: number;
+};
+
+export function clubNoticeMail(
+  kind: "bestaetigt" | "widerrufen",
+  data: ClubNotice,
+) {
+  const admin = `${SITE_URL}/admin/collections/photo-consents`;
+  const child = escapeHtml(data.childName);
+  const team = escapeHtml(data.teamName);
+  if (kind === "bestaetigt") {
+    const check =
+      "Die Zahl allein reicht nicht: Bitte die Namen in der Übersicht mit den Kindern auf dem Foto abgleichen. Erst wenn jedes Kind auf dem Foto eine bestätigte Zustimmung hat, kann bei der Mannschaft das Häkchen „Mannschaftsfoto ausblenden“ raus.";
+    return {
+      subject: `Foto-Zustimmung · ${data.teamName}`,
+      html: renderMailHtml({
+        preheader: `${data.childName} (${data.teamName}) hat zugestimmt.`,
+        eyebrow: "Foto-Zustimmung",
+        heading: "Neue bestätigte Zustimmung",
+        paragraphs: [
+          `<strong>${child}</strong> (${team}) darf auf dem Mannschaftsfoto gezeigt werden.`,
+          `Bestätigte Zustimmungen für diese Mannschaft: <strong>${data.confirmedCount}</strong>.`,
+          escapeHtml(check),
+        ],
+        button: { label: "Zustimmungen ansehen", url: admin },
+      }),
+      text: [
+        `Neue bestätigte Foto-Zustimmung: ${data.childName} (${data.teamName}).`,
+        `Bestätigte Zustimmungen für diese Mannschaft: ${data.confirmedCount}.`,
+        "",
+        check,
+        "",
+        `Übersicht: ${admin}`,
+      ].join("\n"),
+    };
+  }
+  const todo =
+    "Erst wieder einblenden, wenn ein Foto ohne das Kind vorliegt oder alle übrigen Eltern zugestimmt haben. Kommt der Name in der Mannschaft nicht vor, war es vermutlich ein Fehleintrag.";
+  return {
+    subject: `Widerruf Foto-Zustimmung · ${data.teamName}`,
+    html: renderMailHtml({
+      preheader: `Das Mannschaftsfoto von ${data.teamName} ist ausgeblendet.`,
+      eyebrow: "Widerruf",
+      heading: "Mannschaftsfoto ausgeblendet",
+      paragraphs: [
+        `Die Eltern von <strong>${child}</strong> (${team}) haben ihre Zustimmung widerrufen.`,
+        "Das Mannschaftsfoto dieser Mannschaft ist ab sofort auf der Website ausgeblendet; das Häkchen „Mannschaftsfoto ausblenden“ ist gesetzt.",
+        escapeHtml(todo),
+      ],
+      button: { label: "Zustimmungen ansehen", url: admin },
+    }),
     text: [
-      `Hallo ${data.parentName},`,
+      `Widerruf der Foto-Zustimmung: ${data.childName} (${data.teamName}).`,
       "",
-      `du hast auf svnord.de der Veröffentlichung von Mannschaftsfotos mit ${data.childName} (${data.teamName}) zugestimmt. Bitte bestätige das mit diesem Link:`,
+      "Das Mannschaftsfoto dieser Mannschaft ist ab sofort ausgeblendet ('Mannschaftsfoto ausblenden' ist gesetzt).",
+      todo,
       "",
-      links.confirm,
-      "",
-      "Der Link ist 7 Tage gültig. Ohne Bestätigung gilt die Zustimmung nicht.",
-      "",
-      "Zugestimmter Text:",
-      CONSENT_TEXT,
-      "",
-      "Widerrufen kannst du jederzeit hier:",
-      links.revoke,
-      "",
-      "Warst du das nicht? Dann ignoriere diese Mail einfach.",
-      "",
-      "SV Nord München-Lerchenau e.V.",
+      `Übersicht: ${admin}`,
     ].join("\n"),
-  });
+  };
 }
 
 export async function notifyClub(
   kind: "bestaetigt" | "widerrufen",
-  data: { childName: string; teamName: string; confirmedCount: number },
+  data: ClubNotice,
 ): Promise<void> {
   const cfg = resendConfig();
   if (!cfg) return;
-  const lines =
-    kind === "bestaetigt"
-      ? [
-          `Neue bestätigte Foto-Zustimmung: ${data.childName} (${data.teamName}).`,
-          `Bestätigte Zustimmungen für dieses Team: ${data.confirmedCount}.`,
-          "",
-          "Die Zahl allein reicht nicht: Bitte die Namen in der Übersicht mit den Kindern auf dem Foto abgleichen. Erst wenn jedes Kind auf dem Foto eine bestätigte Zustimmung hat, kann im Admin bei der Mannschaft das Häkchen 'Mannschaftsfoto ausblenden' raus.",
-        ]
-      : [
-          `Widerruf der Foto-Zustimmung: ${data.childName} (${data.teamName}).`,
-          "",
-          "Das Mannschaftsfoto dieses Teams ist ab sofort ausgeblendet ('Mannschaftsfoto ausblenden' wurde gesetzt). Erst wieder einblenden, wenn ein Foto ohne das Kind vorliegt oder alle verbleibenden Eltern zugestimmt haben. Kommt der Name in der Mannschaft nicht vor, war es vermutlich ein Fehleintrag.",
-        ];
-  await send(cfg, {
-    to: cfg.club,
-    subject:
-      kind === "bestaetigt"
-        ? `Foto-Zustimmung · ${data.teamName}`
-        : `Widerruf Foto-Zustimmung · ${data.teamName}`,
-    text: [
-      ...lines,
-      "",
-      `Übersicht: ${SITE_URL}/admin/collections/photo-consents`,
-    ].join("\n"),
-  });
+  await send(cfg, { to: cfg.club, ...clubNoticeMail(kind, data) });
 }

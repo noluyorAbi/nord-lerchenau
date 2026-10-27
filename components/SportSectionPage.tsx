@@ -10,6 +10,7 @@ import { pillsFromCms, preferCms, statsFromCms } from "@/lib/abteilungen-werte";
 import { cachedQuery, collectionTag } from "@/lib/cms";
 import { lexicalHasContent } from "@/lib/lexical-text";
 import { getPayloadClient } from "@/lib/payload";
+import { teamPhotoAllowed } from "@/lib/photo-consent";
 import { mediaSrc, usableMediaSrc } from "@/lib/publicUploads";
 import type { Media, Person } from "@/payload-types";
 
@@ -190,8 +191,11 @@ export async function SportSectionPage({
       typeof l?.label === "string" && typeof l?.url === "string",
   );
 
+  // Fehlt die Zustimmung der Eltern, bleibt nur der kuratierte Standard-Hero.
   const photo =
-    team.photo && typeof team.photo === "object" ? (team.photo as Media) : null;
+    teamPhotoAllowed(team) && team.photo && typeof team.photo === "object"
+      ? (team.photo as Media)
+      : null;
   // Ein im CMS gepflegtes Mannschaftsfoto gewinnt, damit der Verein das
   // Hero-Bild selbst austauschen kann. Der kuratierte statische Hero bleibt
   // Fallback, und uebernommen wird nur eine belastbare Quelle.

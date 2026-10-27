@@ -260,6 +260,16 @@ export const Teams: CollectionConfig = {
       },
     },
     {
+      name: "hidePhoto",
+      type: "checkbox",
+      defaultValue: false,
+      label: "Mannschaftsfoto ausblenden",
+      admin: {
+        description:
+          "Häkchen setzen, solange nicht alle Eltern zugestimmt haben (siehe '3. Verein → Foto-Zustimmungen'). Dann zeigt die Seite für dieses Team gar kein Mannschaftsfoto, auch keins von FuPa oder BFV. Ein Widerruf setzt das Häkchen automatisch.",
+      },
+    },
+    {
       name: "externalLinks",
       type: "array",
       label: "Weitere Links",

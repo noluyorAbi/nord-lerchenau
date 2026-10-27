@@ -16,6 +16,7 @@ import { Events } from "./payload/collections/Events";
 import { Fixtures } from "./payload/collections/Fixtures";
 import { Media } from "./payload/collections/Media";
 import { People } from "./payload/collections/People";
+import { PhotoConsents } from "./payload/collections/PhotoConsents";
 import { Posts } from "./payload/collections/Posts";
 import { Sponsors } from "./payload/collections/Sponsors";
 import { Submissions } from "./payload/collections/Submissions";
@@ -103,6 +104,7 @@ export default buildConfig({
     // 3. Verein
     Sponsors,
     Submissions,
+    PhotoConsents,
     // 9. System
     Users,
     Media,

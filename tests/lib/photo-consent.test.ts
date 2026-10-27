@@ -5,6 +5,7 @@ import {
   decideRevoke,
   generateToken,
   hashToken,
+  hidesTeamPhoto,
   isPendingExpired,
   PENDING_TTL_MS,
   photoConsentSchema,
@@ -30,6 +31,27 @@ describe("photoConsentSchema", () => {
   it("rejects a submission without the consent box ticked", () => {
     const result = photoConsentSchema.safeParse({ ...valid, consent: false });
     expect(result.success).toBe(false);
+  });
+
+  it("accepts names with umlauts, hyphens and apostrophes", () => {
+    const parsed = photoConsentSchema.parse({
+      ...valid,
+      childName: "Zoë-Marie O'Brien",
+      parentName: "Jürgen Müller",
+    });
+    expect(parsed.childName).toBe("Zoë-Marie O'Brien");
+  });
+
+  it("rejects links and line breaks in names", () => {
+    for (const childName of [
+      "https://evil.example",
+      "Max\nKlick hier",
+      "Max <b>",
+    ]) {
+      expect(
+        photoConsentSchema.safeParse({ ...valid, childName }).success,
+      ).toBe(false);
+    }
   });
 
   it("rejects a missing team", () => {
@@ -94,6 +116,14 @@ describe("expiry and decisions", () => {
     expect(decideRevoke("offen").ok).toBe(true);
     expect(decideRevoke("bestaetigt").ok).toBe(true);
     expect(decideRevoke("widerrufen").ok).toBe(false);
+  });
+});
+
+describe("hidesTeamPhoto", () => {
+  it("hides the photo only when a confirmed consent is revoked", () => {
+    expect(hidesTeamPhoto("bestaetigt")).toBe(true);
+    expect(hidesTeamPhoto("offen")).toBe(false);
+    expect(hidesTeamPhoto("widerrufen")).toBe(false);
   });
 });
 

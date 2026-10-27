@@ -2,9 +2,12 @@ import { NextResponse } from "next/server";
 
 import { getPayloadClient } from "@/lib/payload";
 import {
+  CONSENT_CATEGORIES,
   CONSENT_TEXT,
+  MAX_PENDING_PER_EMAIL,
   generateToken,
   isPendingExpired,
+  PENDING_TTL_MS,
   photoConsentSchema,
 } from "@/lib/photo-consent";
 import { sendConfirmationRequest } from "@/lib/photo-consent-mail";
@@ -46,7 +49,7 @@ export async function POST(request: Request) {
     const teamDoc = await client
       .findByID({ collection: "teams", id: team, depth: 0 })
       .catch(() => null);
-    if (!teamDoc) {
+    if (!teamDoc || !CONSENT_CATEGORIES.includes(teamDoc.category ?? "")) {
       return NextResponse.json(
         {
           ok: false,
@@ -80,6 +83,34 @@ export async function POST(request: Request) {
         !isPendingExpired(prior.createdAt, new Date()))
     ) {
       return NextResponse.json({ ok: true });
+    }
+
+    // Gegen Mail-Spam an fremde Adressen: offene Eintraege pro Adresse deckeln.
+    // Ein echtes Rate-Limit pro IP fehlt noch (siehe PR).
+    const pending = await client.count({
+      collection: "photo-consents",
+      where: {
+        and: [
+          { email: { equals: email } },
+          { status: { equals: "offen" } },
+          {
+            createdAt: {
+              greater_than: new Date(Date.now() - PENDING_TTL_MS).toISOString(),
+            },
+          },
+        ],
+      },
+      overrideAccess: true,
+    });
+    if (pending.totalDocs >= MAX_PENDING_PER_EMAIL) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error:
+            "Für diese Adresse gibt es schon mehrere unbestätigte Einträge. Bitte zuerst die Mails bestätigen.",
+        },
+        { status: 429 },
+      );
     }
 
     const { token, tokenHash } = generateToken();

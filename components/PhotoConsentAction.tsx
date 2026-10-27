@@ -5,7 +5,7 @@ import { useState } from "react";
 type Status =
   | { state: "idle" }
   | { state: "submitting" }
-  | { state: "done"; teamName: string }
+  | { state: "done"; teamName: string; photoHidden: boolean }
   | { state: "error"; message: string };
 
 type Props = { action: "bestaetigen" | "widerrufen"; token: string };
@@ -20,8 +20,10 @@ const COPY = {
   widerrufen: {
     button: "Zustimmung widerrufen",
     busy: "Wird widerrufen…",
-    done: (team: string) =>
-      `Deine Zustimmung ist widerrufen. Das Mannschaftsfoto von ${team} ist ab sofort ausgeblendet.`,
+    done: (team: string, photoHidden: boolean) =>
+      photoHidden
+        ? `Deine Zustimmung ist widerrufen. Das Mannschaftsfoto von ${team} ist ab sofort ausgeblendet.`
+        : "Deine Zustimmung ist widerrufen. Sie war noch nicht bestätigt und galt deshalb nie.",
   },
 } as const;
 
@@ -49,7 +51,11 @@ export function PhotoConsentAction({ action, token }: Props) {
         });
         return;
       }
-      setStatus({ state: "done", teamName: data.teamName });
+      setStatus({
+        state: "done",
+        teamName: data.teamName,
+        photoHidden: Boolean(data.photoHidden),
+      });
     } catch {
       setStatus({ state: "error", message: "Netzwerkfehler." });
     }
@@ -58,7 +64,7 @@ export function PhotoConsentAction({ action, token }: Props) {
   if (status.state === "done") {
     return (
       <p role="status" className="text-sm leading-relaxed text-nord-ink">
-        {copy.done(status.teamName)}
+        {copy.done(status.teamName, status.photoHidden)}
       </p>
     );
   }

@@ -5,6 +5,7 @@ import {
   decideConfirm,
   decideRevoke,
   hashToken,
+  hidesTeamPhoto,
   tokenSchema,
   type ConsentStatus,
 } from "@/lib/photo-consent";
@@ -89,7 +90,7 @@ export async function handleConsentAction(
       overrideAccess: true,
     });
 
-    if (decision.next === "widerrufen") {
+    if (decision.next === "widerrufen" && hidesTeamPhoto(status)) {
       // Art. 7 Abs. 3 DSGVO: nach dem Widerruf muss das Foto sofort weg. Der
       // afterChange-Hook der Teams invalidiert dabei den Seiten-Cache.
       await client.update({
@@ -111,21 +112,29 @@ export async function handleConsentAction(
       overrideAccess: true,
     });
 
+    // Ein nie bestaetigter Eintrag war nie gueltig; der Verein muss nichts tun.
+    const clubMustAct =
+      decision.next === "bestaetigt" || hidesTeamPhoto(status);
     try {
-      await notifyClub(
-        decision.next === "bestaetigt" ? "bestaetigt" : "widerrufen",
-        {
-          childName: consent.childName,
-          teamName,
-          confirmedCount: confirmed.totalDocs,
-        },
-      );
+      if (clubMustAct)
+        await notifyClub(
+          decision.next === "bestaetigt" ? "bestaetigt" : "widerrufen",
+          {
+            childName: consent.childName,
+            teamName,
+            confirmedCount: confirmed.totalDocs,
+          },
+        );
     } catch (err) {
       // Status ist gespeichert; die Vereinsmail ist nur ein Hinweis.
       console.error(`[/api/foto-zustimmung/${action}] notify failed:`, err);
     }
 
-    return NextResponse.json({ ok: true, teamName });
+    return NextResponse.json({
+      ok: true,
+      teamName,
+      photoHidden: decision.next === "widerrufen" && hidesTeamPhoto(status),
+    });
   } catch (err) {
     console.error(`[/api/foto-zustimmung/${action}] failed:`, err);
     return NextResponse.json(

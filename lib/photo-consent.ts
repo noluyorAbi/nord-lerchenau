@@ -11,6 +11,16 @@ import { z } from "zod";
  * In der Datenbank liegt nur der SHA-256 des Tokens, nie der Token selbst.
  */
 
+// Namen landen in Mails an fremde Adressen: nur Buchstaben, Leerzeichen,
+// Bindestrich, Punkt und Apostroph, damit niemand Links oder Zeilen einschmuggelt.
+const PERSON_NAME = /^\p{L}[\p{L} .'-]*$/u;
+
+/** Nur fuer Kinder- und Jugendteams gibt es eine Elternzustimmung. */
+export const CONSENT_CATEGORIES = ["junioren", "juniorinnen", "bambini"];
+
+/** So viele offene Eintraege darf eine Adresse gleichzeitig haben. */
+export const MAX_PENDING_PER_EMAIL = 5;
+
 export const photoConsentSchema = z.object({
   team: z.coerce
     .number({ message: "Bitte Mannschaft auswählen" })
@@ -20,8 +30,14 @@ export const photoConsentSchema = z.object({
     .string()
     .trim()
     .min(2, "Bitte Namen des Kindes angeben")
-    .max(100),
-  parentName: z.string().trim().min(2, "Bitte deinen Namen angeben").max(100),
+    .max(100)
+    .regex(PERSON_NAME, "Bitte nur den Namen angeben"),
+  parentName: z
+    .string()
+    .trim()
+    .min(2, "Bitte deinen Namen angeben")
+    .max(100)
+    .regex(PERSON_NAME, "Bitte nur den Namen angeben"),
   email: z.string().trim().email("Gültige E-Mail bitte").max(200),
   consent: z.literal(true, {
     message: "Bitte die Zustimmung ankreuzen",
@@ -78,10 +94,19 @@ export function decideConfirm(
   return { ok: true, next: "bestaetigt" };
 }
 
-/** Widerrufen geht aus jedem Zustand ausser "widerrufen". */
+/**
+ * Widerrufen geht aus jedem Zustand ausser "widerrufen". Das Team-Foto blendet
+ * nur der Widerruf einer bestaetigten Zustimmung aus (siehe hidesTeamPhoto):
+ * sonst koennte jeder mit einem eigenen, nie bestaetigten Eintrag ein Foto
+ * abschalten.
+ */
 export function decideRevoke(status: ConsentStatus): Decision {
   if (status === "widerrufen") return { ok: false, reason: "widerrufen" };
   return { ok: true, next: "widerrufen" };
+}
+
+export function hidesTeamPhoto(previous: ConsentStatus): boolean {
+  return previous === "bestaetigt";
 }
 
 /**

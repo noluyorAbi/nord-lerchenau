@@ -12,7 +12,7 @@ Browser ──> Vercel (Next.js 16, Node runtime, Fluid Compute)
                     ├─ Neon Postgres (eu-central-1)      all CMS content
                     ├─ Vercel Blob (store wifujncy146uydef)  uploaded media
                     ├─ OpenAI Chat Completions            /api/chat (Nord-Assistent)
-                    ├─ Resend                              /api/contact mails
+                    ├─ Resend                              /api/contact and /api/foto-zustimmung mails
                     └─ BFV widget API, fussball.de, FuPa, 11teamsports (read only, no keys)
 ```
 
@@ -63,13 +63,20 @@ instead (incident 2026-07-25, Neon quota exhausted).
 ## CMS model
 
 Collections: `posts`, `events`, `people`, `teams`, `fixtures`, `sponsors`,
-`submissions`, `users`, `media`. Globals: `home-page`, `chronik-page`,
+`submissions`, `photo-consents`, `users`, `media`. Globals: `home-page`, `chronik-page`,
 `vereinsheim-page`, `jugendfoerder-page`, `faq-page`, `legal-pages`,
 `site-images`, `site-settings`, `navigation`, `contact-info`.
 
 - Access: read is public for content, writes need a logged-in user. There is
   **no role model**: every user is a full admin. `submissions` cannot be created
   through the API; `/api/contact` writes with the Local API.
+- `photo-consents` holds the parents' consent to team photos. The public form
+  `/foto-zustimmung` writes through `/api/foto-zustimmung` (double opt-in mail,
+  confirm and revoke by token, only its SHA-256 is stored). Admins may create
+  paper consents. Revoking a confirmed consent, by link or in the admin, sets
+  `teams.hidePhoto`, which hides the team photo from every source (CMS, FuPa,
+  BFV) via `teamPhotoAllowed` in `lib/photo-consent.ts`. Hooks:
+  `payload/hooks/photoConsent.ts`.
 - `people.phone` and `people.email` are readable by logged-in users only; the
   frontend reads them server-side through the Local API and decides itself what
   to show (club wish: no private mobile numbers).
@@ -106,14 +113,14 @@ Moving to Payload migrations is the top item in the tech debt list below.
 
 ## External integrations
 
-| Service                     | Where                                                                   | Auth                                            | Failure mode                         |
-| --------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------- | ------------------------------------ |
-| BFV widget API, fussball.de | `lib/bfv.ts`                                                            | none                                            | empty lists, page still renders      |
-| FuPa                        | `lib/fupa.ts`, `app/api/fupa`                                           | none                                            | empty blocks                         |
-| 11teamsports club shop      | `lib/clubshop.ts`                                                       | optional `FIRECRAWL_API_KEY`, else direct fetch | empty shop grid                      |
-| OpenAI                      | `app/(frontend)/api/chat/route.ts`, prompt in `lib/ai-system-prompt.ts` | `OPENAI_API_KEY`                                | assistant answers with an error      |
-| Resend                      | `app/(frontend)/api/contact/route.ts`                                   | `RESEND_API_KEY`                                | submission is saved, mail is skipped |
-| OpenFreeMap tiles           | `components/MapEmbed.tsx`                                               | none                                            | map area empty                       |
+| Service                     | Where                                                                   | Auth                                            | Failure mode                    |
+| --------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------- | ------------------------------- |
+| BFV widget API, fussball.de | `lib/bfv.ts`                                                            | none                                            | empty lists, page still renders |
+| FuPa                        | `lib/fupa.ts`, `app/api/fupa`                                           | none                                            | empty blocks                    |
+| 11teamsports club shop      | `lib/clubshop.ts`                                                       | optional `FIRECRAWL_API_KEY`, else direct fetch | empty shop grid                 |
+| OpenAI                      | `app/(frontend)/api/chat/route.ts`, prompt in `lib/ai-system-prompt.ts` | `OPENAI_API_KEY`                                | assistant answers with an error |
+| Resend                      | `app/(frontend)/api/contact/route.ts`, `lib/photo-consent-mail.ts`      | `RESEND_API_KEY`                                | entry is saved, mail is skipped |
+| OpenFreeMap tiles           | `components/MapEmbed.tsx`                                               | none                                            | map area empty                  |
 
 ## Known tech debt (prioritised)
 
@@ -122,7 +129,8 @@ Moving to Payload migrations is the top item in the tech debt list below.
    migrations. Until then follow the SQL procedure in the Runbook.
 2. **No roles.** Add a `role` field (`admin`, `editor`) and restrict user
    management and `submissions` to admins.
-3. **`/api/chat` and `/api/contact` have no rate limiting.** The chat costs
+3. **`/api/chat`, `/api/contact` and `/api/foto-zustimmung` have no per-IP rate limiting**
+   (the consent form caps entries per address only). The chat costs
    money per request. Vercel Firewall rate limiting or a small KV-backed
    limiter would close it.
 4. **Preview deployments share the production database** (Vercel env

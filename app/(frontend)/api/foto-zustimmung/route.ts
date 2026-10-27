@@ -77,7 +77,9 @@ export async function POST(request: Request) {
       depth: 0,
       overrideAccess: true,
     });
-    // Keine zweite Mail an dieselbe Adresse; die Seite sagt, warum.
+    // Keine zweite Mail an dieselbe Adresse. Die Antwort ist dieselbe wie bei
+    // einem neuen Eintrag, damit niemand abfragen kann, ob fuer ein Kind schon
+    // eine Zustimmung existiert.
     const prior = existing.docs[0];
     const already = existingConsentReason(
       prior
@@ -86,7 +88,7 @@ export async function POST(request: Request) {
       new Date(),
     );
     if (already) {
-      return NextResponse.json({ ok: true, already });
+      return NextResponse.json({ ok: true });
     }
 
     // Gegen Mail-Spam an fremde Adressen: Eintraege pro Adresse deckeln,

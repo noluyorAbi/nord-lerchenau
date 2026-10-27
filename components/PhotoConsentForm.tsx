@@ -94,7 +94,7 @@ export function PhotoConsentForm({ teams, consentText }: Props) {
     return (
       <div
         role="status"
-        className="rounded-xl border border-nord-line bg-nord-paper-2 p-6"
+        className="consent-result rounded-xl border border-nord-line bg-nord-paper-2 p-6"
       >
         <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold-ink">
           {copy.eyebrow}

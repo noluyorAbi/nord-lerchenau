@@ -128,6 +128,11 @@ check either; it refuses any database that already has tables.
   club decides what to delete; deleting is permanent.
 - Contact form submissions are stored in the `submissions` collection even when
   the mail fails.
+- Photo consents (`photo-consents`): a consent entry is deleted again when its
+  confirmation mail fails, so the parent can retry. Testing on production sends
+  real mail and, on confirm or revoke, mails `info@svnord.de`; a revoke after a
+  confirm sets `hidePhoto` on a real team. Test with `delivered@resend.dev` and
+  reset `hidePhoto` afterwards.
 
 ## Open operational items
 

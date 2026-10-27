@@ -226,8 +226,53 @@ export function datenschutzSections(address: ClubAddress): LegalSection[] {
       ],
     },
     {
-      id: "dritte",
+      id: "mannschaftsfotos",
       num: "08",
+      title: "Mannschaftsfotos und Einwilligung",
+      icon: "user",
+      intro: "Einwilligung der Eltern, online oder auf Papier",
+      blocks: [
+        {
+          kind: "lead",
+          text: "Mannschaftsfotos, auf denen Kinder und Jugendliche zu sehen sind, zeigen wir nur mit Einwilligung der Erziehungsberechtigten. Die Einwilligung kann online unter [Foto-Zustimmung](/foto-zustimmung) oder schriftlich beim Verein erteilt werden. Dabei verarbeiten wir:",
+        },
+        {
+          kind: "ul",
+          items: [
+            "Mannschaft und Name des Kindes",
+            "Name der erziehungsberechtigten Person",
+            "E-Mail-Adresse (bei der Online-Einwilligung)",
+            "den Text, dem zugestimmt wurde, sowie den Zeitpunkt der Einwilligung, der Bestätigung und gegebenenfalls des Widerrufs",
+          ],
+        },
+        {
+          kind: "p",
+          text: "Rechtsgrundlage der Veröffentlichung ist Ihre Einwilligung (Art. 6 Abs. 1 lit. a DSGVO). Die Angaben speichern wir, um die Einwilligung nachweisen zu können (Art. 7 Abs. 1 DSGVO in Verbindung mit Art. 6 Abs. 1 lit. f DSGVO). Zugriff hat nur der Verein über den passwortgeschützten Redaktionsbereich.",
+        },
+        { kind: "h3", text: "Bestätigung per E-Mail" },
+        {
+          kind: "p",
+          text: "Bei der Online-Einwilligung schicken wir eine Bestätigungsmail (Double-Opt-in). Erst nach dem Klick auf den Link darin gilt die Einwilligung; unbestätigte Einträge verwenden wir nicht. Für den Versand nutzen wir **Resend** (siehe Abschnitt Kontaktformular).",
+        },
+        {
+          kind: "p",
+          text: "Fehlt für eine Mannschaft die Einwilligung, blenden wir ihr Mannschaftsfoto aus. Das gilt auch für Fotos, die sonst automatisch von FuPa oder dem BFV angezeigt würden.",
+        },
+        {
+          kind: "callout",
+          tone: "info",
+          title: "Widerruf",
+          text: "Sie können Ihre Einwilligung jederzeit ohne Angabe von Gründen widerrufen, über den Link in der Bestätigungsmail oder per E-Mail an info@svnord.de. Das Mannschaftsfoto blenden wir dann aus. Die Rechtmäßigkeit der bis zum Widerruf erfolgten Veröffentlichung bleibt unberührt (Art. 7 Abs. 3 DSGVO).",
+        },
+        {
+          kind: "p",
+          text: "Die Angaben bewahren wir auf, solange das Foto veröffentlicht ist, und danach nur so lange, wie es für den Nachweis der Einwilligung erforderlich ist.",
+        },
+      ],
+    },
+    {
+      id: "dritte",
+      num: "09",
       title: "Eingebettete Drittanbieter",
       icon: "globe",
       intro: "BFV · FuPa · Karten · Instagram · Social",
@@ -235,7 +280,7 @@ export function datenschutzSections(address: ClubAddress): LegalSection[] {
         { kind: "h3", text: "BFV (Bayerischer Fußball-Verband)" },
         {
           kind: "p",
-          text: "Spielpläne, Tabellen und Kaderlisten beziehen wir über die öffentliche Widget-API des **Bayerischen Fußball-Verbands e. V.** (Brienner Straße 50, 80333 München). Der Abruf erfolgt über unseren Server, Ihre IP-Adresse wird dabei **nicht** an den BFV übermittelt. Klicken Sie auf ein verlinktes BFV-Formular oder eine BFV-Seite, gelten die Datenschutzhinweise des BFV.",
+          text: "Spielpläne, Tabellen und Kaderlisten beziehen wir über die öffentliche Widget-API des **Bayerischen Fußball-Verbands e. V.** (Brienner Straße 50, 80333 München). Der Abruf dieser Daten erfolgt über unseren Server, Ihre IP-Adresse wird dabei **nicht** an den BFV übermittelt. Einzelne **Mannschaftsfotos** aus diesem Angebot lädt Ihr Browser dagegen direkt vom Bildserver von fussball.de; dabei werden Ihre IP-Adresse, Browserkennung und die aufgerufene Seite dorthin übertragen (Art. 6 Abs. 1 lit. f DSGVO, berechtigtes Interesse an der Darstellung der Mannschaften). Klicken Sie auf ein verlinktes BFV-Formular oder eine BFV-Seite, gelten die Datenschutzhinweise des BFV.",
         },
         {
           kind: "linkRow",
@@ -246,7 +291,7 @@ export function datenschutzSections(address: ClubAddress): LegalSection[] {
         { kind: "h3", text: "FuPa" },
         {
           kind: "p",
-          text: "Spielpläne, Tabellen und Kaderdaten beziehen wir über die öffentliche API der **FuPa GmbH** (Peigertinger Str. 9, 94538 Fürstenstein). Diese Daten holt unser Server, Ihre IP-Adresse wird dabei nicht übermittelt. Die **Vereinswappen** der Gegner werden dagegen direkt von den FuPa-Bildservern geladen; dabei werden Ihre IP-Adresse, Browserkennung und die aufgerufene Seite an FuPa übertragen. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Darstellung der Spielinformationen).",
+          text: "Spielpläne, Tabellen und Kaderdaten beziehen wir über die öffentliche API der **FuPa GmbH** (Peigertinger Str. 9, 94538 Fürstenstein). Diese Daten holt unser Server, Ihre IP-Adresse wird dabei nicht übermittelt. Die **Vereinswappen** der Gegner sowie **Mannschafts- und Spielerfotos** werden dagegen direkt von den FuPa-Bildservern geladen; dabei werden Ihre IP-Adresse, Browserkennung und die aufgerufene Seite an FuPa übertragen. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Darstellung der Spielinformationen).",
         },
         {
           kind: "linkRow",
@@ -281,7 +326,7 @@ export function datenschutzSections(address: ClubAddress): LegalSection[] {
     },
     {
       id: "ki-assistent",
-      num: "09",
+      num: "10",
       title: "KI-gestützter Website-Assistent",
       icon: "key",
       intro: "Was passiert mit dem, was du in den Chat tippst",
@@ -314,7 +359,7 @@ export function datenschutzSections(address: ClubAddress): LegalSection[] {
     },
     {
       id: "rechte",
-      num: "10",
+      num: "11",
       title: "Rechte der betroffenen Person",
       icon: "scale",
       intro: "Ihre DSGVO-Rechte gegenüber dem Verein",
@@ -366,7 +411,7 @@ export function datenschutzSections(address: ClubAddress): LegalSection[] {
     },
     {
       id: "tls",
-      num: "11",
+      num: "12",
       title: "SSL-/TLS-Verschlüsselung",
       icon: "lock",
       intro: "Sichere Übertragung vertraulicher Inhalte",

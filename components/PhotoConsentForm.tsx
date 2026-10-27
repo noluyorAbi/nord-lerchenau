@@ -8,33 +8,10 @@ type FieldErrors = Partial<
   Record<"team" | "childName" | "parentName" | "email" | "consent", string[]>
 >;
 
-type Already = "schon-bestaetigt" | "schon-offen" | null;
-
-const SUCCESS_COPY = {
-  neu: {
-    eyebrow: "Fast geschafft",
-    title: "Bitte bestätige die Mail.",
-    body: (email: string) =>
-      `Wir haben einen Link an ${email} geschickt. Erst mit dem Klick darauf gilt die Zustimmung. Der Link ist 7 Tage gültig.`,
-  },
-  "schon-offen": {
-    eyebrow: "Schon eingetragen",
-    title: "Die Mail ist schon unterwegs.",
-    body: (email: string) =>
-      `Für dieses Kind haben wir bereits einen Link an ${email} geschickt. Bitte auch im Spam-Ordner nachsehen. Kommt nichts an, melde dich beim Verein.`,
-  },
-  "schon-bestaetigt": {
-    eyebrow: "Schon erledigt",
-    title: "Die Zustimmung liegt schon vor.",
-    body: () =>
-      "Für dieses Kind gibt es bereits eine bestätigte Zustimmung. Du musst nichts weiter tun.",
-  },
-} as const;
-
 type Status =
   | { state: "idle" }
   | { state: "submitting" }
-  | { state: "success"; email: string; already: Already }
+  | { state: "success"; email: string }
   | { state: "error"; message: string; fieldErrors?: FieldErrors };
 
 export type ConsentTeamOption = { id: number; label: string };
@@ -76,34 +53,33 @@ export function PhotoConsentForm({ teams, consentText }: Props) {
         return;
       }
       form.reset();
-      setStatus({
-        state: "success",
-        email,
-        already:
-          data.already === "schon-offen" || data.already === "schon-bestaetigt"
-            ? data.already
-            : null,
-      });
+      setStatus({ state: "success", email });
     } catch {
       setStatus({ state: "error", message: "Netzwerkfehler." });
     }
   }
 
   if (status.state === "success") {
-    const copy = SUCCESS_COPY[status.already ?? "neu"];
     return (
       <div
         role="status"
         className="consent-result rounded-xl border border-nord-line bg-nord-paper-2 p-6"
       >
         <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-nord-gold-ink">
-          {copy.eyebrow}
+          Fast geschafft
         </div>
         <p className="mt-2 font-display text-xl font-black text-nord-ink">
-          {copy.title}
+          Bitte schau in dein Postfach.
         </p>
         <p className="mt-2 text-sm leading-relaxed text-nord-muted">
-          {copy.body(status.email)}
+          {/* Bewusst dieselbe Antwort, ob neu oder schon vorhanden: sonst
+              verraet die Seite, ob fuer ein Kind eine Zustimmung existiert. */}
+          Wir haben einen Bestätigungslink an{" "}
+          <span className="font-semibold text-nord-ink">{status.email}</span>{" "}
+          geschickt, sofern für dieses Kind nicht schon einer unterwegs ist oder
+          die Zustimmung bereits vorliegt. Erst mit dem Klick gilt sie, der Link
+          ist 7 Tage gültig. Nichts angekommen? Bitte auch im Spam-Ordner
+          nachsehen oder beim Verein melden.
         </p>
         <button
           type="button"

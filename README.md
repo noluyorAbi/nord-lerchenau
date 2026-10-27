@@ -45,7 +45,7 @@ from BFV, fussball.de and FuPa.
   <tr>
     <td align="center" width="20%"><h3>56</h3><sub>pages in the sitemap</sub></td>
     <td align="center" width="20%"><h3>28</h3><sub>teams with their own page</sub></td>
-    <td align="center" width="20%"><h3>9 / 10</h3><sub>Payload collections / globals</sub></td>
+    <td align="center" width="20%"><h3>10 / 10</h3><sub>Payload collections / globals</sub></td>
     <td align="center" width="20%"><h3>143</h3><sub>unit tests, all green</sub></td>
     <td align="center" width="20%"><h3>1</h3><sub>deployment for site and admin</sub></td>
   </tr>
@@ -65,7 +65,7 @@ from BFV, fussball.de and FuPa.
 | CMS       | Payload 3.91, admin at `/admin`, German-only UI          |
 | Database  | Postgres: Neon in production, Docker Postgres 17 locally |
 | Media     | Vercel Blob in production, `public/uploads/` locally     |
-| Mail      | Resend (contact form)                                    |
+| Mail      | Resend (contact form, photo consent)                     |
 | AI        | OpenAI Chat Completions (`/api/chat`, club assistant)    |
 | Tooling   | Bun, Vitest, ESLint, Prettier, husky                     |
 | Hosting   | Vercel                                                   |

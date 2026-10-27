@@ -1,5 +1,11 @@
 import React from "react";
-import { LuCalendarPlus, LuFileText, LuImage, LuInbox } from "react-icons/lu";
+import {
+  LuCalendarPlus,
+  LuFileText,
+  LuImage,
+  LuInbox,
+  LuShieldCheck,
+} from "react-icons/lu";
 import { LuCompass, LuHandshake, LuHouse, LuPhoneCall } from "react-icons/lu";
 
 import DashboardTour from "./tour/DashboardTour";
@@ -100,6 +106,12 @@ const dailyTasks: QuickLink[] = [
     title: "Kontaktanfragen",
     hint: "Posteingang vom Kontaktformular",
     Icon: LuInbox,
+  },
+  {
+    href: "/admin/collections/photo-consents",
+    title: "Foto-Zustimmungen",
+    hint: "Zustimmungen der Eltern zu Mannschaftsfotos",
+    Icon: LuShieldCheck,
   },
   {
     href: "/admin/collections/media",
@@ -214,8 +226,8 @@ export default function WelcomeDashboard() {
         >
           Alles ist in Bereiche aufgeteilt: <strong>1. Inhalte</strong> (News,
           Termine), <strong>2. Sport</strong> (Mannschaften, Spieler),{" "}
-          <strong>3. Verein</strong> (Sponsoren, Kontaktanfragen),{" "}
-          <strong>4. Seiten</strong> (Startseite, Chronik),{" "}
+          <strong>3. Verein</strong> (Sponsoren, Kontaktanfragen,
+          Foto-Zustimmungen), <strong>4. Seiten</strong> (Startseite, Chronik),{" "}
           <strong>5. Einstellungen</strong> (Navigation, Kontaktdaten),{" "}
           <strong>9. System</strong> (Bilder, Logins). Links in der Seitenleiste
           findest du alles wieder.

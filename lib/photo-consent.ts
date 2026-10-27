@@ -129,6 +129,28 @@ export function hidesTeamPhoto(previous: ConsentStatus): boolean {
   return previous === "bestaetigt";
 }
 
+/** Text, der bei einer von Hand erfassten Papier-Einwilligung gespeichert wird. */
+export const PAPER_CONSENT_TEXT =
+  "Schriftliche Einwilligung auf Papier, im Admin von Hand erfasst. Das Original liegt beim Verein (siehe Notizen).";
+
+/**
+ * Datumsfelder, die beim Wechsel des Status gesetzt werden muessen. Gilt fuer
+ * die Links aus der Mail genauso wie fuer eine Aenderung von Hand im Admin:
+ * ohne "Bestaetigt am" fehlt sonst der Nachweis, wann zugestimmt wurde.
+ * Ein schon gesetztes Datum bleibt stehen.
+ */
+export function statusTimestamps(
+  next: ConsentStatus,
+  current: { confirmedAt?: string | null; revokedAt?: string | null },
+  now: Date,
+): { confirmedAt?: string; revokedAt?: string } {
+  if (next === "bestaetigt" && !current.confirmedAt)
+    return { confirmedAt: now.toISOString() };
+  if (next === "widerrufen" && !current.revokedAt)
+    return { revokedAt: now.toISOString() };
+  return {};
+}
+
 /**
  * Ob fuer ein Team ueberhaupt ein Mannschaftsfoto erscheinen darf. Gilt fuer
  * alle Quellen: das hochgeladene Foto im CMS, das FuPa-Foto und das BFV-Bild.

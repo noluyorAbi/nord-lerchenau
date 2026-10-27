@@ -10,6 +10,7 @@ import {
   isPendingExpired,
   PENDING_TTL_MS,
   photoConsentSchema,
+  statusTimestamps,
   teamPhotoAllowed,
   tokenSchema,
 } from "@/lib/photo-consent";
@@ -151,6 +152,28 @@ describe("hidesTeamPhoto", () => {
     expect(hidesTeamPhoto("bestaetigt")).toBe(true);
     expect(hidesTeamPhoto("offen")).toBe(false);
     expect(hidesTeamPhoto("widerrufen")).toBe(false);
+  });
+});
+
+describe("statusTimestamps", () => {
+  const now = new Date("2026-10-27T12:00:00Z");
+  it("stamps the first confirmation and the first revocation", () => {
+    expect(statusTimestamps("bestaetigt", {}, now)).toEqual({
+      confirmedAt: now.toISOString(),
+    });
+    expect(statusTimestamps("widerrufen", {}, now)).toEqual({
+      revokedAt: now.toISOString(),
+    });
+  });
+
+  it("never overwrites an existing date or stamps an open entry", () => {
+    expect(
+      statusTimestamps("bestaetigt", { confirmedAt: "2026-01-01" }, now),
+    ).toEqual({});
+    expect(
+      statusTimestamps("widerrufen", { revokedAt: "2026-01-01" }, now),
+    ).toEqual({});
+    expect(statusTimestamps("offen", {}, now)).toEqual({});
   });
 });
 

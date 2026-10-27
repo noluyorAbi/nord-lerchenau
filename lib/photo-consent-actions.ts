@@ -10,6 +10,7 @@ import {
   type ConsentStatus,
 } from "@/lib/photo-consent";
 import { notifyClub } from "@/lib/photo-consent-mail";
+import { PHOTO_HANDLED } from "@/payload/hooks/photoConsent";
 
 /**
  * Gemeinsamer Ablauf fuer die Bestaetigungs- und Widerrufs-Route. Beide laufen
@@ -96,6 +97,8 @@ export async function handleConsentAction(
     await client.update({
       collection: "photo-consents",
       id: consent.id,
+      // Das Foto ist oben schon ausgeblendet; der Hook muss es nicht nochmal.
+      context: { [PHOTO_HANDLED]: true },
       data:
         decision.next === "bestaetigt"
           ? { status: "bestaetigt", confirmedAt: now.toISOString() }

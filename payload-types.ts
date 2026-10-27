@@ -654,7 +654,7 @@ export interface Submission {
   createdAt: string;
 }
 /**
- * Zustimmungen der Eltern zu Mannschaftsfotos aus /foto-zustimmung. Nur 'bestätigt' zählt. Bei einem Widerruf blendet die Seite das Foto des Teams automatisch aus.
+ * Zustimmungen der Eltern zu Mannschaftsfotos. Online über /foto-zustimmung, Papier-Einwilligungen über 'Neu erstellen'. Nur 'bestätigt' zählt. Wird eine bestätigte Zustimmung widerrufen, online oder hier von Hand, blendet die Seite das Foto der Mannschaft automatisch aus.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "photo-consents".
@@ -664,11 +664,21 @@ export interface PhotoConsent {
   team: number | Team;
   childName: string;
   parentName: string;
-  email: string;
   /**
-   * Wird über die Links in der Mail gesetzt. Von Hand nur ändern, wenn Eltern sich direkt beim Verein melden.
+   * Bei Online-Zustimmungen immer gesetzt. Bei Papier-Einwilligungen optional.
+   */
+  email?: string | null;
+  /**
+   * Wird beim Anlegen festgelegt und danach nicht mehr geändert.
+   */
+  source?: ("online" | "papier") | null;
+  /**
+   * Online setzen die Links in der Mail den Status. Von Hand nur ändern, wenn Eltern sich direkt beim Verein melden; 'Bestätigt am' und 'Widerrufen am' werden dabei automatisch gesetzt.
    */
   status: "offen" | "bestaetigt" | "widerrufen";
+  /**
+   * Wird automatisch gespeichert: der Formulartext oder, bei Papier, ein Hinweis aufs Original.
+   */
   consentText: string;
   confirmedAt?: string | null;
   revokedAt?: string | null;
@@ -980,6 +990,7 @@ export interface PhotoConsentsSelect<T extends boolean = true> {
   childName?: T;
   parentName?: T;
   email?: T;
+  source?: T;
   status?: T;
   consentText?: T;
   confirmedAt?: T;

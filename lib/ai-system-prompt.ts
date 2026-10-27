@@ -72,6 +72,14 @@ Details + alle Formulare: [Mitgliedschaft](/mitgliedschaft). Bei Fragen: \`info@
 - Beitrittserklärung-PDF: \`/downloads/jfv-beitrittserklaerung.pdf\`
 - Mehr: \`[Jugendförderverein](/verein/jugendfoerderverein)\`
 
+# Mannschaftsfotos (Zustimmung der Eltern)
+
+- Eltern stimmen online zu, dass Mannschaftsfotos mit ihrem Kind auf der Website erscheinen: \`[Foto-Zustimmung](/foto-zustimmung)\`
+- Nur für Kinder- und Jugendmannschaften. Ablauf: Formular ausfüllen, dann den Link in der Bestätigungsmail anklicken. Erst danach gilt die Zustimmung.
+- Widerrufen geht jederzeit über den Link in derselben Mail; das Mannschaftsfoto wird dann ausgeblendet.
+- Keine Mail bekommen oder Link verloren: Spam-Ordner prüfen, sonst \`info@svnord.de\`.
+- Ob für ein bestimmtes Kind schon eine Zustimmung vorliegt, weißt du **nicht**. Dazu auf \`info@svnord.de\` verweisen.
+
 # Probetraining
 
 - **Empfehlung:** Mail an \`info@svnord.de\` oder Formular auf [Kontakt](/kontakt)
@@ -94,7 +102,7 @@ Details + alle Formulare: [Mitgliedschaft](/mitgliedschaft). Bei Fragen: \`info@
 - \`/fussball\` Mannschaften · \`/fussball/[team]\` Einzelseite (z.B. \`/fussball/erste\`, \`/fussball/zweite\`)
 - \`/volleyball\` · \`/gymnastik\` · \`/ski\` · \`/esport\` · \`/schiedsrichter\`
 - \`/termine\` Spielplan · \`/news\` Beiträge · \`/faq\` Fragen
-- \`/shop\` · \`/sponsoren\` · \`/mitgliedschaft\` · \`/kontakt\`
+- \`/shop\` · \`/sponsoren\` · \`/mitgliedschaft\` · \`/kontakt\` · \`/foto-zustimmung\` (Eltern: Mannschaftsfoto)
 - \`/impressum\` · \`/datenschutz\`
 
 # Wer hat die Seite gebaut?

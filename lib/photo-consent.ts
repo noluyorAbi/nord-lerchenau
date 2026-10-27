@@ -12,14 +12,18 @@ import { z } from "zod";
  */
 
 // Namen landen in Mails an fremde Adressen: nur Buchstaben, Leerzeichen,
-// Bindestrich, Punkt und Apostroph, damit niemand Links oder Zeilen einschmuggelt.
-const PERSON_NAME = /^\p{L}[\p{L} .'-]*$/u;
+// Bindestrich und Apostroph. Kein Punkt, sonst macht ein Mailprogramm aus
+// "www.beispiel.de" einen klickbaren Link.
+const PERSON_NAME = /^\p{L}[\p{L} '-]*$/u;
 
 /** Nur fuer Kinder- und Jugendteams gibt es eine Elternzustimmung. */
 export const CONSENT_CATEGORIES = ["junioren", "juniorinnen", "bambini"];
 
-/** So viele offene Eintraege darf eine Adresse gleichzeitig haben. */
-export const MAX_PENDING_PER_EMAIL = 5;
+/**
+ * So viele Eintraege darf eine Adresse innerhalb von PENDING_TTL_MS anlegen,
+ * egal in welchem Status. Bestaetigen setzt den Zaehler also nicht zurueck.
+ */
+export const MAX_ENTRIES_PER_EMAIL = 5;
 
 export const photoConsentSchema = z.object({
   team: z.coerce
@@ -95,10 +99,26 @@ export function decideConfirm(
 }
 
 /**
+ * Gibt es fuer dieselbe Mannschaft, Adresse und Kind schon einen Eintrag, der
+ * noch zaehlt, wird nichts neu angelegt. Die Antwort sagt dann, warum.
+ */
+export function existingConsentReason(
+  prior: { status: ConsentStatus; createdAt: string | Date } | undefined,
+  now: Date,
+): "schon-bestaetigt" | "schon-offen" | null {
+  if (!prior) return null;
+  if (prior.status === "bestaetigt") return "schon-bestaetigt";
+  if (prior.status === "offen" && !isPendingExpired(prior.createdAt, now))
+    return "schon-offen";
+  return null;
+}
+
+/**
  * Widerrufen geht aus jedem Zustand ausser "widerrufen". Das Team-Foto blendet
  * nur der Widerruf einer bestaetigten Zustimmung aus (siehe hidesTeamPhoto):
- * sonst koennte jeder mit einem eigenen, nie bestaetigten Eintrag ein Foto
- * abschalten.
+ * ein nie bestaetigter Eintrag schaltet also kein Foto ab. Wer mit eigener
+ * Adresse bestaetigt und dann widerruft, kann es weiterhin. Das faellt sicher
+ * aus (Foto weg statt Foto online), und der Verein bekommt dazu eine Mail.
  */
 export function decideRevoke(status: ConsentStatus): Decision {
   if (status === "widerrufen") return { ok: false, reason: "widerrufen" };

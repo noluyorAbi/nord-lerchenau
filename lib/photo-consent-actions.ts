@@ -80,6 +80,19 @@ export async function handleConsentAction(
     const teamId = team?.id ?? (consent.team as number);
     const teamName = team?.name ?? "Mannschaft";
 
+    if (decision.next === "widerrufen" && hidesTeamPhoto(status)) {
+      // Art. 7 Abs. 3 DSGVO: nach dem Widerruf muss das Foto sofort weg. Der
+      // afterChange-Hook der Teams invalidiert dabei den Seiten-Cache. Das
+      // Ausblenden kommt vor dem Statuswechsel: scheitert es, bleibt der
+      // Eintrag bestaetigt und ein zweiter Klick versucht es erneut.
+      await client.update({
+        collection: "teams",
+        id: teamId,
+        data: { hidePhoto: true },
+        overrideAccess: true,
+      });
+    }
+
     await client.update({
       collection: "photo-consents",
       id: consent.id,
@@ -89,17 +102,6 @@ export async function handleConsentAction(
           : { status: "widerrufen", revokedAt: now.toISOString() },
       overrideAccess: true,
     });
-
-    if (decision.next === "widerrufen" && hidesTeamPhoto(status)) {
-      // Art. 7 Abs. 3 DSGVO: nach dem Widerruf muss das Foto sofort weg. Der
-      // afterChange-Hook der Teams invalidiert dabei den Seiten-Cache.
-      await client.update({
-        collection: "teams",
-        id: teamId,
-        data: { hidePhoto: true },
-        overrideAccess: true,
-      });
-    }
 
     const confirmed = await client.count({
       collection: "photo-consents",

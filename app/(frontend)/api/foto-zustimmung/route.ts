@@ -4,11 +4,12 @@ import { getPayloadClient } from "@/lib/payload";
 import {
   CONSENT_CATEGORIES,
   CONSENT_TEXT,
-  MAX_PENDING_PER_EMAIL,
+  existingConsentReason,
+  MAX_ENTRIES_PER_EMAIL,
   generateToken,
-  isPendingExpired,
   PENDING_TTL_MS,
   photoConsentSchema,
+  type ConsentStatus,
 } from "@/lib/photo-consent";
 import { sendConfirmationRequest } from "@/lib/photo-consent-mail";
 
@@ -76,23 +77,25 @@ export async function POST(request: Request) {
       depth: 0,
       overrideAccess: true,
     });
+    // Keine zweite Mail an dieselbe Adresse; die Seite sagt, warum.
     const prior = existing.docs[0];
-    if (
-      prior &&
-      (prior.status === "bestaetigt" ||
-        !isPendingExpired(prior.createdAt, new Date()))
-    ) {
-      return NextResponse.json({ ok: true });
+    const already = existingConsentReason(
+      prior
+        ? { status: prior.status as ConsentStatus, createdAt: prior.createdAt }
+        : undefined,
+      new Date(),
+    );
+    if (already) {
+      return NextResponse.json({ ok: true, already });
     }
 
-    // Gegen Mail-Spam an fremde Adressen: offene Eintraege pro Adresse deckeln.
-    // Ein echtes Rate-Limit pro IP fehlt noch (siehe PR).
-    const pending = await client.count({
+    // Gegen Mail-Spam an fremde Adressen: Eintraege pro Adresse deckeln,
+    // egal in welchem Status. Ein echtes Rate-Limit pro IP fehlt noch.
+    const recent = await client.count({
       collection: "photo-consents",
       where: {
         and: [
           { email: { equals: email } },
-          { status: { equals: "offen" } },
           {
             createdAt: {
               greater_than: new Date(Date.now() - PENDING_TTL_MS).toISOString(),
@@ -102,12 +105,12 @@ export async function POST(request: Request) {
       },
       overrideAccess: true,
     });
-    if (pending.totalDocs >= MAX_PENDING_PER_EMAIL) {
+    if (recent.totalDocs >= MAX_ENTRIES_PER_EMAIL) {
       return NextResponse.json(
         {
           ok: false,
           error:
-            "Für diese Adresse gibt es schon mehrere unbestätigte Einträge. Bitte zuerst die Mails bestätigen.",
+            "Mit dieser Adresse wurden in den letzten Tagen schon mehrere Zustimmungen eingetragen. Bitte melde dich für weitere direkt beim Verein.",
         },
         { status: 429 },
       );

@@ -93,12 +93,12 @@ export async function notifyClub(
           `Neue bestätigte Foto-Zustimmung: ${data.childName} (${data.teamName}).`,
           `Bestätigte Zustimmungen für dieses Team: ${data.confirmedCount}.`,
           "",
-          "Sind alle Kinder auf dem Foto abgedeckt, kann im Admin bei der Mannschaft das Häkchen 'Mannschaftsfoto ausblenden' raus.",
+          "Die Zahl allein reicht nicht: Bitte die Namen in der Übersicht mit den Kindern auf dem Foto abgleichen. Erst wenn jedes Kind auf dem Foto eine bestätigte Zustimmung hat, kann im Admin bei der Mannschaft das Häkchen 'Mannschaftsfoto ausblenden' raus.",
         ]
       : [
           `Widerruf der Foto-Zustimmung: ${data.childName} (${data.teamName}).`,
           "",
-          "Das Mannschaftsfoto dieses Teams ist ab sofort ausgeblendet ('Mannschaftsfoto ausblenden' wurde gesetzt). Erst wieder einblenden, wenn ein Foto ohne das Kind vorliegt oder alle verbleibenden Eltern zugestimmt haben.",
+          "Das Mannschaftsfoto dieses Teams ist ab sofort ausgeblendet ('Mannschaftsfoto ausblenden' wurde gesetzt). Erst wieder einblenden, wenn ein Foto ohne das Kind vorliegt oder alle verbleibenden Eltern zugestimmt haben. Kommt der Name in der Mannschaft nicht vor, war es vermutlich ein Fehleintrag.",
         ];
   await send(cfg, {
     to: cfg.club,

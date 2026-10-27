@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   decideConfirm,
   decideRevoke,
+  existingConsentReason,
   generateToken,
   hashToken,
   hidesTeamPhoto,
@@ -45,6 +46,7 @@ describe("photoConsentSchema", () => {
   it("rejects links and line breaks in names", () => {
     for (const childName of [
       "https://evil.example",
+      "www.sv-nord-login.de",
       "Max\nKlick hier",
       "Max <b>",
     ]) {
@@ -116,6 +118,31 @@ describe("expiry and decisions", () => {
     expect(decideRevoke("offen").ok).toBe(true);
     expect(decideRevoke("bestaetigt").ok).toBe(true);
     expect(decideRevoke("widerrufen").ok).toBe(false);
+  });
+});
+
+describe("existingConsentReason", () => {
+  const now = new Date("2026-10-26T12:00:00Z");
+  it("reports a confirmed or fresh pending duplicate and ignores the rest", () => {
+    expect(existingConsentReason(undefined, now)).toBeNull();
+    expect(
+      existingConsentReason({ status: "bestaetigt", createdAt: now }, now),
+    ).toBe("schon-bestaetigt");
+    expect(
+      existingConsentReason({ status: "offen", createdAt: now }, now),
+    ).toBe("schon-offen");
+    expect(
+      existingConsentReason(
+        {
+          status: "offen",
+          createdAt: new Date(now.getTime() - PENDING_TTL_MS - 1),
+        },
+        now,
+      ),
+    ).toBeNull();
+    expect(
+      existingConsentReason({ status: "widerrufen", createdAt: now }, now),
+    ).toBeNull();
   });
 });
 

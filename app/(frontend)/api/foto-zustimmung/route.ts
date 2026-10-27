@@ -61,36 +61,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Gleiche Zustimmung schon da (bestaetigt, oder offen und noch gueltig):
-    // nichts neu anlegen und keine zweite Mail an dieselbe Adresse schicken.
-    const existing = await client.find({
-      collection: "photo-consents",
-      where: {
-        and: [
-          { team: { equals: team } },
-          { email: { equals: email } },
-          { childName: { equals: childName } },
-          { status: { not_equals: "widerrufen" } },
-        ],
-      },
-      limit: 1,
-      depth: 0,
-      overrideAccess: true,
-    });
-    // Keine zweite Mail an dieselbe Adresse. Die Antwort ist dieselbe wie bei
-    // einem neuen Eintrag, damit niemand abfragen kann, ob fuer ein Kind schon
-    // eine Zustimmung existiert.
-    const prior = existing.docs[0];
-    const already = existingConsentReason(
-      prior
-        ? { status: prior.status as ConsentStatus, createdAt: prior.createdAt }
-        : undefined,
-      new Date(),
-    );
-    if (already) {
-      return NextResponse.json({ ok: true });
-    }
-
     // Gegen Mail-Spam an fremde Adressen: Eintraege pro Adresse deckeln,
     // egal in welchem Status. Ein echtes Rate-Limit pro IP fehlt noch.
     const recent = await client.count({
@@ -116,6 +86,38 @@ export async function POST(request: Request) {
         },
         { status: 429 },
       );
+    }
+
+    // Gleiche Zustimmung schon da (bestaetigt, oder offen und noch gueltig):
+    // nichts neu anlegen und keine zweite Mail an dieselbe Adresse schicken.
+    const existing = await client.find({
+      collection: "photo-consents",
+      where: {
+        and: [
+          { team: { equals: team } },
+          { email: { equals: email } },
+          { childName: { equals: childName } },
+          { status: { not_equals: "widerrufen" } },
+        ],
+      },
+      limit: 1,
+      depth: 0,
+      overrideAccess: true,
+    });
+    // Keine zweite Mail an dieselbe Adresse. Die Antwort ist dieselbe wie bei
+    // einem neuen Eintrag. Die Obergrenze oben greift vorher, sonst liesse
+    // sich ueber 429 gegen ok abfragen, ob fuer ein Kind schon eine Zustimmung
+    // existiert. Ganz verdeckt ist es nicht: ohne Mailversand antwortet die
+    // Route etwas schneller.
+    const prior = existing.docs[0];
+    const already = existingConsentReason(
+      prior
+        ? { status: prior.status as ConsentStatus, createdAt: prior.createdAt }
+        : undefined,
+      new Date(),
+    );
+    if (already) {
+      return NextResponse.json({ ok: true });
     }
 
     const { token, tokenHash } = generateToken();

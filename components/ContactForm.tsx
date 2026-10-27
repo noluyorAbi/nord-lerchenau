@@ -245,7 +245,7 @@ type FieldProps = {
   autoComplete?: string;
 };
 
-function Field({
+export function Field({
   name,
   label,
   error,

@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { resolveBfvTeamPhoto } from "@/lib/bfv";
 import { getFupaTeamPhoto } from "@/lib/fupa";
+import { teamPhotoAllowed } from "@/lib/photo-consent";
 import { mediaSrc } from "@/lib/publicUploads";
 import type { Person, Team } from "@/payload-types";
 
@@ -26,14 +27,22 @@ export async function TeamCard({ team }: Props) {
   // Reihenfolge: selbst hochgeladenes Foto aus dem Admin (bewusste
   // Vereinsentscheidung) vor dem aktuellen fupa-Mannschaftsfoto, das der
   // Verein dort laufend pflegt, und erst dann das BFV-Bild.
+  // Fehlt die Zustimmung der Eltern, gibt es aus keiner Quelle ein Foto.
+  const photoAllowed = teamPhotoAllowed(team);
   const cmsPhoto =
-    team.photo && typeof team.photo === "object" ? mediaSrc(team.photo) : null;
-  const fupaPhoto = team.fupa
-    ? await getFupaTeamPhoto(team.fupa, new Date(), "512x288")
-    : null;
+    photoAllowed && team.photo && typeof team.photo === "object"
+      ? mediaSrc(team.photo)
+      : null;
+  const fupaPhoto =
+    photoAllowed && team.fupa
+      ? await getFupaTeamPhoto(team.fupa, new Date(), "512x288")
+      : null;
   // BFV nur, wenn dahinter ein echtes Foto liegt und kein Wappen-Ausschnitt.
-  const teamImage =
-    cmsPhoto ?? fupaPhoto?.url ?? (await resolveBfvTeamPhoto(team.bfv?.teamId));
+  const teamImage = photoAllowed
+    ? (cmsPhoto ??
+      fupaPhoto?.url ??
+      (await resolveBfvTeamPhoto(team.bfv?.teamId)))
+    : null;
 
   return (
     <Link

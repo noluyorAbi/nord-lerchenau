@@ -74,6 +74,7 @@ export interface Config {
     fixtures: Fixture;
     sponsors: Sponsor;
     submissions: Submission;
+    "photo-consents": PhotoConsent;
     users: User;
     media: Media;
     "payload-kv": PayloadKv;
@@ -90,6 +91,7 @@ export interface Config {
     fixtures: FixturesSelect<false> | FixturesSelect<true>;
     sponsors: SponsorsSelect<false> | SponsorsSelect<true>;
     submissions: SubmissionsSelect<false> | SubmissionsSelect<true>;
+    "photo-consents": PhotoConsentsSelect<false> | PhotoConsentsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     "payload-kv": PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -486,6 +488,10 @@ export interface Team {
    */
   photo?: (number | null) | Media;
   /**
+   * Häkchen setzen, solange nicht alle Eltern zugestimmt haben (siehe '3. Verein → Foto-Zustimmungen'). Dann zeigt die Seite für dieses Team gar kein Mannschaftsfoto, auch keins von FuPa oder BFV. Ein Widerruf setzt das Häkchen automatisch.
+   */
+  hidePhoto?: boolean | null;
+  /**
    * z.B. BFV Spielplan, Tabelle, externe Seiten.
    */
   externalLinks?:
@@ -648,6 +654,33 @@ export interface Submission {
   createdAt: string;
 }
 /**
+ * Zustimmungen der Eltern zu Mannschaftsfotos aus /foto-zustimmung. Nur 'bestätigt' zählt. Bei einem Widerruf blendet die Seite das Foto des Teams automatisch aus.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "photo-consents".
+ */
+export interface PhotoConsent {
+  id: number;
+  team: number | Team;
+  childName: string;
+  parentName: string;
+  email: string;
+  /**
+   * Wird über die Links in der Mail gesetzt. Von Hand nur ändern, wenn Eltern sich direkt beim Verein melden.
+   */
+  status: "offen" | "bestaetigt" | "widerrufen";
+  consentText: string;
+  confirmedAt?: string | null;
+  revokedAt?: string | null;
+  tokenHash: string;
+  /**
+   * Nur für Vereins-Admins sichtbar.
+   */
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Login-Konten für das Admin-Panel. Login per Benutzername (E-Mail funktioniert weiterhin). Hier weitere Admins anlegen oder Passwörter ändern.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -667,6 +700,7 @@ export interface User {
   resetPasswordExpiration?: string | null;
   salt?: string | null;
   hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
   loginAttempts?: number | null;
   lockUntil?: string | null;
   sessions?:
@@ -730,6 +764,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: "submissions";
         value: number | Submission;
+      } | null)
+    | ({
+        relationTo: "photo-consents";
+        value: number | PhotoConsent;
       } | null)
     | ({
         relationTo: "users";
@@ -872,6 +910,7 @@ export interface TeamsSelect<T extends boolean = true> {
   trainers?: T;
   description?: T;
   photo?: T;
+  hidePhoto?: T;
   externalLinks?:
     | T
     | {
@@ -934,6 +973,24 @@ export interface SubmissionsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "photo-consents_select".
+ */
+export interface PhotoConsentsSelect<T extends boolean = true> {
+  team?: T;
+  childName?: T;
+  parentName?: T;
+  email?: T;
+  status?: T;
+  consentText?: T;
+  confirmedAt?: T;
+  revokedAt?: T;
+  tokenHash?: T;
+  notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
@@ -946,6 +1003,7 @@ export interface UsersSelect<T extends boolean = true> {
   resetPasswordExpiration?: T;
   salt?: T;
   hash?: T;
+  resetPasswordRequestedAt?: T;
   loginAttempts?: T;
   lockUntil?: T;
   sessions?:

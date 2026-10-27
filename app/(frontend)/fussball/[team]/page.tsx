@@ -24,6 +24,7 @@ import {
 } from "@/lib/fupa";
 import { formatKickoff } from "@/lib/format-date";
 import { getPayloadClient } from "@/lib/payload";
+import { teamPhotoAllowed } from "@/lib/photo-consent";
 import { mediaSrc } from "@/lib/publicUploads";
 import type { Person } from "@/payload-types";
 
@@ -99,11 +100,18 @@ export default async function TeamPage({ params }: Props) {
   const liveFupaSlug = team.fupa ? await resolveLiveFupaSlug(team.fupa) : null;
   const hasFupaMeta = Boolean(newestStoredFupaSlug(team.fupa ?? null));
   // BFV nur, wenn dahinter ein echtes Foto liegt und kein Wappen-Ausschnitt.
-  const bfvTeamImage = await resolveBfvTeamPhoto(bfv?.teamId);
+  // Fehlt die Zustimmung der Eltern, gibt es aus keiner Quelle ein Foto.
+  const photoAllowed = teamPhotoAllowed(team);
+  const bfvTeamImage = photoAllowed
+    ? await resolveBfvTeamPhoto(bfv?.teamId)
+    : null;
   const cmsPhoto =
-    team.photo && typeof team.photo === "object" ? mediaSrc(team.photo) : null;
+    photoAllowed && team.photo && typeof team.photo === "object"
+      ? mediaSrc(team.photo)
+      : null;
   // Aktuellstes Mannschaftsfoto von fupa (16:9, Platzhalter ausgefiltert).
-  const fupaPhoto = team.fupa ? await getFupaTeamPhoto(team.fupa) : null;
+  const fupaPhoto =
+    photoAllowed && team.fupa ? await getFupaTeamPhoto(team.fupa) : null;
   // Reihenfolge: selbst hochgeladenes Foto aus dem Admin, dann das laufend
   // gepflegte fupa-Mannschaftsfoto, zuletzt das BFV-Bild.
   const hero = cmsPhoto

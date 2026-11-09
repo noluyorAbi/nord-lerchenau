@@ -65,6 +65,17 @@ export function MapEmbed({
       const maplibre = await import("maplibre-gl");
       if (cancelled) return;
 
+      // maplibre-gl 6 sucht seinen Worker neben dem eigenen Modul
+      // (import.meta.url). Next buendelt das Modul in einen Chunk, dort liegt
+      // kein Worker, die Karte bliebe leer ("Worker failed to load"). Das
+      // Bundler-Asset liefert den (eigenstaendigen) Worker unter eigener URL.
+      maplibre.setWorkerUrl(
+        new URL(
+          "../node_modules/maplibre-gl/dist/maplibre-gl-worker.mjs",
+          import.meta.url,
+        ).href,
+      );
+
       map = new maplibre.Map({
         container: host,
         style: STYLES[variant],

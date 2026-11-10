@@ -1,6 +1,14 @@
 import type { CollectionConfig } from "payload";
 
 import { authenticated } from "../access/authenticated";
+import {
+  CLUB_CHANGE,
+  EXPERIENCE,
+  PLAYED_BEFORE,
+} from "../../lib/contact-topics";
+
+const isProbetraining = (data: { birthYear?: number | null }) =>
+  data.birthYear != null;
 
 export const Submissions: CollectionConfig = {
   slug: "submissions",
@@ -10,7 +18,7 @@ export const Submissions: CollectionConfig = {
   },
   admin: {
     useAsTitle: "name",
-    defaultColumns: ["name", "email", "createdAt", "handled"],
+    defaultColumns: ["name", "subject", "birthYear", "createdAt", "handled"],
     description:
       "Nachrichten aus dem Kontaktformular. Häkchen 'Erledigt' setzen, wenn beantwortet.",
     group: "3. Verein",
@@ -31,6 +39,44 @@ export const Submissions: CollectionConfig = {
     { name: "address", type: "textarea", required: true, label: "Adresse" },
     { name: "subject", type: "text", required: true, label: "Betreff" },
     { name: "message", type: "textarea", required: true, label: "Nachricht" },
+    // Zusatzangaben aus dem Probetraining-Formular. Fuer andere Anliegen leer
+    // und im Admin ausgeblendet. Nur das Geburtsjahr, nie das volle Datum.
+    {
+      name: "birthYear",
+      type: "number",
+      label: "Jahrgang",
+      admin: {
+        condition: isProbetraining,
+        description: "Geburtsjahr des Spielers, zum Zuordnen zum Trainer.",
+      },
+    },
+    {
+      name: "playedBefore",
+      type: "select",
+      label: "Schon Fußball gespielt?",
+      options: PLAYED_BEFORE.map((o) => ({ ...o })),
+      admin: { condition: isProbetraining },
+    },
+    {
+      name: "experience",
+      type: "select",
+      label: "Spielerfahrung",
+      options: EXPERIENCE.map((o) => ({ ...o })),
+      admin: { condition: isProbetraining },
+    },
+    {
+      name: "clubChange",
+      type: "select",
+      label: "Vereinswechsel?",
+      options: CLUB_CHANGE.map((o) => ({ ...o })),
+      admin: { condition: isProbetraining },
+    },
+    {
+      name: "currentClub",
+      type: "text",
+      label: "Aktueller Verein",
+      admin: { condition: isProbetraining },
+    },
     {
       name: "handled",
       type: "checkbox",

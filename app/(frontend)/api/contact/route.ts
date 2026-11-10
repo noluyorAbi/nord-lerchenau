@@ -1,7 +1,13 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
-import { contactSchema } from "@/lib/contact-schema";
+import { contactSchema, probetrainingDetails } from "@/lib/contact-schema";
+import {
+  CLUB_CHANGE,
+  EXPERIENCE,
+  PLAYED_BEFORE,
+  labelFor,
+} from "@/lib/contact-topics";
 import { getPayloadClient } from "@/lib/payload";
 
 export async function POST(request: Request) {
@@ -33,12 +39,13 @@ export async function POST(request: Request) {
   }
 
   const { name, email, phone, address, subject, message } = parsed.data;
+  const training = probetrainingDetails(parsed.data);
 
   try {
     const client = await getPayloadClient();
     await client.create({
       collection: "submissions",
-      data: { name, email, phone, address, subject, message },
+      data: { name, email, phone, address, subject, message, ...training },
       overrideAccess: true,
     });
   } catch (err) {
@@ -73,6 +80,21 @@ export async function POST(request: Request) {
           phone ? `Telefon: ${phone}` : null,
           address ? `Adresse: ${address}` : null,
           subject ? `Betreff: ${subject}` : null,
+          ...(training
+            ? [
+                `Jahrgang: ${training.birthYear}`,
+                `Schon Fußball gespielt: ${labelFor(PLAYED_BEFORE, training.playedBefore)}`,
+                training.experience
+                  ? `Spielerfahrung: ${labelFor(EXPERIENCE, training.experience)}`
+                  : null,
+                training.clubChange
+                  ? `Vereinswechsel: ${labelFor(CLUB_CHANGE, training.clubChange)}`
+                  : null,
+                training.currentClub
+                  ? `Aktueller Verein: ${training.currentClub}`
+                  : null,
+              ]
+            : []),
           "",
           message,
         ]

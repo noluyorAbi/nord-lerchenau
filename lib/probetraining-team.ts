@@ -114,7 +114,8 @@ export function suggestTeam(
       return {
         title: "Senioren B (Ü40)",
         note: base,
-        alternative: "Auch bei Senioren A (Ü32) kannst du mittrainieren.",
+        alternative:
+          "Bei Interesse klärt der Trainer gern, ob auch Senioren A (Ü32) infrage kommt.",
       };
     }
     if (u >= 32) {
@@ -124,7 +125,7 @@ export function suggestTeam(
         // Bis 36 spielen viele noch bei den Herren mit.
         alternative:
           u <= 36
-            ? "Bei Interesse besprechen wir gern, ob auch die Herren (1., 2. oder 3. Mannschaft) infrage kommen."
+            ? "Bei Interesse klärt der Trainer gern, ob auch die Herren (1., 2. oder 3. Mannschaft) infrage kommen."
             : undefined,
       };
     }

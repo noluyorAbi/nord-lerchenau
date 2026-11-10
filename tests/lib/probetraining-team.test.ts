@@ -5,6 +5,7 @@ import {
   seasonEndYear,
   seasonLabel,
   suggestTeam,
+  tooYoungMessage,
 } from "@/lib/probetraining-team";
 
 // Spieljahr 2026/27: es endet 2027, "U" = 2027 minus Geburtsjahr.
@@ -122,5 +123,20 @@ describe("suggestTeam: Mädchen", () => {
       const s = suggestTeam(year, "spielerin", NOV_2026);
       expect(s?.personal).toBe(true);
     }
+  });
+});
+
+describe("tooYoungMessage", () => {
+  it("explains the minimum age for the Fußballkindergarten", () => {
+    expect(tooYoungMessage(2024, NOV_2026)).toContain("mindestens 4 Jahre");
+    expect(tooYoungMessage(2024, NOV_2026)).toContain("Jahrgang 2023");
+    expect(tooYoungMessage(2026, NOV_2026)).toContain("mindestens 4 Jahre");
+  });
+
+  it("stays silent for old enough children and for typos", () => {
+    expect(tooYoungMessage(2023, NOV_2026)).toBeNull();
+    expect(tooYoungMessage(2014, NOV_2026)).toBeNull();
+    // Geburtsjahr in der Zukunft: Tippfehler, kein "zu jung"
+    expect(tooYoungMessage(2030, NOV_2026)).toBeNull();
   });
 });

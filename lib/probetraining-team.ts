@@ -49,6 +49,20 @@ export function birthYearRange(now: Date = new Date()) {
   return { min: BIRTH_YEAR_MIN, max: seasonEndYear(now) - YOUNGEST_U };
 }
 
+/**
+ * Hinweis fuer Kinder, die fuer den Fussballkindergarten zu jung sind, sonst
+ * null. Ein Geburtsjahr in der Zukunft ist ein Tippfehler und kein "zu jung".
+ */
+export function tooYoungMessage(
+  birthYear: number,
+  now: Date = new Date(),
+): string | null {
+  const { max } = birthYearRange(now);
+  if (!Number.isInteger(birthYear) || birthYear <= max) return null;
+  if (birthYear > berlinYearMonth(now).year) return null;
+  return `Für den Fußballkindergarten müssen Kinder mindestens 4 Jahre alt sein (Jahrgang ${max} oder älter).`;
+}
+
 export type TeamSuggestion = {
   /** Name der Mannschaft, wird auch gespeichert. */
   title: string;
@@ -110,7 +124,7 @@ export function suggestTeam(
         // Bis 36 spielen viele noch bei den Herren mit.
         alternative:
           u <= 36
-            ? "Auch bei den Herren (1., 2. oder 3. Mannschaft) kannst du mittrainieren."
+            ? "Bei Interesse besprechen wir gern, ob auch die Herren (1., 2. oder 3. Mannschaft) infrage kommen."
             : undefined,
       };
     }

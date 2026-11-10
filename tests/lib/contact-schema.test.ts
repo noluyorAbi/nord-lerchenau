@@ -50,6 +50,11 @@ describe("contactSchema", () => {
     expect(withYear("abc")).toBeDefined();
     expect(withYear(String(latestYear + 1))).toBeDefined();
     expect(withYear(String(latestYear))).toBeUndefined();
+    // Zu junge Kinder bekommen den Hinweis zum Mindestalter.
+    expect(withYear(String(latestYear + 1))?.[0]).toContain(
+      "mindestens 4 Jahre",
+    );
+    expect(withYear("1900")?.[0]).not.toContain("mindestens 4 Jahre");
     expect(withYear("2014")).toBeUndefined();
   });
 

@@ -12,7 +12,11 @@ import {
   isProbetrainingTopic,
   type PlayerGender,
 } from "@/lib/contact-topics";
-import { suggestTeam, type TeamSuggestion } from "@/lib/probetraining-team";
+import {
+  suggestTeam,
+  tooYoungMessage,
+  type TeamSuggestion,
+} from "@/lib/probetraining-team";
 
 type FieldErrors = Partial<{
   name: string[];
@@ -56,6 +60,10 @@ export function ContactForm({ defaultSubject }: Props) {
   const [playedBefore, setPlayedBefore] = useState("");
   const [clubChange, setClubChange] = useState("");
   const isProbetraining = isProbetrainingTopic(topic);
+  const tooYoung =
+    isProbetraining && /^\d{4}$/.test(birthYear)
+      ? tooYoungMessage(Number(birthYear))
+      : null;
   const suggestion =
     isProbetraining && /^\d{4}$/.test(birthYear) && playerGender
       ? suggestTeam(Number(birthYear), playerGender as PlayerGender)
@@ -200,6 +208,14 @@ export function ContactForm({ defaultSubject }: Props) {
             error={fieldErrors?.playerGender?.[0]}
             required
           />
+          {tooYoung ? (
+            <p
+              role="status"
+              className="form-reveal rounded-lg border border-nord-navy-2/30 bg-white px-4 py-3 text-sm leading-relaxed text-nord-ink"
+            >
+              {tooYoung}
+            </p>
+          ) : null}
           {suggestion ? <TeamHint suggestion={suggestion} /> : null}
           <RadioGroup
             name="playedBefore"

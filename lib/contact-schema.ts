@@ -11,7 +11,7 @@ import {
   type PlayedBefore,
   type PlayerGender,
 } from "@/lib/contact-topics";
-import { birthYearRange } from "@/lib/probetraining-team";
+import { birthYearRange, tooYoungMessage } from "@/lib/probetraining-team";
 
 /** Leere Eingaben aus dem Formular gelten als "nicht angegeben". */
 const blankToUndefined = (value: unknown) =>
@@ -69,7 +69,8 @@ export const contactSchema = z
     } else if (data.birthYear < min || data.birthYear > max) {
       need(
         "birthYear",
-        `Bitte ein Geburtsjahr zwischen ${min} und ${max} angeben`,
+        tooYoungMessage(data.birthYear) ??
+          `Bitte ein Geburtsjahr zwischen ${min} und ${max} angeben`,
       );
     }
 

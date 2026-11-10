@@ -6,8 +6,10 @@ import {
   CLUB_CHANGE,
   EXPERIENCE,
   PLAYED_BEFORE,
+  PLAYER_GENDER,
   labelFor,
 } from "@/lib/contact-topics";
+import { suggestTeam } from "@/lib/probetraining-team";
 import { getPayloadClient } from "@/lib/payload";
 
 export async function POST(request: Request) {
@@ -40,12 +42,26 @@ export async function POST(request: Request) {
 
   const { name, email, phone, address, subject, message } = parsed.data;
   const training = probetrainingDetails(parsed.data);
+  // Der Vorschlag wird hier berechnet und gespeichert, nicht vom Browser
+  // uebernommen: so steht in der Anfrage, was zum Zeitpunkt des Absendens galt.
+  const suggestedTeam = training
+    ? suggestTeam(training.birthYear, training.playerGender)?.title
+    : undefined;
 
   try {
     const client = await getPayloadClient();
     await client.create({
       collection: "submissions",
-      data: { name, email, phone, address, subject, message, ...training },
+      data: {
+        name,
+        email,
+        phone,
+        address,
+        subject,
+        message,
+        ...training,
+        suggestedTeam,
+      },
       overrideAccess: true,
     });
   } catch (err) {
@@ -82,7 +98,10 @@ export async function POST(request: Request) {
           subject ? `Betreff: ${subject}` : null,
           ...(training
             ? [
-                `Jahrgang: ${training.birthYear}`,
+                `Jahrgang: ${training.birthYear} (${labelFor(PLAYER_GENDER, training.playerGender)})`,
+                suggestedTeam
+                  ? `Vorgeschlagene Mannschaft: ${suggestedTeam}`
+                  : null,
                 `Schon Fußball gespielt: ${labelFor(PLAYED_BEFORE, training.playedBefore)}`,
                 training.experience
                   ? `Spielerfahrung: ${labelFor(EXPERIENCE, training.experience)}`

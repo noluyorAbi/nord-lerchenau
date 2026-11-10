@@ -4,10 +4,10 @@
  * dieselbe Quelle, damit die Texte nicht auseinanderlaufen.
  */
 
+export const PROBETRAINING = "Probetraining";
+
 export const TOPICS = [
-  "Probetraining · Großfeld (Herren)",
-  "Probetraining · Großfeld (Damen)",
-  "Probetraining · Kleinfeld (Jugend)",
+  PROBETRAINING,
   "Mitgliedschaft",
   "Vereinsheim / Veranstaltung",
   "Sponsoring",
@@ -15,8 +15,13 @@ export const TOPICS = [
 ] as const;
 
 export function isProbetrainingTopic(topic: string | undefined | null) {
-  return typeof topic === "string" && topic.startsWith("Probetraining");
+  return typeof topic === "string" && topic.startsWith(PROBETRAINING);
 }
+
+export const PLAYER_GENDER = [
+  { value: "spielerin", label: "Spielerin" },
+  { value: "spieler", label: "Spieler" },
+] as const;
 
 export const PLAYED_BEFORE = [
   { value: "ja", label: "Ja" },
@@ -37,10 +42,15 @@ export const CLUB_CHANGE = [
   { value: "ohne-verein", label: "Ich spiele zurzeit in keinem Verein" },
 ] as const;
 
+export type PlayerGender = (typeof PLAYER_GENDER)[number]["value"];
 export type PlayedBefore = (typeof PLAYED_BEFORE)[number]["value"];
 export type Experience = (typeof EXPERIENCE)[number]["value"];
 export type ClubChange = (typeof CLUB_CHANGE)[number]["value"];
 
+export const PLAYER_GENDER_VALUES = PLAYER_GENDER.map((o) => o.value) as [
+  PlayerGender,
+  ...PlayerGender[],
+];
 export const PLAYED_BEFORE_VALUES = PLAYED_BEFORE.map((o) => o.value) as [
   PlayedBefore,
   ...PlayedBefore[],
@@ -62,7 +72,3 @@ export function labelFor<V extends string>(
 ): string | undefined {
   return options.find((o) => o.value === value)?.label;
 }
-
-/** Aelteste und juengste plausible Jahrgaenge (Herren bis Bambini). */
-export const BIRTH_YEAR_MIN = 1940;
-export const BIRTH_YEAR_MAX_AGE = 3;

@@ -1,11 +1,14 @@
 -- Schema fuer die Zusatzangaben im Probetraining-Formular.
 --
 -- Found by diffing `pg_dump -s` of the schema main creates against the one
--- this branch creates, both in an empty throwaway database. Five new nullable
--- columns on `submissions` and the three enum types behind the select fields,
+-- this branch creates, both in an empty throwaway database. Seven new nullable
+-- columns on `submissions` and the four enum types behind the select fields,
 -- nothing else:
 --
 --   birth_year    Geburtsjahr des Spielers (nur das Jahr, nie das volle Datum)
+--   player_gender "spielerin" | "spieler"
+--   suggested_team Vorgeschlagene Mannschaft, vom Server aus Geburtsjahr und
+--                  Datum berechnet (nur ein Vorschlag)
 --   played_before "ja" | "nein"
 --   experience    "unter-1-jahr" | "1-2-jahre" | "3-5-jahre" | "ueber-5-jahre"
 --   club_change   "ja" | "nein" | "ohne-verein"
@@ -21,6 +24,15 @@
 -- Check: psql "$DATABASE_URI" -c "\d submissions"
 
 BEGIN;
+
+DO $$
+BEGIN
+  CREATE TYPE public.enum_submissions_player_gender AS ENUM (
+    'spielerin',
+    'spieler'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 DO $$
 BEGIN
@@ -51,6 +63,8 @@ END $$;
 
 ALTER TABLE submissions
   ADD COLUMN IF NOT EXISTS birth_year numeric,
+  ADD COLUMN IF NOT EXISTS player_gender public.enum_submissions_player_gender,
+  ADD COLUMN IF NOT EXISTS suggested_team character varying,
   ADD COLUMN IF NOT EXISTS played_before public.enum_submissions_played_before,
   ADD COLUMN IF NOT EXISTS experience public.enum_submissions_experience,
   ADD COLUMN IF NOT EXISTS club_change public.enum_submissions_club_change,

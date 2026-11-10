@@ -5,6 +5,7 @@ import {
   CLUB_CHANGE,
   EXPERIENCE,
   PLAYED_BEFORE,
+  PLAYER_GENDER,
 } from "../../lib/contact-topics";
 
 const isProbetraining = (data: { birthYear?: number | null }) =>
@@ -48,6 +49,24 @@ export const Submissions: CollectionConfig = {
       admin: {
         condition: isProbetraining,
         description: "Geburtsjahr des Spielers, zum Zuordnen zum Trainer.",
+      },
+    },
+    {
+      name: "playerGender",
+      type: "select",
+      label: "Spielerin / Spieler",
+      options: PLAYER_GENDER.map((o) => ({ ...o })),
+      admin: { condition: isProbetraining },
+    },
+    {
+      name: "suggestedTeam",
+      type: "text",
+      label: "Vorgeschlagene Mannschaft",
+      admin: {
+        condition: isProbetraining,
+        readOnly: true,
+        description:
+          "Aus Geburtsjahr und Datum der Anfrage berechnet (Spieljahr ab 1. Juli), nur ein Vorschlag.",
       },
     },
     {

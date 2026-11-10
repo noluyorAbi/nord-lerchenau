@@ -646,6 +646,11 @@ export interface Submission {
    * Geburtsjahr des Spielers, zum Zuordnen zum Trainer.
    */
   birthYear?: number | null;
+  playerGender?: ("spielerin" | "spieler") | null;
+  /**
+   * Aus Geburtsjahr und Datum der Anfrage berechnet (Spieljahr ab 1. Juli), nur ein Vorschlag.
+   */
+  suggestedTeam?: string | null;
   playedBefore?: ("ja" | "nein") | null;
   experience?: ("unter-1-jahr" | "1-2-jahre" | "3-5-jahre" | "ueber-5-jahre") | null;
   clubChange?: ("ja" | "nein" | "ohne-verein") | null;
@@ -985,6 +990,8 @@ export interface SubmissionsSelect<T extends boolean = true> {
   subject?: T;
   message?: T;
   birthYear?: T;
+  playerGender?: T;
+  suggestedTeam?: T;
   playedBefore?: T;
   experience?: T;
   clubChange?: T;

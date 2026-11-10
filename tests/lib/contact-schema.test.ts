@@ -1,17 +1,19 @@
 import { describe, expect, it } from "vitest";
 
 import { contactSchema, probetrainingDetails } from "@/lib/contact-schema";
+import { seasonEndYear } from "@/lib/probetraining-team";
 
 const base = {
   name: "Max Muster",
   email: "max@example.de",
   phone: "0891234567",
   address: "Musterstraße 1, 80995 München",
-  subject: "Probetraining · Kleinfeld (Jugend)",
+  subject: "Probetraining · Anfrage",
   message: "Mein Sohn möchte gern mittrainieren.",
 };
-const training = { ...base, topic: "Probetraining · Kleinfeld (Jugend)" };
-const year = new Date().getFullYear();
+const training = { ...base, topic: "Probetraining" };
+const player = { birthYear: "2014", playerGender: "spieler" };
+const latestYear = seasonEndYear() - 4;
 
 function errors(input: unknown) {
   const r = contactSchema.safeParse(input);
@@ -25,51 +27,43 @@ describe("contactSchema", () => {
     ).toBe(true);
   });
 
-  it("ignores training fields for other topics", () => {
-    const r = contactSchema.safeParse({
-      ...base,
-      topic: "Sponsoring",
-      birthYear: "abc",
-    });
-    // Ein kaputtes Geburtsjahr ist trotzdem ungueltig, aber ein leeres nicht.
-    expect(r.success).toBe(false);
+  it("ignores empty training fields for other topics", () => {
     expect(
       contactSchema.safeParse({ ...base, topic: "Sponsoring", birthYear: "" })
         .success,
     ).toBe(true);
   });
 
-  it("requires birth year and the played-before answer for a Probetraining", () => {
+  it("requires birth year, gender and the played-before answer for a Probetraining", () => {
     const e = errors(training);
     expect(e.birthYear).toBeDefined();
+    expect(e.playerGender).toBeDefined();
     expect(e.playedBefore).toBeDefined();
   });
 
   it("rejects implausible birth years", () => {
-    expect(
-      errors({ ...training, birthYear: "1900", playedBefore: "nein" })
-        .birthYear,
-    ).toBeDefined();
-    expect(
-      errors({ ...training, birthYear: String(year), playedBefore: "nein" })
-        .birthYear,
-    ).toBeDefined();
-    expect(
-      errors({ ...training, birthYear: "2014", playedBefore: "nein" }),
-    ).toEqual({});
+    const withYear = (birthYear: string) =>
+      errors({ ...training, ...player, birthYear, playedBefore: "nein" })
+        .birthYear;
+
+    expect(withYear("1900")).toBeDefined();
+    expect(withYear("abc")).toBeDefined();
+    expect(withYear(String(latestYear + 1))).toBeDefined();
+    expect(withYear(String(latestYear))).toBeUndefined();
+    expect(withYear("2014")).toBeUndefined();
   });
 
   it("accepts a player who never played, without club details", () => {
     const r = contactSchema.safeParse({
       ...training,
-      birthYear: "2014",
+      ...player,
       playedBefore: "nein",
     });
     expect(r.success).toBe(true);
   });
 
   it("asks for experience and club situation when the player played before", () => {
-    const e = errors({ ...training, birthYear: "2014", playedBefore: "ja" });
+    const e = errors({ ...training, ...player, playedBefore: "ja" });
     expect(e.experience).toBeDefined();
     expect(e.clubChange).toBeDefined();
   });
@@ -77,7 +71,7 @@ describe("contactSchema", () => {
   it("requires the current club only when the player wants to change", () => {
     const ja = {
       ...training,
-      birthYear: "2014",
+      ...player,
       playedBefore: "ja",
       experience: "3-5-jahre",
       clubChange: "ja",
@@ -98,7 +92,7 @@ describe("probetrainingDetails", () => {
   it("drops club details when the player never played", () => {
     const data = contactSchema.parse({
       ...training,
-      birthYear: "2014",
+      ...player,
       playedBefore: "nein",
       experience: "3-5-jahre",
       clubChange: "ja",
@@ -106,6 +100,7 @@ describe("probetrainingDetails", () => {
     });
     expect(probetrainingDetails(data)).toEqual({
       birthYear: 2014,
+      playerGender: "spieler",
       playedBefore: "nein",
     });
   });
@@ -113,7 +108,7 @@ describe("probetrainingDetails", () => {
   it("keeps the club only for a wanted change", () => {
     const wants = contactSchema.parse({
       ...training,
-      birthYear: "2014",
+      ...player,
       playedBefore: "ja",
       experience: "1-2-jahre",
       clubChange: "ja",
@@ -121,6 +116,7 @@ describe("probetrainingDetails", () => {
     });
     expect(probetrainingDetails(wants)).toEqual({
       birthYear: 2014,
+      playerGender: "spieler",
       playedBefore: "ja",
       experience: "1-2-jahre",
       clubChange: "ja",
@@ -129,7 +125,7 @@ describe("probetrainingDetails", () => {
 
     const stays = contactSchema.parse({
       ...training,
-      birthYear: "2014",
+      ...player,
       playedBefore: "ja",
       experience: "1-2-jahre",
       clubChange: "nein",

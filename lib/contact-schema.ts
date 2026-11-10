@@ -1,16 +1,17 @@
 import { z } from "zod";
 
 import {
-  BIRTH_YEAR_MAX_AGE,
-  BIRTH_YEAR_MIN,
   CLUB_CHANGE_VALUES,
   EXPERIENCE_VALUES,
   PLAYED_BEFORE_VALUES,
+  PLAYER_GENDER_VALUES,
   isProbetrainingTopic,
   type ClubChange,
   type Experience,
   type PlayedBefore,
+  type PlayerGender,
 } from "@/lib/contact-topics";
+import { birthYearRange } from "@/lib/probetraining-team";
 
 /** Leere Eingaben aus dem Formular gelten als "nicht angegeben". */
 const blankToUndefined = (value: unknown) =>
@@ -35,6 +36,10 @@ export const contactSchema = z
         .int("Bitte das Geburtsjahr als Zahl angeben")
         .optional(),
     ),
+    playerGender: z.preprocess(
+      blankToUndefined,
+      z.enum(PLAYER_GENDER_VALUES).optional(),
+    ),
     playedBefore: z.preprocess(
       blankToUndefined,
       z.enum(PLAYED_BEFORE_VALUES).optional(),
@@ -58,15 +63,17 @@ export const contactSchema = z
     const need = (path: keyof typeof data, message: string) =>
       ctx.addIssue({ code: "custom", path: [path], message });
 
-    const maxYear = new Date().getFullYear() - BIRTH_YEAR_MAX_AGE;
+    const { min, max } = birthYearRange();
     if (data.birthYear === undefined) {
       need("birthYear", "Bitte das Geburtsjahr angeben");
-    } else if (data.birthYear < BIRTH_YEAR_MIN || data.birthYear > maxYear) {
+    } else if (data.birthYear < min || data.birthYear > max) {
       need(
         "birthYear",
-        `Bitte ein Geburtsjahr zwischen ${BIRTH_YEAR_MIN} und ${maxYear} angeben`,
+        `Bitte ein Geburtsjahr zwischen ${min} und ${max} angeben`,
       );
     }
+
+    if (!data.playerGender) need("playerGender", "Bitte auswählen");
 
     if (!data.playedBefore) {
       need("playedBefore", "Bitte auswählen");
@@ -88,6 +95,7 @@ export type ContactInput = z.infer<typeof contactSchema>;
 
 export type ProbetrainingDetails = {
   birthYear: number;
+  playerGender: PlayerGender;
   playedBefore: PlayedBefore;
   experience?: Experience;
   clubChange?: ClubChange;
@@ -103,10 +111,17 @@ export function probetrainingDetails(
   data: ContactInput,
 ): ProbetrainingDetails | null {
   if (!isProbetrainingTopic(data.topic)) return null;
-  if (data.birthYear === undefined || !data.playedBefore) return null;
+  if (
+    data.birthYear === undefined ||
+    !data.playerGender ||
+    !data.playedBefore
+  ) {
+    return null;
+  }
 
   const details: ProbetrainingDetails = {
     birthYear: data.birthYear,
+    playerGender: data.playerGender,
     playedBefore: data.playedBefore,
   };
   if (data.playedBefore !== "ja") return details;

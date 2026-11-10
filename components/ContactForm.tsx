@@ -6,9 +6,13 @@ import {
   CLUB_CHANGE,
   EXPERIENCE,
   PLAYED_BEFORE,
+  PLAYER_GENDER,
+  PROBETRAINING,
   TOPICS,
   isProbetrainingTopic,
+  type PlayerGender,
 } from "@/lib/contact-topics";
+import { suggestTeam, type TeamSuggestion } from "@/lib/probetraining-team";
 
 type FieldErrors = Partial<{
   name: string[];
@@ -18,6 +22,7 @@ type FieldErrors = Partial<{
   subject: string[];
   message: string[];
   birthYear: string[];
+  playerGender: string[];
   playedBefore: string[];
   experience: string[];
   clubChange: string[];
@@ -33,6 +38,8 @@ type Status =
 function resolveDefaultTopic(value: string | undefined): string {
   if (!value) return "";
   if ((TOPICS as readonly string[]).includes(value)) return value;
+  // Alte Links wie "Probetraining · Großfeld (Herren)" landen beim einen Thema.
+  if (value.startsWith(PROBETRAINING)) return PROBETRAINING;
   const lower = value.toLowerCase();
   const hit = TOPICS.find((t) => t.toLowerCase().includes(lower));
   return hit ?? "";
@@ -44,9 +51,15 @@ export function ContactForm({ defaultSubject }: Props) {
   const [status, setStatus] = useState<Status>({ state: "idle" });
   const initialTopic = resolveDefaultTopic(defaultSubject);
   const [topic, setTopic] = useState(initialTopic);
+  const [birthYear, setBirthYear] = useState("");
+  const [playerGender, setPlayerGender] = useState("");
   const [playedBefore, setPlayedBefore] = useState("");
   const [clubChange, setClubChange] = useState("");
   const isProbetraining = isProbetrainingTopic(topic);
+  const suggestion =
+    isProbetraining && /^\d{4}$/.test(birthYear) && playerGender
+      ? suggestTeam(Number(birthYear), playerGender as PlayerGender)
+      : null;
   const initialDetail =
     defaultSubject && !initialTopic ? defaultSubject : undefined;
 
@@ -72,6 +85,7 @@ export function ContactForm({ defaultSubject }: Props) {
       website: String(fd.get("website") ?? ""),
       // Felder anderer Anliegen sind nicht im DOM und kommen leer an.
       birthYear: String(fd.get("birthYear") ?? ""),
+      playerGender: String(fd.get("playerGender") ?? ""),
       playedBefore: String(fd.get("playedBefore") ?? ""),
       experience: String(fd.get("experience") ?? ""),
       clubChange: String(fd.get("clubChange") ?? ""),
@@ -95,6 +109,8 @@ export function ContactForm({ defaultSubject }: Props) {
       }
       form.reset();
       setTopic(initialTopic);
+      setBirthYear("");
+      setPlayerGender("");
       setPlayedBefore("");
       setClubChange("");
       setStatus({ state: "success" });
@@ -170,9 +186,21 @@ export function ContactForm({ defaultSubject }: Props) {
             pattern="[0-9]{4}"
             maxLength={4}
             placeholder="z. B. 2014"
+            value={birthYear}
+            onChange={setBirthYear}
             error={fieldErrors?.birthYear?.[0]}
             required
           />
+          <RadioGroup
+            name="playerGender"
+            legend="Spielerin oder Spieler?"
+            options={PLAYER_GENDER}
+            value={playerGender}
+            onChange={setPlayerGender}
+            error={fieldErrors?.playerGender?.[0]}
+            required
+          />
+          {suggestion ? <TeamHint suggestion={suggestion} /> : null}
           <RadioGroup
             name="playedBefore"
             legend="Hat der Spieler schon Fußball gespielt?"
@@ -340,6 +368,9 @@ type FieldProps = {
   pattern?: string;
   maxLength?: number;
   placeholder?: string;
+  /** Gesteuertes Feld: der Wert liegt beim Aufrufer. */
+  value?: string;
+  onChange?: (value: string) => void;
 };
 
 export function Field({
@@ -356,7 +387,17 @@ export function Field({
   pattern,
   maxLength,
   placeholder,
+  value,
+  onChange,
 }: FieldProps) {
+  const valueProps =
+    value !== undefined
+      ? {
+          value,
+          onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+            onChange?.(e.target.value),
+        }
+      : { defaultValue };
   const common =
     "mt-1.5 w-full rounded-lg border border-nord-line bg-white px-3 py-2.5 text-sm text-nord-ink placeholder:text-nord-muted focus:border-nord-navy-2 focus:outline-none focus:ring-2 focus:ring-nord-sky/50";
 
@@ -370,7 +411,7 @@ export function Field({
         <textarea
           name={name}
           required={required}
-          defaultValue={defaultValue}
+          {...valueProps}
           rows={rows ?? 5}
           autoComplete={autoComplete}
           className={common}
@@ -381,7 +422,7 @@ export function Field({
           name={name}
           type={type}
           required={required}
-          defaultValue={defaultValue}
+          {...valueProps}
           autoComplete={autoComplete}
           inputMode={inputMode}
           pattern={pattern}
@@ -449,5 +490,30 @@ function RadioGroup({
         </span>
       ) : null}
     </fieldset>
+  );
+}
+
+function TeamHint({ suggestion }: { suggestion: TeamSuggestion }) {
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      className="form-reveal rounded-lg border border-nord-navy-2/30 bg-white px-4 py-3"
+    >
+      <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-nord-muted">
+        {suggestion.personal ? "Zuordnung" : "Passende Mannschaft"}
+      </div>
+      <div className="mt-1 text-base font-semibold text-nord-ink">
+        {suggestion.title}
+      </div>
+      <p className="mt-1 text-sm leading-relaxed text-nord-muted">
+        {suggestion.note}
+      </p>
+      {suggestion.alternative ? (
+        <p className="mt-1 text-sm leading-relaxed text-nord-muted">
+          {suggestion.alternative}
+        </p>
+      ) : null}
+    </div>
   );
 }

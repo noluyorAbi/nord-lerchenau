@@ -37,9 +37,9 @@ export const EXPERIENCE = [
 ] as const;
 
 export const CLUB_CHANGE = [
-  { value: "ja", label: "Ja, ich möchte wechseln" },
-  { value: "nein", label: "Nein, ich bleibe in meinem Verein" },
-  { value: "ohne-verein", label: "Ich spiele zurzeit in keinem Verein" },
+  { value: "ja", label: "Ja, Wechsel gewünscht" },
+  { value: "nein", label: "Nein, bleibt im bisherigen Verein" },
+  { value: "ohne-verein", label: "Zurzeit in keinem Verein" },
 ] as const;
 
 export type PlayerGender = (typeof PLAYER_GENDER)[number]["value"];

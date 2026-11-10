@@ -60,6 +60,9 @@ export function ContactForm({ defaultSubject }: Props) {
   const [playedBefore, setPlayedBefore] = useState("");
   const [clubChange, setClubChange] = useState("");
   const isProbetraining = isProbetrainingTopic(topic);
+  // Ansprache im Zusatzteil richtet sich nach der ersten Auswahl.
+  const isGirl = playerGender === "spielerin";
+  const who = isGirl ? "die Spielerin" : "der Spieler";
   const tooYoung =
     isProbetraining && /^\d{4}$/.test(birthYear)
       ? tooYoungMessage(Number(birthYear))
@@ -183,22 +186,9 @@ export function ContactForm({ defaultSubject }: Props) {
       {isProbetraining ? (
         <div className="form-reveal space-y-4 rounded-lg border border-nord-line bg-nord-paper-2 p-4 sm:p-5">
           <p className="text-sm leading-relaxed text-nord-muted">
-            Mit ein paar Angaben zum Spieler können wir deine Anfrage dem
-            passenden Trainer geben.
+            Mit ein paar Angaben können wir deine Anfrage dem passenden Trainer
+            geben.
           </p>
-          <Field
-            name="birthYear"
-            label="Geburtsjahr des Spielers"
-            type="text"
-            inputMode="numeric"
-            pattern="[0-9]{4}"
-            maxLength={4}
-            placeholder="z. B. 2014"
-            value={birthYear}
-            onChange={setBirthYear}
-            error={fieldErrors?.birthYear?.[0]}
-            required
-          />
           <RadioGroup
             name="playerGender"
             legend="Spielerin oder Spieler?"
@@ -208,52 +198,69 @@ export function ContactForm({ defaultSubject }: Props) {
             error={fieldErrors?.playerGender?.[0]}
             required
           />
-          {tooYoung ? (
-            <p
-              role="status"
-              className="form-reveal rounded-lg border border-nord-navy-2/30 bg-white px-4 py-3 text-sm leading-relaxed text-nord-ink"
-            >
-              {tooYoung}
-            </p>
-          ) : null}
-          {suggestion ? <TeamHint suggestion={suggestion} /> : null}
-          <RadioGroup
-            name="playedBefore"
-            legend="Hat der Spieler schon Fußball gespielt?"
-            options={PLAYED_BEFORE}
-            value={playedBefore}
-            onChange={setPlayedBefore}
-            error={fieldErrors?.playedBefore?.[0]}
-            required
-          />
-          {playedBefore === "ja" ? (
+          {playerGender ? (
             <div className="form-reveal space-y-4">
-              <SelectField
-                name="experience"
-                label="Wie lange schon?"
-                options={EXPERIENCE.map((o) => o.label)}
-                values={EXPERIENCE.map((o) => o.value)}
-                placeholder="Bitte auswählen…"
-                error={fieldErrors?.experience?.[0]}
+              <Field
+                name="birthYear"
+                label={`Geburtsjahr ${isGirl ? "der Spielerin" : "des Spielers"}`}
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]{4}"
+                maxLength={4}
+                placeholder="z. B. 2014"
+                value={birthYear}
+                onChange={setBirthYear}
+                error={fieldErrors?.birthYear?.[0]}
                 required
               />
+              {tooYoung ? (
+                <p
+                  role="status"
+                  className="form-reveal rounded-lg border border-nord-navy-2/30 bg-white px-4 py-3 text-sm leading-relaxed text-nord-ink"
+                >
+                  {tooYoung}
+                </p>
+              ) : null}
+              {suggestion ? <TeamHint suggestion={suggestion} /> : null}
               <RadioGroup
-                name="clubChange"
-                legend="Möchte der Spieler den Verein wechseln?"
-                options={CLUB_CHANGE}
-                value={clubChange}
-                onChange={setClubChange}
-                error={fieldErrors?.clubChange?.[0]}
+                name="playedBefore"
+                legend={`Hat ${who} schon Fußball gespielt?`}
+                options={PLAYED_BEFORE}
+                value={playedBefore}
+                onChange={setPlayedBefore}
+                error={fieldErrors?.playedBefore?.[0]}
                 required
               />
-              {clubChange === "ja" ? (
-                <div className="form-reveal">
-                  <Field
-                    name="currentClub"
-                    label="Aktueller Verein"
-                    error={fieldErrors?.currentClub?.[0]}
+              {playedBefore === "ja" ? (
+                <div className="form-reveal space-y-4">
+                  <SelectField
+                    name="experience"
+                    label="Wie lange schon?"
+                    options={EXPERIENCE.map((o) => o.label)}
+                    values={EXPERIENCE.map((o) => o.value)}
+                    placeholder="Bitte auswählen…"
+                    error={fieldErrors?.experience?.[0]}
                     required
                   />
+                  <RadioGroup
+                    name="clubChange"
+                    legend={`Möchte ${who} den Verein wechseln?`}
+                    options={CLUB_CHANGE}
+                    value={clubChange}
+                    onChange={setClubChange}
+                    error={fieldErrors?.clubChange?.[0]}
+                    required
+                  />
+                  {clubChange === "ja" ? (
+                    <div className="form-reveal">
+                      <Field
+                        name="currentClub"
+                        label="Aktueller Verein"
+                        error={fieldErrors?.currentClub?.[0]}
+                        required
+                      />
+                    </div>
+                  ) : null}
                 </div>
               ) : null}
             </div>

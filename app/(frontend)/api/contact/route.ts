@@ -8,9 +8,15 @@ import {
   PLAYED_BEFORE,
   PLAYER_GENDER,
   labelFor,
+  type PlayerGender,
 } from "@/lib/contact-topics";
 import { suggestTeam } from "@/lib/probetraining-team";
 import { getPayloadClient } from "@/lib/payload";
+
+function suggestedTeamLine(birthYear: number, gender: PlayerGender) {
+  const title = suggestTeam(birthYear, gender)?.title;
+  return title ? `Vorgeschlagene Mannschaft: ${title}` : null;
+}
 
 export async function POST(request: Request) {
   let payload: unknown;
@@ -42,11 +48,28 @@ export async function POST(request: Request) {
 
   const { name, email, phone, address, subject, message } = parsed.data;
   const training = probetrainingDetails(parsed.data);
-  // Der Vorschlag wird hier berechnet und gespeichert, nicht vom Browser
-  // uebernommen: so steht in der Anfrage, was zum Zeitpunkt des Absendens galt.
-  const suggestedTeam = training
-    ? suggestTeam(training.birthYear, training.playerGender)?.title
-    : undefined;
+  // Der Vorschlag wird hier berechnet, nicht vom Browser uebernommen: so steht
+  // in der Anfrage, was zum Zeitpunkt des Absendens galt.
+  const trainingLines = training
+    ? [
+        `Jahrgang: ${training.birthYear} (${labelFor(PLAYER_GENDER, training.playerGender)})`,
+        suggestedTeamLine(training.birthYear, training.playerGender),
+        `Schon Fußball gespielt: ${labelFor(PLAYED_BEFORE, training.playedBefore)}`,
+        training.experience
+          ? `Spielerfahrung: ${labelFor(EXPERIENCE, training.experience)}`
+          : null,
+        training.clubChange
+          ? `Vereinswechsel: ${labelFor(CLUB_CHANGE, training.clubChange)}`
+          : null,
+        training.currentClub
+          ? `Aktueller Verein: ${training.currentClub}`
+          : null,
+      ]
+    : [];
+  const details = trainingLines.filter(Boolean).join("\n");
+  // Die Angaben stehen auch in der gespeicherten Nachricht, damit sie bei einem
+  // Mailausfall nicht verloren gehen (kein eigenes Datenbankfeld noetig).
+  const storedMessage = details ? `${details}\n\n${message}` : message;
 
   try {
     const client = await getPayloadClient();
@@ -58,9 +81,7 @@ export async function POST(request: Request) {
         phone,
         address,
         subject,
-        message,
-        ...training,
-        suggestedTeam,
+        message: storedMessage,
       },
       overrideAccess: true,
     });
@@ -96,24 +117,7 @@ export async function POST(request: Request) {
           phone ? `Telefon: ${phone}` : null,
           address ? `Adresse: ${address}` : null,
           subject ? `Betreff: ${subject}` : null,
-          ...(training
-            ? [
-                `Jahrgang: ${training.birthYear} (${labelFor(PLAYER_GENDER, training.playerGender)})`,
-                suggestedTeam
-                  ? `Vorgeschlagene Mannschaft: ${suggestedTeam}`
-                  : null,
-                `Schon Fußball gespielt: ${labelFor(PLAYED_BEFORE, training.playedBefore)}`,
-                training.experience
-                  ? `Spielerfahrung: ${labelFor(EXPERIENCE, training.experience)}`
-                  : null,
-                training.clubChange
-                  ? `Vereinswechsel: ${labelFor(CLUB_CHANGE, training.clubChange)}`
-                  : null,
-                training.currentClub
-                  ? `Aktueller Verein: ${training.currentClub}`
-                  : null,
-              ]
-            : []),
+          details || null,
           "",
           message,
         ]

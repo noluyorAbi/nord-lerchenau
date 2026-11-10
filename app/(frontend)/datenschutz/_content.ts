@@ -160,9 +160,14 @@ export function datenschutzSections(address: ClubAddress): LegalSection[] {
           items: [
             "Name",
             "E-Mail-Adresse",
-            "Telefonnummer (optional)",
-            "Nachricht",
+            "Telefonnummer",
+            "Adresse",
+            "Anliegen, Betreff und Nachricht",
           ],
+        },
+        {
+          kind: "p",
+          text: "Bei Anfragen zum **Probetraining** fragen wir zusätzlich ab, damit wir Sie dem passenden Trainer und der passenden Mannschaft zuordnen können: das **Geburtsjahr** (nicht das volle Geburtsdatum) und ob es sich um eine Spielerin oder einen Spieler handelt, ob schon Fußball gespielt wurde und wie lange, ob ein Vereinswechsel gewünscht ist und, falls ja, der bisherige Verein. Ohne diese Angaben können wir das Probetraining nicht zuordnen. Bei Kindern geben die Erziehungsberechtigten die Angaben an. Welche Mannschaft zu einem Jahrgang passt, wird direkt im Formular berechnet und Ihnen als unverbindlicher Vorschlag angezeigt; ob ein Probetraining möglich ist, entscheidet der Trainer.",
         },
         {
           kind: "p",

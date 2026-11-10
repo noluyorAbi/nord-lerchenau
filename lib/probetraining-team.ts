@@ -103,7 +103,17 @@ export function suggestTeam(
         alternative: "Auch bei Senioren A (Ü32) kannst du mittrainieren.",
       };
     }
-    if (u >= 32) return { title: "Senioren A (Ü32)", note: base };
+    if (u >= 32) {
+      return {
+        title: "Senioren A (Ü32)",
+        note: base,
+        // Bis 36 spielen viele noch bei den Herren mit.
+        alternative:
+          u <= 36
+            ? "Auch bei den Herren (1., 2. oder 3. Mannschaft) kannst du mittrainieren."
+            : undefined,
+      };
+    }
     return { title: "Herren (1., 2. oder 3. Mannschaft)", note: base };
   }
 

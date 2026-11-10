@@ -73,6 +73,17 @@ describe("suggestTeam: Jungs", () => {
     );
   });
 
+  it("offers the Herren teams as an alternative for 32 to 36 year olds", () => {
+    // Spieljahr 2026/27: 1995 -> 32, 1991 -> 36, 1990 -> 37.
+    for (const year of [1995, 1993, 1991]) {
+      expect(suggestTeam(year, "spieler", NOV_2026)?.alternative).toContain(
+        "Herren (1., 2. oder 3. Mannschaft)",
+      );
+    }
+    expect(suggestTeam(1990, "spieler", NOV_2026)?.alternative).toBeUndefined();
+    expect(suggestTeam(1996, "spieler", NOV_2026)?.alternative).toBeUndefined();
+  });
+
   it("gives no suggestion outside the plausible range", () => {
     expect(suggestTeam(2024, "spieler", NOV_2026)).toBeNull();
     expect(suggestTeam(1939, "spieler", NOV_2026)).toBeNull();

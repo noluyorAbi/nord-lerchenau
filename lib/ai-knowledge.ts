@@ -28,6 +28,7 @@ import {
   TIME_WINDOWED_REVALIDATE_SECONDS,
 } from "@/lib/cms";
 import { lexicalToPlainText } from "@/lib/lexical-text";
+import { teamStaff } from "@/lib/team-staff";
 import { getPayloadClient } from "@/lib/payload";
 
 const MAX_TEAM_TEXT = 900;
@@ -54,12 +55,10 @@ export function teamPath(team: Pick<Team, "sport" | "slug">): string {
     : `/${team.sport}`;
 }
 
-/** "Name, Rolle": die Rolle steht beim Personeneintrag, nicht im Mannschaftstext. */
-function trainersOf(people: Team["trainers"]): string[] {
-  return (people ?? []).flatMap((p) =>
-    typeof p === "object" && p?.name
-      ? [p.role ? `${p.name}, ${p.role}` : p.name]
-      : [],
+/** "Name, Rolle": die Rolle gilt fuer genau diese Mannschaft (team.staff). */
+function trainersOf(team: Pick<Team, "staff" | "trainers">): string[] {
+  return teamStaff(team).map(({ person, role }) =>
+    role ? `${person.name}, ${role}` : person.name,
   );
 }
 
@@ -72,7 +71,7 @@ export function formatTeams(teams: Team[]): string {
         t.ageGroup ? `Altersklasse: ${t.ageGroup}` : null,
         ...(t.stats ?? []).map((s) => `${s.label}: ${s.value}`),
       ].filter(Boolean);
-      const trainers = trainersOf(t.trainers);
+      const trainers = trainersOf(t);
       const description = lexicalToPlainText(t.description);
 
       const lines = [`- **${t.name}** ([Seite](${teamPath(t)}))`];

@@ -26,7 +26,7 @@ import { formatKickoff } from "@/lib/format-date";
 import { getPayloadClient } from "@/lib/payload";
 import { teamPhotoAllowed } from "@/lib/photo-consent";
 import { mediaSrc } from "@/lib/publicUploads";
-import type { Person } from "@/payload-types";
+import { teamStaff } from "@/lib/team-staff";
 
 type Props = { params: Promise<{ team: string }> };
 
@@ -57,9 +57,7 @@ export default async function TeamPage({ params }: Props) {
   const team = teamResult.docs[0];
   if (!team) notFound();
 
-  const trainers = (team.trainers ?? []).filter(
-    (t): t is Person => typeof t === "object" && t !== null,
-  );
+  const staff = teamStaff(team);
 
   const fixturesResult = await cachedQuery(
     ["team-fixtures", String(team.id)],
@@ -314,14 +312,14 @@ export default async function TeamPage({ params }: Props) {
             </section>
           ) : null}
 
-          {trainers.length > 0 ? (
+          {staff.length > 0 ? (
             <section>
               <h2 className="mb-5 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold-ink">
                 Trainer
               </h2>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {trainers.map((trainer) => (
-                  <PersonCard key={trainer.id} person={trainer} />
+                {staff.map(({ person, role }) => (
+                  <PersonCard key={person.id} person={person} role={role} />
                 ))}
               </div>
             </section>

@@ -32,7 +32,7 @@ Externe Links (BFV, FuPa, 11teamsports) nur, wenn nötig — interne Links bevor
 - **Gegründet:** 15. Oktober 1947 in München
 - **Sitz:** Bezirkssportanlage Lerchenau, Ebereschenstraße 17, 80935 München
 - **Mitglieder:** über 600
-- **Mannschaften:** ca. 13 Aktiv-Teams (1. + 2. Herren + Damen + Jugend Bambini bis A-Jugend), insgesamt 26 Mannschaften im erweiterten Sinne
+- **Mannschaften:** Herren, Senioren, Juniorinnen und Jugend von Bambini bis A-Jugend; die vollständige, aktuelle Liste steht unten im Vereinswissen
 - **Lizenzierte Trainer:** 25+ mit Trainerlizenzen C-Lizenz und höher
 - **Abteilungen (5):** Fußball, Volleyball, Gymnastik, Ski, eSport (+ Schiedsrichter-Gruppe)
 - **1. Herren Fußball:** Landesliga, Saison 2026/27
@@ -86,7 +86,7 @@ Details + alle Formulare: [Mitgliedschaft](/mitgliedschaft). Bei Fragen: \`info@
 - **Sportarten zur Auswahl:**
   - Fußball: Herren, Senioren, Juniorinnen, Jugend (Kleinfeld / Kompaktfeld / Großfeld)
   - Gymnastik, Volleyball, Ski, eSport
-- Mannschaftsspezifische Trainingszeiten stehen auf der jeweiligen Mannschaftsseite unter \`/fussball/<team-slug>\`. **Niemals erfinden.**
+- Trainingszeiten, Trainer:innen und Spielklassen stehen im Abschnitt **Aktuelles Vereinswissen** unten. Nur diese Angaben verwenden, **niemals erfinden**. Fehlt eine Angabe dort, ehrlich sagen und auf die Mannschaftsseite oder info@svnord.de verweisen.
 
 # Vereinsshop
 

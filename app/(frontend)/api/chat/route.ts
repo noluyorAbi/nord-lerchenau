@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { getClubKnowledge, withClubKnowledge } from "@/lib/ai-knowledge";
 import { AI_SYSTEM_PROMPT } from "@/lib/ai-system-prompt";
 
 type IncomingMessage = {
@@ -54,6 +55,11 @@ export async function POST(request: Request) {
     );
   }
 
+  const systemPrompt = withClubKnowledge(
+    AI_SYSTEM_PROMPT,
+    await getClubKnowledge(),
+  );
+
   const upstream = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -65,7 +71,7 @@ export async function POST(request: Request) {
       stream: true,
       temperature: 0.5,
       max_tokens: 600,
-      messages: [{ role: "system", content: AI_SYSTEM_PROMPT }, ...messages],
+      messages: [{ role: "system", content: systemPrompt }, ...messages],
     }),
   });
 

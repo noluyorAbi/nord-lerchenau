@@ -1,11 +1,11 @@
+import Link from "next/link";
+
 import { cachedQuery, globalTag } from "@/lib/cms";
 import { getPayloadClient } from "@/lib/payload";
 
 type Props = {
   teamName?: string;
 };
-
-const FALLBACK_EMAIL = "info@svnord.de";
 
 function formatPhoneDisplay(raw: string | null | undefined): string | null {
   if (!raw) return null;
@@ -14,7 +14,6 @@ function formatPhoneDisplay(raw: string | null | undefined): string | null {
 
 export async function ProbetrainingBanner({ teamName }: Props) {
   let phone: string | null = null;
-  let email: string | null = null;
   try {
     const info = await cachedQuery(
       ["global", "contact-info"],
@@ -25,13 +24,18 @@ export async function ProbetrainingBanner({ teamName }: Props) {
       },
     );
     phone = info.phone ?? null;
-    email = info.email ?? FALLBACK_EMAIL;
   } catch {
-    email = FALLBACK_EMAIL;
+    // Ohne Kontaktdaten bleibt nur das Formular.
   }
 
   const phoneDisplay = formatPhoneDisplay(phone);
   const phoneTel = phone ? phone.replace(/\s+/g, "") : null;
+
+  // Das Formular fragt Geburtsjahr und Spielerfahrung ab, damit die Anfrage beim
+  // passenden Trainer landet. Eine Mail würde diese Angaben nicht liefern.
+  const contactHref = `/kontakt?subject=Probetraining${
+    teamName ? `&team=${encodeURIComponent(teamName)}` : ""
+  }`;
 
   const headline = teamName
     ? `Lust auf Probetraining bei der ${teamName}?`
@@ -64,9 +68,10 @@ export async function ProbetrainingBanner({ teamName }: Props) {
             {headline}
           </h2>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/80 md:text-base">
-            Schreib uns einfach eine E-Mail. Wir melden uns schnell bei dir mit
-            dem passenden Termin, dem Treffpunkt und allen wichtigen Infos.
-            Bitte bring deine eigene Sportkleidung und Schienbeinschoner mit.
+            Fülle einfach das Kontaktformular aus. Wir melden uns schnell bei
+            dir mit dem passenden Termin, dem Treffpunkt und allen wichtigen
+            Infos. Bitte bring deine eigene Sportkleidung und Schienbeinschoner
+            mit.
           </p>
           {phoneDisplay ? (
             <div className="mt-5 font-mono text-[11px] uppercase tracking-[0.18em] text-white/60">
@@ -77,44 +82,38 @@ export async function ProbetrainingBanner({ teamName }: Props) {
         </div>
 
         <div className="flex flex-col gap-3">
-          {email ? (
-            <a
-              href={`mailto:${email}?subject=${encodeURIComponent(
-                "Probetraining",
-              )}&body=${encodeURIComponent(
-                `Hallo SV Nord,\n\nich interessiere mich für ein Probetraining${
-                  teamName ? ` bei der ${teamName}` : ""
-                }.\n\nViele Grüße`,
-              )}`}
-              className="group inline-flex items-center justify-between gap-4 rounded-xl bg-nord-gold px-5 py-4 font-display font-bold text-nord-navy shadow-lg transition hover:-translate-y-0.5 hover:brightness-110"
-            >
-              <span className="flex items-center gap-3">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden
-                >
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2Z" />
-                  <path d="m22 6-10 7L2 6" />
-                </svg>
-                <span>
-                  <span className="block font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-nord-navy/60">
-                    E-Mail
-                  </span>
-                  <span className="block text-base leading-tight">{email}</span>
+          <Link
+            href={contactHref}
+            className="group inline-flex items-center justify-between gap-4 rounded-xl bg-nord-gold px-5 py-4 font-display font-bold text-nord-navy shadow-lg transition hover:-translate-y-0.5 hover:brightness-110"
+          >
+            <span className="flex items-center gap-3">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden
+              >
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2Z" />
+                <path d="m22 6-10 7L2 6" />
+              </svg>
+              <span>
+                <span className="block font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-nord-navy/60">
+                  Kontaktformular
+                </span>
+                <span className="block text-base leading-tight">
+                  Zum Probetraining anmelden
                 </span>
               </span>
-              <span className="font-mono text-lg transition group-hover:translate-x-0.5">
-                →
-              </span>
-            </a>
-          ) : null}
+            </span>
+            <span className="font-mono text-lg transition group-hover:translate-x-0.5">
+              →
+            </span>
+          </Link>
 
           {phoneTel ? (
             <a

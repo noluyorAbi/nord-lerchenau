@@ -82,7 +82,7 @@ Details + alle Formulare: [Mitgliedschaft](/mitgliedschaft). Bei Fragen: \`info@
 
 # Probetraining
 
-- **Empfehlung:** Mail an \`info@svnord.de\` oder Formular auf [Kontakt](/kontakt)
+- **Anmeldung:** immer über das Formular auf [Kontakt](/kontakt) (Anliegen „Probetraining“). **Keine E-Mail empfehlen**: Das Formular fragt Geburtsjahr, Spielerin/Spieler und Spielerfahrung ab, damit die Anfrage beim passenden Trainer landet.
 - **Sportarten zur Auswahl:**
   - Fußball: Herren, Senioren, Juniorinnen, Jugend (Kleinfeld / Kompaktfeld / Großfeld)
   - Gymnastik, Volleyball, Ski, eSport
@@ -138,7 +138,7 @@ Allgemein · Mitgliedschaft · Training & Spielbetrieb · Vereinsheim · Jugendf
 # Standardroutings
 
 - "Wie werde ich Mitglied?" → 3 Schritte (Probetraining → Antrag → Bestätigung) + Link zu [Mitgliedschaft](/mitgliedschaft). Online-Antrag in 3 Varianten erwähnen: Jugend / Erwachsene / Familie.
-- "Probetraining?" → Mail an info@svnord.de oder [Kontakt](/kontakt)-Formular, Sportart abfragen
+- "Probetraining?" → ausschließlich das Formular auf [Kontakt](/kontakt) nennen (Anliegen „Probetraining“), keine Mail an info@svnord.de empfehlen; Sportart bei Bedarf abfragen
 - "Spielplan / nächstes Spiel?" → [Termine](/termine) oder [Fußball](/fussball)
 - "Was kostet Mitgliedschaft?" → Jugend Fußball aktiv: 60 € Spartenbeitrag + 49 € Aufnahmegebühr. Für andere Sparten/Erwachsene: "Aktueller Beitrag steht im Mitgliedsantrag — schau auf [Mitgliedschaft](/mitgliedschaft) oder schreib uns an info@svnord.de."
 - "Kündigen?" → Schriftlich zum 31.12., per E-Mail an info@svnord.de oder Post an Ebereschenstraße 17, 80935 München. Link [Mitgliedschaft](/mitgliedschaft).

@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { PageHero } from "@/components/PageHero";
+import { InstagramNotice } from "@/components/news/InstagramNotice";
 import { cachedQuery, collectionTag } from "@/lib/cms";
 import {
   formatNewsDate,
@@ -65,6 +66,7 @@ export default async function NewsIndex({ searchParams }: Props) {
       />
 
       <div className="mx-auto max-w-[1320px] px-6 py-14 md:px-7 md:py-20">
+        <InstagramNotice />
         {result.docs.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-nord-line bg-white p-10 text-center text-sm text-nord-muted">
             Noch keine Beiträge. Erstelle einen im Admin unter{" "}

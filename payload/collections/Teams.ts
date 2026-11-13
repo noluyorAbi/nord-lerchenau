@@ -233,15 +233,40 @@ export const Teams: CollectionConfig = {
       ],
     },
     {
+      name: "staff",
+      type: "array",
+      label: "Trainer:innen & Betreuer",
+      labels: { singular: "Person", plural: "Personen" },
+      admin: {
+        description:
+          "Wer betreut die Mannschaft, und in welcher Rolle? Die Rolle gilt nur für diese Mannschaft (z. B. 'Trainer (DFB C-Lizenz)', 'Co-Trainer', 'Torwart-Trainer'). Reihenfolge = Reihenfolge auf der Seite. Die Person muss unter '2. Sport → Personen' angelegt sein.",
+      },
+      fields: [
+        {
+          name: "person",
+          type: "relationship",
+          relationTo: "people",
+          required: true,
+          label: "Person",
+        },
+        {
+          name: "role",
+          type: "text",
+          required: true,
+          label: "Rolle in dieser Mannschaft",
+          admin: { description: "z. B. 'Trainer (DFB C-Lizenz)'." },
+        },
+      ],
+    },
+    {
+      // Abgelöst durch "staff". Bleibt vorerst als Rückfall für Mannschaften,
+      // die noch nicht umgezogen sind, und ist im Admin ausgeblendet.
       name: "trainers",
       type: "relationship",
       relationTo: "people",
       hasMany: true,
-      label: "Trainer:innen",
-      admin: {
-        description:
-          "Personen aus '2. Sport → Personen' auswählen (mehrere möglich).",
-      },
+      label: "Trainer:innen (alt)",
+      admin: { hidden: true },
     },
     {
       name: "description",

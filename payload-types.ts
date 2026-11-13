@@ -464,6 +464,19 @@ export interface Team {
   /**
    * Personen aus '2. Sport → Personen' auswählen (mehrere möglich).
    */
+  /**
+   * Wer betreut die Mannschaft, und in welcher Rolle? Die Rolle gilt nur für diese Mannschaft (z. B. 'Trainer (DFB C-Lizenz)', 'Co-Trainer', 'Torwart-Trainer'). Reihenfolge = Reihenfolge auf der Seite. Die Person muss unter '2. Sport → Personen' angelegt sein.
+   */
+  staff?:
+    | {
+        person: number | Person;
+        /**
+         * z. B. 'Trainer (DFB C-Lizenz)'.
+         */
+        role: string;
+        id?: string | null;
+      }[]
+    | null;
   trainers?: (number | Person)[] | null;
   /**
    * Optionale Vorstellung des Teams.
@@ -915,6 +928,13 @@ export interface TeamsSelect<T extends boolean = true> {
     | {
         label?: T;
         value?: T;
+        id?: T;
+      };
+  staff?:
+    | T
+    | {
+        person?: T;
+        role?: T;
         id?: T;
       };
   trainers?: T;

@@ -35,7 +35,13 @@ const team = (over: Partial<Team>): Team =>
     sport: "fussball",
     league: "U13 Kreisklasse Nord 1",
     birthYears: "2014",
-    trainers: [{ id: 7, name: "Steffen Helmreich" } as Person],
+    trainers: [
+      {
+        id: 7,
+        name: "Steffen Helmreich",
+        role: "Trainer (DFB C-Lizenz)",
+      } as Person,
+    ],
     description: lexical(
       "Der Jahrgang 2014 spielt in der U13.",
       "Dienstag und Donnerstag, 17:00 bis 18:15 Uhr.",
@@ -61,7 +67,9 @@ describe("formatTeams", () => {
       "**D1-Junioren · U13** ([Seite](/fussball/d1-junioren))",
     );
     expect(out).toContain("Spielklasse: U13 Kreisklasse Nord 1");
-    expect(out).toContain("Trainer:innen: Steffen Helmreich");
+    expect(out).toContain(
+      "Trainer:innen: Steffen Helmreich, Trainer (DFB C-Lizenz)",
+    );
     expect(out).toContain("Dienstag und Donnerstag, 17:00 bis 18:15 Uhr.");
   });
 

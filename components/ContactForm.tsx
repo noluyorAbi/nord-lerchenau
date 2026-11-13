@@ -49,9 +49,9 @@ function resolveDefaultTopic(value: string | undefined): string {
   return hit ?? "";
 }
 
-type Props = { defaultSubject?: string };
+type Props = { defaultSubject?: string; defaultDetail?: string };
 
-export function ContactForm({ defaultSubject }: Props) {
+export function ContactForm({ defaultSubject, defaultDetail }: Props) {
   const [status, setStatus] = useState<Status>({ state: "idle" });
   const initialTopic = resolveDefaultTopic(defaultSubject);
   const [topic, setTopic] = useState(initialTopic);
@@ -71,8 +71,10 @@ export function ContactForm({ defaultSubject }: Props) {
     isProbetraining && /^\d{4}$/.test(birthYear) && playerGender
       ? suggestTeam(Number(birthYear), playerGender as PlayerGender)
       : null;
+  // Ein Link kann die Mannschaft mitgeben, z. B. "?subject=Probetraining&team=D1-Junioren".
   const initialDetail =
-    defaultSubject && !initialTopic ? defaultSubject : undefined;
+    defaultDetail?.trim().slice(0, 100) ||
+    (defaultSubject && !initialTopic ? defaultSubject : undefined);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

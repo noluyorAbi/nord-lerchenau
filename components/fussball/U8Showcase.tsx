@@ -10,20 +10,20 @@ const FALLBACK_CARDS: Card[] = [
   {
     key: "trainerteam",
     src: "/sport/u8/trainerteam.jpg",
-    caption: "Trainerteam U8",
-    sub: "Unsere Trainer:innen der jüngsten Jahrgänge",
-  },
-  {
-    key: "loewen",
-    src: "/sport/u8/loewen.jpg",
-    caption: "U8 Löwen",
-    sub: "F-Junioren · U8-I",
+    caption: "Trainerteam U9",
+    sub: "Unsere Trainer:innen der F-Junioren",
   },
   {
     key: "tiger",
     src: "/sport/u8/tiger.jpg",
-    caption: "U8 Tiger",
-    sub: "F-Junioren · U8-II",
+    caption: "U9 Tiger",
+    sub: "F-Junioren · U9-1",
+  },
+  {
+    key: "loewen",
+    src: "/sport/u8/loewen.jpg",
+    caption: "U9 Löwen",
+    sub: "F-Junioren · U9-2",
   },
 ];
 
@@ -45,15 +45,14 @@ export function U8Showcase({
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
           <div className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold-ink">
-            Unsere U8
+            Unsere U9
           </div>
           <h2 className="mt-2 font-display text-2xl font-black tracking-tight text-nord-ink md:text-3xl">
             Löwen, Tiger und ihr Trainerteam
           </h2>
         </div>
         <p className="max-w-md text-sm leading-relaxed text-nord-muted">
-          Die Allerjüngsten beim SV Nord — zwei Mannschaften, ein engagiertes
-          Trainerteam, jede Menge Bewegung.
+          Zwei Mannschaften, ein engagiertes Trainerteam, jede Menge Bewegung.
         </p>
       </div>
       <div className="grid gap-4 sm:grid-cols-3">

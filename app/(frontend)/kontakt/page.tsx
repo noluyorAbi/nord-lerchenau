@@ -9,11 +9,11 @@ import { getPayloadClient } from "@/lib/payload";
 export const dynamic = "force-dynamic";
 
 type Props = {
-  searchParams: Promise<{ subject?: string }>;
+  searchParams: Promise<{ subject?: string; team?: string }>;
 };
 
 export default async function KontaktPage({ searchParams }: Props) {
-  const { subject } = await searchParams;
+  const { subject, team } = await searchParams;
   const contact = await cachedQuery(
     ["global", "contact-info"],
     [globalTag("contact-info")],
@@ -70,7 +70,7 @@ export default async function KontaktPage({ searchParams }: Props) {
               </p>
             </div>
 
-            <ContactForm defaultSubject={subject} />
+            <ContactForm defaultSubject={subject} defaultDetail={team} />
 
             <p className="mt-7 border-t border-nord-line pt-5 text-[11px] leading-relaxed text-nord-muted">
               Mit dem Absenden stimmst du der Verarbeitung deiner Angaben zur

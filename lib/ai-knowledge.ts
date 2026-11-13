@@ -54,9 +54,12 @@ export function teamPath(team: Pick<Team, "sport" | "slug">): string {
     : `/${team.sport}`;
 }
 
-function namesOf(people: Team["trainers"]): string[] {
+/** "Name, Rolle": die Rolle steht beim Personeneintrag, nicht im Mannschaftstext. */
+function trainersOf(people: Team["trainers"]): string[] {
   return (people ?? []).flatMap((p) =>
-    typeof p === "object" && p?.name ? [p.name] : [],
+    typeof p === "object" && p?.name
+      ? [p.role ? `${p.name}, ${p.role}` : p.name]
+      : [],
   );
 }
 
@@ -69,13 +72,13 @@ export function formatTeams(teams: Team[]): string {
         t.ageGroup ? `Altersklasse: ${t.ageGroup}` : null,
         ...(t.stats ?? []).map((s) => `${s.label}: ${s.value}`),
       ].filter(Boolean);
-      const trainers = namesOf(t.trainers);
+      const trainers = trainersOf(t.trainers);
       const description = lexicalToPlainText(t.description);
 
       const lines = [`- **${t.name}** ([Seite](${teamPath(t)}))`];
       if (facts.length) lines.push(`  ${facts.join(" · ")}`);
       if (trainers.length)
-        lines.push(`  Trainer:innen: ${trainers.join(", ")}`);
+        lines.push(`  Trainer:innen: ${trainers.join("; ")}`);
       if (description) lines.push(`  ${clip(description, MAX_TEAM_TEXT)}`);
       return lines.join("\n");
     })

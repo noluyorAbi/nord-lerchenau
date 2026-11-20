@@ -40,19 +40,23 @@ const STATUS = [
 type Status =
   | { state: "idle" }
   | { state: "working" }
-  | { state: "done"; simplified: boolean; kind: AntragKind }
+  | {
+      state: "done";
+      /** Ist die Mail beim Verein angekommen? Sonst bleibt nur die Datei. */
+      sent: boolean;
+      simplified: boolean;
+      copy: { url: string; fileName: string };
+    }
   | { state: "error"; message: string };
 
-function download(bytes: Uint8Array, fileName: string) {
-  const blob = new Blob([bytes as BlobPart], { type: "application/pdf" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = fileName;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 10_000);
+/** Base64 ohne Umweg über riesige Strings in einem Aufruf. */
+function toBase64(bytes: Uint8Array): string {
+  let binary = "";
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+  }
+  return btoa(binary);
 }
 
 export function SpielerpassForm() {
@@ -113,6 +117,7 @@ export function SpielerpassForm() {
     };
 
     setResult({ state: "working" });
+    let built: { bytes: Uint8Array; simplified: boolean };
     try {
       // Erst jetzt laden: pdf-lib ist gross und wird nur hier gebraucht.
       const { fillAntragPdf } = await import("@/lib/spielerpass-pdf");
@@ -120,12 +125,7 @@ export function SpielerpassForm() {
         player: playerSig ?? undefined,
         guardian: kind === "junioren" ? (guardianSig ?? undefined) : undefined,
       });
-      download(bytes, antragFileName(data));
-      setResult({
-        state: "done",
-        simplified: fields.simplified,
-        kind: data.kind,
-      });
+      built = { bytes, simplified: fields.simplified };
     } catch (err) {
       console.error("[spielerpass] PDF konnte nicht erzeugt werden:", err);
       setResult({
@@ -133,7 +133,39 @@ export function SpielerpassForm() {
         message:
           "Das Formular konnte nicht erstellt werden. Bitte versuche es noch einmal oder lade das leere Formular unten herunter.",
       });
+      return;
     }
+
+    const fileName = antragFileName(data);
+    const copy = {
+      url: URL.createObjectURL(
+        new Blob([built.bytes as BlobPart], { type: "application/pdf" }),
+      ),
+      fileName,
+    };
+
+    let sent = false;
+    try {
+      const res = await fetch("/api/spielerpass", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...data,
+          email: get("email"),
+          website: get("website"),
+          pdf: toBase64(built.bytes),
+        }),
+      });
+      sent = res.ok;
+    } catch {
+      sent = false;
+    }
+    setResult({
+      state: "done",
+      sent,
+      simplified: built.simplified,
+      copy,
+    });
   }
 
   const working = result.state === "working";
@@ -270,6 +302,29 @@ export function SpielerpassForm() {
             </div>
           ) : null}
 
+          <Field
+            name="email"
+            type="email"
+            label="Deine E-Mail-Adresse (für Rückfragen des Vereins)"
+            autoComplete="email"
+            required
+          />
+          {/* Honeypot: für Menschen unsichtbar, Bots füllen es aus. */}
+          <div
+            aria-hidden
+            className="absolute -left-[9999px] h-0 w-0 overflow-hidden"
+          >
+            <label>
+              Website
+              <input
+                type="text"
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+              />
+            </label>
+          </div>
+
           <div className="space-y-5 border-t border-nord-line pt-5">
             <h3 className="font-display text-lg font-black text-nord-ink">
               Unterschrift
@@ -326,7 +381,7 @@ export function SpielerpassForm() {
             disabled={working}
             className="inline-flex w-full items-center justify-center rounded-lg bg-nord-ink px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-60 sm:w-auto"
           >
-            {working ? "Wird erstellt…" : "Antrag als PDF erstellen →"}
+            {working ? "Wird gesendet…" : "Antrag absenden →"}
           </button>
         </div>
       ) : null}
@@ -337,16 +392,37 @@ export function SpielerpassForm() {
 function Next({ result }: { result: Extract<Status, { state: "done" }> }) {
   return (
     <div className="form-reveal rounded-lg border border-nord-navy-2/30 bg-white px-4 py-4 text-sm leading-relaxed text-nord-ink">
-      <div className="font-semibold">
-        Dein unterschriebener Antrag wurde heruntergeladen.
-      </div>
-      <p className="mt-2 text-nord-muted">
-        Schicke die PDF-Datei per E-Mail an{" "}
-        <a href={`mailto:${ANTRAG_RECIPIENT}`} className="underline">
-          {ANTRAG_RECIPIENT}
-        </a>{" "}
-        (die Datei als Anhang). Den Rest erledigt der Verein.
-      </p>
+      {result.sent ? (
+        <>
+          <div className="font-semibold">
+            Dein Antrag ist beim Verein angekommen.
+          </div>
+          <p className="mt-2 text-nord-muted">
+            Wir haben ihn an {ANTRAG_RECIPIENT} geschickt und melden uns bei
+            Rückfragen. Hier ist deine Kopie als PDF zum Aufbewahren.
+          </p>
+        </>
+      ) : (
+        <>
+          <div className="font-semibold text-red-700">
+            Der Antrag konnte nicht gesendet werden.
+          </div>
+          <p className="mt-2 text-nord-muted">
+            Speichere die PDF-Datei und schicke sie als Anhang per E-Mail an{" "}
+            <a href={`mailto:${ANTRAG_RECIPIENT}`} className="underline">
+              {ANTRAG_RECIPIENT}
+            </a>
+            .
+          </p>
+        </>
+      )}
+      <a
+        href={result.copy.url}
+        download={result.copy.fileName}
+        className="mt-3 inline-flex rounded-lg border border-nord-ink px-4 py-2 text-sm font-semibold text-nord-ink transition hover:bg-nord-paper-2"
+      >
+        PDF speichern
+      </a>
       {result.simplified ? (
         <p className="mt-3 rounded-md bg-nord-paper-2 px-3 py-2 text-nord-ink">
           Einzelne Zeichen konnte das Formular nicht darstellen und hat sie

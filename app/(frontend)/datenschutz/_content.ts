@@ -173,6 +173,18 @@ export function datenschutzSections(address: ClubAddress): LegalSection[] {
           kind: "p",
           text: "Rechtsgrundlage: Art. 6 Abs. 1 lit. a DSGVO (Einwilligung). Die Daten werden ausschließlich für die Bearbeitung Ihrer Anfrage verwendet und gelöscht, sobald die Konversation beendet ist.",
         },
+        {
+          kind: "h3",
+          text: "Online-Antrag auf Spielberechtigung (Spielerpass)",
+        },
+        {
+          kind: "p",
+          text: "Beim Antrag unter /verein/spielerpass geben Sie die Angaben ein, die der Bayerische Fußball-Verband (BFV) im Antrag auf Spielberechtigung verlangt: Familienname, Vorname, Geburtsdatum, Geschlecht, Anschrift, Staatsangehörigkeit und Geburtsort, bei einem Vereinswechsel der bisherige Verein und die Passnummer, bei Spielern aus dem Ausland der letzte Wohnort und Verein im Ausland. Dazu kommen Ihre E-Mail-Adresse für Rückfragen und Ihre Unterschrift (am Bildschirm gezeichnet oder als Bild hochgeladen). Bei Kindern geben die Erziehungsberechtigten die Angaben an.",
+        },
+        {
+          kind: "p",
+          text: "Der Antrag wird in Ihrem Browser als PDF erstellt und mit Ihrem Klick auf „Antrag absenden“ per E-Mail an den Verein übermittelt (Versand über Resend, siehe unten). Wir speichern ihn **nicht in einer Datenbank**; er liegt in unserem E-Mail-Postfach. Der Verein trägt die Angaben im BFV-Portal SpielPlus ein und bewahrt den unterschriebenen Antrag nach den Vorgaben des BFV zwei Jahre auf. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Durchführung der Mitgliedschaft und Erteilung der Spielberechtigung).",
+        },
         { kind: "h3", text: "Resend (E-Mail-Versand)" },
         {
           kind: "p",

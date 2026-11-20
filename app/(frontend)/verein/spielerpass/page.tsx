@@ -34,11 +34,11 @@ export default function SpielerpassPage() {
               So funktioniert&apos;s.
             </h2>
             <p className="mt-3 max-w-prose text-sm leading-relaxed text-nord-muted">
-              Das Formular wird in deinem Browser erstellt. Deine Angaben werden
-              dabei nicht an uns übertragen und nicht gespeichert. Die
-              Vereinsangaben (Vereinsnummer, Unterschrift und Stempel des
-              Vereins) ergänzt der Verein. Voraussetzung ist die Mitgliedschaft
-              im SV Nord, siehe{" "}
+              Das Formular wird in deinem Browser erstellt. Deine Angaben und
+              deine Unterschrift werden dabei nicht an uns übertragen und nicht
+              gespeichert, du bekommst nur die fertige PDF-Datei. Unterschrift
+              und Stempel des Vereins ergänzt der Verein. Voraussetzung ist die
+              Mitgliedschaft im SV Nord, siehe{" "}
               <Link href="/mitgliedschaft" className="underline">
                 Mitgliedschaft
               </Link>

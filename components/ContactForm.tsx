@@ -476,7 +476,7 @@ type RadioGroupProps = {
   error?: string;
 };
 
-function RadioGroup({
+export function RadioGroup({
   name,
   legend,
   options,

@@ -3,7 +3,6 @@ import Link from "next/link";
 
 import { PageHero } from "@/components/PageHero";
 import { SpielerpassForm } from "@/components/SpielerpassForm";
-import { ANTRAG_TEMPLATE } from "@/lib/spielerpass";
 
 export const metadata: Metadata = {
   title: "Spielerpass beantragen",
@@ -52,18 +51,6 @@ export default function SpielerpassPage() {
 
           <SpielerpassForm />
         </section>
-
-        <p className="mt-6 text-sm leading-relaxed text-nord-muted">
-          Lieber von Hand ausfüllen? Hier sind die leeren Formulare des BFV:{" "}
-          <a href={ANTRAG_TEMPLATE.junioren} className="underline">
-            Junioren/Juniorinnen
-          </a>
-          ,{" "}
-          <a href={ANTRAG_TEMPLATE.erwachsene} className="underline">
-            Herren/Senioren/Frauen
-          </a>{" "}
-          (PDF, gültig ab 1. Juli 2026).
-        </p>
       </div>
     </>
   );

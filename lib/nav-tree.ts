@@ -23,6 +23,7 @@ export const NAV_TREE: NavItem[] = [
       { label: "Übersicht", href: "/verein" },
       { label: "Chronik", href: "/verein/chronik" },
       { label: "Vorstand", href: "/verein/vorstand" },
+      { label: "Spielerpass beantragen", href: "/verein/spielerpass" },
       { label: "Kinder- & Jugendschutz", href: "/verein/jugendschutz" },
       { label: "Vereinsheim", href: "/verein/vereinsheim" },
       { label: "Jugendförderverein", href: "/verein/jugendfoerderverein" },

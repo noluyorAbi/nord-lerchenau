@@ -9,7 +9,7 @@ import { cachedQuery, globalTag } from "@/lib/cms";
 import { getPayloadClient } from "@/lib/payload";
 import { vereinsJahre } from "@/lib/verein-jahre";
 
-const CHRONIK_ZEITSCHRIFTEN_URL = "https://my.hidrive.com/share/j-39fs2i9w";
+const CHRONIK_ZEITSCHRIFTEN_URL = "https://my.hidrive.com/share/0w188h.7ri";
 
 const STATS = [
   {

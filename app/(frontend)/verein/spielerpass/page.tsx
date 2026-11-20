@@ -9,10 +9,6 @@ export const metadata: Metadata = {
   description:
     "Antrag auf Spielberechtigung online ausfüllen: Das Formular des BFV wird mit deinen Angaben und deiner Unterschrift erstellt.",
   alternates: { canonical: "/verein/spielerpass" },
-  // Bis zum offiziellen Start unsichtbar: kein Menüpunkt, keine Sitemap, kein
-  // Suchmaschinen-Eintrag. Zum Freischalten robots entfernen, Menüpunkt in
-  // lib/nav-tree.ts und Eintrag in der Sitemap ergänzen.
-  robots: { index: false, follow: false },
 };
 
 export default function SpielerpassPage() {

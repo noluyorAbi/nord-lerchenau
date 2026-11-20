@@ -4,7 +4,7 @@
  * eine Kopiervorlage mit denselben Angaben für die Eingabe in SpielPlus.
  *
  * Nichts davon wird gespeichert: Die Angaben (Minderjähriger!) liegen nur in
- * der Mail an info@svnord.de und im Browser des Antragstellers.
+ * der Mail an den Verein und im Browser des Antragstellers.
  */
 
 import { z } from "zod";
@@ -16,6 +16,18 @@ import {
   normalizePassNumber,
   type AntragData,
 } from "@/lib/spielerpass";
+
+/** Empfänger der Antrags-Mail; zum Testen per SPIELERPASS_TO_EMAIL überschreibbar. */
+export const DEFAULT_RECIPIENTS = ["info@svnord.de", "vertrag@svnord.de"];
+
+/** Liest die Empfänger aus einer kommagetrennten Liste, sonst die Standardliste. */
+export function recipients(envValue: string | undefined): string[] {
+  const list = (envValue ?? "")
+    .split(",")
+    .map((a) => a.trim())
+    .filter((a) => z.string().email().safeParse(a).success);
+  return list.length > 0 ? list : DEFAULT_RECIPIENTS;
+}
 
 /** Obergrenze für das PDF als Base64-Text (ca. 2,2 MB Datei, unter dem Vercel-Limit). */
 export const MAX_PDF_BASE64 = 3_000_000;

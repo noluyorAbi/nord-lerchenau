@@ -398,8 +398,8 @@ function Next({ result }: { result: Extract<Status, { state: "done" }> }) {
             Dein Antrag ist beim Verein angekommen.
           </div>
           <p className="mt-2 text-nord-muted">
-            Wir haben ihn an {ANTRAG_RECIPIENT} geschickt und melden uns bei
-            Rückfragen. Hier ist deine Kopie als PDF zum Aufbewahren.
+            Wir haben ihn an den Verein geschickt und melden uns bei Rückfragen.
+            Hier ist deine Kopie als PDF zum Aufbewahren.
           </p>
         </>
       ) : (

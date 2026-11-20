@@ -4,6 +4,7 @@ import {
   buildKopiervorlage,
   buildMail,
   decodePdf,
+  recipients,
   spielerpassSubmitSchema,
 } from "@/lib/spielerpass-submit";
 
@@ -111,6 +112,26 @@ describe("Mail", () => {
   });
 });
 
+describe("recipients", () => {
+  it("nutzt standardmäßig info@ und vertrag@", () => {
+    expect(recipients(undefined)).toEqual([
+      "info@svnord.de",
+      "vertrag@svnord.de",
+    ]);
+    expect(recipients("")).toEqual(["info@svnord.de", "vertrag@svnord.de"]);
+  });
+  it("liest eine kommagetrennte Liste und ignoriert Ungültiges", () => {
+    expect(recipients(" a@example.org , kaputt, b@example.org ")).toEqual([
+      "a@example.org",
+      "b@example.org",
+    ]);
+    expect(recipients("kaputt")).toEqual([
+      "info@svnord.de",
+      "vertrag@svnord.de",
+    ]);
+  });
+});
+
 describe("POST /api/spielerpass", () => {
   const send = vi.fn();
 
@@ -124,7 +145,7 @@ describe("POST /api/spielerpass", () => {
     }));
     process.env.RESEND_API_KEY = "key";
     process.env.RESEND_FROM_EMAIL = "from@example.org";
-    delete process.env.RESEND_TO_EMAIL;
+    delete process.env.SPIELERPASS_TO_EMAIL;
   });
 
   const call = async (body: unknown) => {
@@ -137,15 +158,21 @@ describe("POST /api/spielerpass", () => {
     );
   };
 
-  it("schickt Mail mit PDF-Anhang an info@svnord.de", async () => {
+  it("schickt Mail mit PDF-Anhang an info@ und vertrag@", async () => {
     const res = await call(valid);
     expect(res.status).toBe(200);
     const arg = send.mock.calls[0][0];
-    expect(arg.to).toBe("info@svnord.de");
+    expect(arg.to).toEqual(["info@svnord.de", "vertrag@svnord.de"]);
     expect(arg.replyTo).toBe("eltern@example.org");
     expect(arg.attachments).toHaveLength(1);
     expect(arg.attachments[0].content.subarray(0, 5).toString()).toBe("%PDF-");
     expect(arg.text).toContain("Familienname: Nowak");
+  });
+
+  it("SPIELERPASS_TO_EMAIL überschreibt die Empfänger", async () => {
+    process.env.SPIELERPASS_TO_EMAIL = "test@example.org";
+    await call(valid);
+    expect(send.mock.calls[0][0].to).toEqual(["test@example.org"]);
   });
 
   it("Honeypot: Erfolg vortäuschen, nichts senden", async () => {

@@ -4,6 +4,7 @@ import { Resend } from "resend";
 import {
   buildMail,
   decodePdf,
+  recipients,
   spielerpassSubmitSchema,
 } from "@/lib/spielerpass-submit";
 
@@ -49,7 +50,6 @@ export async function POST(request: Request) {
 
   const resendKey = process.env.RESEND_API_KEY;
   const fromEmail = process.env.RESEND_FROM_EMAIL;
-  const toEmail = process.env.RESEND_TO_EMAIL ?? "info@svnord.de";
   if (!resendKey || !fromEmail) {
     console.error("[/api/spielerpass] RESEND_API_KEY/RESEND_FROM_EMAIL fehlt");
     return NextResponse.json(
@@ -62,7 +62,7 @@ export async function POST(request: Request) {
   try {
     const { error } = await new Resend(resendKey).emails.send({
       from: fromEmail,
-      to: toEmail,
+      to: recipients(process.env.SPIELERPASS_TO_EMAIL),
       replyTo: data.email,
       subject,
       text,

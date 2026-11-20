@@ -24,7 +24,7 @@ export const CLUB_NAME = "SV Nord München-Lerchenau e.V.";
  */
 export const CLUB_NUMBER = "1325";
 
-type Box = { x: number; y: number; width: number; height: number };
+export type Box = { x: number; y: number; width: number; height: number };
 
 /**
  * Unterschriftsfelder auf Seite 1 der Vorlagen (PDF-Punkte, Ursprung unten
@@ -42,6 +42,18 @@ export const SIGNATURE_BOXES: Record<
   erwachsene: {
     player: { x: 61, y: 69, width: 229, height: 41 },
   },
+};
+
+/**
+ * Unterschriftsfeld auf Seite 3 (Einverständnis zur stellvertretenden
+ * Online-Abmeldung), in beiden Vorlagen an derselben Stelle. Wird nur bei
+ * einem Vereinswechsel unterschrieben.
+ */
+export const CONSENT_SIGNATURE_BOX: Box = {
+  x: 43,
+  y: 434,
+  width: 247,
+  height: 41,
 };
 
 export const ANTRAG_TEMPLATE: Record<AntragKind, string> = {

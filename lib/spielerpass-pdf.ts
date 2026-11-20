@@ -6,10 +6,12 @@
 
 import {
   ANTRAG_TEMPLATE,
+  CONSENT_SIGNATURE_BOX,
   SIGNATURE_BOXES,
   buildAntragFields,
   type AntragData,
   type AntragFields,
+  type Box,
 } from "@/lib/spielerpass";
 
 const FONT_URL = "/fonts/NotoSans-Regular-subset.ttf";
@@ -67,23 +69,18 @@ export async function fillAntragPdf(
   for (const name of fields.checks) form.getCheckBox(name).check();
   form.updateFieldAppearances(font);
 
-  const page = pdf.getPage(0);
-  const boxes = SIGNATURE_BOXES[data.kind];
   const note = `digital erfasst ${stamp(signedAt)}`;
   const pad = 4;
   const noteSize = 5.5;
 
-  for (const who of ["player", "guardian"] as const) {
-    const box = boxes[who];
-    const png = signatures[who];
-    if (!box || !png) continue;
-
+  const sign = async (pageIndex: number, box: Box, png: Uint8Array) => {
     const img = await pdf.embedPng(png);
     const maxW = box.width - pad * 2;
     const maxH = box.height - pad - noteSize - 5;
     const scale = Math.min(maxW / img.width, maxH / img.height);
     const w = img.width * scale;
     const h = img.height * scale;
+    const page = pdf.getPage(pageIndex);
     page.drawImage(img, {
       x: box.x + (box.width - w) / 2,
       y: box.y + box.height - pad - h,
@@ -97,6 +94,18 @@ export async function fillAntragPdf(
       font,
       color: rgb(0.25, 0.25, 0.25),
     });
+  };
+
+  const boxes = SIGNATURE_BOXES[data.kind];
+  for (const who of ["player", "guardian"] as const) {
+    const box = boxes[who];
+    const png = signatures[who];
+    if (box && png) await sign(0, box, png);
+  }
+  // Seite 3 gilt nur beim Vereinswechsel; eine Unterschrift genügt dort.
+  const consent = signatures.player ?? signatures.guardian;
+  if (data.change === "vereinswechsel" && consent) {
+    await sign(2, CONSENT_SIGNATURE_BOX, consent);
   }
 
   return { bytes: await pdf.save(), fields };

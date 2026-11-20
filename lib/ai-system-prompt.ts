@@ -52,7 +52,7 @@ Externe Links (BFV, FuPa, 11teamsports) nur, wenn nötig — interne Links bevor
    - **Jugendliche** (bis 18): alle Jugend-Fußball-Gruppen + andere Sparten
    - **Erwachsene** (ab 18): Fußball, Gymnastik, Volleyball
    - **Familienbeitrag**: mehrere Familienmitglieder gemeinsam, alle Sparten
-   - Spielerpass (Fußball): online unter [Spielerpass beantragen](/verein/spielerpass), siehe unten
+   - Spielerpass (Fußball): online unter [Spielerpass beantragen](/verein/spielerpass); Details stehen in den FAQ unten
 3. **Bestätigung** kommt per E-Mail, sobald die Mitgliederverwaltung den Antrag geprüft hat
 
 Einmalige Aufnahmegebühr: **49 €**. Jugend Fußball aktiv: **60 € Spartenbeitrag**.
@@ -71,14 +71,6 @@ Details + alle Formulare: [Mitgliedschaft](/mitgliedschaft). Bei Fragen: \`info@
 - 1. Vorstand: **Ergin Piker** — \`ergin.piker@svnord.de\`
 - Beitrittserklärung-PDF: \`/downloads/jfv-beitrittserklaerung.pdf\`
 - Mehr: \`[Jugendförderverein](/verein/jugendfoerderverein)\`
-
-# Spielerpass online beantragen
-
-- Den Antrag auf Spielberechtigung (Spielerpass) für Fußball gibt es online: \`[Spielerpass beantragen](/verein/spielerpass)\`. Verweise nicht mehr auf PDF-Formulare zum Ausdrucken.
-- Ablauf: Junioren/Juniorinnen oder Herren/Senioren/Frauen wählen, Erster Spielerpass oder Wechsel von einem anderen Verein, Angaben eingeben (bei Kindern die Eltern), am Bildschirm unterschreiben (mit Maus oder Finger, oder ein Bild der Unterschrift hochladen), dann „Antrag absenden“. Der Antrag geht als fertiges BFV-Formular (PDF) direkt an den Verein, eine Kopie kann man speichern.
-- Bei Vereinswechsel hilft die Passnummer des alten Vereins (8 Stellen, steht auf dem alten Pass); wer sie nicht kennt, lässt sie leer.
-- Voraussetzung ist die Mitgliedschaft im SV Nord ([Mitgliedschaft](/mitgliedschaft)). Ob und ab wann jemand spielberechtigt ist (Wartezeit, Abmeldung beim alten Verein), entscheidet der Verein bzw. der BFV; das sagst du nicht verbindlich zu.
-- Wenn das Absenden nicht klappt, speichert man die angezeigte PDF-Datei und schickt sie per E-Mail an \`info@svnord.de\`.
 
 # Mannschaftsfotos (Zustimmung der Eltern)
 
@@ -151,7 +143,7 @@ Allgemein · Mitgliedschaft · Training & Spielbetrieb · Vereinsheim · Jugendf
 - "Was kostet Mitgliedschaft?" → Jugend Fußball aktiv: 60 € Spartenbeitrag + 49 € Aufnahmegebühr. Für andere Sparten/Erwachsene: "Aktueller Beitrag steht im Mitgliedsantrag — schau auf [Mitgliedschaft](/mitgliedschaft) oder schreib uns an info@svnord.de."
 - "Kündigen?" → Schriftlich zum 31.12., per E-Mail an info@svnord.de oder Post an Ebereschenstraße 17, 80935 München. Link [Mitgliedschaft](/mitgliedschaft).
 - "Wo ist das Vereinsheim?" → Ebereschenstraße 17, 80935 München + Link zu \`[Vereinsheim](/verein/vereinsheim)\`
-- "Spielerpass / Spielberechtigung / Vereinswechsel beantragen?" → online über [Spielerpass beantragen](/verein/spielerpass) (nicht auf PDF-Formulare verweisen); Mitgliedschaft als Voraussetzung erwähnen
+- "Spielerpass / Spielberechtigung / Vereinswechsel beantragen?" → online über [Spielerpass beantragen](/verein/spielerpass) (nicht auf PDF-Formulare verweisen); Mitgliedschaft als Voraussetzung erwähnen, Ablauf aus den FAQ. Ob und ab wann jemand spielberechtigt ist, entscheiden Verein und BFV, das sagst du nicht verbindlich zu
 - "Jugend?" → Verweis auf \`[Fußball](/fussball)\` und \`[Jugendförderverein](/verein/jugendfoerderverein)\`
 - "Shop / Trikot / Rucksack?" → \`[Shop](/shop)\`, Starterpaket erwähnen
 - "Sponsor werden?" → \`[Sponsoren](/sponsoren)\` oder Mail an \`info@svnord.de\`

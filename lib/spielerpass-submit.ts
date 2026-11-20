@@ -12,6 +12,7 @@ import { z } from "zod";
 import {
   ANTRAG_KINDS,
   CLUB_NAME,
+  antragFileName,
   formatBirthDate,
   normalizePassNumber,
   type AntragData,
@@ -162,7 +163,7 @@ export function buildMail(
     buildKopiervorlage(d),
     "",
     "Vom Verein zu prüfen oder zu ergänzen: Wartezeit-Ausnahmen, Sportgerichtsverfahren/Sperre, Stammverein (JFG), Unterschrift und Stempel des Vereins.",
-    "Hinweis: Die Unterschrift wurde digital erfasst. Das BFV-Formular sieht eine Originalunterschrift vor; bitte beim BFV klären, ob das als Nachweis genügt.",
+    "Hinweis: Die Unterschrift wurde digital am Bildschirm erfasst (Datum und Uhrzeit stehen im PDF neben der Unterschrift).",
     d.abroadResidence || d.abroadClub
       ? "Bei Spielern aus dem Ausland muss eine Kopie von Reisepass oder Personalausweis beiliegen."
       : "",
@@ -170,13 +171,7 @@ export function buildMail(
     .filter((l, i, a) => l !== "" || a[i - 1] !== "")
     .join("\n");
 
-  const fileName = `Antrag-Spielberechtigung-${
-    name
-      .normalize("NFD")
-      .replace(/\p{M}/gu, "")
-      .replace(/[^A-Za-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "") || "Antrag"
-  }.pdf`;
+  const fileName = antragFileName(d);
 
   return { subject, text, fileName };
 }

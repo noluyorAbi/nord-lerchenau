@@ -44,6 +44,14 @@ describe("toPdfText", () => {
     });
     expect(toPdfText("Łukasz")).toEqual({ text: "Lukasz", simplified: true });
   });
+  it("nutzt die Zeichenmenge der eingebetteten Schrift", () => {
+    const font = new Set([..."Şahin"].map((c) => c.codePointAt(0)!));
+    expect(toPdfText("Şahin", (cp) => font.has(cp))).toEqual({
+      text: "Şahin",
+      simplified: false,
+    });
+    expect(toPdfText("Şağ", (cp) => font.has(cp)).simplified).toBe(true);
+  });
   it("ersetzt nicht Lateinisches durch ?", () => {
     expect(toPdfText("Иван").text).toBe("????");
   });
@@ -70,6 +78,9 @@ describe("Hilfsfunktionen", () => {
     expect(antragFileName({ lastName: "Müller", firstName: "Max Paul" })).toBe(
       "Antrag-Spielberechtigung-Muller-Max-Paul.pdf",
     );
+    expect(antragFileName({ lastName: "Łukasz", firstName: "Şahin" })).toBe(
+      "Antrag-Spielberechtigung-Lukasz-Sahin.pdf",
+    );
     expect(antragFileName({ lastName: "", firstName: "" })).toBe(
       "Antrag-Spielberechtigung.pdf",
     );
@@ -80,6 +91,7 @@ describe("buildAntragFields", () => {
   it("Junioren, Erstausstellung", () => {
     const f = buildAntragFields(base);
     expect(f.text).toMatchObject({
+      Vereinsnummer: "1325",
       Vereinsname: "SV Nord München-Lerchenau e.V.",
       Familienname: "Mustermann",
       Geburtsdatum: "03.05.2014",

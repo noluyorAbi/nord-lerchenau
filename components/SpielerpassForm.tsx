@@ -3,7 +3,9 @@
 import { useState, type FormEvent } from "react";
 
 import { Field, RadioGroup } from "@/components/ContactForm";
+import { SignaturePad } from "@/components/SignaturePad";
 import {
+  ANTRAG_RECIPIENT,
   antragFileName,
   isGermanNationality,
   normalizePassNumber,
@@ -60,6 +62,9 @@ export function SpielerpassForm() {
   const [status, setStatus] = useState<string>("amateur");
   const [nationality, setNationality] = useState("");
   const [passError, setPassError] = useState<string>();
+  const [playerSig, setPlayerSig] = useState<Uint8Array | null>(null);
+  const [guardianSig, setGuardianSig] = useState<Uint8Array | null>(null);
+  const [sigError, setSigError] = useState<string>();
   const [result, setResult] = useState<Status>({ state: "idle" });
 
   const abroad = nationality.trim() !== "" && !isGermanNationality(nationality);
@@ -75,6 +80,16 @@ export function SpielerpassForm() {
     const pass = get("passNumber");
     if (wechsel && pass && !normalizePassNumber(pass)) {
       setPassError("Die Passnummer hat 8 Stellen, z. B. 1234-5678.");
+      return;
+    }
+
+    setSigError(undefined);
+    if (!playerSig && !(guardianSig && kind === "junioren")) {
+      setSigError(
+        kind === "junioren"
+          ? "Bitte unterschreibe: Spielerin oder Spieler und/oder Erziehungsberechtigte."
+          : "Bitte unterschreibe das Formular.",
+      );
       return;
     }
 
@@ -101,7 +116,10 @@ export function SpielerpassForm() {
     try {
       // Erst jetzt laden: pdf-lib ist gross und wird nur hier gebraucht.
       const { fillAntragPdf } = await import("@/lib/spielerpass-pdf");
-      const { bytes, fields } = await fillAntragPdf(data);
+      const { bytes, fields } = await fillAntragPdf(data, {
+        player: playerSig ?? undefined,
+        guardian: kind === "junioren" ? (guardianSig ?? undefined) : undefined,
+      });
       download(bytes, antragFileName(data));
       setResult({
         state: "done",
@@ -252,6 +270,48 @@ export function SpielerpassForm() {
             </div>
           ) : null}
 
+          <div className="space-y-5 border-t border-nord-line pt-5">
+            <h3 className="font-display text-lg font-black text-nord-ink">
+              Unterschrift
+            </h3>
+            {kind === "junioren" ? (
+              <>
+                <SignaturePad
+                  legend="Erziehungsberechtigte/r"
+                  hint="Bei E-, F- und G-Junioren genügt diese Unterschrift."
+                  onChange={setGuardianSig}
+                />
+                <SignaturePad
+                  legend="Spielerin / Spieler"
+                  hint="Nicht nötig bei E-, F- und G-Junioren."
+                  onChange={setPlayerSig}
+                />
+              </>
+            ) : (
+              <SignaturePad
+                legend="Spielerin / Spieler"
+                onChange={setPlayerSig}
+              />
+            )}
+            {sigError ? (
+              <p role="alert" className="text-sm text-red-600">
+                {sigError}
+              </p>
+            ) : null}
+            <label className="flex cursor-pointer items-start gap-3 text-sm leading-relaxed text-nord-ink">
+              <input
+                type="checkbox"
+                name="confirm"
+                required
+                className="mt-1 h-4 w-4 shrink-0 accent-nord-navy"
+              />
+              <span>
+                Ich bestätige, dass meine Angaben stimmen und die Unterschrift
+                von mir stammt.
+              </span>
+            </label>
+          </div>
+
           <div aria-live="polite">
             {result.state === "error" ? (
               <p role="alert" className="text-sm text-red-600">
@@ -277,23 +337,21 @@ export function SpielerpassForm() {
 function Next({ result }: { result: Extract<Status, { state: "done" }> }) {
   return (
     <div className="form-reveal rounded-lg border border-nord-navy-2/30 bg-white px-4 py-4 text-sm leading-relaxed text-nord-ink">
-      <div className="font-semibold">Dein Antrag wurde heruntergeladen.</div>
-      <ol className="mt-2 list-decimal space-y-1 pl-5 text-nord-muted">
-        <li>PDF ausdrucken.</li>
-        <li>
-          Unterschreiben:{" "}
-          {result.kind === "junioren"
-            ? "Spielerin oder Spieler und ein Erziehungsberechtigter (bei E-, F- und G-Junioren genügt der Erziehungsberechtigte)."
-            : "die Spielerin oder der Spieler."}{" "}
-          Das Original muss mit echter Unterschrift vorliegen.
-        </li>
-        <li>An deinen Trainer oder den Verein weitergeben.</li>
-      </ol>
+      <div className="font-semibold">
+        Dein unterschriebener Antrag wurde heruntergeladen.
+      </div>
+      <p className="mt-2 text-nord-muted">
+        Schicke die PDF-Datei per E-Mail an{" "}
+        <a href={`mailto:${ANTRAG_RECIPIENT}`} className="underline">
+          {ANTRAG_RECIPIENT}
+        </a>{" "}
+        (die Datei als Anhang). Den Rest erledigt der Verein.
+      </p>
       {result.simplified ? (
         <p className="mt-3 rounded-md bg-nord-paper-2 px-3 py-2 text-nord-ink">
-          Einzelne Sonderzeichen (z. B. ş, ğ) kann das Formular nicht darstellen
-          und hat sie vereinfacht. Bitte kontrolliere die Schreibweise von Namen
-          und Orten und korrigiere sie bei Bedarf per Hand.
+          Einzelne Zeichen konnte das Formular nicht darstellen und hat sie
+          vereinfacht. Bitte kontrolliere die Schreibweise von Namen und Orten
+          im PDF.
         </p>
       ) : null}
     </div>

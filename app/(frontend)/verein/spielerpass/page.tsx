@@ -8,7 +8,7 @@ import { ANTRAG_TEMPLATE } from "@/lib/spielerpass";
 export const metadata: Metadata = {
   title: "Spielerpass beantragen",
   description:
-    "Antrag auf Spielberechtigung online ausfüllen: Das Formular des BFV wird mit deinen Angaben erstellt, zum Ausdrucken und Unterschreiben.",
+    "Antrag auf Spielberechtigung online ausfüllen: Das Formular des BFV wird mit deinen Angaben und deiner Unterschrift erstellt.",
   alternates: { canonical: "/verein/spielerpass" },
 };
 
@@ -18,7 +18,7 @@ export default function SpielerpassPage() {
       <PageHero
         eyebrow="Für Spieler und Eltern"
         title="Spielerpass beantragen."
-        lede="Gib deine Angaben ein, wir erstellen daraus den fertig ausgefüllten Antrag auf Spielberechtigung des BFV. Du musst ihn nur noch ausdrucken und unterschreiben."
+        lede="Gib deine Angaben ein, wir erstellen daraus den fertig ausgefüllten Antrag auf Spielberechtigung des BFV. Du unterschreibst am Handy oder mit der Maus und schickst uns die Datei."
       />
 
       <div className="mx-auto max-w-3xl px-6 py-14 md:px-10 md:py-20">

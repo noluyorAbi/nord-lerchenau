@@ -5,15 +5,44 @@
  * macht lib/spielerpass-pdf.ts im Browser, damit keine Angaben zum Server
  * wandern.
  *
- * Bewusst NICHT ausgefüllt: Vereinsnummer, Stammverein (JFG), Sportgerichts-
- * verfahren, Wartezeit-Ausnahmen, Unterschriften. Das sind Angaben des
- * Vereins bzw. der Unterzeichnenden.
+ * Bewusst NICHT ausgefüllt: Stammverein (JFG), Sportgerichtsverfahren,
+ * Wartezeit-Ausnahmen sowie Unterschrift und Stempel des Vereins. Das sind
+ * Angaben des Vereins.
  */
-
-export const CLUB_NAME = "SV Nord München-Lerchenau e.V.";
 
 export const ANTRAG_KINDS = ["junioren", "erwachsene"] as const;
 export type AntragKind = (typeof ANTRAG_KINDS)[number];
+
+/** An wen die Antragsteller das fertige PDF schicken. */
+export const ANTRAG_RECIPIENT = "info@svnord.de";
+
+export const CLUB_NAME = "SV Nord München-Lerchenau e.V.";
+/**
+ * 4-stellige Vereinsnummer für das Formular. Die BFV-Vereinsseite nennt
+ * 31001325; die ersten vier Stellen (3100) sind die Verbandskennung, siehe
+ * "PV3100 + Vereinsnummer" in der Anleitung zu SpielPlus.
+ */
+export const CLUB_NUMBER = "1325";
+
+type Box = { x: number; y: number; width: number; height: number };
+
+/**
+ * Unterschriftsfelder auf Seite 1 der Vorlagen (PDF-Punkte, Ursprung unten
+ * links). Aus den grauen Feldern der Vorlage ausgemessen; ändert der BFV das
+ * Layout, müssen sie neu bestimmt werden.
+ */
+export const SIGNATURE_BOXES: Record<
+  AntragKind,
+  { player: Box; guardian?: Box }
+> = {
+  junioren: {
+    player: { x: 61, y: 84, width: 141, height: 41 },
+    guardian: { x: 236, y: 84, width: 141, height: 41 },
+  },
+  erwachsene: {
+    player: { x: 61, y: 69, width: 229, height: 41 },
+  },
+};
 
 export const ANTRAG_TEMPLATE: Record<AntragKind, string> = {
   junioren: "/downloads/antrag-spielberechtigung-junioren-2026-07.pdf",
@@ -54,8 +83,13 @@ export type AntragFields = {
   simplified: boolean;
 };
 
-// Zeichen, die die Standardschrift des PDFs (WinAnsi) ausser Latin-1 kennt.
+/** Zeichen, die die Standardschrift (WinAnsi) auch ausserhalb von Latin-1 kennt. */
 const WIN_ANSI_EXTRA = new Set("€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ".split(""));
+
+export type CanRender = (codePoint: number) => boolean;
+
+const winAnsi: CanRender = (cp) =>
+  cp <= 0xff || WIN_ANSI_EXTRA.has(String.fromCodePoint(cp));
 
 const FALLBACK: Record<string, string> = {
   ı: "i",
@@ -70,22 +104,26 @@ const FALLBACK: Record<string, string> = {
   Ø: "O",
 };
 
-/** Ersetzt Zeichen, die das PDF nicht darstellen kann, durch nahe Buchstaben. */
-export function toPdfText(input: string): {
-  text: string;
-  simplified: boolean;
-} {
+/**
+ * Prüft Zeichen gegen die eingebettete Schrift. Was sie nicht darstellen kann,
+ * wird durch einen nahen Buchstaben ersetzt, sonst durch "?".
+ */
+export function toPdfText(
+  input: string,
+  canRender: CanRender = winAnsi,
+): { text: string; simplified: boolean } {
   let simplified = false;
   let out = "";
   for (const ch of input.normalize("NFC")) {
-    const code = ch.codePointAt(0) ?? 0;
-    if (code <= 0xff || WIN_ANSI_EXTRA.has(ch)) {
+    if (canRender(ch.codePointAt(0) ?? 0)) {
       out += ch;
       continue;
     }
     simplified = true;
     const base = FALLBACK[ch] ?? ch.normalize("NFD").replace(/\p{M}/gu, "");
-    out += [...base].every((c) => (c.codePointAt(0) ?? 0) <= 0xff) ? base : "?";
+    out += [...base].every((c) => canRender(c.codePointAt(0) ?? 0))
+      ? base
+      : "?";
   }
   return { text: out, simplified };
 }
@@ -114,7 +152,10 @@ export function isGermanNationality(value: string): boolean {
 
 const clean = (s: string | undefined) => (s ?? "").replace(/\s+/g, " ").trim();
 
-export function buildAntragFields(data: AntragData): AntragFields {
+export function buildAntragFields(
+  data: AntragData,
+  canRender: CanRender = winAnsi,
+): AntragFields {
   const jun = data.kind === "junioren";
   const text: Record<string, string> = {};
   const checks: string[] = [];
@@ -123,7 +164,7 @@ export function buildAntragFields(data: AntragData): AntragFields {
   const set = (field: string, value: string | undefined) => {
     const v = clean(value);
     if (!v) return;
-    const r = toPdfText(v);
+    const r = toPdfText(v, canRender);
     simplified ||= r.simplified;
     text[field] = r.text;
   };
@@ -131,6 +172,7 @@ export function buildAntragFields(data: AntragData): AntragFields {
   const wechsel = data.change === "vereinswechsel";
   const birth = formatBirthDate(data.birthDate);
 
+  set("Vereinsnummer", CLUB_NUMBER);
   set("Vereinsname", CLUB_NAME);
   set("Familienname", data.lastName);
   set("Vorname", data.firstName);
@@ -198,7 +240,9 @@ export function antragFileName(
   data: Pick<AntragData, "lastName" | "firstName">,
 ) {
   const part = (s: string) =>
-    s
+    [...s]
+      .map((c) => FALLBACK[c] ?? c)
+      .join("")
       .normalize("NFD")
       .replace(/\p{M}/gu, "")
       .replace(/[^A-Za-z0-9]+/g, "-")

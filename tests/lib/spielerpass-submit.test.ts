@@ -105,7 +105,8 @@ describe("Mail", () => {
     expect(subject).toBe(
       "Spielerpass-Antrag · Nowak, Łukasz (Junioren/Juniorinnen, Vereinswechsel)",
     );
-    expect(fileName).toBe("Antrag-Spielberechtigung-Nowak-ukasz.pdf");
+    expect(fileName).toBe("Antrag-Spielberechtigung-Nowak-Lukasz.pdf");
+    expect(text).not.toContain("beim BFV klären");
     expect(text).toContain("Rückfragen an: eltern@example.org");
     expect(text).toContain("KOPIERVORLAGE FÜR SPIELPLUS");
     expect(text).toContain("20.11.26, 18:00");

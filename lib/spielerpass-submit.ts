@@ -21,6 +21,7 @@ import {
   CLUB_NAME,
   antragFileName,
   formatBirthDate,
+  isGermanNationality,
   normalizePassNumber,
   type AntragData,
 } from "@/lib/spielerpass";
@@ -95,7 +96,6 @@ export const spielerpassSubmitSchema = z
     ),
     waitReasons: z.array(z.string().max(40)).max(20).optional(),
     otherText: optionalText(200),
-    stammverein: optionalText(150),
     consent: z.boolean().optional(),
     /** Für Rückfragen des Vereins. */
     email: z.string().trim().email("Gültige E-Mail bitte").max(200),
@@ -166,7 +166,6 @@ export function buildKopiervorlage(
   const rows: Array<[string, string | undefined]> = [
     ["Antragsart", option?.label ?? d.change],
     ["Sonstiges", d.change === "sonstiges" ? d.otherText : undefined],
-    ["Neuer Stammverein (JFG)", d.stammverein],
     ["Familienname", d.lastName],
     ["Vorname", d.firstName],
     ["Geburtsdatum", formatBirthDate(d.birthDate)],
@@ -236,10 +235,10 @@ export function buildMail(
     "------------------------------------------------------------",
     buildKopiervorlage(d),
     "",
-    "Vom Verein zu prüfen oder zu ergänzen: Nachweise zu Wartezeit-Ausnahmen, Stammverein (JFG), Unterschrift und Stempel des Vereins.",
+    "Vom Verein zu prüfen oder zu ergänzen: Nachweise zu Wartezeit-Ausnahmen, Unterschrift und Stempel des Vereins.",
     "Hinweis: Die Unterschrift wurde digital am Bildschirm erfasst (Datum und Uhrzeit stehen im PDF neben der Unterschrift).",
-    d.abroadResidence || d.abroadClub
-      ? "Bei Spielern aus dem Ausland muss eine Kopie von Reisepass oder Personalausweis beiliegen."
+    !isGermanNationality(d.nationality)
+      ? "Bei Spielern aus dem Ausland oder ohne deutsche Staatsangehörigkeit muss ab dem vollendeten 10. Lebensjahr eine Kopie von Reisepass oder Personalausweis beiliegen."
       : "",
   ]
     .filter((l, i, a) => l !== "" || a[i - 1] !== "")

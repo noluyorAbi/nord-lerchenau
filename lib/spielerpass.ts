@@ -5,9 +5,8 @@
  * macht lib/spielerpass-pdf.ts im Browser, damit keine Angaben zum Server
  * wandern.
  *
- * Bewusst NICHT ausgefüllt: Stammverein (JFG), Sportgerichtsverfahren,
- * Wartezeit-Ausnahmen sowie Unterschrift und Stempel des Vereins. Das sind
- * Angaben des Vereins.
+ * Bewusst NICHT ausgefüllt: Stammverein (der SV Nord ist keine Junioren-
+ * Fördergemeinschaft) sowie Unterschrift und Stempel des Vereins.
  */
 
 import { seasonEndYear } from "@/lib/probetraining-team";
@@ -101,8 +100,6 @@ export type AntragData = {
   waitReasons?: string[];
   /** Freitext bei "Sonstiges". */
   otherText?: string;
-  /** Nur Junioren, nur Stammvereinswechsel: Vereinsnummer und Name. */
-  stammverein?: string;
   /** Einverständnis zur stellvertretenden Online-Abmeldung (Seite 3). */
   consent?: boolean;
 };
@@ -222,6 +219,23 @@ export function signatureNeeds(
   };
 }
 
+/**
+ * Ältere A-Junioren (U19) und ältere B-Juniorinnen (U17): Für sie gelten bei
+ * einem Wechsel nicht die Gründe aus § 31 JO, sondern § 44 Nr. 2 SpO (laut
+ * Hinweis auf Seite 2 der Junioren-Vorlage). Gleiche Jahrgangsrechnung wie bei
+ * signatureNeeds.
+ */
+export function usesAdultTransferRules(
+  birthDate: string,
+  gender: AntragGender | "",
+  now: Date = new Date(),
+): boolean {
+  const m = /^(\d{4})-\d{2}-\d{2}$/.exec(birthDate.trim());
+  if (!m) return false;
+  const u = seasonEndYear(now) - Number(m[1]);
+  return u === 19 || (gender === "weiblich" && u === 17);
+}
+
 export function isGermanNationality(value: string): boolean {
   const v = value.trim().toLowerCase();
   return (
@@ -286,9 +300,6 @@ export function buildAntragFields(
   }
   for (const r of reasons) checks.push(r.check);
   if (data.change === "sonstiges") set("Sonstiges Text", data.otherText);
-  if (jun && data.change === "stammverein") {
-    set("Vereinsnummer + Name Stammverein", data.stammverein);
-  }
 
   if (transfer) {
     set("Letzter Verein", data.previousClub);

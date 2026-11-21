@@ -38,9 +38,7 @@ export default function SpielerpassPage() {
             </h2>
             <p className="mt-3 max-w-prose text-sm leading-relaxed text-nord-muted">
               Der Antrag wird in deinem Browser als PDF erstellt und mit deinem
-              Klick per E-Mail an den Verein geschickt. Wir speichern ihn nicht
-              in einer Datenbank, du bekommst eine Kopie. Unterschrift und
-              Stempel des Vereins ergänzt der Verein. Voraussetzung ist die
+              Klick per E-Mail an den Verein geschickt. Voraussetzung ist die
               Mitgliedschaft im SV Nord, siehe{" "}
               <Link href="/mitgliedschaft" className="underline">
                 Mitgliedschaft

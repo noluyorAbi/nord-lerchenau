@@ -15,6 +15,7 @@ import {
   normalizePassNumber,
   signatureNeeds,
   toPdfText,
+  usesAdultTransferRules,
   type AntragData,
 } from "@/lib/spielerpass";
 
@@ -155,6 +156,31 @@ describe("signatureNeeds", () => {
   });
 });
 
+describe("usesAdultTransferRules", () => {
+  const now = new Date("2026-11-21T12:00:00Z"); // Spieljahr 2026/27
+  it("ältere A-Junioren (Jahrgang 2008) und ältere B-Juniorinnen (2010)", () => {
+    expect(usesAdultTransferRules("2008-05-01", "maennlich", now)).toBe(true);
+    expect(usesAdultTransferRules("2008-05-01", "weiblich", now)).toBe(true);
+    expect(usesAdultTransferRules("2010-05-01", "weiblich", now)).toBe(true);
+    // ältere B-Junioren (männlich) fallen nicht darunter
+    expect(usesAdultTransferRules("2010-05-01", "maennlich", now)).toBe(false);
+  });
+  it("jüngere Jahrgänge und leere Eingaben nicht", () => {
+    expect(usesAdultTransferRules("2009-05-01", "maennlich", now)).toBe(false);
+    expect(usesAdultTransferRules("2012-05-01", "weiblich", now)).toBe(false);
+    expect(usesAdultTransferRules("", "", now)).toBe(false);
+  });
+  it("rückt mit dem Spieljahr vor", () => {
+    expect(
+      usesAdultTransferRules(
+        "2009-05-01",
+        "maennlich",
+        new Date("2027-11-21T12:00:00Z"),
+      ),
+    ).toBe(true);
+  });
+});
+
 describe("buildAntragFields", () => {
   it("Junioren, Erstausstellung", () => {
     const f = buildAntragFields(base);
@@ -260,7 +286,7 @@ describe("buildAntragFields", () => {
     expect(erw.checks).not.toContain("Vereinswechsel");
   });
 
-  it("weitere Antragsarten, Sonstiges und Stammverein", () => {
+  it("weitere Antragsarten und Sonstiges", () => {
     const sonst = buildAntragFields({
       ...base,
       kind: "erwachsene",
@@ -269,15 +295,6 @@ describe("buildAntragFields", () => {
     });
     expect(sonst.checks).toContain("Sonstiges 3");
     expect(sonst.text["Sonstiges Text"]).toBe("Nachmeldung");
-    const jfg = buildAntragFields({
-      ...base,
-      change: "stammverein",
-      previousClub: "FC Beispiel",
-      stammverein: "1234 FC Neu",
-    });
-    expect(jfg.checks).toContain("Wechsel Stammverein JFG");
-    expect(jfg.text["Vereinsnummer + Name Stammverein"]).toBe("1234 FC Neu");
-    expect(jfg.text["Letzter Verein"]).toBe("FC Beispiel");
   });
 
   it("meldet vereinfachte Zeichen", () => {
@@ -313,7 +330,6 @@ describe.each(ANTRAG_KINDS)("Vorlage %s", (kind) => {
         sanction: true,
         sanctionFrom: "2026-10-01",
         sanctionTo: "2026-12-31",
-        stammverein: "1234 FC Neu",
         otherText: "x",
       },
       // jede Antragsart und jeder Wartezeit-Grund
@@ -323,7 +339,6 @@ describe.each(ANTRAG_KINDS)("Vorlage %s", (kind) => {
         change: o.value,
         previousClub: "FC Beispiel",
         otherText: "x",
-        stammverein: "1234 FC Neu",
       })),
       {
         ...base,

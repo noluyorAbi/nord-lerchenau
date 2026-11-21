@@ -16,6 +16,7 @@ import {
   isGermanNationality,
   normalizePassNumber,
   signatureNeeds,
+  usesAdultTransferRules,
   type AntragChange,
   type AntragData,
   type AntragGender,
@@ -111,6 +112,19 @@ export function SpielerpassForm() {
     ? { player: true, guardian: false }
     : signatureNeeds(birthDate);
 
+  // Hinweise des BFV-Formulars, die zur Unterschrift gehören.
+  const insuranceNote =
+    change === "zweitspielrecht" || change === "zweitspielrecht-ue";
+  const contractNote =
+    adult &&
+    (change === "vertragsverlaengerung" ||
+      change === "statuswechsel" ||
+      (transfer && status !== "amateur"));
+  const adultTransferRules =
+    vereinswechsel &&
+    !adult &&
+    usesAdultTransferRules(birthDate, gender as AntragGender | "");
+
   function pickKind(value: string) {
     setKind(value);
     setChange("");
@@ -154,6 +168,23 @@ export function SpielerpassForm() {
 
   function next() {
     if (stepIsValid(step)) goTo(Math.min(step + 1, STEPS.length));
+  }
+
+  /** Klick auf einen Schritt: zurück immer, vor nur, wenn alles davor passt. */
+  function jumpTo(target: number) {
+    if (target <= step) {
+      goTo(target);
+      return;
+    }
+    for (let n = step; n < target; n++) {
+      if (!stepIsValid(n)) {
+        goTo(n);
+        // erst nach dem Umschalten melden, damit die Felder sichtbar sind
+        requestAnimationFrame(() => stepIsValid(n));
+        return;
+      }
+    }
+    goTo(target);
   }
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
@@ -212,9 +243,9 @@ export function SpielerpassForm() {
       sanction: sanction === "ja",
       sanctionFrom: sanction === "ja" ? get("sanctionFrom") : undefined,
       sanctionTo: sanction === "ja" ? get("sanctionTo") : undefined,
-      waitReasons: vereinswechsel ? waitReasons : undefined,
+      waitReasons:
+        vereinswechsel && !adultTransferRules ? waitReasons : undefined,
       otherText: change === "sonstiges" ? get("otherText") : undefined,
-      stammverein: change === "stammverein" ? get("stammverein") : undefined,
       consent: transfer ? consent === "ja" : undefined,
     };
 
@@ -282,23 +313,34 @@ export function SpielerpassForm() {
       className="scroll-mt-28 space-y-6"
       noValidate={false}
     >
-      <nav aria-label="Fortschritt" className="space-y-2">
+      <nav aria-label="Fortschritt">
         <ol className="grid grid-cols-3 gap-2">
           {STEPS.map((label, i) => (
             <li key={label}>
-              <div
-                className={`h-1.5 rounded-full ${
-                  i + 1 <= step ? "bg-nord-navy" : "bg-nord-line"
-                }`}
-              />
-              <div
-                className={`mt-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] ${
-                  i + 1 === step ? "text-nord-ink" : "text-nord-muted"
-                }`}
+              <button
+                type="button"
+                onClick={() => jumpTo(i + 1)}
+                disabled={working || done}
                 aria-current={i + 1 === step ? "step" : undefined}
+                className="group block w-full cursor-pointer text-left disabled:cursor-default"
               >
-                {i + 1}. {label}
-              </div>
+                <span
+                  className={`block h-1.5 rounded-full transition-colors ${
+                    i + 1 <= step
+                      ? "bg-nord-navy"
+                      : "bg-nord-line group-hover:bg-nord-muted/40"
+                  }`}
+                />
+                <span
+                  className={`mt-1.5 block text-[11px] font-semibold uppercase tracking-[0.1em] ${
+                    i + 1 === step
+                      ? "text-nord-ink"
+                      : "text-nord-muted group-hover:text-nord-ink"
+                  }`}
+                >
+                  {i + 1}. {label}
+                </span>
+              </button>
             </li>
           ))}
         </ol>
@@ -331,15 +373,6 @@ export function SpielerpassForm() {
               label="Worum geht es genau?"
               maxLength={200}
               required
-            />
-          </div>
-        ) : null}
-        {change === "stammverein" ? (
-          <div className="form-reveal">
-            <Field
-              name="stammverein"
-              label="Neuer Stammverein (Vereinsnummer und Name)"
-              maxLength={150}
             />
           </div>
         ) : null}
@@ -421,8 +454,9 @@ export function SpielerpassForm() {
           <div className="form-reveal space-y-4 rounded-lg border border-nord-line bg-nord-paper-2 p-4 sm:p-5">
             <p className="text-sm leading-relaxed text-nord-muted">
               Nur wenn die Spielerin oder der Spieler aus dem Ausland kommt.
-              Sonst bleibt beides leer. Eine Kopie von Reisepass oder
-              Personalausweis muss dem Antrag beiliegen.
+              Sonst bleibt beides leer. Ab dem vollendeten 10. Lebensjahr muss
+              dem Antrag eine Kopie von Reisepass oder Personalausweis
+              beiliegen.
             </p>
             <Field name="abroadResidence" label="Letzter Wohnort im Ausland" />
             <Field name="abroadClub" label="Letzter Verein im Ausland" />
@@ -479,7 +513,17 @@ export function SpielerpassForm() {
                 oder Bestätigung des bisherigen Vereins) bitte per E-Mail an{" "}
                 {ANTRAG_RECIPIENT} nachreichen.
               </p>
-              {reasons.map((r) => (
+              {adultTransferRules ? (
+                <p className="rounded-lg border border-nord-gold/60 bg-white px-3 py-2.5 text-sm leading-relaxed text-nord-ink">
+                  Für ältere A-Junioren und ältere B-Juniorinnen gelten diese
+                  Fälle nicht. Es gilt § 44 Nr. 2 SpO: Die Wartezeit entfällt,
+                  wenn Amateurspieler nachweislich sechs Monate nicht mehr
+                  gespielt haben (Freundschafts- oder Pflichtspiel). Der
+                  Nachweis ist beim Antrag einzureichen, bitte per E-Mail an{" "}
+                  {ANTRAG_RECIPIENT}.
+                </p>
+              ) : null}
+              {(adultTransferRules ? [] : reasons).map((r) => (
                 <label
                   key={r.id}
                   className="flex cursor-pointer items-start gap-3 rounded-lg border border-nord-line bg-white px-3 py-2.5 text-sm leading-relaxed text-nord-ink has-[:checked]:border-nord-navy-2 has-[:checked]:bg-nord-sky/10"
@@ -582,6 +626,22 @@ export function SpielerpassForm() {
         <h3 className="font-display text-lg font-black text-nord-ink">
           Unterschrift
         </h3>
+        {insuranceNote ? (
+          <p className="rounded-lg border border-nord-gold/60 bg-nord-paper-2 px-4 py-3 text-sm leading-relaxed text-nord-ink">
+            <strong>Hinweis des BFV zum Zweitspielrecht:</strong> Mit der
+            Unterschrift wird auch bestätigt, dass beim BLSV für Spieler aus
+            einem anderen Landesverband eine Sportversicherung besteht. Außerdem
+            sind § 37 SpO und die dazugehörigen Durchführungsbestimmungen zum
+            Zweitspielrecht zwingend zu beachten.
+          </p>
+        ) : null}
+        {contractNote ? (
+          <p className="rounded-lg border border-nord-gold/60 bg-nord-paper-2 px-4 py-3 text-sm leading-relaxed text-nord-ink">
+            <strong>Hinweis für Vertragsspieler:</strong> Der Spieler versichert
+            mit seiner Unterschrift, dass er keine anderweitige Bindung als
+            Vertragsspieler eingegangen ist.
+          </p>
+        ) : null}
         {needs === null ? (
           <p className="text-sm text-nord-muted">
             Bitte gib im vorigen Schritt zuerst das Geburtsdatum an.

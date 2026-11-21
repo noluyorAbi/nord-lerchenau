@@ -9,7 +9,6 @@ export type AntragKind = "junioren" | "erwachsene";
 export const ANTRAG_CHANGES = [
   "erstausstellung",
   "vereinswechsel",
-  "stammverein",
   "vertragsverlaengerung",
   "statuswechsel",
   "zweitspielrecht",
@@ -36,11 +35,6 @@ export const CHANGE_OPTIONS: Record<AntragKind, ChangeOption[]> = {
       value: "vereinswechsel",
       label: "Wechsel von einem anderen Verein",
       check: "Vereinswechsel 01",
-    },
-    {
-      value: "stammverein",
-      label: "Wechsel des Stammvereins (Junioren-Fördergemeinschaft, JFG)",
-      check: "Wechsel Stammverein JFG",
     },
     { value: "sonstiges", label: "Sonstiges", check: "Sonstiges" },
   ],
@@ -80,10 +74,7 @@ export const CHANGE_OPTIONS: Record<AntragKind, ChangeOption[]> = {
 };
 
 /** Bei diesen Anträgen gibt es einen bisherigen Verein, Seite 2 und Seite 3. */
-export const TRANSFER_CHANGES: readonly AntragChange[] = [
-  "vereinswechsel",
-  "stammverein",
-];
+export const TRANSFER_CHANGES: readonly AntragChange[] = ["vereinswechsel"];
 export const isTransfer = (change: AntragChange) =>
   TRANSFER_CHANGES.includes(change);
 

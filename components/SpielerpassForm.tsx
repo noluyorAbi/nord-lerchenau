@@ -5,7 +5,13 @@ import { useState, type FormEvent } from "react";
 import { Field, RadioGroup } from "@/components/ContactForm";
 import { SignaturePad } from "@/components/SignaturePad";
 import {
+  CHANGE_OPTIONS,
+  WAIT_REASONS,
+  isTransfer,
+} from "@/lib/spielerpass-options";
+import {
   ANTRAG_RECIPIENT,
+  CLUB_NAME,
   antragFileName,
   isGermanNationality,
   normalizePassNumber,
@@ -26,9 +32,20 @@ const GENDERS = [
   { value: "weiblich", label: "weiblich" },
 ] as const;
 
-const CHANGES = [
-  { value: "erstausstellung", label: "Erster Spielerpass" },
-  { value: "vereinswechsel", label: "Wechsel von einem anderen Verein" },
+const YES_NO = [
+  { value: "nein", label: "Nein" },
+  { value: "ja", label: "Ja" },
+] as const;
+
+const CONSENT = [
+  {
+    value: "ja",
+    label: "Ja, ich erteile die Einverständniserklärung (Seite 3)",
+  },
+  {
+    value: "nein",
+    label: "Nein, die Abmeldung beim bisherigen Verein erledige ich selbst",
+  },
 ] as const;
 
 const STATUS = [
@@ -65,6 +82,10 @@ export function SpielerpassForm() {
   const [change, setChange] = useState<string>("");
   const [status, setStatus] = useState<string>("amateur");
   const [nationality, setNationality] = useState("");
+  const [previousClub, setPreviousClub] = useState("");
+  const [sanction, setSanction] = useState("");
+  const [waitReasons, setWaitReasons] = useState<string[]>([]);
+  const [consent, setConsent] = useState("");
   const [passError, setPassError] = useState<string>();
   const [playerSig, setPlayerSig] = useState<Uint8Array | null>(null);
   const [guardianSig, setGuardianSig] = useState<Uint8Array | null>(null);
@@ -73,7 +94,16 @@ export function SpielerpassForm() {
 
   const abroad = nationality.trim() !== "" && !isGermanNationality(nationality);
   const adult = kind === "erwachsene";
-  const wechsel = change === "vereinswechsel";
+  const changeOptions = kind ? CHANGE_OPTIONS[kind as AntragKind] : [];
+  const transfer = change !== "" && isTransfer(change as AntragChange);
+  const vereinswechsel = change === "vereinswechsel";
+  const reasons = kind ? WAIT_REASONS[kind as AntragKind] : [];
+
+  function pickKind(value: string) {
+    setKind(value);
+    setChange("");
+    setWaitReasons([]);
+  }
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -82,7 +112,7 @@ export function SpielerpassForm() {
 
     setPassError(undefined);
     const pass = get("passNumber");
-    if (wechsel && pass && !normalizePassNumber(pass)) {
+    if (transfer && pass && !normalizePassNumber(pass)) {
       setPassError("Die Passnummer hat 8 Stellen, z. B. 1234-5678.");
       return;
     }
@@ -109,11 +139,18 @@ export function SpielerpassForm() {
       nationality: get("nationality"),
       birthPlace: get("birthPlace"),
       change: change as AntragChange,
-      previousClub: wechsel ? get("previousClub") : undefined,
-      passNumber: wechsel ? pass : undefined,
-      status: wechsel && adult ? (status as AntragStatus) : undefined,
+      previousClub: transfer ? previousClub.trim() : undefined,
+      passNumber: transfer ? pass : undefined,
+      status: transfer && adult ? (status as AntragStatus) : undefined,
       abroadResidence: abroad ? get("abroadResidence") : undefined,
       abroadClub: abroad ? get("abroadClub") : undefined,
+      sanction: sanction === "ja",
+      sanctionFrom: sanction === "ja" ? get("sanctionFrom") : undefined,
+      sanctionTo: sanction === "ja" ? get("sanctionTo") : undefined,
+      waitReasons: vereinswechsel ? waitReasons : undefined,
+      otherText: change === "sonstiges" ? get("otherText") : undefined,
+      stammverein: change === "stammverein" ? get("stammverein") : undefined,
+      consent: transfer ? consent === "ja" : undefined,
     };
 
     setResult({ state: "working" });
@@ -131,7 +168,7 @@ export function SpielerpassForm() {
       setResult({
         state: "error",
         message:
-          "Das Formular konnte nicht erstellt werden. Bitte versuche es noch einmal oder lade das leere Formular unten herunter.",
+          "Das Formular konnte nicht erstellt werden. Bitte versuche es noch einmal.",
       });
       return;
     }
@@ -177,7 +214,7 @@ export function SpielerpassForm() {
         legend="Für wen ist der Antrag?"
         options={KINDS}
         value={kind}
-        onChange={setKind}
+        onChange={pickKind}
         required
       />
 
@@ -186,11 +223,30 @@ export function SpielerpassForm() {
           <RadioGroup
             name="change"
             legend="Worum geht es?"
-            options={CHANGES}
+            options={changeOptions}
             value={change}
             onChange={setChange}
             required
           />
+          {change === "sonstiges" ? (
+            <div className="form-reveal">
+              <Field
+                name="otherText"
+                label="Worum geht es genau?"
+                maxLength={200}
+                required
+              />
+            </div>
+          ) : null}
+          {change === "stammverein" ? (
+            <div className="form-reveal">
+              <Field
+                name="stammverein"
+                label="Neuer Stammverein (Vereinsnummer und Name)"
+                maxLength={150}
+              />
+            </div>
+          ) : null}
 
           <div className="grid gap-4 sm:grid-cols-2">
             <Field
@@ -275,9 +331,15 @@ export function SpielerpassForm() {
             </div>
           ) : null}
 
-          {wechsel ? (
+          {transfer ? (
             <div className="form-reveal space-y-4 rounded-lg border border-nord-line bg-nord-paper-2 p-4 sm:p-5">
-              <Field name="previousClub" label="Bisheriger Verein" required />
+              <Field
+                name="previousClub"
+                label="Bisheriger Verein"
+                value={previousClub}
+                onChange={setPreviousClub}
+                required
+              />
               <Field
                 name="passNumber"
                 label="Passnummer des bisherigen Vereins"
@@ -299,6 +361,90 @@ export function SpielerpassForm() {
                   onChange={setStatus}
                 />
               ) : null}
+            </div>
+          ) : null}
+
+          {vereinswechsel ? (
+            <fieldset className="form-reveal space-y-3 rounded-lg border border-nord-line bg-nord-paper-2 p-4 sm:p-5">
+              <legend className="px-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-nord-muted">
+                Entfällt die Wartezeit? (Seite 2 des Formulars)
+              </legend>
+              <p className="text-sm leading-relaxed text-nord-muted">
+                Nur ankreuzen, wenn einer dieser Fälle zutrifft. Sonst nichts
+                auswählen. Die nötigen Nachweise (zum Beispiel Meldebestätigung
+                oder Bestätigung des bisherigen Vereins) bitte per E-Mail an{" "}
+                {ANTRAG_RECIPIENT} nachreichen.
+              </p>
+              {reasons.map((r) => (
+                <label
+                  key={r.id}
+                  className="flex cursor-pointer items-start gap-3 rounded-lg border border-nord-line bg-white px-3 py-2.5 text-sm leading-relaxed text-nord-ink has-[:checked]:border-nord-navy-2 has-[:checked]:bg-nord-sky/10"
+                >
+                  <input
+                    type="checkbox"
+                    checked={waitReasons.includes(r.id)}
+                    onChange={(e) =>
+                      setWaitReasons((prev) =>
+                        e.target.checked
+                          ? [...prev, r.id]
+                          : prev.filter((id) => id !== r.id),
+                      )
+                    }
+                    className="mt-1 h-4 w-4 shrink-0 accent-nord-navy"
+                  />
+                  <span>{r.label}</span>
+                </label>
+              ))}
+            </fieldset>
+          ) : null}
+
+          <div className="space-y-4">
+            <RadioGroup
+              name="sanction"
+              legend="Läuft ein Sportgerichtsverfahren oder wurde die Spielerin / der Spieler gesperrt?"
+              options={YES_NO}
+              value={sanction}
+              onChange={setSanction}
+              required
+            />
+            {sanction === "ja" ? (
+              <div className="form-reveal grid gap-4 sm:grid-cols-2">
+                <Field name="sanctionFrom" type="date" label="Sperre von" />
+                <Field name="sanctionTo" type="date" label="Sperre bis" />
+              </div>
+            ) : null}
+          </div>
+
+          {transfer ? (
+            <div className="form-reveal space-y-3 rounded-lg border border-nord-gold/60 bg-nord-paper-2 p-4 sm:p-5">
+              <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-nord-gold-ink">
+                Seite 3 des Formulars
+              </div>
+              <h3 className="font-display text-lg font-black text-nord-ink">
+                Einverständniserklärung zur Online-Abmeldung
+              </h3>
+              <p className="rounded-lg border border-nord-line bg-white px-4 py-3 text-sm leading-relaxed text-nord-ink">
+                Hiermit wird meinem neuen Verein <strong>{CLUB_NAME}</strong>{" "}
+                die Erlaubnis erteilt, die stellvertretende Online-Abmeldung im
+                Rahmen der Beantragung eines Vereinswechsels online beim
+                bisherigen Verein{" "}
+                <strong>{previousClub.trim() || "(bitte oben angeben)"}</strong>{" "}
+                vorzunehmen.
+              </p>
+              <p className="text-sm leading-relaxed text-nord-muted">
+                Bitte lies den Text und prüfe, dass der bisherige Verein stimmt.
+                Mit „Ja“ wird Seite 3 des Formulars mit deiner Unterschrift
+                versehen. Die Abmeldung ersetzt nicht die Kündigung der
+                Mitgliedschaft im bisherigen Verein.
+              </p>
+              <RadioGroup
+                name="consent"
+                legend="Einverständnis"
+                options={CONSENT}
+                value={consent}
+                onChange={setConsent}
+                required
+              />
             </div>
           ) : null}
 
@@ -416,6 +562,13 @@ function Next({ result }: { result: Extract<Status, { state: "done" }> }) {
           </p>
         </>
       )}
+      {result.sent ? (
+        <p className="mt-3 rounded-md bg-nord-paper-2 px-3 py-2 text-nord-ink">
+          Bitte kontrolliere im PDF noch einmal die Angaben, bei einem Wechsel
+          auch <strong>Seite 2</strong> (Wartezeit) und <strong>Seite 3</strong>{" "}
+          (Einverständniserklärung zur Online-Abmeldung).
+        </p>
+      ) : null}
       <a
         href={result.copy.url}
         download={result.copy.fileName}

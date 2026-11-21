@@ -10,6 +10,13 @@
 import { z } from "zod";
 
 import {
+  ANTRAG_CHANGES,
+  CHANGE_OPTIONS,
+  WAIT_REASONS,
+  isTransfer,
+  waitReasonIds,
+} from "@/lib/spielerpass-options";
+import {
   ANTRAG_KINDS,
   CLUB_NAME,
   antragFileName,
@@ -56,7 +63,7 @@ export const spielerpassSubmitSchema = z
     city: text(100, "den Wohnort"),
     nationality: text(80, "die Staatsangehörigkeit"),
     birthPlace: text(100, "den Geburtsort"),
-    change: z.enum(["erstausstellung", "vereinswechsel"]),
+    change: z.enum(ANTRAG_CHANGES),
     previousClub: optionalText(150),
     passNumber: z.preprocess(
       blankToUndefined,
@@ -71,6 +78,25 @@ export const spielerpassSubmitSchema = z
     ),
     abroadResidence: optionalText(150),
     abroadClub: optionalText(150),
+    sanction: z.boolean(),
+    sanctionFrom: z.preprocess(
+      blankToUndefined,
+      z
+        .string()
+        .regex(/^\d{4}-\d{2}-\d{2}$/)
+        .optional(),
+    ),
+    sanctionTo: z.preprocess(
+      blankToUndefined,
+      z
+        .string()
+        .regex(/^\d{4}-\d{2}-\d{2}$/)
+        .optional(),
+    ),
+    waitReasons: z.array(z.string().max(40)).max(20).optional(),
+    otherText: optionalText(200),
+    stammverein: optionalText(150),
+    consent: z.boolean().optional(),
     /** Für Rückfragen des Vereins. */
     email: z.string().trim().email("Gültige E-Mail bitte").max(200),
     /** PDF als Base64, im Browser erzeugt. */
@@ -78,9 +104,30 @@ export const spielerpassSubmitSchema = z
     /** Honeypot: echte Nutzer lassen es leer, die Route prüft es. */
     website: z.string().max(200).optional(),
   })
-  .refine((d) => d.change !== "vereinswechsel" || !!d.previousClub, {
-    path: ["previousClub"],
-    message: "Bitte den bisherigen Verein angeben",
+  .superRefine((d, ctx) => {
+    const issue = (path: string, message: string) =>
+      ctx.addIssue({ code: "custom", path: [path], message });
+    if (!CHANGE_OPTIONS[d.kind].some((o) => o.value === d.change)) {
+      issue("change", "Diese Art des Antrags gibt es hier nicht");
+    }
+    if (isTransfer(d.change)) {
+      if (!d.previousClub) {
+        issue("previousClub", "Bitte den bisherigen Verein angeben");
+      }
+      if (d.consent === undefined) {
+        issue(
+          "consent",
+          "Bitte die Einverständniserklärung (Seite 3) beantworten",
+        );
+      }
+    }
+    if (d.change === "sonstiges" && !d.otherText) {
+      issue("otherText", "Bitte kurz beschreiben");
+    }
+    const valid = waitReasonIds(d.kind);
+    if ((d.waitReasons ?? []).some((id) => !valid.includes(id))) {
+      issue("waitReasons", "Ungültiger Grund");
+    }
   });
 
 export type SpielerpassSubmit = z.infer<typeof spielerpassSubmitSchema>;
@@ -102,10 +149,24 @@ const oneLine = (s: string) => s.replace(/\s+/g, " ").trim();
 export function buildKopiervorlage(
   d: Omit<SpielerpassSubmit, "pdf" | "website">,
 ): string {
-  const wechsel = d.change === "vereinswechsel";
+  const transfer = isTransfer(d.change);
   const pass = d.passNumber ? normalizePassNumber(d.passNumber) : null;
+  const option = CHANGE_OPTIONS[d.kind].find((o) => o.value === d.change);
+  const reasons = WAIT_REASONS[d.kind].filter((r) =>
+    (d.waitReasons ?? []).includes(r.id),
+  );
+  const sanction = d.sanction
+    ? `Ja${
+        d.sanctionFrom || d.sanctionTo
+          ? ` (von ${formatBirthDate(d.sanctionFrom ?? "") || "?"} bis ${formatBirthDate(d.sanctionTo ?? "") || "?"})`
+          : ""
+      }`
+    : "Nein";
+
   const rows: Array<[string, string | undefined]> = [
-    ["Antragsart", wechsel ? "Vereinswechsel" : "Erstausstellung"],
+    ["Antragsart", option?.label ?? d.change],
+    ["Sonstiges", d.change === "sonstiges" ? d.otherText : undefined],
+    ["Neuer Stammverein (JFG)", d.stammverein],
     ["Familienname", d.lastName],
     ["Vorname", d.firstName],
     ["Geburtsdatum", formatBirthDate(d.birthDate)],
@@ -115,7 +176,7 @@ export function buildKopiervorlage(
     ["Wohnort", d.city],
     ["Staatsangehörigkeit", d.nationality],
     ["Geburtsort", d.birthPlace],
-    ...(wechsel
+    ...(transfer
       ? ([
           ["Letzter Verein", d.previousClub],
           ["Passnummer des letzten Vereins", pass ?? undefined],
@@ -127,13 +188,28 @@ export function buildKopiervorlage(
           ],
         ] as Array<[string, string | undefined]>)
       : []),
+    ["Sportgerichtsverfahren / Sperre", sanction],
     ["Letzter Wohnort im Ausland", d.abroadResidence],
     ["Letzter Verein im Ausland", d.abroadClub],
   ];
-  return rows
+  const lines = rows
     .filter(([, v]) => v)
-    .map(([k, v]) => `${k}: ${oneLine(v!)}`)
-    .join("\n");
+    .map(([k, v]) => `${k}: ${oneLine(v!)}`);
+
+  if (reasons.length > 0) {
+    lines.push("Wartezeit entfällt (Seite 2), Nachweise beachten:");
+    for (const r of reasons) lines.push(`- ${r.label}`);
+  }
+  if (transfer) {
+    lines.push(
+      `Einverständnis zur stellvertretenden Online-Abmeldung (Seite 3): ${
+        d.consent
+          ? "erteilt"
+          : "NICHT erteilt, die Abmeldung beim bisherigen Verein erledigt der Spieler selbst"
+      }`,
+    );
+  }
+  return lines.join("\n");
 }
 
 export function buildMail(
@@ -146,10 +222,8 @@ export function buildMail(
     timeStyle: "short",
   }).format(sentAt);
   const name = oneLine(`${d.lastName}, ${d.firstName}`);
-  const wechsel = d.change === "vereinswechsel";
-
   const subject = `Spielerpass-Antrag · ${name} (${KIND_LABEL[d.kind]}, ${
-    wechsel ? "Vereinswechsel" : "Erstausstellung"
+    CHANGE_OPTIONS[d.kind].find((o) => o.value === d.change)?.label ?? d.change
   })`;
 
   const text = [
@@ -162,7 +236,7 @@ export function buildMail(
     "------------------------------------------------------------",
     buildKopiervorlage(d),
     "",
-    "Vom Verein zu prüfen oder zu ergänzen: Wartezeit-Ausnahmen, Sportgerichtsverfahren/Sperre, Stammverein (JFG), Unterschrift und Stempel des Vereins.",
+    "Vom Verein zu prüfen oder zu ergänzen: Nachweise zu Wartezeit-Ausnahmen, Stammverein (JFG), Unterschrift und Stempel des Vereins.",
     "Hinweis: Die Unterschrift wurde digital am Bildschirm erfasst (Datum und Uhrzeit stehen im PDF neben der Unterschrift).",
     d.abroadResidence || d.abroadClub
       ? "Bei Spielern aus dem Ausland muss eine Kopie von Reisepass oder Personalausweis beiliegen."

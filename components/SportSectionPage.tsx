@@ -12,7 +12,8 @@ import { lexicalHasContent } from "@/lib/lexical-text";
 import { getPayloadClient } from "@/lib/payload";
 import { teamPhotoAllowed } from "@/lib/photo-consent";
 import { mediaSrc, usableMediaSrc } from "@/lib/publicUploads";
-import type { Media, Person } from "@/payload-types";
+import { teamStaff } from "@/lib/team-staff";
+import type { Media } from "@/payload-types";
 
 export type StaticContact = {
   name: string;
@@ -174,11 +175,10 @@ export async function SportSectionPage({
   const excludeSet = new Set((excludeTrainerNames ?? []).map(normalizeName));
   const trainers = hideTrainers
     ? []
-    : (team.trainers ?? [])
-        .filter((t): t is Person => typeof t === "object" && t !== null)
-        .filter((t) => !excludeSet.has(normalizeName(t.name)))
+    : teamStaff(team)
+        .filter((m) => !excludeSet.has(normalizeName(m.person.name)))
         // Wer schon als fester Ansprechpartner steht, bekommt keine zweite Karte.
-        .filter((t) => !staticNames.has(normalizeName(t.name)));
+        .filter((m) => !staticNames.has(normalizeName(m.person.name)));
 
   // Bewusst der Inhalts-Check und nicht nur "ist ein Richtext-Objekt da":
   // ein im Editor geleertes Feld speichert einen leeren Absatz, und weil die
@@ -335,8 +335,8 @@ export async function SportSectionPage({
                   </span>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  {trainers.map((trainer) => (
-                    <PersonCard key={trainer.id} person={trainer} />
+                  {trainers.map(({ person, role }) => (
+                    <PersonCard key={person.id} person={person} role={role} />
                   ))}
                 </div>
               </div>

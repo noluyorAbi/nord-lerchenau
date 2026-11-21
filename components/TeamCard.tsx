@@ -4,7 +4,8 @@ import { resolveBfvTeamPhoto } from "@/lib/bfv";
 import { getFupaTeamPhoto } from "@/lib/fupa";
 import { teamPhotoAllowed } from "@/lib/photo-consent";
 import { mediaSrc } from "@/lib/publicUploads";
-import type { Person, Team } from "@/payload-types";
+import { teamStaff } from "@/lib/team-staff";
+import type { Team } from "@/payload-types";
 
 type Props = { team: Team };
 
@@ -19,9 +20,8 @@ export async function TeamCard({ team }: Props) {
     (team.ageGroup ? `Altersklasse ${team.ageGroup}` : null) ??
     "Mannschaft";
 
-  const trainerNames = (team.trainers ?? [])
-    .filter((t): t is Person => typeof t === "object" && t !== null)
-    .map((t) => t.name)
+  const trainerNames = teamStaff(team)
+    .map((m) => m.person.name)
     .filter((n): n is string => typeof n === "string" && n.length > 0);
 
   // Reihenfolge: selbst hochgeladenes Foto aus dem Admin (bewusste

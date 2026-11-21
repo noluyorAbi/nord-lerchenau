@@ -1,7 +1,8 @@
 import type { Media, Person } from "@/payload-types";
 import { mediaSrc } from "@/lib/publicUploads";
 
-type Props = { person: Person };
+/** `role` ist die Rolle in der jeweiligen Mannschaft, sonst die der Person. */
+type Props = { person: Person; role?: string };
 
 function portraitUrl(photo: Person["photo"]): string | null {
   if (!photo || typeof photo !== "object") return null;
@@ -18,7 +19,7 @@ function whatsappLink(phone: string): string | null {
   return `https://wa.me/${intl}`;
 }
 
-export function PersonCard({ person }: Props) {
+export function PersonCard({ person, role }: Props) {
   const src = portraitUrl(person.photo);
   const wa =
     person.function === "trainer" && person.phone
@@ -51,7 +52,7 @@ export function PersonCard({ person }: Props) {
         {person.name}
       </h3>
       <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-nord-sky-ink">
-        {person.role}
+        {role ?? person.role}
       </div>
       <div className="mt-3 space-y-0.5 text-xs text-nord-muted">
         {person.phone ? (

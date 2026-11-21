@@ -13,6 +13,7 @@ import {
   formatBirthDate,
   isGermanNationality,
   normalizePassNumber,
+  signatureNeeds,
   toPdfText,
   type AntragData,
 } from "@/lib/spielerpass";
@@ -86,6 +87,71 @@ describe("Hilfsfunktionen", () => {
     expect(antragFileName({ lastName: "", firstName: "" })).toBe(
       "Antrag-Spielberechtigung.pdf",
     );
+  });
+});
+
+describe("signatureNeeds", () => {
+  const now = new Date("2026-11-21T12:00:00Z"); // Spieljahr 2026/27
+  it("E-, F- und G-Junioren: nur die Eltern unterschreiben", () => {
+    // U11 = Jahrgang 2016, U7 = 2020
+    expect(signatureNeeds("2016-03-09", now)).toEqual({
+      player: false,
+      guardian: true,
+    });
+    expect(signatureNeeds("2020-01-01", now)).toEqual({
+      player: false,
+      guardian: true,
+    });
+  });
+  it("ab D-Junioren unterschreiben Spieler und Eltern", () => {
+    // U12 = Jahrgang 2015
+    expect(signatureNeeds("2015-06-30", now)).toEqual({
+      player: true,
+      guardian: true,
+    });
+    expect(signatureNeeds("2010-02-01", now)).toEqual({
+      player: true,
+      guardian: true,
+    });
+  });
+  it("Volljährige brauchen keine Unterschrift der Eltern", () => {
+    expect(signatureNeeds("2008-11-21", now)).toEqual({
+      player: true,
+      guardian: false,
+    });
+    // am Vortag des 18. Geburtstags noch Eltern
+    expect(signatureNeeds("2008-11-22", now)).toEqual({
+      player: true,
+      guardian: true,
+    });
+  });
+  it("das Spieljahr wechselt am 1. Juli", () => {
+    // Jahrgang 2016 ist im Juni 2026 noch U10 (Spieljahr 2025/26), im Juli U11
+    expect(
+      signatureNeeds("2015-06-30", new Date("2026-06-15T12:00:00Z")),
+    ).toEqual({ player: false, guardian: true });
+  });
+  it("entspricht der BFV-Tabelle für 2026/27 und rückt jedes Jahr von selbst vor", () => {
+    // BFV: D 2014/2015, E 2016/2017, F 2018/2019, G ab 2020
+    const needsPlayer = (y: number, d: Date) =>
+      signatureNeeds(`${y}-10-01`, d)?.player;
+    expect(needsPlayer(2014, now)).toBe(true);
+    expect(needsPlayer(2015, now)).toBe(true);
+    expect(needsPlayer(2016, now)).toBe(false);
+    expect(needsPlayer(2020, now)).toBe(false);
+    // ein Jahr später: dann sind 2016/2017 die D-Junioren (U13/U12)
+    const next = new Date("2027-11-21T12:00:00Z");
+    expect(needsPlayer(2016, next)).toBe(true);
+    expect(needsPlayer(2017, next)).toBe(false);
+    // Jahrgang zählt, nicht das genaue Alter: Dez. 2015 ist im Nov. 2026
+    // noch 10 Jahre alt, aber D-Junior
+    expect(signatureNeeds("2015-12-31", now)?.player).toBe(true);
+  });
+  it("ungültige oder zukünftige Daten: null", () => {
+    expect(signatureNeeds("", now)).toBeNull();
+    expect(signatureNeeds("2026-02-30", now)).toBeNull();
+    expect(signatureNeeds("2027-01-01", now)).toBeNull();
+    expect(signatureNeeds("1900-01-01", now)).toBeNull();
   });
 });
 

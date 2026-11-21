@@ -13,6 +13,7 @@ import {
   formatBirthDate,
   isGermanNationality,
   normalizePassNumber,
+  signatureNeeds,
   toPdfText,
   type AntragData,
 } from "@/lib/spielerpass";
@@ -86,6 +87,55 @@ describe("Hilfsfunktionen", () => {
     expect(antragFileName({ lastName: "", firstName: "" })).toBe(
       "Antrag-Spielberechtigung.pdf",
     );
+  });
+});
+
+describe("signatureNeeds", () => {
+  const now = new Date("2026-11-21T12:00:00Z"); // Spieljahr 2026/27
+  it("E-, F- und G-Junioren: nur die Eltern unterschreiben", () => {
+    // U11 = Jahrgang 2016, U7 = 2020
+    expect(signatureNeeds("2016-03-09", now)).toEqual({
+      player: false,
+      guardian: true,
+    });
+    expect(signatureNeeds("2020-01-01", now)).toEqual({
+      player: false,
+      guardian: true,
+    });
+  });
+  it("ab D-Junioren unterschreiben Spieler und Eltern", () => {
+    // U12 = Jahrgang 2015
+    expect(signatureNeeds("2015-06-30", now)).toEqual({
+      player: true,
+      guardian: true,
+    });
+    expect(signatureNeeds("2010-02-01", now)).toEqual({
+      player: true,
+      guardian: true,
+    });
+  });
+  it("Volljährige brauchen keine Unterschrift der Eltern", () => {
+    expect(signatureNeeds("2008-11-21", now)).toEqual({
+      player: true,
+      guardian: false,
+    });
+    // am Vortag des 18. Geburtstags noch Eltern
+    expect(signatureNeeds("2008-11-22", now)).toEqual({
+      player: true,
+      guardian: true,
+    });
+  });
+  it("das Spieljahr wechselt am 1. Juli", () => {
+    // Jahrgang 2016 ist im Juni 2026 noch U10 (Spieljahr 2025/26), im Juli U11
+    expect(
+      signatureNeeds("2015-06-30", new Date("2026-06-15T12:00:00Z")),
+    ).toEqual({ player: false, guardian: true });
+  });
+  it("ungültige oder zukünftige Daten: null", () => {
+    expect(signatureNeeds("", now)).toBeNull();
+    expect(signatureNeeds("2026-02-30", now)).toBeNull();
+    expect(signatureNeeds("2027-01-01", now)).toBeNull();
+    expect(signatureNeeds("1900-01-01", now)).toBeNull();
   });
 });
 

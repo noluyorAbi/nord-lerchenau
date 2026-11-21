@@ -10,6 +10,7 @@
  * Angaben des Vereins.
  */
 
+import { seasonEndYear } from "@/lib/probetraining-team";
 import {
   CHANGE_OPTIONS,
   WAIT_REASONS,
@@ -169,6 +170,51 @@ export function formatBirthDate(iso: string): string {
 export function normalizePassNumber(raw: string): string | null {
   const clean = raw.replace(/[\s\-–./]/g, "").toUpperCase();
   return /^[A-Z0-9]{8}$/.test(clean) ? clean : null;
+}
+
+export type SignatureNeeds = { player: boolean; guardian: boolean };
+
+/**
+ * Wer bei Junioren unterschreiben muss. Die Vorlage nimmt E-, F- und G-Junioren
+ * von der Spielerunterschrift aus (Altersklasse U11 und jünger, das "U" ist das
+ * Endjahr des Spieljahres minus Geburtsjahr). Eine Unterschrift der
+ * Erziehungsberechtigten braucht es nur bis zur Volljährigkeit. Null, solange
+ * das Geburtsdatum fehlt oder nicht stimmt.
+ */
+export function signatureNeeds(
+  birthDate: string,
+  now: Date = new Date(),
+): SignatureNeeds | null {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(birthDate.trim());
+  if (!m) return null;
+  const [year, month, day] = [Number(m[1]), Number(m[2]), Number(m[3])];
+  const born = new Date(Date.UTC(year, month - 1, day));
+  if (
+    born.getUTCFullYear() !== year ||
+    born.getUTCMonth() !== month - 1 ||
+    born.getUTCDate() !== day ||
+    born.getTime() > now.getTime() ||
+    year < 1940
+  ) {
+    return null;
+  }
+  const today = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Berlin",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  })
+    .format(now)
+    .split("-")
+    .map(Number);
+  const age =
+    today[0] -
+    year -
+    (today[1] < month || (today[1] === month && today[2] < day) ? 1 : 0);
+  return {
+    player: seasonEndYear(now) - year >= 12,
+    guardian: age < 18,
+  };
 }
 
 export function isGermanNationality(value: string): boolean {

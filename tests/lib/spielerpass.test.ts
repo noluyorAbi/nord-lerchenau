@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { PDFDocument } from "pdf-lib";
 import { describe, expect, it } from "vitest";
 
+import { CHANGE_OPTIONS, WAIT_REASONS } from "@/lib/spielerpass-options";
 import {
   ANTRAG_KINDS,
   ANTRAG_TEMPLATE,
@@ -28,6 +29,7 @@ const base: AntragData = {
   nationality: "deutsch",
   birthPlace: "München",
   change: "erstausstellung",
+  sanction: false,
 };
 
 describe("toPdfText", () => {
@@ -98,7 +100,11 @@ describe("buildAntragFields", () => {
       "Straße, Haus-Nr": "Lerchenauer Str. 1",
     });
     expect(f.text).not.toHaveProperty("Letzter Verein");
-    expect(f.checks).toEqual(["Geschlecht männlich", "Erstausstellung"]);
+    expect(f.checks).toEqual([
+      "Geschlecht männlich",
+      "Erstausstellung",
+      "Sportgerichtsverfahren nein 3",
+    ]);
     expect(f.simplified).toBe(false);
   });
 
@@ -114,7 +120,11 @@ describe("buildAntragFields", () => {
     expect(f.text["Passnr. letzter Verein 01"]).toBe("1234");
     expect(f.text["Passnr. letzter Verein 02"]).toBe("5678");
     expect(f.text["Bisheriger Verein Einverständnis 2"]).toBe("FC Beispiel");
-    expect(f.checks).toEqual(["Geschlecht weiblich", "Vereinswechsel 01"]);
+    expect(f.checks).toEqual([
+      "Geschlecht weiblich",
+      "Vereinswechsel 01",
+      "Sportgerichtsverfahren nein 3",
+    ]);
   });
 
   it("Erwachsene: eigene Feldnamen und Status", () => {
@@ -133,7 +143,75 @@ describe("buildAntragFields", () => {
       "Geschlecht männlich",
       "Vereinswechsel",
       "Vertragsspieler",
+      "Sportgerichtsverfahren nein",
     ]);
+  });
+
+  it("Sportgerichtsverfahren mit Zeitraum", () => {
+    const jun = buildAntragFields({
+      ...base,
+      sanction: true,
+      sanctionFrom: "2026-10-01",
+      sanctionTo: "2026-12-31",
+    });
+    expect(jun.checks).toContain("Sportgerichtsverfahren ja 3");
+    expect(jun.text["Sportgerichtsverfahren von 3"]).toBe("01.10.2026");
+    expect(jun.text["Sportgerichtsverfahren bis 3"]).toBe("31.12.2026");
+    const erw = buildAntragFields({
+      ...base,
+      kind: "erwachsene",
+      sanction: true,
+    });
+    expect(erw.checks).toContain("Sportgerichtsverfahren ja");
+  });
+
+  it("Wartezeit-Grund kreuzt Seite 2 und den Paragrafen auf Seite 1 an", () => {
+    const jun = buildAntragFields({
+      ...base,
+      change: "vereinswechsel",
+      previousClub: "FC Beispiel",
+      waitReasons: ["b", "c-studium"],
+    });
+    expect(jun.checks).toEqual(
+      expect.arrayContaining([
+        "Vereinswechsel 03",
+        "Vereinswechsel 04",
+        "Entfall Wartezeit 02",
+        "Entfall Wartezeit 05",
+      ]),
+    );
+    expect(jun.checks).not.toContain("Vereinswechsel 01");
+
+    const erw = buildAntragFields({
+      ...base,
+      kind: "erwachsene",
+      change: "vereinswechsel",
+      previousClub: "FC Beispiel",
+      waitReasons: ["2"],
+    });
+    expect(erw.checks).toContain("Vereinswechsel  §44 SpO");
+    expect(erw.checks).toContain("§44 Option 2");
+    expect(erw.checks).not.toContain("Vereinswechsel");
+  });
+
+  it("weitere Antragsarten, Sonstiges und Stammverein", () => {
+    const sonst = buildAntragFields({
+      ...base,
+      kind: "erwachsene",
+      change: "sonstiges",
+      otherText: "Nachmeldung",
+    });
+    expect(sonst.checks).toContain("Sonstiges 3");
+    expect(sonst.text["Sonstiges Text"]).toBe("Nachmeldung");
+    const jfg = buildAntragFields({
+      ...base,
+      change: "stammverein",
+      previousClub: "FC Beispiel",
+      stammverein: "1234 FC Neu",
+    });
+    expect(jfg.checks).toContain("Wechsel Stammverein JFG");
+    expect(jfg.text["Vereinsnummer + Name Stammverein"]).toBe("1234 FC Neu");
+    expect(jfg.text["Letzter Verein"]).toBe("FC Beispiel");
   });
 
   it("meldet vereinfachte Zeichen", () => {
@@ -163,6 +241,31 @@ describe.each(ANTRAG_KINDS)("Vorlage %s", (kind) => {
         abroadClub: "SK Beispiel",
       },
       { ...base, kind, gender: "weiblich" },
+      {
+        ...base,
+        kind,
+        sanction: true,
+        sanctionFrom: "2026-10-01",
+        sanctionTo: "2026-12-31",
+        stammverein: "1234 FC Neu",
+        otherText: "x",
+      },
+      // jede Antragsart und jeder Wartezeit-Grund
+      ...CHANGE_OPTIONS[kind].map((o) => ({
+        ...base,
+        kind,
+        change: o.value,
+        previousClub: "FC Beispiel",
+        otherText: "x",
+        stammverein: "1234 FC Neu",
+      })),
+      {
+        ...base,
+        kind,
+        change: "vereinswechsel" as const,
+        previousClub: "FC Beispiel",
+        waitReasons: WAIT_REASONS[kind].map((r) => r.id),
+      },
     ];
     for (const s of samples) {
       const { text, checks } = buildAntragFields(s);

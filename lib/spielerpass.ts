@@ -10,8 +10,16 @@
  * Angaben des Vereins.
  */
 
+import {
+  CHANGE_OPTIONS,
+  WAIT_REASONS,
+  isTransfer,
+  type AntragChange,
+  type AntragKind,
+} from "@/lib/spielerpass-options";
+
 export const ANTRAG_KINDS = ["junioren", "erwachsene"] as const;
-export type AntragKind = (typeof ANTRAG_KINDS)[number];
+export type { AntragChange, AntragKind };
 
 /** An wen die Antragsteller das fertige PDF schicken. */
 export const ANTRAG_RECIPIENT = "info@svnord.de";
@@ -62,7 +70,6 @@ export const ANTRAG_TEMPLATE: Record<AntragKind, string> = {
 };
 
 export type AntragGender = "maennlich" | "weiblich";
-export type AntragChange = "erstausstellung" | "vereinswechsel";
 export type AntragStatus = "amateur" | "vertragsspieler" | "lizenzspieler";
 
 export type AntragData = {
@@ -85,6 +92,18 @@ export type AntragData = {
   status?: AntragStatus;
   abroadResidence?: string;
   abroadClub?: string;
+  /** Läuft ein Sportgerichtsverfahren oder wurde der Spieler gesperrt? */
+  sanction: boolean;
+  sanctionFrom?: string;
+  sanctionTo?: string;
+  /** Gründe, aus denen die Wartezeit entfällt (Seite 2), siehe WAIT_REASONS. */
+  waitReasons?: string[];
+  /** Freitext bei "Sonstiges". */
+  otherText?: string;
+  /** Nur Junioren, nur Stammvereinswechsel: Vereinsnummer und Name. */
+  stammverein?: string;
+  /** Einverständnis zur stellvertretenden Online-Abmeldung (Seite 3). */
+  consent?: boolean;
 };
 
 export type AntragFields = {
@@ -181,7 +200,7 @@ export function buildAntragFields(
     text[field] = r.text;
   };
 
-  const wechsel = data.change === "vereinswechsel";
+  const transfer = isTransfer(data.change);
   const birth = formatBirthDate(data.birthDate);
 
   set("Vereinsnummer", CLUB_NUMBER);
@@ -199,8 +218,28 @@ export function buildAntragFields(
     data.gender === "weiblich" ? "Geschlecht weiblich" : "Geschlecht männlich",
   );
 
-  if (wechsel) {
-    checks.push(jun ? "Vereinswechsel 01" : "Vereinswechsel");
+  // Seite 1: Art des Antrags. Gilt ein Grund für den Wegfall der Wartezeit,
+  // nennt die Vorlage statt "Vereinswechsel" den Paragrafen.
+  const reasons = WAIT_REASONS[data.kind].filter((r) =>
+    (data.waitReasons ?? []).includes(r.id),
+  );
+  const option = CHANGE_OPTIONS[data.kind].find((o) => o.value === data.change);
+  if (option) {
+    if (data.change === "vereinswechsel" && reasons.length > 0) {
+      for (const c of new Set(reasons.map((r) => r.pageOneCheck))) {
+        checks.push(c);
+      }
+    } else {
+      checks.push(option.check);
+    }
+  }
+  for (const r of reasons) checks.push(r.check);
+  if (data.change === "sonstiges") set("Sonstiges Text", data.otherText);
+  if (jun && data.change === "stammverein") {
+    set("Vereinsnummer + Name Stammverein", data.stammverein);
+  }
+
+  if (transfer) {
     set("Letzter Verein", data.previousClub);
     const pass = normalizePassNumber(data.passNumber ?? "");
     if (pass) {
@@ -216,8 +255,22 @@ export function buildAntragFields(
             : "Amateur",
       );
     }
-  } else {
-    checks.push("Erstausstellung");
+  }
+
+  // Sportgerichtsverfahren / Sperre
+  const sanctionSuffix = jun ? " 3" : "";
+  checks.push(
+    `Sportgerichtsverfahren ${data.sanction ? "ja" : "nein"}${sanctionSuffix}`,
+  );
+  if (data.sanction) {
+    set(
+      `Sportgerichtsverfahren von${sanctionSuffix}`,
+      formatBirthDate(data.sanctionFrom ?? ""),
+    );
+    set(
+      `Sportgerichtsverfahren bis${sanctionSuffix}`,
+      formatBirthDate(data.sanctionTo ?? ""),
+    );
   }
 
   set(
@@ -230,13 +283,14 @@ export function buildAntragFields(
   );
 
   // Seite 3 (Einverständniserklärung zur Online-Abmeldung): dieselben Angaben,
-  // nur bei Vereinswechsel sinnvoll. Die Feldnamen weichen je Vorlage ab.
+  // nur bei einem Wechsel sinnvoll. Die Feldnamen weichen je Vorlage ab. Die
+  // Unterschrift dort setzt der Browser nur, wenn consent gesetzt ist.
   const suffix = jun ? " Einverständnis 2" : " Einverständnis";
   set(`Familienname${suffix}`, data.lastName);
   set(`Vorname${suffix}`, data.firstName);
   set(`Geburtsdatum${suffix}`, birth);
   set(`Neuer Verein${suffix}`, CLUB_NAME);
-  if (wechsel) {
+  if (transfer) {
     set(
       jun
         ? "Bisheriger Verein Einverständnis 2"

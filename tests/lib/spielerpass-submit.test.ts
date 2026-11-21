@@ -24,6 +24,8 @@ const valid = {
   change: "vereinswechsel",
   previousClub: "TSV Beispielhausen",
   passNumber: "1234-5678",
+  sanction: false,
+  consent: true,
   email: "eltern@example.org",
   pdf: PDF_B64,
 };
@@ -44,6 +46,27 @@ describe("spielerpassSubmitSchema", () => {
       spielerpassSubmitSchema.safeParse({ ...valid, passNumber: "123" })
         .success,
     ).toBe(false);
+  });
+  it("verlangt bei einem Wechsel die Antwort zu Seite 3", () => {
+    const r = spielerpassSubmitSchema.safeParse({
+      ...valid,
+      consent: undefined,
+    });
+    expect(r.success).toBe(false);
+  });
+  it("prüft Antragsart, Sonstiges und Wartezeit-Gründe", () => {
+    const ok = (extra: object) =>
+      spielerpassSubmitSchema.safeParse({ ...valid, ...extra }).success;
+    // Zweitspielrecht gibt es nur für Erwachsene
+    expect(ok({ change: "zweitspielrecht" })).toBe(false);
+    expect(ok({ kind: "erwachsene", change: "zweitspielrecht" })).toBe(true);
+    // Sonstiges braucht eine Beschreibung
+    expect(ok({ change: "sonstiges" })).toBe(false);
+    expect(ok({ change: "sonstiges", otherText: "Nachmeldung" })).toBe(true);
+    // Gründe müssen zur Altersgruppe passen
+    expect(ok({ waitReasons: ["a", "b"] })).toBe(true);
+    expect(ok({ waitReasons: ["10"] })).toBe(false);
+    expect(ok({ kind: "erwachsene", waitReasons: ["10"] })).toBe(true);
   });
   it("lehnt ungültige E-Mail, PLZ und Datum ab", () => {
     for (const bad of [
@@ -82,7 +105,7 @@ describe("Mail", () => {
 
   it("Kopiervorlage in Formularreihenfolge, mit Originalschreibweise", () => {
     expect(buildKopiervorlage(d).split("\n")).toEqual([
-      "Antragsart: Vereinswechsel",
+      "Antragsart: Wechsel von einem anderen Verein",
       "Familienname: Nowak",
       "Vorname: Łukasz",
       "Geburtsdatum: 09.03.2014",
@@ -94,6 +117,8 @@ describe("Mail", () => {
       "Geburtsort: Kraków",
       "Letzter Verein: TSV Beispielhausen",
       "Passnummer des letzten Vereins: 12345678",
+      "Sportgerichtsverfahren / Sperre: Nein",
+      "Einverständnis zur stellvertretenden Online-Abmeldung (Seite 3): erteilt",
     ]);
   });
 
@@ -103,7 +128,7 @@ describe("Mail", () => {
       new Date("2026-11-20T17:00:00Z"),
     );
     expect(subject).toBe(
-      "Spielerpass-Antrag · Nowak, Łukasz (Junioren/Juniorinnen, Vereinswechsel)",
+      "Spielerpass-Antrag · Nowak, Łukasz (Junioren/Juniorinnen, Wechsel von einem anderen Verein)",
     );
     expect(fileName).toBe("Antrag-Spielberechtigung-Nowak-Lukasz.pdf");
     expect(text).not.toContain("beim BFV klären");

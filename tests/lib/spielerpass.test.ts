@@ -131,6 +131,22 @@ describe("signatureNeeds", () => {
       signatureNeeds("2015-06-30", new Date("2026-06-15T12:00:00Z")),
     ).toEqual({ player: false, guardian: true });
   });
+  it("entspricht der BFV-Tabelle für 2026/27 und rückt jedes Jahr von selbst vor", () => {
+    // BFV: D 2014/2015, E 2016/2017, F 2018/2019, G ab 2020
+    const needsPlayer = (y: number, d: Date) =>
+      signatureNeeds(`${y}-10-01`, d)?.player;
+    expect(needsPlayer(2014, now)).toBe(true);
+    expect(needsPlayer(2015, now)).toBe(true);
+    expect(needsPlayer(2016, now)).toBe(false);
+    expect(needsPlayer(2020, now)).toBe(false);
+    // ein Jahr später: dann sind 2016/2017 die D-Junioren (U13/U12)
+    const next = new Date("2027-11-21T12:00:00Z");
+    expect(needsPlayer(2016, next)).toBe(true);
+    expect(needsPlayer(2017, next)).toBe(false);
+    // Jahrgang zählt, nicht das genaue Alter: Dez. 2015 ist im Nov. 2026
+    // noch 10 Jahre alt, aber D-Junior
+    expect(signatureNeeds("2015-12-31", now)?.player).toBe(true);
+  });
   it("ungültige oder zukünftige Daten: null", () => {
     expect(signatureNeeds("", now)).toBeNull();
     expect(signatureNeeds("2026-02-30", now)).toBeNull();

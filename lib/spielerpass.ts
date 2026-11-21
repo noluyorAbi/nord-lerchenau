@@ -176,10 +176,15 @@ export type SignatureNeeds = { player: boolean; guardian: boolean };
 
 /**
  * Wer bei Junioren unterschreiben muss. Die Vorlage nimmt E-, F- und G-Junioren
- * von der Spielerunterschrift aus (Altersklasse U11 und jünger, das "U" ist das
- * Endjahr des Spieljahres minus Geburtsjahr). Eine Unterschrift der
- * Erziehungsberechtigten braucht es nur bis zur Volljährigkeit. Null, solange
- * das Geburtsdatum fehlt oder nicht stimmt.
+ * von der Spielerunterschrift aus. Die Altersklasse richtet sich beim BFV nach
+ * dem Geburtsjahrgang (1.1. bis 31.12.), nicht nach dem genauen Alter: im
+ * Spieljahr 2026/27 sind D-Junioren 2014/2015 geboren, E-Junioren 2016/2017,
+ * F-Junioren 2018/2019, G-Junioren ab 2020 (bfv.de, "Passrecht Junior(inn)en").
+ * Das "U" ist das Endjahr des Spieljahres (es beginnt am 1. Juli) minus
+ * Geburtsjahr, die Grenze verschiebt sich also jedes Jahr von selbst. Eine
+ * Unterschrift der Erziehungsberechtigten braucht es nur bis zur
+ * Volljährigkeit (genaues Alter). Null, solange das Geburtsdatum fehlt oder
+ * nicht stimmt.
  */
 export function signatureNeeds(
   birthDate: string,

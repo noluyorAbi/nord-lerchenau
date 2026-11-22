@@ -37,7 +37,7 @@ export default async function JuniorenPage() {
         { role: "Fußball-Jugend", names: ["Ergin Piker"] },
         {
           role: "Großfeld",
-          names: ["Tom Wurm", "Thomas Tiesler", "Zeljko Jeremic"],
+          names: ["Thomas Wurm", "Thomas Tiesler", "Zeljko Jeremic"],
         },
         { role: "Kompaktfeld", names: ["Steffen Helmreich"] },
         { role: "Kleinfeld", names: ["Thomas Wimmer", "Stephan Krusche"] },

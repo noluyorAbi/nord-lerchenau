@@ -272,10 +272,9 @@ export async function Hero({ hero, slides }: Props) {
             </HeroItem>
 
             <HeroItem>
-              {/* Vollständiger Vereinsname als Kicker, schmales geschütztes
-                  Leerzeichen (U+202F) vor „e. V." */}
+              {/* Vollständiger Vereinsname als Kicker mit geschütztem Leerzeichen vor e.V. */}
               <p className="mb-3 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-nord-gold/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.45)]">
-                SV Nord München-Lerchenau e.&#8239;V.
+                SV Nord München-Lerchenau&nbsp;e.V.
               </p>
               <h1
                 className="font-display font-black text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.4)]"

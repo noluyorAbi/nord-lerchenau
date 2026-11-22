@@ -83,7 +83,10 @@ export const NAV_TREE: NavItem[] = [
             label: "Juniorinnen",
             href: "/fussball/juniorinnen",
             children: [
-              { label: "Alle Juniorinnen-Teams", href: "/fussball/juniorinnen" },
+              {
+                label: "Alle Juniorinnen-Teams",
+                href: "/fussball/juniorinnen",
+              },
               ...juniorinnenTeams,
             ],
           },

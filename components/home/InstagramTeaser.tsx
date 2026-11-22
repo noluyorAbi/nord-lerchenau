@@ -35,9 +35,19 @@ const SOCIAL_LINKS: Array<{
   desc: string;
 }> = [
   {
+    label: "Instagram",
+    href: IG_PROFILE_URL,
+    desc: "Fotos und Einblicke aus dem Vereinsleben.",
+  },
+  {
     label: "Facebook",
     href: "https://www.facebook.com/svnordlerchenau/",
     desc: "Ankündigungen, Termine, Vereinsnachrichten.",
+  },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/company/sv-nord-m%C3%BCnchen-lerchenau",
+    desc: "Neuigkeiten vom Verein und aus seinem Netzwerk.",
   },
   {
     label: "fupa.net",

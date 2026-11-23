@@ -19,6 +19,7 @@ const GREETING =
   "Servus! Ich bin der Nord-Assistent. Frag mich zu Mannschaften, Probetraining, Mitgliedschaft, Vereinsheim — was du wissen willst.";
 
 const SUGGESTIONS = [
+  "Änderung melden?",
   "Wie kann ich Probetraining vereinbaren?",
   "Was kostet die Mitgliedschaft?",
   "Welche Jugendmannschaften gibt es?",

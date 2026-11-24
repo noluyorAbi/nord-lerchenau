@@ -4,6 +4,7 @@
  * Angaben verlassen das Gerät nicht. pdf-lib wird erst beim Absenden geladen.
  */
 
+import { isTransfer } from "@/lib/spielerpass-options";
 import {
   ANTRAG_TEMPLATE,
   CONSENT_SIGNATURE_BOX,
@@ -102,9 +103,10 @@ export async function fillAntragPdf(
     const png = signatures[who];
     if (box && png) await sign(0, box, png);
   }
-  // Seite 3 gilt nur beim Vereinswechsel; eine Unterschrift genügt dort.
+  // Seite 3 wird nur unterschrieben, wenn die Einverständniserklärung
+  // ausdrücklich erteilt wurde; eine Unterschrift genügt dort.
   const consent = signatures.player ?? signatures.guardian;
-  if (data.change === "vereinswechsel" && consent) {
+  if (isTransfer(data.change) && data.consent === true && consent) {
     await sign(2, CONSENT_SIGNATURE_BOX, consent);
   }
 

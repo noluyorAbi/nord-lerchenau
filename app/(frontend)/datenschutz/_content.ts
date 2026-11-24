@@ -297,7 +297,7 @@ export function datenschutzSections(address: ClubAddress): LegalSection[] {
         { kind: "h3", text: "BFV (Bayerischer Fußball-Verband)" },
         {
           kind: "p",
-          text: "Spielpläne, Tabellen und Kaderlisten beziehen wir über die öffentliche Widget-API des **Bayerischen Fußball-Verbands e. V.** (Brienner Straße 50, 80333 München). Der Abruf dieser Daten erfolgt über unseren Server, Ihre IP-Adresse wird dabei **nicht** an den BFV übermittelt. Einzelne **Mannschaftsfotos** aus diesem Angebot lädt Ihr Browser dagegen direkt vom Bildserver von fussball.de; dabei werden Ihre IP-Adresse, Browserkennung und die aufgerufene Seite dorthin übertragen (Art. 6 Abs. 1 lit. f DSGVO, berechtigtes Interesse an der Darstellung der Mannschaften). Klicken Sie auf ein verlinktes BFV-Formular oder eine BFV-Seite, gelten die Datenschutzhinweise des BFV.",
+          text: "Spielpläne, Tabellen und Kaderlisten beziehen wir über die öffentliche Widget-API des **Bayerischen Fußball-Verbands e.V.** (Brienner Straße 50, 80333 München). Der Abruf dieser Daten erfolgt über unseren Server, Ihre IP-Adresse wird dabei **nicht** an den BFV übermittelt. Einzelne **Mannschaftsfotos** aus diesem Angebot lädt Ihr Browser dagegen direkt vom Bildserver von fussball.de; dabei werden Ihre IP-Adresse, Browserkennung und die aufgerufene Seite dorthin übertragen (Art. 6 Abs. 1 lit. f DSGVO, berechtigtes Interesse an der Darstellung der Mannschaften). Klicken Sie auf ein verlinktes BFV-Formular oder eine BFV-Seite, gelten die Datenschutzhinweise des BFV.",
         },
         {
           kind: "linkRow",

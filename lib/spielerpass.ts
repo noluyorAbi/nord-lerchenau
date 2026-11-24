@@ -5,13 +5,21 @@
  * macht lib/spielerpass-pdf.ts im Browser, damit keine Angaben zum Server
  * wandern.
  *
- * Bewusst NICHT ausgefüllt: Stammverein (JFG), Sportgerichtsverfahren,
- * Wartezeit-Ausnahmen sowie Unterschrift und Stempel des Vereins. Das sind
- * Angaben des Vereins.
+ * Bewusst NICHT ausgefüllt: Stammverein (der SV Nord ist keine Junioren-
+ * Fördergemeinschaft) sowie Unterschrift und Stempel des Vereins.
  */
 
+import { seasonEndYear } from "@/lib/probetraining-team";
+import {
+  CHANGE_OPTIONS,
+  WAIT_REASONS,
+  isTransfer,
+  type AntragChange,
+  type AntragKind,
+} from "@/lib/spielerpass-options";
+
 export const ANTRAG_KINDS = ["junioren", "erwachsene"] as const;
-export type AntragKind = (typeof ANTRAG_KINDS)[number];
+export type { AntragChange, AntragKind };
 
 /** An wen die Antragsteller das fertige PDF schicken. */
 export const ANTRAG_RECIPIENT = "info@svnord.de";
@@ -62,7 +70,6 @@ export const ANTRAG_TEMPLATE: Record<AntragKind, string> = {
 };
 
 export type AntragGender = "maennlich" | "weiblich";
-export type AntragChange = "erstausstellung" | "vereinswechsel";
 export type AntragStatus = "amateur" | "vertragsspieler" | "lizenzspieler";
 
 export type AntragData = {
@@ -85,6 +92,16 @@ export type AntragData = {
   status?: AntragStatus;
   abroadResidence?: string;
   abroadClub?: string;
+  /** Läuft ein Sportgerichtsverfahren oder wurde der Spieler gesperrt? */
+  sanction: boolean;
+  sanctionFrom?: string;
+  sanctionTo?: string;
+  /** Gründe, aus denen die Wartezeit entfällt (Seite 2), siehe WAIT_REASONS. */
+  waitReasons?: string[];
+  /** Freitext bei "Sonstiges". */
+  otherText?: string;
+  /** Einverständnis zur stellvertretenden Online-Abmeldung (Seite 3). */
+  consent?: boolean;
 };
 
 export type AntragFields = {
@@ -152,6 +169,73 @@ export function normalizePassNumber(raw: string): string | null {
   return /^[A-Z0-9]{8}$/.test(clean) ? clean : null;
 }
 
+export type SignatureNeeds = { player: boolean; guardian: boolean };
+
+/**
+ * Wer bei Junioren unterschreiben muss. Die Vorlage nimmt E-, F- und G-Junioren
+ * von der Spielerunterschrift aus. Die Altersklasse richtet sich beim BFV nach
+ * dem Geburtsjahrgang (1.1. bis 31.12.), nicht nach dem genauen Alter: im
+ * Spieljahr 2026/27 sind D-Junioren 2014/2015 geboren, E-Junioren 2016/2017,
+ * F-Junioren 2018/2019, G-Junioren ab 2020 (bfv.de, "Passrecht Junior(inn)en").
+ * Das "U" ist das Endjahr des Spieljahres (es beginnt am 1. Juli) minus
+ * Geburtsjahr, die Grenze verschiebt sich also jedes Jahr von selbst. Eine
+ * Unterschrift der Erziehungsberechtigten braucht es nur bis zur
+ * Volljährigkeit (genaues Alter). Null, solange das Geburtsdatum fehlt oder
+ * nicht stimmt.
+ */
+export function signatureNeeds(
+  birthDate: string,
+  now: Date = new Date(),
+): SignatureNeeds | null {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(birthDate.trim());
+  if (!m) return null;
+  const [year, month, day] = [Number(m[1]), Number(m[2]), Number(m[3])];
+  const born = new Date(Date.UTC(year, month - 1, day));
+  if (
+    born.getUTCFullYear() !== year ||
+    born.getUTCMonth() !== month - 1 ||
+    born.getUTCDate() !== day ||
+    born.getTime() > now.getTime() ||
+    year < 1940
+  ) {
+    return null;
+  }
+  const today = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Berlin",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  })
+    .format(now)
+    .split("-")
+    .map(Number);
+  const age =
+    today[0] -
+    year -
+    (today[1] < month || (today[1] === month && today[2] < day) ? 1 : 0);
+  return {
+    player: seasonEndYear(now) - year >= 12,
+    guardian: age < 18,
+  };
+}
+
+/**
+ * Ältere A-Junioren (U19) und ältere B-Juniorinnen (U17): Für sie gelten bei
+ * einem Wechsel nicht die Gründe aus § 31 JO, sondern § 44 Nr. 2 SpO (laut
+ * Hinweis auf Seite 2 der Junioren-Vorlage). Gleiche Jahrgangsrechnung wie bei
+ * signatureNeeds.
+ */
+export function usesAdultTransferRules(
+  birthDate: string,
+  gender: AntragGender | "",
+  now: Date = new Date(),
+): boolean {
+  const m = /^(\d{4})-\d{2}-\d{2}$/.exec(birthDate.trim());
+  if (!m) return false;
+  const u = seasonEndYear(now) - Number(m[1]);
+  return u === 19 || (gender === "weiblich" && u === 17);
+}
+
 export function isGermanNationality(value: string): boolean {
   const v = value.trim().toLowerCase();
   return (
@@ -181,7 +265,7 @@ export function buildAntragFields(
     text[field] = r.text;
   };
 
-  const wechsel = data.change === "vereinswechsel";
+  const transfer = isTransfer(data.change);
   const birth = formatBirthDate(data.birthDate);
 
   set("Vereinsnummer", CLUB_NUMBER);
@@ -199,8 +283,25 @@ export function buildAntragFields(
     data.gender === "weiblich" ? "Geschlecht weiblich" : "Geschlecht männlich",
   );
 
-  if (wechsel) {
-    checks.push(jun ? "Vereinswechsel 01" : "Vereinswechsel");
+  // Seite 1: Art des Antrags. Gilt ein Grund für den Wegfall der Wartezeit,
+  // nennt die Vorlage statt "Vereinswechsel" den Paragrafen.
+  const reasons = WAIT_REASONS[data.kind].filter((r) =>
+    (data.waitReasons ?? []).includes(r.id),
+  );
+  const option = CHANGE_OPTIONS[data.kind].find((o) => o.value === data.change);
+  if (option) {
+    if (data.change === "vereinswechsel" && reasons.length > 0) {
+      for (const c of new Set(reasons.map((r) => r.pageOneCheck))) {
+        checks.push(c);
+      }
+    } else {
+      checks.push(option.check);
+    }
+  }
+  for (const r of reasons) checks.push(r.check);
+  if (data.change === "sonstiges") set("Sonstiges Text", data.otherText);
+
+  if (transfer) {
     set("Letzter Verein", data.previousClub);
     const pass = normalizePassNumber(data.passNumber ?? "");
     if (pass) {
@@ -216,8 +317,22 @@ export function buildAntragFields(
             : "Amateur",
       );
     }
-  } else {
-    checks.push("Erstausstellung");
+  }
+
+  // Sportgerichtsverfahren / Sperre
+  const sanctionSuffix = jun ? " 3" : "";
+  checks.push(
+    `Sportgerichtsverfahren ${data.sanction ? "ja" : "nein"}${sanctionSuffix}`,
+  );
+  if (data.sanction) {
+    set(
+      `Sportgerichtsverfahren von${sanctionSuffix}`,
+      formatBirthDate(data.sanctionFrom ?? ""),
+    );
+    set(
+      `Sportgerichtsverfahren bis${sanctionSuffix}`,
+      formatBirthDate(data.sanctionTo ?? ""),
+    );
   }
 
   set(
@@ -230,13 +345,14 @@ export function buildAntragFields(
   );
 
   // Seite 3 (Einverständniserklärung zur Online-Abmeldung): dieselben Angaben,
-  // nur bei Vereinswechsel sinnvoll. Die Feldnamen weichen je Vorlage ab.
+  // nur bei einem Wechsel sinnvoll. Die Feldnamen weichen je Vorlage ab. Die
+  // Unterschrift dort setzt der Browser nur, wenn consent gesetzt ist.
   const suffix = jun ? " Einverständnis 2" : " Einverständnis";
   set(`Familienname${suffix}`, data.lastName);
   set(`Vorname${suffix}`, data.firstName);
   set(`Geburtsdatum${suffix}`, birth);
   set(`Neuer Verein${suffix}`, CLUB_NAME);
-  if (wechsel) {
+  if (transfer) {
     set(
       jun
         ? "Bisheriger Verein Einverständnis 2"

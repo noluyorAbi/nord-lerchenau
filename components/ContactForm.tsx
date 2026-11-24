@@ -501,6 +501,7 @@ export function RadioGroup({
               type="radio"
               name={name}
               value={opt.value}
+              required={required}
               checked={value === opt.value}
               onChange={() => onChange(opt.value)}
               className="h-4 w-4 shrink-0 accent-nord-navy"

@@ -324,6 +324,17 @@ export async function Footer() {
         ))}
       </div>
 
+      <div className="mx-auto w-full max-w-[1320px] px-6 pb-8 md:px-7">
+        <a
+          href="https://svnord.featurebase.app/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 rounded-full bg-nord-gold px-5 py-3 font-display text-sm font-semibold uppercase tracking-[0.04em] text-nord-navy transition hover:-translate-y-px hover:shadow-[0_8px_20px_rgba(200,169,106,0.4)]"
+        >
+          Änderung beantragen <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+
       <div className="border-t border-white/10">
         <div className="mx-auto flex w-full max-w-[1320px] flex-col items-start justify-between gap-3 px-6 py-6 text-[11px] text-white/50 md:flex-row md:items-center md:px-7">
           <div className="font-mono tracking-[0.04em]">

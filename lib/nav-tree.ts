@@ -14,6 +14,31 @@ export type NavItem = {
   children?: NavItem[];
 };
 
+const juniorenTeams: NavItem[] = [
+  { label: "A1-Junioren · U19-I", href: "/fussball/a1-junioren" },
+  { label: "B1-Junioren · U17", href: "/fussball/b1-junioren" },
+  { label: "C1-Junioren · U15", href: "/fussball/c1-junioren" },
+  { label: "C2-Junioren · U14", href: "/fussball/c-junioren-u14" },
+  { label: "C2-Junioren · U14-2", href: "/fussball/c2-junioren" },
+  { label: "D1-Junioren · U13", href: "/fussball/d1-junioren" },
+  { label: "E-Junioren · U11", href: "/fussball/e1-junioren" },
+  { label: "E-Junioren · U11-2", href: "/fussball/e2-junioren" },
+  { label: "E-Junioren · U10", href: "/fussball/E-junioren" },
+  { label: "F-Junioren · U9-1", href: "/fussball/f1-junioren" },
+  { label: "F-Junioren · U9-2", href: "/fussball/f1-junioren-2" },
+  { label: "F-Junioren · U8-1", href: "/fussball/f2-junioren" },
+  { label: "F-Junioren · U8-3", href: "/fussball/f3-junioren" },
+  { label: "F-Junioren · U8-2", href: "/fussball/f4-junioren" },
+  { label: "G-Junioren", href: "/fussball/g-junioren" },
+];
+
+const juniorinnenTeams: NavItem[] = [
+  { label: "B-Juniorinnen · U17", href: "/fussball/b-juniorinnen" },
+  { label: "C-Juniorinnen · U15", href: "/fussball/c-juniorinnen" },
+  { label: "D-Juniorinnen · U13", href: "/fussball/d-juniorinnen" },
+  { label: "E-Juniorinnen · U11", href: "/fussball/e-juniorinnen-u11" },
+];
+
 export const NAV_TREE: NavItem[] = [
   { label: "Startseite", href: "/" },
   {
@@ -47,8 +72,25 @@ export const NAV_TREE: NavItem[] = [
               { label: "3. Mannschaft", href: "/fussball/dritte" },
             ],
           },
-          { label: "Junioren", href: "/fussball/junioren" },
-          { label: "Juniorinnen", href: "/fussball/juniorinnen" },
+          {
+            label: "Junioren",
+            href: "/fussball/junioren",
+            children: [
+              { label: "Alle Junioren-Teams", href: "/fussball/junioren" },
+              ...juniorenTeams,
+            ],
+          },
+          {
+            label: "Juniorinnen",
+            href: "/fussball/juniorinnen",
+            children: [
+              {
+                label: "Alle Juniorinnen-Teams",
+                href: "/fussball/juniorinnen",
+              },
+              ...juniorinnenTeams,
+            ],
+          },
           { label: "Bambinis", href: "/fussball/bambini" },
           { label: "Schiedsrichter", href: "/schiedsrichter" },
         ],

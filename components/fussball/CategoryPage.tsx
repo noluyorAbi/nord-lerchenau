@@ -16,15 +16,11 @@ export type LeadershipGroup = { role: string; names: string[] };
 type LeadershipContact = { phone?: string | null; email?: string | null };
 
 /**
- * Wessen Telefonnummer oeffentlich stehen darf. Der Verein hat am 25.08.2026
- * ausdruecklich die Nummer von Felix Kirmeyer angefragt, und nur die. Auf
- * /verein/vorstand werden Telefonnummern auf Vereinswunsch komplett
- * unterdrueckt, deshalb wird hier niemand ungefragt aufgenommen: eine private
- * Handynummer veroeffentlicht man nicht als Nebenwirkung einer Codeaenderung.
- * E-Mail-Adressen sind davon nicht betroffen, das sind @svnord.de-Adressen und
- * sie stehen bereits oeffentlich auf der Vorstand-Seite.
+ * Wessen Telefonnummer oeffentlich stehen darf. Aktuell ist keine Nummer
+ * freigegeben. Eine private Handynummer wird nicht ohne ausdrueckliche
+ * Freigabe veroeffentlicht. E-Mail-Adressen sind davon nicht betroffen.
  */
-const PHONE_PUBLIC = new Set(["Felix Kirmeyer"]);
+const PHONE_PUBLIC = new Set<string>();
 
 type Props = {
   slug: FussballCategorySlug;

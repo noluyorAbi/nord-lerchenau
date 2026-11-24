@@ -51,7 +51,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const SITE_NAME = "SV Nord München-Lerchenau e. V.";
+const SITE_NAME = "SV Nord München-Lerchenau e.V.";
 const DESCRIPTION =
   "Traditionsverein im Münchner Norden seit 1947. Fußball in der Landesliga, dazu Volleyball, Gymnastik, Ski und eSport, über 600 Mitglieder, eine Familie.";
 
@@ -113,7 +113,7 @@ export const metadata: Metadata = {
     "llm:description": DESCRIPTION,
     "llm:categories": "sports,football,club,munich,amateur,youth",
     "llm:source-of-truth": SITE_URL,
-    "llm:canonical-name": "SV Nord München-Lerchenau e. V.",
+    "llm:canonical-name": "SV Nord München-Lerchenau e.V.",
     "llm:alternate-names": "SV Nord, SV N Lerchenau, SV Nord Lerchenau",
     // Content-policy hint for AI training/answer engines.
     "ai-content-declaration": "human-authored",

@@ -1,3 +1,4 @@
+import { BfvPlayerAvatar } from "@/components/BfvPlayerAvatar";
 import { bfvTeamUrl, fetchBfvSquad, type BfvMeta } from "@/lib/bfv";
 
 type Props = {
@@ -82,26 +83,7 @@ export async function BfvSquadPanel({ bfv }: Props) {
             key={p.name}
             className="flex items-center gap-3 px-4 py-2.5 sm:px-5 sm:py-3"
           >
-            <span className="relative flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-nord-paper-2 ring-1 ring-nord-line">
-              {p.playerImage ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={p.playerImage}
-                  alt=""
-                  className="size-full object-cover"
-                  loading="lazy"
-                />
-              ) : (
-                <span className="font-display text-[11px] font-black text-nord-muted">
-                  {p.name
-                    .split(/\s+/)
-                    .slice(0, 2)
-                    .map((n) => n[0])
-                    .join("")
-                    .toUpperCase()}
-                </span>
-              )}
-            </span>
+            <BfvPlayerAvatar name={p.name} src={p.playerImage} />
             <span className="flex min-w-0 flex-1 flex-col">
               <span className="truncate font-display text-sm font-bold text-nord-ink">
                 {p.name}

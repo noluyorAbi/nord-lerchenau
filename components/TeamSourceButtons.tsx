@@ -9,7 +9,6 @@ import {
 type Props = {
   bfv: BfvMeta | null | undefined;
   fupa: FupaMeta | null | undefined;
-  variant?: "light" | "dark";
   className?: string;
 };
 
@@ -18,12 +17,7 @@ type Props = {
  * has on the wider web: the BFV (official league registry) and fupa.net
  * (community mirror with squad + player photos).
  */
-export async function TeamSourceButtons({
-  bfv,
-  fupa,
-  variant = "dark",
-  className,
-}: Props) {
+export async function TeamSourceButtons({ bfv, fupa, className }: Props) {
   const bfvUrl = bfvTeamUrl(bfv ?? null);
   // Neuester auf fupa existierender Saison-Slug (Auto-Upgrade alter Slugs).
   // Ist die fupa-API nicht erreichbar, verlinkt der neueste gespeicherte
@@ -63,17 +57,6 @@ export async function TeamSourceButtons({
           <span>Auf FuPa</span>
           <ArrowOut className="opacity-80 transition group-hover:translate-x-0.5 group-hover:opacity-100" />
         </a>
-      ) : null}
-
-      {/* Subtle note when only one source is linked, useful on youth/non-fupa teams */}
-      {!fupaUrl && bfvUrl ? (
-        <span
-          className={`font-mono text-[10px] uppercase tracking-[0.14em] ${
-            variant === "dark" ? "text-white/50" : "text-nord-muted"
-          }`}
-        >
-          FuPa · nicht gelistet
-        </span>
       ) : null}
     </div>
   );

@@ -1,4 +1,5 @@
 import { PageHero } from "@/components/PageHero";
+import Link from "next/link";
 import { BFV_FORMULARE_URL } from "@/lib/bfv-formulare";
 import { cachedQuery, globalTag } from "@/lib/cms";
 import { getPayloadClient } from "@/lib/payload";
@@ -131,6 +132,48 @@ export default async function MitgliedschaftPage() {
           </div>
         </section>
 
+        <section className="mb-16" aria-labelledby="spielerpass-heading">
+          <div className="rounded-2xl border border-nord-gold/60 bg-gradient-to-br from-nord-paper-2 to-white p-6 md:p-8">
+            <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-nord-gold-ink">
+              Fußball · Spielberechtigung
+            </div>
+            <h2
+              id="spielerpass-heading"
+              className="mt-2 text-2xl font-bold tracking-tight text-nord-ink md:text-3xl"
+            >
+              Spielerpass online beantragen
+            </h2>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-nord-muted">
+              Angaben eingeben, am Handy oder mit der Maus unterschreiben,
+              fertig. Der Antrag auf Spielberechtigung geht als fertiges
+              BFV-Formular direkt an den Verein. Voraussetzung ist die
+              Mitgliedschaft.
+            </p>
+            <Link
+              href="/verein/spielerpass"
+              className="mt-5 inline-flex items-center gap-2 rounded-lg bg-nord-ink px-5 py-3 text-sm font-bold uppercase tracking-wide text-white transition hover:opacity-90"
+            >
+              Spielerpass beantragen{" "}
+              <span aria-hidden className="transition-transform">
+                →
+              </span>
+            </Link>
+            <p className="mt-5 text-xs leading-relaxed text-nord-muted">
+              Weitere Dokumente (zum Beispiel Vereinswechsel oder Verträge)
+              finden sich bei der{" "}
+              <a
+                href={BFV_FORMULARE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline"
+              >
+                BFV-Passabteilung auf bfv.de
+              </a>
+              .
+            </p>
+          </div>
+        </section>
+
         <section className="mb-16">
           <div className="mb-5 flex items-end justify-between gap-4">
             <h2 className="text-sm font-bold uppercase tracking-[0.15em] text-nord-muted">
@@ -256,25 +299,6 @@ export default async function MitgliedschaftPage() {
                 aria-hidden
               >
                 ↓
-              </span>
-            </a>
-            <a
-              href={BFV_FORMULARE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex items-start justify-between gap-3 rounded-xl border border-nord-line bg-white px-5 py-4 transition hover:border-nord-gold hover:shadow-sm"
-            >
-              <span className="flex-1 text-sm font-semibold text-nord-ink">
-                Formulare der BFV-Passabteilung
-                <span className="block text-[11px] font-normal text-nord-muted">
-                  Spielerpass, Vereinswechsel & Verträge · bfv.de
-                </span>
-              </span>
-              <span
-                className="shrink-0 text-nord-gold-ink transition-transform group-hover:translate-x-0.5"
-                aria-hidden
-              >
-                ↗
               </span>
             </a>
           </div>

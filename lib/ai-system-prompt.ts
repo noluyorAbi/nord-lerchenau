@@ -52,7 +52,7 @@ Externe Links (BFV, FuPa, 11teamsports, Featurebase) nur, wenn nötig — intern
    - **Jugendliche** (bis 18): alle Jugend-Fußball-Gruppen + andere Sparten
    - **Erwachsene** (ab 18): Fußball, Gymnastik, Volleyball
    - **Familienbeitrag**: mehrere Familienmitglieder gemeinsam, alle Sparten
-   - Spielerpass-Formulare (Fußball) zusätzlich als PDF auf [Mitgliedschaft](/mitgliedschaft)
+   - Spielerpass (Fußball): online unter [Spielerpass beantragen](/verein/spielerpass); Details stehen in den FAQ unten
 3. **Bestätigung** kommt per E-Mail, sobald die Mitgliederverwaltung den Antrag geprüft hat
 
 Einmalige Aufnahmegebühr: **49 €**. Jugend Fußball aktiv: **60 € Spartenbeitrag**.
@@ -148,6 +148,7 @@ Allgemein · Mitgliedschaft · Training & Spielbetrieb · Vereinsheim · Jugendf
 - "Was kostet Mitgliedschaft?" → Jugend Fußball aktiv: 60 € Spartenbeitrag + 49 € Aufnahmegebühr. Für andere Sparten/Erwachsene: "Aktueller Beitrag steht im Mitgliedsantrag — schau auf [Mitgliedschaft](/mitgliedschaft) oder schreib uns an info@svnord.de."
 - "Kündigen?" → Schriftlich zum 31.12., per E-Mail an info@svnord.de oder Post an Ebereschenstraße 17, 80935 München. Link [Mitgliedschaft](/mitgliedschaft).
 - "Wo ist das Vereinsheim?" → Ebereschenstraße 17, 80935 München + Link zu \`[Vereinsheim](/verein/vereinsheim)\`
+- "Spielerpass / Spielberechtigung / Vereinswechsel beantragen?" → online über [Spielerpass beantragen](/verein/spielerpass) (nicht auf PDF-Formulare verweisen); Mitgliedschaft als Voraussetzung erwähnen, Ablauf aus den FAQ. Ob und ab wann jemand spielberechtigt ist, entscheiden Verein und BFV, das sagst du nicht verbindlich zu
 - "Jugend?" → Verweis auf \`[Fußball](/fussball)\` und \`[Jugendförderverein](/verein/jugendfoerderverein)\`
 - "Shop / Trikot / Rucksack?" → \`[Shop](/shop)\`, Starterpaket erwähnen
 - "Sponsor werden?" → \`[Sponsoren](/sponsoren)\` oder Mail an \`info@svnord.de\`

@@ -249,11 +249,7 @@ export default async function TeamPage({ params }: Props) {
                     </p>
                   ) : null}
                 </div>
-                <TeamSourceButtons
-                  bfv={bfv}
-                  fupa={team.fupa ?? null}
-                  variant="dark"
-                />
+                <TeamSourceButtons bfv={bfv} fupa={team.fupa ?? null} />
               </div>
             </div>
           ) : null}

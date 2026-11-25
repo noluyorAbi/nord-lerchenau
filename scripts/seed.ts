@@ -947,7 +947,7 @@ Die Alten Herren des SV Nord: Ehrenliga und Altherrenrunde, Fußball aus Freude 
 Montag, 18:00 bis 19:30 Uhr.`,
     },
     {
-      name: "A1-Junioren · U19-I",
+      name: "A1-Junioren · U19",
       slug: "a1-junioren",
       sport: "fussball",
       category: "junioren",
@@ -958,23 +958,14 @@ Montag, 18:00 bis 19:30 Uhr.`,
         teamId: "011MICNASC000000VTVG0001VTR8C1K7",
         slug: "sg-nord-lerchenau-fasanarie-nord-u19-i",
         spielklasse: "A-Junioren / Kreisliga",
-        partner: "Spielgemeinschaft mit Fasanarie-Nord",
-      },
-      // fupa legt Jugend-Halbsaisons (autumn/spring) erst nach und nach an;
-      // autumn2026 existiert noch nicht (404). Die Slugs hier duerfen alt
-      // bleiben: resolveLiveFupaSlug() upgraded zur Laufzeit automatisch auf
-      // die neueste auf fupa existierende Saison.
-      fupa: {
-        autumnSlug: "sg-n-lerchenau-fasanerie-n-u19-1-autumn2025",
-        springSlug: "sg-n-lerchenau-fasanerie-n-u19-1-spring2026",
       },
       descriptionMd: `## A1-Junioren
 
-Die Jahrgänge 2006 bis 2008 bilden als Spielgemeinschaft mit Fasanarie-Nord unsere A1 und spielen in der U19 Kreisliga Nord, der höchsten Jugendspielklasse im Verein.
+Die Jahrgänge 2006 bis 2008 bilden unsere A1 und spielen in der U19 Kreisliga Nord, der höchsten Jugendspielklasse im Verein.
 
 ## Trainerteam
 
-**Gökrem Kocademir**, Trainer (DFB C-Lizenz). **Tom Kopatschek**, Teammanager und Physiotherapie. **Marco Müller**, Torwart-Trainer.
+**Gökrem Kocademir**, Trainer (DFB C-Lizenz). **Tom Kopatschek**, Teammanager und Physiotherapie. **Marco Müller**, Torwart-Trainer. **Tarak Boussarsar**, Co-Trainer.
 
 ## Trainingszeiten
 

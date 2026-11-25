@@ -15,7 +15,7 @@ export type NavItem = {
 };
 
 const juniorenTeams: NavItem[] = [
-  { label: "A1-Junioren · U19-I", href: "/fussball/a1-junioren" },
+  { label: "A1-Junioren · U19", href: "/fussball/a1-junioren" },
   { label: "B1-Junioren · U17", href: "/fussball/b1-junioren" },
   { label: "C1-Junioren · U15", href: "/fussball/c1-junioren" },
   { label: "C2-Junioren · U14", href: "/fussball/c-junioren-u14" },

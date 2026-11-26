@@ -2,7 +2,7 @@ import { FadeUp } from "@/components/motion/FadeUp";
 import { StatCounter } from "@/components/motion/StatCounter";
 
 const STATS = [
-  { label: "Mitglieder", value: "630+", sub: "aktive Nordler" },
+  { label: "Mitglieder", value: "700+", sub: "aktive Nordler" },
   { label: "lizenzierte Trainer", value: "25+", sub: "ehrenamtlich" },
   { label: "Mannschaften", value: "26", sub: "alle Abteilungen" },
 ];

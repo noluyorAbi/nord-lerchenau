@@ -38,7 +38,7 @@ export function MembershipCta() {
               </h2>
               <p className="mt-5 max-w-xl text-[16px] leading-relaxed text-white/75">
                 Ob als Spieler, Eltern, Fan oder Förderer, beim SV Nord ist
-                Platz für jede und jeden. Über 600 Mitglieder, sechs Sportarten,
+                Platz für jede und jeden. Über 700 Mitglieder, sechs Sportarten,
                 ein Vereinsheim mit Biergarten.
               </p>
             </div>

@@ -56,7 +56,7 @@ export const HomePage: GlobalConfig = {
           type: "textarea",
           label: "Untertitel",
           defaultValue:
-            "Seit 1947 zuhause im Münchner Norden. 500+ Mitglieder, vier Sportarten, eine Familie.",
+            "Seit 1947 zuhause im Münchner Norden. 700+ Mitglieder, vier Sportarten, eine Familie.",
         },
         {
           name: "primaryCtaLabel",
@@ -161,7 +161,7 @@ export const HomePage: GlobalConfig = {
       ],
       defaultValue: [
         { label: "Gegründet", value: "1947" },
-        { label: "Mitglieder", value: "500+" },
+        { label: "Mitglieder", value: "700+" },
         { label: "Mannschaften", value: "13" },
         { label: "Landesliga", value: "Aufsteiger" },
       ],

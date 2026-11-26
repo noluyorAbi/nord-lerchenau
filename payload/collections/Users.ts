@@ -22,6 +22,9 @@ export const Users: CollectionConfig = {
     update: authenticated,
   },
   auth: {
+    // Standard wären 2 Stunden. Redakteure sollen nicht mitten im Tag neu
+    // anmelden müssen, daher 7 Tage.
+    tokenExpiration: 60 * 60 * 24 * 7,
     loginWithUsername: {
       allowEmailLogin: true,
       requireEmail: true,

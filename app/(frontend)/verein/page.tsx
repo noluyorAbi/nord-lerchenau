@@ -7,7 +7,7 @@ const JAHRE = vereinsJahre();
 
 const STATS = [
   { value: "1947", label: "Gegründet" },
-  { value: "600+", label: "Mitglieder" },
+  { value: "700+", label: "Mitglieder" },
   { value: "5", label: "Abteilungen" },
   { value: String(JAHRE), label: "Jahre" },
 ];
@@ -111,7 +111,7 @@ export default function VereinPage() {
       <PageHero
         eyebrow="Der Verein"
         title="SV Nord München-Lerchenau e.V."
-        lede="Traditionsverein im Münchner Norden seit 1947: über 600 Mitglieder, fünf Abteilungen."
+        lede="Traditionsverein im Münchner Norden seit 1947: über 700 Mitglieder, fünf Abteilungen."
       />
 
       <section className="mx-auto max-w-7xl px-6 pt-8 pb-14 md:px-10 md:pt-12 md:pb-20">

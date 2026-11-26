@@ -176,7 +176,7 @@ export default async function VorstandPage() {
           {/* 2026_06_02 Vereinswunsch: eine Jugendleitung (statt Anzahl der Personen). */}
           <StatTile value={1} label="Jugendleitung" tone="gold" />
           {/* 2026_06_02 Vereinswunsch: Mitgliederzahl statt Ansprechpartner-Anzahl. */}
-          <StatTile value="600+" label="Mitglieder" tone="ink" />
+          <StatTile value="700+" label="Mitglieder" tone="ink" />
         </div>
 
         <SectionHeader

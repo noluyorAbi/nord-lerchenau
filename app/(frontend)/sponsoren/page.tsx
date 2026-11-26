@@ -71,7 +71,7 @@ export default async function SponsorenPage() {
             <p className="text-base leading-relaxed text-nord-ink">
               Der SV Nord München-Lerchenau e.V. ist ein traditioneller
               Sportverein im Münchner Norden, der im Jahr 1947 gegründet wurde.
-              Derzeit haben wir über 600 Mitglieder in Fußball, Volleyball,
+              Derzeit haben wir über 700 Mitglieder in Fußball, Volleyball,
               Gymnastik, Ski und eSport.
             </p>
             <p className="mt-3 text-base leading-relaxed text-nord-ink">

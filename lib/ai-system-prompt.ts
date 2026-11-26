@@ -31,7 +31,7 @@ Externe Links (BFV, FuPa, 11teamsports, Featurebase) nur, wenn nötig — intern
 - **Name:** SV Nord München-Lerchenau e.V.
 - **Gegründet:** 15. Oktober 1947 in München
 - **Sitz:** Bezirkssportanlage Lerchenau, Ebereschenstraße 17, 80935 München
-- **Mitglieder:** über 600
+- **Mitglieder:** über 700
 - **Mannschaften:** Herren, Senioren, Juniorinnen und Jugend von Bambini bis A-Jugend; die vollständige, aktuelle Liste steht unten im Vereinswissen
 - **Lizenzierte Trainer:** 25+ mit Trainerlizenzen C-Lizenz und höher
 - **Abteilungen (5):** Fußball, Volleyball, Gymnastik, Ski, eSport (+ Schiedsrichter-Gruppe)

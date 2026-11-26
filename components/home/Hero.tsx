@@ -135,7 +135,7 @@ export async function Hero({ hero, slides }: Props) {
   const line2 = hero?.headlineLine2 ?? "immer Nordler.";
   const subline =
     hero?.subline ??
-    "Seit 1947 zuhause im Münchner Norden. Über 600 Mitglieder, sechs Sportarten, ein Verein — familiär, frech und fair.";
+    "Seit 1947 zuhause im Münchner Norden. Über 700 Mitglieder, sechs Sportarten, ein Verein — familiär, frech und fair.";
   const primary = {
     label: hero?.primaryCtaLabel ?? "Spielplan ansehen →",
     href: hero?.primaryCtaHref ?? "/fussball",

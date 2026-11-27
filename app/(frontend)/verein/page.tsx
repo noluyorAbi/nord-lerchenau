@@ -60,7 +60,7 @@ const CARDS: FeatureCard[] = [
     href: "/verein/jugendschutz",
     eyebrow: "Schutzkonzept",
     title: "Kinder- & Jugendschutz",
-    desc: "Erweitertes Führungszeugnis für alle Trainer, klare Prävention und Ansprechstellen im Verdachtsfall.",
+    desc: "Verhaltensregeln für Trainer, erweitertes Führungszeugnis für alle Trainer und klare Ansprechstellen im Verdachtsfall.",
     meta: "Schutz & Prävention",
     tone: "navy",
   },

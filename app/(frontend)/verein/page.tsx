@@ -41,6 +41,14 @@ const CARDS: FeatureCard[] = [
     tone: "sky",
   },
   {
+    href: "/verein/jugendkonzept",
+    eyebrow: "Jugend",
+    title: "Jugendkonzept",
+    desc: "Leitbild, Altersstufen, Trainer und der Weg von den Bambini bis zur 1. Mannschaft.",
+    meta: "Bambini bis U19",
+    tone: "sky",
+  },
+  {
     href: "/verein/vereinsheim",
     eyebrow: "Treffpunkt",
     title: "Vereinsheim Eschengarten",

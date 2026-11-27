@@ -12,6 +12,8 @@ const STATIC_PATHS = [
   "/verein/spielerpass",
   "/verein/vereinsheim",
   "/verein/jugendfoerderverein",
+  "/verein/jugendkonzept",
+  "/verein/jugendschutz",
   "/fussball",
   "/sport",
   "/volleyball",

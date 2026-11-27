@@ -185,9 +185,9 @@ export default async function FussballPage() {
             <FussballPillar
               eyebrow="Torwart"
               title="Fußball — Torwart"
-              body="Spezielles Torwart-Training für alle Altersklassen. Wir suchen Talente und bilden eigene Torhüter:innen aus. Spielerbetreuung ab den Junioren."
-              href="/fussball"
-              meta="Position · Training"
+              body="Einmal pro Woche gezieltes Torwarttraining für alle Jugendmannschaften ab der F-Jugend, geleitet von erfahrenen Torhütern aus dem Herrenbereich."
+              href="/fussball/torwart"
+              meta="Ab der F-Jugend"
               tone="gold"
             />
             <FussballPillar

@@ -93,6 +93,7 @@ export const NAV_TREE: NavItem[] = [
             ],
           },
           { label: "Bambinis", href: "/fussball/bambini" },
+          { label: "Torwarttraining", href: "/fussball/torwart" },
           { label: "Schiedsrichter", href: "/schiedsrichter" },
         ],
       },

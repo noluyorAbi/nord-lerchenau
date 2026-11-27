@@ -355,9 +355,10 @@ export default async function JugendkonzeptPage() {
           <p>
             Torhüter brauchen eigenes Training. Im Kinderfußball darf jedes Kind
             ins Tor, der Torwart wechselt regelmäßig. So entdecken wir Talente.
-            Wir bilden eigene Torhüterinnen und Torhüter aus und suchen weitere.
-            Wer Lust hat, schreibt uns über das{" "}
-            <Int href="/kontakt">Kontaktformular</Int>.
+            Ab der F-Jugend gibt es einmal pro Woche Torwarttraining für alle
+            Jugendmannschaften. Erfahrene Torhüter aus dem Herrenbereich leiten
+            es gezielt nach bewährten Methoden. Mehr auf der Seite{" "}
+            <Int href="/fussball/torwart">Torwarttraining</Int>.
           </p>
         </Section>
 

@@ -13,7 +13,7 @@ export const metadata = {
 const FACTS = [
   {
     title: "Einmal pro Woche",
-    text: "feste Torwarteinheit zusätzlich zum Mannschaftstraining",
+    text: "feste Torwarteinheit, parallel zum Mannschaftstraining",
   },
   {
     title: "Ab der F-Jugend",
@@ -104,8 +104,8 @@ export default function TorwartPage() {
             Torhüter haben eine eigene Rolle: Sie spielen mit den Händen,
             verteidigen das Tor und starten das Spiel. Das lässt sich im
             normalen Mannschaftstraining nur schwer gezielt üben. Deshalb
-            bekommen Torhüterinnen und Torhüter bei uns zusätzlich eine eigene
-            Einheit pro Woche.
+            trainieren Torhüterinnen und Torhüter bei uns einmal pro Woche
+            gezielt, parallel zum Mannschaftstraining.
           </p>
           <p>
             Im Kinderfußball darf jedes Kind ins Tor und der Torwart wechselt

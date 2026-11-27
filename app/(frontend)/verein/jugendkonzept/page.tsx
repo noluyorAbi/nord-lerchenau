@@ -88,7 +88,7 @@ const PATH = [
   {
     title: "Aufbau",
     meta: "D- und C-Jugend",
-    text: "Mehr Wettbewerb und Zusatzangebote für Talente, zum Beispiel Torwarttraining und Athletiktraining.",
+    text: "Neben dem Breitensport zählen Leistung und Entwicklung stärker. Zusatzangebote für Talente, zum Beispiel Torwarttraining und Athletiktraining.",
   },
   {
     title: "Leistung",
@@ -309,6 +309,16 @@ export default async function JugendkonzeptPage() {
           </ol>
           <p>
             <strong className="font-semibold text-nord-ink">
+              Leistung und Breite:
+            </strong>{" "}
+            Ab der D- oder C-Jugend lassen wir neben dem Breitensportgedanken
+            auch ein gewisses Leistungsprinzip zu. Leistung und Entwicklung
+            werden stärker berücksichtigt und gezielt gefördert. Wir verbinden
+            beides: eine gute sportliche Ausbildung für alle und Perspektiven
+            für Kinder und Jugendliche, die mehr erreichen wollen.
+          </p>
+          <p>
+            <strong className="font-semibold text-nord-ink">
               Zusatzangebote:
             </strong>{" "}
             Für besonders talentierte Kinder gibt es zusätzlich zum normalen
@@ -366,9 +376,12 @@ export default async function JugendkonzeptPage() {
                 <strong className="font-semibold text-nord-ink">
                   Kommunikation:
                 </strong>{" "}
-                Jede Mannschaft hat eine WhatsApp-Gruppe. Dazu kommen
-                Communities für größere Gruppen. Termine, Zu- und Absagen laufen
-                über die App Spond, damit alle immer Bescheid wissen.
+                Wir kommunizieren strukturiert, zum Beispiel über
+                WhatsApp-Gruppen und Communities oder den Vereinsplaner. Die
+                Termine planen wir mit Spond, der BFV Teams App oder dem
+                Vereinsplaner, damit alle immer Bescheid wissen. Langfristig
+                wollen wir den Vereinsplaner als zentrale Stelle für
+                Informationen, Termine und Absprachen aufbauen.
               </>,
               <>
                 <strong className="font-semibold text-nord-ink">
